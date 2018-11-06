@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.filemanage.BlockManageService">
+    <sql id="all">
+        id,
+        create_user_id as createUserId,
+        created,
+        updated,
+        white_content as whiteContent,
+        black_content as blackContent,
+        file_parser_id as fileParserId
+    </sql>
+    <sql id="allNodes">
+        id,
+        create_user_id,
+        created,
+        updated,
+        white_content,
+        black_content,
+        file_parser_id
+    </sql>
+
+    <select id="get" parameterType="com.fms.domain.filemanage.BlockManage" resultType="com.fms.domain.filemanage.BlockManage">
+        SELECT <include refid="all" />
+        FROM block_manage
+        <where>
+            <if test="id != null ">
+                and id = #{id}
+            </if>
+            <if test="fileParserId != null ">
+                and file_parser_id = #{fileParserId}
+            </if>
+        </where>
+    </select>
+    <sql id="condition">
+        <where>
+            <if test="id != null ">
+                and id = #{id}
+            </if>
+            <if test="fileParserId != null ">
+                and file_parser_id = #{fileParserId}
+            </if>
+        </where>
+    </sql>
+    <select id="query" parameterType="map" resultType="com.fms.domain.filemanage.BlockManage">
+        SELECT <include refid="all" />
+        FROM block_manage
+        <include refid="condition" />
+    </select>
+
+    <!--添加数据-->
+    <insert id="add" parameterType="com.fms.domain.filemanage.BlockManage">
+        INSERT INTO block_manage
+        (<include refid="allNodes" />)
+        VALUES (
+        #{id},
+        #{createUserId},
+        #{created},
+        #{updated},
+        #{whiteContent},
+        #{blackContent},
+        #{fileParserId}
+        )
+    </insert>
+
+    <!--根据id更新名单信息-->
+    <update id="updateById" parameterType="com.fms.domain.filemanage.BlockManage">
+        UPDATE block_manage
+        SET
+        white_content = #{whiteContent},
+        black_content = #{blackContent},
+        updated = #{updated}
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+        </where>
+    </update>
+
+    <!--根据解析器id更新名单信息-->
+    <update id="updateByParserId" parameterType="com.fms.domain.filemanage.BlockManage">
+        UPDATE block_manage
+        SET
+        <if test="whiteContent!= null and whiteContent !=''">
+            white_content = concat(white_content, ',', #{whiteContent}),
+        </if>
+        <if test="blackContent!= null and blackContent !=''">
+            black_content = concat(black_content, ',', #{blackContent}),
+        </if>
+        updated = #{updated}
+        where file_parser_id = #{fileParserId}
+    </update>
+</mapper>

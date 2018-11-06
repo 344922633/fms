@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.filemanage.FileParserJarService">
+    <sql id="all">
+        id,
+        name,
+        path
+    </sql>
+
+    <sql id="condition">
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="name != null and name != ''">
+            AND name = #{name}
+        </if>
+        <if test="path != null and path != ''">
+            AND path = #{path}
+        </if>
+
+    </sql>
+
+    <select id="query" parameterType="map" resultType="com.fms.domain.filemanage.FileParserJar">
+        SELECT <include refid="all" />
+        FROM file_parser_jar
+        WHERE  1 = 1
+        <include refid="condition" />
+        order by name
+    </select>
+
+    <insert id="add" parameterType="com.fms.domain.filemanage.FileParserJar">
+        INSERT INTO file_parser_jar
+        (<include refid="all" />)
+        VALUES (
+        #{id},
+        #{name},
+        #{path}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.fms.domain.filemanage.FileParserJar">
+        UPDATE file_parser_jar
+        SET
+        <if test="name!=null">
+            name = #{name},
+        </if>
+        <if test="path!=null">
+            path = #{path},
+        </if>
+        id = #{id}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="map">
+        DELETE FROM file_parser_jar
+        WHERE id = #{id}
+    </delete>
+</mapper>

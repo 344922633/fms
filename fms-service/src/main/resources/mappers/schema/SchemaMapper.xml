@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.schema.SchemaService">
+    <resultMap id="columnInfo" type="map">
+        <result column="COLUMN_NAME" property="column_name" />
+        <result column="COLUMN_KEY" property="column_key" />
+        <result column="DATA_TYPE" property="data_type" />
+        <result column="CHARACTER_MAXIMUM_LENGTH" property="max_length" />
+    </resultMap>
+    <select id="listColumns" parameterType="map" resultMap="columnInfo">
+        select COLUMN_NAME,COLUMN_KEY,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH
+        from information_schema.COLUMNS
+        where TABLE_SCHEMA = (select database())
+        and TABLE_NAME = #{tableName}
+    </select>
+
+    <select id="getAllTables" resultType="string">
+        select table_name
+        from information_schema.tables
+        where TABLE_SCHEMA=(select database())
+    </select>
+
+    <insert id="insertData">
+        INSERT INTO ${tableName}
+        <foreach collection="data" item="d" open="(" close=")" separator=",">
+            ${d.column_name}
+        </foreach>
+        VALUES
+        <foreach collection="data" item="d" open="(" close=")" separator=",">
+            #{d.value}
+        </foreach>
+    </insert>
+</mapper>
+
+
+

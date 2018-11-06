@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.filemanage.ChunkService">
+
+    <sql id="all">
+        identifier,
+        chunk_number as chunkNumber,
+        chunk_size as currentChunkSize
+    </sql>
+
+    <select id="query" parameterType="map" resultType="com.fms.domain.filemanage.upload.Chunk">
+        SELECT identifier,chunk_number as chunkNumber, chunk_size as currentChunkSize
+        FROM file_chunk_info
+        WHERE identifier=#{identifier} and chunk_number=#{chunkNumber}
+    </select>
+
+    <insert id="add" parameterType="com.fms.domain.filemanage.upload.Chunk" >
+        INSERT INTO file_chunk_info
+        (identifier,chunk_number, chunk_size)
+        VALUES (
+        #{identifier},
+        #{chunkNumber},
+        #{currentChunkSize}
+        )
+    </insert>
+
+    <update id="delete" parameterType="map">
+        DELETE FROM file_chunk_info WHERE identifier=#{identifier}
+    </update>
+
+</mapper>

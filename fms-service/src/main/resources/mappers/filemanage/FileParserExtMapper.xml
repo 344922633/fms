@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.filemanage.FileParserExtService">
+    <resultMap id="tableInfo" type="com.fms.domain.filemanage.TableInfo">
+        <result column="TABLE_NAME" property="table_name" />
+        <association property="columnInfo" resultMap="columnInfo" />
+    </resultMap>
+    <resultMap id="columnInfo" type="map">
+        <result column="COLUMN_NAME" property="column_name" />
+        <result column="COLUMN_KEY" property="column_key" />
+        <result column="DATA_TYPE" property="data_type" />
+        <result column="CHARACTER_MAXINUM_LENGTH" property="max_length" />
+    </resultMap>
+    <sql id="all">
+        id,
+        parserId,
+        parameterName,
+        parameterValue,
+        parameterDesc
+    </sql>
+
+    <sql id="allNoAs">
+        id,
+        parserId,
+        parameterName,
+        parameterValue,
+        parameterDesc
+    </sql>
+
+    <select id="get" parameterType="long" resultType="com.fms.domain.filemanage.FileParserExt">
+        SELECT <include refid="all" />
+        FROM file_parserext
+        WHERE id = #{id}
+    </select>
+
+    <sql id="condition">
+        <if test="parserId != null and parserId != ''">
+            AND parserId = #{parserId}
+        </if>
+
+    </sql>
+
+    <select id="query" parameterType="map" resultType="com.fms.domain.filemanage.FileParserExt">
+        SELECT <include refid="all" />
+        FROM file_parserext
+        WHERE 1 = 1
+        <include refid="condition" />
+    </select>
+
+
+    <insert id="add" parameterType="com.fms.domain.filemanage.FileParserExt">
+        INSERT INTO file_parserext (<include refid="allNoAs" />)
+        VALUES (
+          #{id},
+          #{parserId},
+          #{parameterName},
+          #{parameterValue},
+          #{parameterDesc}
+        )
+    </insert>
+    <update id="update" parameterType="com.fms.domain.filemanage.FileParserExt">
+        UPDATE file_parserext
+        SET parameterName = #{parameterName},
+        parameterValue = #{parameterValue},
+        parameterDesc = #{parameterDesc}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM file_parserext
+        WHERE parserId = #{parserId}
+    </delete>
+
+</mapper>

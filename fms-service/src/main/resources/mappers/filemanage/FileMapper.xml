@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.filemanage.FileService">
+    <sql id="all">
+        id,
+        name,
+        real_path AS realPath,
+        description,
+        type,
+        tag,
+        directory_id AS directoryId,
+        is_upload AS isUpload,
+        groups,
+        class_id AS classId,
+        class_type AS classType,
+        class_name AS className,
+        is_parser AS isParser,
+        recommend_parser_id AS recommendParserId,
+        recommend_parser_name AS recommendParserName,
+        file_md5 AS fileMd5,
+        is_export AS isExport
+    </sql>
+    <sql id="aall">
+        a.id,
+        a.name,
+        a.real_path AS realPath,
+        a.description,
+        a.type,
+        a.tag,
+        a.directory_id AS directoryId,
+        a.is_upload AS isUpload,
+        a.groups,
+        a.class_id AS classId,
+        a.class_type AS classType,
+        a.class_name AS className,
+        a.is_parser AS isParser,
+        a.recommend_parser_id AS recommendParserId,
+        a.recommend_parser_name AS recommendParserName,
+        a.file_md5 AS fileMd5,
+        a.is_export AS isExport
+    </sql>
+    <sql id="allNoAs">
+        id,
+        name,
+        real_path,
+        description,
+        type,
+        tag,
+        directory_id,
+        is_upload,
+        groups,
+        class_id,
+        class_type,
+        class_name,
+        is_parser,
+        recommend_parser_id,
+        recommend_parser_name,
+        file_md5,
+        is_export
+    </sql>
+    <sql id="condition">
+        <if test="name != null and name != ''">
+            AND name = #{name}
+        </if>
+        <if test="realPath != null and realPath != ''">
+            AND real_path = #{realPath}
+        </if>
+        <if test="description != null and description">
+            AND description = #{description}
+        </if>
+        <if test="type != null and type != ''">
+            AND type = #{type}
+        </if>
+        <if test="tag != null and tag != ''">
+            AND tag = #{tag}
+        </if>
+        <if test="directoryId != null">
+            AND directory_id = #{directoryId}
+        </if>
+        <if test="isUpload != null">
+            AND is_upload = #{isUpload}
+        </if>
+        <if test="groups != null and groups != ''">
+            AND groups = #{groups}
+        </if>
+        <if test="classId != null">
+            AND class_id = #{classId}
+        </if>
+        <if test="isParser != null ">
+            AND is_parser = #{isParser}
+        </if>
+        <if test="isExport != null ">
+            AND is_export = #{isExport}
+        </if>
+
+        <if test="classType != null and classType != ''">
+            AND class_type = #{classType}
+        </if>
+        <if test="fileMd5 != null and fileMd5 != ''">
+            AND file_md5 = #{fileMd5}
+        </if>
+
+    </sql>
+
+    <select id="get" parameterType="long" resultType="com.fms.domain.filemanage.File">
+        SELECT <include refid="all" />
+        FROM fms_file
+        WHERE id = #{id}
+    </select>
+    <select id="query" parameterType="map" resultType="com.fms.domain.filemanage.File">
+        SELECT <include refid="all" />
+        FROM fms_file
+        WHERE  1 = 1
+        <include refid="condition" />
+        order by name
+    </select>
+    <select id="pageFileByIsParserAndRemoveRepeat" parameterType="map" resultType="com.fms.domain.filemanage.File">
+        select
+        <include refid="aall" />
+        from ( SELECT f1.* FROM (select * from fms_file where 1=1 <include refid="condition" />) f1
+        LEFT JOIN (select * from fms_file where 1=1 <include refid="condition" />) f2 ON f1.file_md5 = f2.file_md5
+        AND f1.id &lt; f2.id  WHERE f2.id IS NULL ) a
+        order by a.name
+    </select>
+    <select id="queryCountByIsParserAndRemoveRepeat" parameterType="map" resultType="int">
+        SELECT COUNT(1)
+        from ( SELECT f1.* FROM (select * from fms_file where 1=1 <include refid="condition" />) f1
+        LEFT JOIN (select * from fms_file where 1=1 <include refid="condition" />) f2 ON f1.file_md5 = f2.file_md5
+        AND f1.id &lt; f2.id  WHERE f2.id IS NULL ) a
+    </select>
+    <select id="getFileListByDirectoryIds" parameterType="map" resultType="com.fms.domain.filemanage.File">
+        SELECT <include refid="all" />
+        FROM fms_file
+        WHERE directory_id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="queryCount" parameterType="map" resultType="int">
+        SELECT COUNT(1)
+        FROM fms_file
+        where 1 = 1
+        <include refid="condition" />
+    </select>
+
+    <insert id="add" parameterType="com.fms.domain.filemanage.File">
+        INSERT INTO fms_file
+        (<include refid="allNoAs" />)
+        VALUES (
+          #{id},
+          #{name},
+          #{realPath},
+          #{description},
+          #{type},
+          #{tag},
+          #{directoryId},
+          #{isUpload},
+          #{groups},
+          #{classId},
+          #{classType},
+          #{className},
+          #{isParser},
+          #{recommendParserId},
+          #{recommendParserName},
+          #{fileMd5},
+          #{isExport}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.fms.domain.filemanage.File">
+        UPDATE fms_file
+        SET
+        <if test="name!=null">
+            name = #{name},
+        </if>
+        <if test="realPath!=null">
+          real_path = #{realPath},
+        </if>
+        <if test="description!=null">
+          description = #{description},
+        </if>
+        <if test="type!=null">
+          type = #{type},
+        </if>
+        <if test="tag!=null">
+          tag = #{tag},
+        </if>
+        <if test="directoryId!=null">
+          directory_id = #{directoryId},
+        </if>
+        <if test="isUpload!=null">
+          is_upload = #{isUpload},
+        </if>
+        <if test="groups!=null">
+          groups = #{groups},
+        </if>
+        <if test="classId != null">
+            class_id = #{classId},
+        </if>
+        <if test="classType != null">
+            class_type = #{classType},
+        </if>
+        <if test="className != null">
+            class_name = #{className},
+        </if>
+        <if test="isParser != null">
+            is_parser = #{isParser},
+        </if>
+        <if test="recommendParserId != null">
+            recommend_parser_id = #{recommendParserId},
+        </if>
+        <if test="recommendParserName != null">
+            recommend_parser_name = #{recommendParserName},
+        </if>
+        <if test="isExport != null">
+            is_export = #{isExport},
+        </if>
+
+
+        id = #{id}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="map">
+        DELETE FROM fms_file
+        WHERE id = #{id}
+    </delete>
+    
+    <select id="getFileStatistic" resultType="map">
+        select count(class_type) as value, class_type as name
+        from fms_file
+        group by class_type
+    </select>
+
+    <select id="getFileSuffixStatistic" resultType="map">
+        SELECT count(type) as value, type as name
+        from fms_file
+        group by type
+    </select>
+</mapper>

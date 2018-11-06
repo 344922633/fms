@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.user.UserService">
+
+    <sql id="all">
+        id,
+        name,
+        password,
+        creatd,
+        state
+    </sql>
+
+    <select id="testSelect" parameterType="map" resultType="map">
+        SELECT * FROM sys_users limit 1
+    </select>
+
+    <select id="queryId" parameterType="map" resultType="com.fms.domain.filemanage.User">
+        SELECT <include refid="all" />
+        FROM sys_users
+        WHERE id=#{id}
+    </select>
+    <select id="queryName" parameterType="map" resultType="com.fms.domain.filemanage.User">
+        SELECT <include refid="all" />
+        FROM sys_users
+        WHERE name=#{name}
+    </select>
+
+    <insert id="add" parameterType="com.fms.domain.filemanage.User" >
+        INSERT INTO sys_users
+        (<include refid="all" />)
+        VALUES (
+        #{id},
+        #{name},
+        #{password},
+        #{creatd},
+        #{state}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.fms.domain.filemanage.User">
+        UPDATE sys_users
+        SET
+          password=#{password},state=#{state}
+        WHERE id=#{id}
+    </update>
+
+</mapper>

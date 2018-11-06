@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.filemanage.DirectoryService">
+    <sql id="all">
+        id,
+        parent_id AS parentId,
+        leaf,
+        code,
+        text,
+        description,
+        level
+    </sql>
+    <sql id="allNoAs">
+        id,
+        parent_id,
+        leaf,
+        code,
+        text,
+        description,
+        level
+    </sql>
+    <sql id="condition">
+        <if test="parentId != null">
+            AND parent_id = #{parentId}
+        </if>
+        <if test="leaf != null">
+            AND leaf = #{leaf}
+        </if>
+        <if test="code != null and code != ''">
+            AND code = #{code}
+        </if>
+        <if test="text != null and text != ''">
+            AND text = #{text}
+        </if>
+        <if test="level != null">
+            AND level = #{level}
+        </if>
+    </sql>
+    <select id="query" parameterType="map" resultType="com.fms.domain.filemanage.Directory">
+        SELECT <include refid="all" />
+        FROM fms_directory
+        WHERE 1 = 1
+        <include refid="condition" />
+    </select>
+
+    <insert id="add" parameterType="com.fms.domain.filemanage.Directory" >
+        INSERT INTO fms_directory
+        (<include refid="allNoAs" />)
+        VALUES (
+          #{id},
+          #{parentId},
+          #{leaf},
+          #{code},
+          #{text},
+          #{description},
+          #{level}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.fms.domain.filemanage.Directory">
+        UPDATE fms_directory
+        SET
+        parent_id = #{parentId},
+        leaf = #{leaf},
+        code = #{code},
+        text = #{text},
+        description = #{description},
+        level = #{level}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="map">
+        DELETE FROM fms_directory
+        WHERE id = #{id}
+    </delete>
+    <delete id="deleteIds" parameterType="map">
+        DELETE FROM fms_directory
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

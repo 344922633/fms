@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.filemanage.FileParserService">
+    <resultMap id="tableInfo" type="com.fms.domain.filemanage.TableInfo">
+        <result column="TABLE_NAME" property="table_name" />
+        <association property="columnInfo" resultMap="columnInfo" />
+    </resultMap>
+    <resultMap id="columnInfo" type="map">
+        <result column="COLUMN_NAME" property="column_name" />
+        <result column="COLUMN_KEY" property="column_key" />
+        <result column="DATA_TYPE" property="data_type" />
+        <result column="CHARACTER_MAXINUM_LENGTH" property="max_length" />
+    </resultMap>
+    <sql id="all">
+        id,
+        name,
+        create_user_id as createUserId,
+        created,
+        updated,
+        source,
+        class_name AS className,
+        params,
+        method_name AS methodName,
+        input_type AS inputType
+    </sql>
+
+    <sql id="allNoAs">
+        id,
+        name,
+        create_user_id,
+        created,
+        updated,
+        source,
+        class_name,
+        params,
+        method_name,
+        input_type
+    </sql>
+
+    <select id="get" parameterType="long" resultType="com.fms.domain.filemanage.FileParser">
+        SELECT <include refid="all" />
+        FROM file_parser
+        WHERE id = #{id}
+    </select>
+
+    <sql id="condition">
+        <if test="name != null and name != ''">
+            AND name = #{name}
+        </if>
+        <if test="createUserId != null">
+            AND create_user_id = #{createUserId}
+        </if>
+        <if test="source != null">
+            AND source = #{source}
+        </if>
+        <if test="className != null and className != ''">
+            AND class_name = #{className}
+        </if>
+        <if test="inputType != null">
+            AND input_type = #{inputType}
+        </if>
+
+    </sql>
+    <select id="queryOrderList" parameterType="map" resultType="com.fms.domain.filemanage.FileParser">
+        SELECT <include refid="all" />
+        FROM file_parser
+        WHERE id IN (#{ids})
+        UNION ALL
+        SELECT <include refid="all" />
+        FROM file_parser
+        WHERE id NOT IN (#{ids})
+    </select>
+    <select id="query" parameterType="map" resultType="com.fms.domain.filemanage.FileParser">
+        SELECT <include refid="all" />
+        FROM file_parser
+        WHERE 1 = 1
+        <include refid="condition" />
+        order by name
+    </select>
+
+    <select id="queryCount" parameterType="map" resultType="int">
+        SELECT COUNT(1)
+        FROM file_parser
+        WHERE 1 = 1
+        <include refid="condition" />
+    </select>
+
+    <insert id="add" parameterType="com.fms.domain.filemanage.FileParser">
+        INSERT INTO file_parser (<include refid="allNoAs" />)
+        VALUES (
+          #{id},
+          #{name},
+          #{createUserId},
+          #{created},
+          #{updated},
+          #{source},
+          #{className},
+          #{params},
+          #{methodName},
+          #{inputType}
+        )
+    </insert>
+    <update id="update" parameterType="com.fms.domain.filemanage.FileParser">
+        UPDATE file_parser
+        SET name = #{name},
+        create_user_id = #{createUserId},
+        created = #{created},
+        updated = #{updated},
+        source = #{source},
+        class_name = #{className},
+        params = #{params},
+        method_name = #{methodName},
+        input_type = #{inputType}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM file_parser
+        WHERE id = #{id}
+    </delete>
+
+    <!--根据id查询对应的解析器名称-->
+    <select id="getNamesByIds" parameterType="map" resultType="string">
+        SELECT GROUP_CONCAT(name)
+        FROM file_parser t
+        <where>
+            <if test="ids != null and ids.length >0">
+                AND t.id IN
+                <foreach item="id" index="index" collection="ids" open="("  close=")" separator=",">
+                    #{id}
+                </foreach>
+             </if>
+        </where>
+    </select>
+    <insert id="parseDataSaveDatabase" parameterType="map">
+        INSERT INTO ${table_name}
+        (
+          <foreach collection="columns" item="key" index="index" separator=",">
+              ${key}
+          </foreach>
+        )
+        VALUES
+        <foreach collection="data" item="item" index="index" separator=",">
+            (
+                <foreach collection="columns" item="key" index="index1" separator=",">
+                    #{item.${key}}
+                </foreach>
+            )
+        </foreach>
+    </insert>
+    <select id="queryTableInfo" resultMap="tableInfo">
+        SELECT a.TABLE_NAME,b.COLUMN_NAME,b.COLUMN_KEY
+        FROM information_schema.TABLES AS a INNER JOIN information_schema.COLUMNS AS b
+        ON a.TABLE_NAME=b.TABLE_NAME AND a.TABLE_SCHEMA=(select database())
+    </select>
+</mapper>
