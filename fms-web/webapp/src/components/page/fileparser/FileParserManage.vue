@@ -113,15 +113,7 @@
         },
         data () {
             return {
-                //parserExtList:[],
-                 parserExtList:[
-                    {parameterName:"File",parameterDesc:"文件上传",parameterValue:""},
-                    {parameterName:"参数1",parameterDesc:"参数描述1",parameterValue:""},
-                    {parameterName:"参数2",parameterDesc:"参数描述2",parameterValue:""},
-                    {parameterName:"参数3",parameterDesc:"参数描述3",parameterValue:""},
-                    {parameterName:"参数4",parameterDesc:"参数描述4",parameterValue:""},
-
-                ],
+                parserExtList:[],,
                 param1:"参数1",
                 paramDesc1:"参数1的描述",
                 parserNameList:[],
@@ -144,7 +136,7 @@
                 pageSize: 5,
                 //文件列表
                 fileList: [],
-                addFileList:[],
+                resultFils:"",
                 //当前选中文件
                 current: null,
                 //当前解析器
@@ -304,10 +296,16 @@
                 file.status = 'finished'
                 this.$refs.uploadFile[0].fileList.push(file);
                 return false;
-                console.info(this.uploadListFile);
+                console.info("文件地址集合："+this.uploadListFile);
             },
 
             FileUpload(){
+                console.info(this.uploadListFile.length);
+                let length = this.uploadListFile.length;
+                if(length != 1){
+                    this.$Message.error('有且只能上传一个文件');
+                    return false;
+                }
                 this.loadingStatus = true;
                 let FileNameList=[];
                 this.$refs.uploadFile[0].clearFiles();
@@ -390,6 +388,8 @@
             uploadSuccessFile(response, file, fileList){
                 console.log(file)
                 console.log(fileList)
+                this.resultFils = file.response;
+                console.info(this.resultFils);
                 this.loadingStatus = false;
                 this.$Message.success('This is a success tip');
             },
@@ -530,6 +530,7 @@
 
                 this.$refs.uploadFile[0].clearFiles();
                 this.uploadListFile = [];
+                this.resultFils = "";
 
             },
             //编辑弹框显示状态监听
@@ -575,7 +576,7 @@
                 }
             },
             //文件上传成功回掉
-            handleUploadSuccess(response, file, fileList) {
+           handleUploadSuccess(response, file, fileList) {
                 if (response.success) {
                     this.parser.source = response.data;
                     if (this.parser.id) {
@@ -593,6 +594,11 @@
             },
             //请求后台
             postOperate(url) {
+                this.parserExtList.forEach(item => {
+                    if(item.parameterName.endsWith('File')){
+                        item.parameterValue = this.resultFils
+                    }
+                });
                 var me = this;
                 this.parser.parserExt = JSON.stringify(this.parserExtList);
                 this.$axios.post(url,this.parser)
