@@ -113,7 +113,7 @@
         },
         data () {
             return {
-                parserExtList:[],,
+                parserExtList:[],
                 param1:"参数1",
                 paramDesc1:"参数1的描述",
                 parserNameList:[],
