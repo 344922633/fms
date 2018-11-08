@@ -257,7 +257,7 @@
         <!--解析页面-->
 
         <Modal v-model="parserVisible" fullscreen footer-hide @on-visible-change="changeParserVisible">
-            <single-parser  :file="currentFile" :parserData="parserData" :columnData="tableColumnData" @after-close="parserVisible = false"></single-parser>
+            <single-parser  :file="currentFile" :parserData="parserData" :parserExtList="parserExtList" :columnData="tableColumnData" @after-close="parserVisible = false"></single-parser>
         </Modal>
         <!--遮罩-->
         <Spin size="large" fix v-if="loading">
@@ -276,7 +276,7 @@
     import qs from 'qs';
     import BMF from 'browser-md5-file';
    
- const bmf = new BMF();
+    const bmf = new BMF();
 
     export default {
         name: "FileManagement",
@@ -286,6 +286,7 @@
         },
         data() {
             return {
+                parserExtList:[],
                 config: {},
                 modal8: false,//上传弹出窗口
                 modal1: false,//上传弹出框用于确认当前选中目录
@@ -473,7 +474,7 @@
             },
             //文件md5
             preprocess(chunk){
-                if (chunk.file.md5 === '' || chunk.file.md5 == null) {
+               if (chunk.file.md5 === '' || chunk.file.md5 == null) {
                     bmf.md5(chunk.file.file, function (err, md5) {
                         chunk.file.uniqueIdentifier=md5;
                         chunk.preprocessFinished()
@@ -985,14 +986,25 @@
                     id: classId
                 }).then(res => {
                     this.parserData = res.data ? res.data : [];
-                })
+                });
+                this.parserExtList=[
+                   {parameterName:"File",parameterDesc:"文件上传",parameterValue:"1111"},
+                   {parameterName:"参数1",parameterDesc:"参数描述1",parameterValue:"1111"},
+                   {parameterName:"参数2",parameterDesc:"参数描述2",parameterValue:"111"},
+                   {parameterName:"参数3",parameterDesc:"参数描述3",parameterValue:"111"},
+                   {parameterName:"参数4",parameterDesc:"参数描述4",parameterValue:"111"},
+
+               ]
             },
             //关闭解析页面，初始化数据
             changeParserVisible(val) {
                 if (!val) {
                     Bus.$emit('cleanData')
                 }
-            }
+            },
+
+
+
         },
         mounted() {
             this.$nextTick(() => {

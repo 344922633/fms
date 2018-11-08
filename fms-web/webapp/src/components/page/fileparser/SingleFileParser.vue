@@ -44,6 +44,25 @@
                         </Select>
                     </FormItem>
                 </i-col>
+                <i-col span="6" prop="parserExtList"  v-for="item in parserExtList">
+                    <FormItem :label="item.parameterName">
+                        <Input v-if="item.parameterName != 'File'" v-model="item.parameterValue" :placeholder="item.parameterDesc"/>
+                        <div v-if="item.parameterName == 'File'">
+                        <Upload
+                            ref="uploadFile"
+                            multiple
+                            :before-upload="handleUploadFile"
+                            action="mvc/fileParserJar/uploadFileParam"
+                            :on-success="uploadSuccessFile"
+                            :on-remove="handleRemoveFile"
+                            :on-error="uploadErrorFile">
+                            <Button icon="ios-cloud-upload-outline">上传</Button>
+                            <span>{{resultFils ? resultFils : item.parameterValue}}</span>
+                        </Upload>
+                        <Button style="margin-top: 5px" type="text" @click="FileUpload" :loading="loadingStatus">{{ loadingStatus ? '上传中' : '上传' }}</Button>
+                        </div>
+                    </FormItem>
+                </i-col>
                 <i-col span="4">
                     <Button @click="handleParse" :loading="loading">解析</Button>
                 </i-col>
@@ -131,6 +150,10 @@
         components: {ICol},
         data() {
             return {
+                uploadListFile:[],
+                loadingStatus: false,
+                fileList: [],
+                resultFils:"",
                 loading: false,
                 //解析结果字段
                 fields: [],
@@ -169,6 +192,10 @@
             parserData: {
                 type: Array,
                 default: []
+            },
+            parserExtList:{
+                type: Array,
+                default: []
             }
         },
         created() {
@@ -176,10 +203,16 @@
             this.getTables()
             //重新打开页面 清空数据
             Bus.$on('cleanData', () => {
+
                 me.fields = [];
                 if (me.$refs.table.children[0]) {
                     me.$refs.table.removeChild(me.$refs.table.children[0]);
                 }
+
+                this.$refs.uploadFile[0].clearFiles();
+                this.uploadListFile = [];
+                this.resultFils = "";
+
             });
         },
         computed: {
@@ -255,6 +288,13 @@
             },
             //解析处理
             handleParse() {
+
+                this.parserExtList.forEach(item => {
+                    if(item.parameterName.endsWith('File')){
+                        item.parameterValue = this.resultFils
+                    }
+                });
+
                 this.fields = [];
                 if (this.$refs.table.children[0]) {
                     this.$refs.table.removeChild(this.$refs.table.children[0]);
@@ -478,7 +518,63 @@
                 }).catch(e => {
                     this.loading = false;
                 });
-            }
+            },
+
+                        handleUploadFile(file){
+                            this.uploadListFile.push(file);
+                            file.status = 'finished'
+                            this.$refs.uploadFile[0].fileList.push(file);
+                            return false;
+                            console.info("文件地址集合："+this.uploadListFile);
+                        },
+
+                        uploadSuccessFile(response, file, fileList){
+                            console.log(file)
+                            console.log(fileList)
+                            this.resultFils = file.response;
+                            console.info(this.resultFils);
+                            this.loadingStatus = false;
+                            this.$Message.success('This is a success tip');
+                        },
+
+                        uploadSuccessFile(response, file, fileList){
+                            console.log(file)
+                            console.log(fileList)
+                            this.resultFils = file.response;
+                            console.info(this.resultFils);
+                            this.loadingStatus = false;
+                            this.$Message.success('This is a success tip');
+                        },
+
+                        handleRemoveFile(file, fileList) {
+                            let idx = this.uploadListFile.findIndex((f) => {
+                                return f.name == file.name;
+                            })
+                            this.uploadListFile.splice(idx, 1);
+                        },
+
+                        uploadErrorFile(){
+                            this.loadingStatus = false;
+                            this.$Message.error('上传文件失败');
+                        },
+
+                        FileUpload(){
+                            console.info(this.uploadListFile.length);
+                            let length = this.uploadListFile.length;
+                            if(length != 1){
+                                this.$Message.error('有且只能上传一个文件');
+                                return false;
+                            }
+                            this.loadingStatus = true;
+                            let FileNameList=[];
+                            this.$refs.uploadFile[0].clearFiles();
+                                if (this.uploadListFile) {
+                                    this.uploadListFile.forEach(file => {
+                                        this.$refs.uploadFile[0].post(file);
+                                    })
+                                }
+
+                        },
         }
     }
 </script>
