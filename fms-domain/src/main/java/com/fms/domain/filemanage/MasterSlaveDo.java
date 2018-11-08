@@ -9,4 +9,6 @@ public class MasterSlaveDo {
     private String masterTable;
 
     private String slaveTable;
+
+    private String type;
 }

@@ -6,9 +6,10 @@
         <result column="COLUMN_KEY" property="column_key" />
         <result column="DATA_TYPE" property="data_type" />
         <result column="CHARACTER_MAXIMUM_LENGTH" property="max_length" />
+        <result column="COLUMN_DESC" property="column_desc" />
     </resultMap>
     <select id="listColumns" parameterType="map" resultMap="columnInfo">
-        select COLUMN_NAME,COLUMN_KEY,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH
+        select  COLUMN_NAME,COLUMN_KEY,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,concat(COLUMN_COMMENT,'(',TABLE_NAME,')') AS COLUMN_DESC
         from information_schema.COLUMNS
         where TABLE_SCHEMA = (select database())
         and TABLE_NAME = #{tableName}
