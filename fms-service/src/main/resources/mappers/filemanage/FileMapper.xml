@@ -13,6 +13,7 @@
         groups,
         class_id AS classId,
         class_type AS classType,
+        fatherclass_name AS fatherClassName,
         class_name AS className,
         is_parser AS isParser,
         recommend_parser_id AS recommendParserId,
@@ -32,6 +33,7 @@
         a.groups,
         a.class_id AS classId,
         a.class_type AS classType,
+        a.fatherclass_name AS fatherClassName,
         a.class_name AS className,
         a.is_parser AS isParser,
         a.recommend_parser_id AS recommendParserId,
@@ -51,6 +53,7 @@
         groups,
         class_id,
         class_type,
+        fatherclass_name,
         class_name,
         is_parser,
         recommend_parser_id,
@@ -100,6 +103,9 @@
             AND file_md5 = #{fileMd5}
         </if>
 
+        <if test="fatherClassName != null and fatherClassName != ''">
+            AND fatherclass_name = #{fatherClassName}
+        </if>
     </sql>
 
     <select id="get" parameterType="long" resultType="com.fms.domain.filemanage.File">
@@ -159,6 +165,7 @@
           #{groups},
           #{classId},
           #{classType},
+          #{fatherClassName},
           #{className},
           #{isParser},
           #{recommendParserId},
@@ -200,6 +207,9 @@
         </if>
         <if test="classType != null">
             class_type = #{classType},
+        </if>
+        <if test="fatherClassName != null">
+            fatherclass_name = #{fatherClassName},
         </if>
         <if test="className != null">
             class_name = #{className},

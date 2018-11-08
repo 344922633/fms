@@ -231,6 +231,8 @@ public class UploadController {
         if(fileTypeList.size()>0){
             file.setClassId(fileTypeList.get(0).getId());
             file.setClassName(fileTypeList.get(0).getName());
+            file.setFatherClassName(fileTypeList.get(0).getType());
+
         }
 
 

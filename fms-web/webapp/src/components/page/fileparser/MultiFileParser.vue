@@ -13,7 +13,20 @@
                     <Button type="success" shape="circle" ghost size="small" style="margin: 5px" @click="handleMultiParse">执行解析</Button>
                     <Button type="success" shape="circle" ghost size="small" style="margin: 5px" @click="isFileUp=true">文件上传</Button>
                     <Card title="预分类">
-                        <Table highlight-row ref="currentRowTable1" :data="preClassData" :columns="preClassColumns" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange"></Table>
+                        数据库类文件
+                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor1" :columns="preClassColumns1" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange1"></Table>
+                        拓扑结构类文件
+                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor2" :columns="preClassColumns2" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange2"></Table>
+                        结构化文件
+                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor3" :columns="preClassColumns3" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange3"></Table>
+                        文本类文件
+                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor4" :columns="preClassColumns4" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange4"></Table>
+                        配置类文件
+                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor5" :columns="preClassColumns5" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange5"></Table>
+                        日志类文件
+                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor6" :columns="preClassColumns6" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange6"></Table>
+                        程序类文件
+                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor7" :columns="preClassColumns7" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange7"></Table>
                     </Card>
                     <Card title="待分类">
                         <Table highlight-row ref="currentRowTable2" :data="waitClassData" :columns="waitClassColumns" min-height="300"  height="400" tref="2"  @on-row-click="handleLeftRowClick" @on-selection-change="handleWaitSelectionChange"></Table>
@@ -93,6 +106,13 @@
                 viewFileName:'',
                 //解析前预分类数据
                 preClassData: [],
+                preClassDataFor1: [],
+                preClassDataFor2: [],
+                preClassDataFor3: [],
+                preClassDataFor4: [],
+                preClassDataFor5: [],
+                preClassDataFor6: [],
+                preClassDataFor7: [],
                 //解析前待分类数据
                 waitClassData: [],
                 //解析前其他分类数据
@@ -110,7 +130,13 @@
                 //解析后其他分类数据
                 afterOtherData: [],
                 //解析前预分类选中行
-                preSelection: [],
+                preSelection1: [],
+                preSelection2: [],
+                preSelection3: [],
+                preSelection4: [],
+                preSelection5: [],
+                preSelection6: [],
+                preSelection7: [],
                 //解析前待分类选中行
                 waitSelection: [],
                 //解析前其他分类选中行
@@ -152,7 +178,7 @@
                     waiting: '等待中'
                 },
                 //解析前预分类列
-                preClassColumns: [
+                preClassColumns1: [
                     {
                         type: 'selection',
                         width: 50,
@@ -179,7 +205,223 @@
                                             event.stopPropagation()
                                             this.currentIndex = params.index;
                                             this.currentParser = params.row.recommendParserId;
-                                            this.currentType = '预分类';
+                                            this.currentType = '预分类1';
+                                            this.parserVisible = true;
+                                        }
+                                    }
+                                }, '选择解析器')
+                            ]);
+                        }
+                    }
+                ],
+                preClassColumns2: [
+                    {
+                        type: 'selection',
+                        width: 50,
+                        align: 'center'
+                    },
+                    {
+                        title: '文件名',
+//                        width: 80,
+                        key: 'name'
+                    },
+                    {
+                        title: '解析器',
+                        width: 80,
+                        key: 'recommendParserName'
+                    },
+                    {
+                        title: '操作',
+                        key: 'recommendParserName',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('a', {
+                                    on: {
+                                        click: () => {
+                                            event.stopPropagation()
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = '预分类2';
+                                            this.parserVisible = true;
+                                        }
+                                    }
+                                }, '选择解析器')
+                            ]);
+                        }
+                    }
+                ],
+                preClassColumns3: [
+                    {
+                        type: 'selection',
+                        width: 50,
+                        align: 'center'
+                    },
+                    {
+                        title: '文件名',
+//                        width: 80,
+                        key: 'name'
+                    },
+                    {
+                        title: '解析器',
+                        width: 80,
+                        key: 'recommendParserName'
+                    },
+                    {
+                        title: '操作',
+                        key: 'recommendParserName',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('a', {
+                                    on: {
+                                        click: () => {
+                                            event.stopPropagation()
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = '预分类3';
+                                            this.parserVisible = true;
+                                        }
+                                    }
+                                }, '选择解析器')
+                            ]);
+                        }
+                    }
+                ],
+                preClassColumns4: [
+                    {
+                        type: 'selection',
+                        width: 50,
+                        align: 'center'
+                    },
+                    {
+                        title: '文件名',
+//                        width: 80,
+                        key: 'name'
+                    },
+                    {
+                        title: '解析器',
+                        width: 80,
+                        key: 'recommendParserName'
+                    },
+                    {
+                        title: '操作',
+                        key: 'recommendParserName',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('a', {
+                                    on: {
+                                        click: () => {
+                                            event.stopPropagation()
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = '预分类4';
+                                            this.parserVisible = true;
+                                        }
+                                    }
+                                }, '选择解析器')
+                            ]);
+                        }
+                    }
+                ],
+                preClassColumns5: [
+                    {
+                        type: 'selection',
+                        width: 50,
+                        align: 'center'
+                    },
+                    {
+                        title: '文件名',
+//                        width: 80,
+                        key: 'name'
+                    },
+                    {
+                        title: '解析器',
+                        width: 80,
+                        key: 'recommendParserName'
+                    },
+                    {
+                        title: '操作',
+                        key: 'recommendParserName',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('a', {
+                                    on: {
+                                        click: () => {
+                                            event.stopPropagation()
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = '预分类5';
+                                            this.parserVisible = true;
+                                        }
+                                    }
+                                }, '选择解析器')
+                            ]);
+                        }
+                    }
+                ],
+                preClassColumns6: [
+                    {
+                        type: 'selection',
+                        width: 50,
+                        align: 'center'
+                    },
+                    {
+                        title: '文件名',
+//                        width: 80,
+                        key: 'name'
+                    },
+                    {
+                        title: '解析器',
+                        width: 80,
+                        key: 'recommendParserName'
+                    },
+                    {
+                        title: '操作',
+                        key: 'recommendParserName',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('a', {
+                                    on: {
+                                        click: () => {
+                                            event.stopPropagation()
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = '预分类6';
+                                            this.parserVisible = true;
+                                        }
+                                    }
+                                }, '选择解析器')
+                            ]);
+                        }
+                    }
+                ],
+                preClassColumns7: [
+                    {
+                        type: 'selection',
+                        width: 50,
+                        align: 'center'
+                    },
+                    {
+                        title: '文件名',
+//                        width: 80,
+                        key: 'name'
+                    },
+                    {
+                        title: '解析器',
+                        width: 80,
+                        key: 'recommendParserName'
+                    },
+                    {
+                        title: '操作',
+                        key: 'recommendParserName',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('a', {
+                                    on: {
+                                        click: () => {
+                                            event.stopPropagation()
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = '预分类7';
                                             this.parserVisible = true;
                                         }
                                     }
@@ -506,18 +748,108 @@
                     this.parsers = res.data;
                     this.$axios.post('mvc/pageFilesByIsParser', {
                         'classType': '预分类',
+                        'fatherClassName': '1',
                         'isParser':0,
                         isExport:0,
                         page:1,
                         limit:50
                     }).then(res => {
-                        this.preClassData = res.data.list;
-                        for(var i=0;i<this.preClassData.length;i++){
-                            this.preClassData[i]._checked=true;
+                        this.preClassDataFor1 = res.data.list;
+                        for(var i=0;i<this.preClassDataFor1.length;i++){
+                            this.preClassDataFor1[i]._checked=true;
                         }
-                        this.handlePreSelectionChange(this.preClassData);
+                        this.handlePreSelectionChange1(this.preClassDataFor1);
 
                     })
+                    this.$axios.post('mvc/pageFilesByIsParser', {
+                        'classType': '预分类',
+                        'fatherClassName': '2',
+                        'isParser':0,
+                        isExport:0,
+                        page:1,
+                        limit:50
+                    }).then(res => {
+                        this.preClassDataFor2 = res.data.list;
+                        for(var i=0;i<this.preClassDataFor2.length;i++){
+                            this.preClassDataFor2[i]._checked=true;
+                        }
+                        this.handlePreSelectionChange2(this.preClassDataFor2);
+                    })
+                    this.$axios.post('mvc/pageFilesByIsParser', {
+                        'classType': '预分类',
+                        'fatherClassName': '3',
+                        'isParser':0,
+                        isExport:0,
+                        page:1,
+                        limit:50
+                    }).then(res => {
+                        this.preClassDataFor3 = res.data.list;
+                        for(var i=0;i<this.preClassDataFor3.length;i++){
+                            this.preClassDataFor3[i]._checked=true;
+                        }
+                        this.handlePreSelectionChange3(this.preClassDataFor3);
+                    })
+                    this.$axios.post('mvc/pageFilesByIsParser', {
+                        'classType': '预分类',
+                        'fatherClassName': '4',
+                        'isParser':0,
+                        isExport:0,
+                        page:1,
+                        limit:50
+                    }).then(res => {
+                        this.preClassDataFor4 = res.data.list;
+                        for(var i=0;i<this.preClassDataFor4.length;i++){
+                            this.preClassDataFor4[i]._checked=true;
+                        }
+                        this.handlePreSelectionChange4(this.preClassDataFor4);
+                    })
+                    this.$axios.post('mvc/pageFilesByIsParser', {
+                        'classType': '预分类',
+                        'fatherClassName': '5',
+                        'isParser':0,
+                        isExport:0,
+                        page:1,
+                        limit:50
+                    }).then(res => {
+                        this.preClassDataFor5 = res.data.list;
+                        for(var i=0;i<this.preClassDataFor5.length;i++){
+                            this.preClassDataFor5[i]._checked=true;
+                        }
+                        this.handlePreSelectionChange5(this.preClassDataFor5);
+                    })
+                    this.$axios.post('mvc/pageFilesByIsParser', {
+                        'classType': '预分类',
+                        'fatherClassName': '6',
+                        'isParser':0,
+                        isExport:0,
+                        page:1,
+                        limit:50
+                    }).then(res => {
+                        this.preClassDataFor6 = res.data.list;
+                        for(var i=0;i<this.preClassDataFor6.length;i++){
+                            this.preClassDataFor6[i]._checked=true;
+                        }
+                        this.handlePreSelectionChange6(this.preClassDataFor6);
+                    })
+                    this.$axios.post('mvc/pageFilesByIsParser', {
+                        'classType': '预分类',
+                        'fatherClassName': '7',
+                        'isParser':0,
+                        isExport:0,
+                        page:1,
+                        limit:50
+                    }).then(res => {
+                        this.preClassDataFor7 = res.data.list;
+                        for(var i=0;i<this.preClassDataFor7.length;i++){
+                            this.preClassDataFor7[i]._checked=true;
+                        }
+                        this.handlePreSelectionChange7(this.preClassDataFor7);
+                    })
+
+
+
+
+
                     this.$axios.post('mvc/pageFilesByIsParser', {
                         'classType': '待分类',
                         'isParser':0,
@@ -547,7 +879,7 @@
             //执行多文件解析
             handleMultiParse() {
                 this.parsed=0;
-                this.allParse=this.preSelection.length+this.waitSelection.length+this.otherSelection.length;
+                this.allParse=this.preSelection1.length+this.preSelection2.length+this.preSelection3.length+this.preSelection4.length+this.preSelection5.length+this.preSelection6.length+this.preSelection7.length+this.waitSelection.length+this.otherSelection.length;
                 if(this.allParse===0){
                     this.$notify({
                         title: '提示',
@@ -556,16 +888,16 @@
                     });
                     return;
                 }
-                if (this.preSelection.length > 0) {
+                if (this.preSelection1.length > 0) {
                     this.afterPreClassData=[];
-                    this.preSelection.forEach((item,index)=>{
+                    this.preSelection1.forEach((item,index)=>{
                         this.$axios.post('mvc/fileParser/multiParse', {
-                            selection: JSON.stringify([this.preSelection[index]])
+                            selection: JSON.stringify([this.preSelection1[index]])
                         }).then(res => {
                             if(res.data.success===false){
                                 this.$notify({
                                     title: '提示',
-                                    message: '文件'+this.preSelection[index].name+'解析失败:'+res.data.data,
+                                    message: '文件'+this.preSelection1[index].name+'解析失败:'+res.data.data,
                                     type: 'error'
                                 });
                             }else{
@@ -575,12 +907,164 @@
                         }).catch(e=>{
                             this.$notify({
                                 title: '提示',
-                                message: '文件'+this.preSelection[index].name+'解析失败',
+                                message: '文件'+this.preSelection1[index].name+'解析失败',
                                 type: 'error'
                             });
                         });
                     });
                 }
+ if (this.preSelection2.length > 0) {
+                    this.afterPreClassData=[];
+                    this.preSelection2.forEach((item,index)=>{
+                        this.$axios.post('mvc/fileParser/multiParse', {
+                            selection: JSON.stringify([this.preSelection2[index]])
+                        }).then(res => {
+                            if(res.data.success===false){
+                                this.$notify({
+                                    title: '提示',
+                                    message: '文件'+this.preSelection2[index].name+'解析失败:'+res.data.data,
+                                    type: 'error'
+                                });
+                            }else{
+                                this.afterPreClassData=this.afterPreClassData.concat(res.data);
+                                this.parsed++;
+                            }
+                        }).catch(e=>{
+                            this.$notify({
+                                title: '提示',
+                                message: '文件'+this.preSelection2[index].name+'解析失败',
+                                type: 'error'
+                            });
+                        });
+                    });
+                }
+ if (this.preSelection3.length > 0) {
+                    this.afterPreClassData=[];
+                    this.preSelection3.forEach((item,index)=>{
+                        this.$axios.post('mvc/fileParser/multiParse', {
+                            selection: JSON.stringify([this.preSelection3[index]])
+                        }).then(res => {
+                            if(res.data.success===false){
+                                this.$notify({
+                                    title: '提示',
+                                    message: '文件'+this.preSelection3[index].name+'解析失败:'+res.data.data,
+                                    type: 'error'
+                                });
+                            }else{
+                                this.afterPreClassData=this.afterPreClassData.concat(res.data);
+                                this.parsed++;
+                            }
+                        }).catch(e=>{
+                            this.$notify({
+                                title: '提示',
+                                message: '文件'+this.preSelection3[index].name+'解析失败',
+                                type: 'error'
+                            });
+                        });
+                    });
+                }
+             if (this.preSelection4.length > 0) {
+                    this.afterPreClassData=[];
+                    this.preSelection4.forEach((item,index)=>{
+                        this.$axios.post('mvc/fileParser/multiParse', {
+                            selection: JSON.stringify([this.preSelection4[index]])
+                        }).then(res => {
+                            if(res.data.success===false){
+                                this.$notify({
+                                    title: '提示',
+                                    message: '文件'+this.preSelection4[index].name+'解析失败:'+res.data.data,
+                                    type: 'error'
+                                });
+                            }else{
+                                this.afterPreClassData=this.afterPreClassData.concat(res.data);
+                                this.parsed++;
+                            }
+                        }).catch(e=>{
+                            this.$notify({
+                                title: '提示',
+                                message: '文件'+this.preSelection4[index].name+'解析失败',
+                                type: 'error'
+                            });
+                        });
+                    });
+                }
+ if (this.preSelection5.length > 0) {
+                    this.afterPreClassData=[];
+                    this.preSelection5.forEach((item,index)=>{
+                        this.$axios.post('mvc/fileParser/multiParse', {
+                            selection: JSON.stringify([this.preSelection5[index]])
+                        }).then(res => {
+                            if(res.data.success===false){
+                                this.$notify({
+                                    title: '提示',
+                                    message: '文件'+this.preSelection5[index].name+'解析失败:'+res.data.data,
+                                    type: 'error'
+                                });
+                            }else{
+                                this.afterPreClassData=this.afterPreClassData.concat(res.data);
+                                this.parsed++;
+                            }
+                        }).catch(e=>{
+                            this.$notify({
+                                title: '提示',
+                                message: '文件'+this.preSelection5[index].name+'解析失败',
+                                type: 'error'
+                            });
+                        });
+                    });
+                }
+ if (this.preSelection6.length > 0) {
+                    this.afterPreClassData=[];
+                    this.preSelection6.forEach((item,index)=>{
+                        this.$axios.post('mvc/fileParser/multiParse', {
+                            selection: JSON.stringify([this.preSelection6[index]])
+                        }).then(res => {
+                            if(res.data.success===false){
+                                this.$notify({
+                                    title: '提示',
+                                    message: '文件'+this.preSelection6[index].name+'解析失败:'+res.data.data,
+                                    type: 'error'
+                                });
+                            }else{
+                                this.afterPreClassData=this.afterPreClassData.concat(res.data);
+                                this.parsed++;
+                            }
+                        }).catch(e=>{
+                            this.$notify({
+                                title: '提示',
+                                message: '文件'+this.preSelection6[index].name+'解析失败',
+                                type: 'error'
+                            });
+                        });
+                    });
+                }
+ if (this.preSelection7.length > 0) {
+                    this.afterPreClassData=[];
+                    this.preSelection7.forEach((item,index)=>{
+                        this.$axios.post('mvc/fileParser/multiParse', {
+                            selection: JSON.stringify([this.preSelection7[index]])
+                        }).then(res => {
+                            if(res.data.success===false){
+                                this.$notify({
+                                    title: '提示',
+                                    message: '文件'+this.preSelection7[index].name+'解析失败:'+res.data.data,
+                                    type: 'error'
+                                });
+                            }else{
+                                this.afterPreClassData=this.afterPreClassData.concat(res.data);
+                                this.parsed++;
+                            }
+                        }).catch(e=>{
+                            this.$notify({
+                                title: '提示',
+                                message: '文件'+this.preSelection7[index].name+'解析失败',
+                                type: 'error'
+                            });
+                        });
+                    });
+                }
+
+
                 if (this.waitSelection.length > 0) {
                     this.afterWaitClassData=[];
                     this.waitSelection.forEach((item,index)=>{
@@ -634,9 +1118,28 @@
                 // this.getAllData();
             },
             //解析前预分类选中
-            handlePreSelectionChange(selection) {
-                this.preSelection = selection;
+            handlePreSelectionChange1(selection) {
+                this.preSelection1 = selection;
             },
+            handlePreSelectionChange2(selection) {
+                this.preSelection2 = selection;
+            },
+            handlePreSelectionChange3(selection) {
+                this.preSelection3 = selection;
+            },
+            handlePreSelectionChange4(selection) {
+                this.preSelection4 = selection;
+            },
+            handlePreSelectionChange5(selection) {
+                this.preSelection5 = selection;
+            },
+            handlePreSelectionChange6(selection) {
+                this.preSelection6 = selection;
+            },
+            handlePreSelectionChange7(selection) {
+                this.preSelection7 = selection;
+            },
+
             //解析前待分类选中
             handleWaitSelectionChange(selection) {
                 this.waitSelection= selection;
@@ -661,10 +1164,36 @@
             handleOk() {
                 this.fixCon = false;
                 let current = this.parsers.find(i => i.id == this.currentParser);
-                if (this.currentType == '预分类') {
-                    this.preClassData[this.currentIndex].recommendParserId = current.id
-                    this.preClassData[this.currentIndex].recommendParserName = current.name
-                } else if (this.currentType == '待分类') {
+                if (this.currentType == '预分类1') {
+                    this.preClassDataFor1[this.currentIndex].recommendParserId = current.id
+                    this.preClassDataFor1[this.currentIndex].recommendParserName = current.name
+                }
+                else if (this.currentType == '预分类2') {
+                     this.preClassDataFor2[this.currentIndex].recommendParserId = current.id
+                     this.preClassDataFor2[this.currentIndex].recommendParserName = current.name
+                 }
+                else if (this.currentType == '预分类3') {
+                     this.preClassDataFor3[this.currentIndex].recommendParserId = current.id
+                     this.preClassDataFor3[this.currentIndex].recommendParserName = current.name
+                 }
+                else if (this.currentType == '预分类4') {
+                     this.preClassDataFor4[this.currentIndex].recommendParserId = current.id
+                     this.preClassDataFor4[this.currentIndex].recommendParserName = current.name
+                 }
+                else if (this.currentType == '预分类5') {
+                     this.preClassDataFor5[this.currentIndex].recommendParserId = current.id
+                     this.preClassDataFor5[this.currentIndex].recommendParserName = current.name
+                 }
+                else if (this.currentType == '预分类6') {
+                     this.preClassDataFor6[this.currentIndex].recommendParserId = current.id
+                     this.preClassDataFor6[this.currentIndex].recommendParserName = current.name
+                 }
+                else if (this.currentType == '预分类7') {
+                     this.preClassDataFor7[this.currentIndex].recommendParserId = current.id
+                     this.preClassDataFor7[this.currentIndex].recommendParserName = current.name
+                 }
+
+                else if (this.currentType == '待分类') {
                     this.waitClassData[this.currentIndex].recommendParserId = current.id
                     this.waitClassData[this.currentIndex].recommendParserName = current.name
                 } else {

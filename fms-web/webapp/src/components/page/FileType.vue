@@ -26,6 +26,18 @@
                 <el-form-item label="分类名称"  label-width="100px">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
+                <el-form-item label="父分类" label-width="100px">
+                    <el-select v-model="form.type">
+                      <el-option label="数据库类文件" value="1"></el-option>
+                      <el-option label="拓扑结构类文件" value="2"></el-option>
+                      <el-option label="结构化文件" value="3"></el-option>
+                      <el-option label="文本类文件" value="4"></el-option>
+                      <el-option label="配置类文件" value="5"></el-option>
+                      <el-option label="日志类文件" value="6"></el-option>
+                      <el-option label="程序类文件" value="7"></el-option>
+                    </el-select>
+                  </el-form-item>
+
                 <el-form-item label="文件后缀" label-width="100px">
                     <el-input v-model="form.fileSuffix"></el-input>
                 </el-form-item>
@@ -195,6 +207,7 @@
                         const item = this.tableData[index];
                         this.form = {
                             name: res.data.name,
+                            type: res.data.type,
                             fileSuffix: res.data.fileSuffix
                         };
                         var fileParserIdsArr = [];
@@ -241,9 +254,11 @@
 
             // 保存编辑
             saveEdit() {
+            alert(1);
                 var fileParserIds = this.checked.join(",");
                 this.$axios.post(this.addOrupdateUrl, {
                     id: this.id,
+                    type: this.form.type,
                     name:this.form.name,
                     fileSuffix: this.form.fileSuffix,
                     fileParserIds: fileParserIds

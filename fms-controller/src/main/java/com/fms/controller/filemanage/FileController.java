@@ -152,6 +152,7 @@ public class FileController {
             file.setClassType("预分类");
             file.setClassId(fileType.getId());
             file.setClassName(fileType.getName());
+            file.setFatherClassName(fileType.getType());
 
 //            if(uRecommendParserId==null||uRecommendParserId==0L){
                 String recommendParserIds = fileType.getFileParserIds();

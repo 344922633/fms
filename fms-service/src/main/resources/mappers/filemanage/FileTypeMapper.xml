@@ -4,6 +4,7 @@
     <sql id="all">
         id,
         name,
+        type,
         create_user_id as createUserId,
         created,
         updated,
@@ -13,6 +14,7 @@
     <sql id="allNoAs">
         id,
         name,
+        type,
         create_user_id,
         created,
         updated,
@@ -69,6 +71,7 @@
         VALUES (
         #{id},
         #{name},
+        #{type},
         #{createUserId},
         #{created},
         #{updated},
@@ -83,6 +86,7 @@
         SET
         name = #{name},
         updated = #{updated},
+         type = #{type},
         file_suffix = #{fileSuffix},
         file_parser_ids = #{fileParserIds}
         WHERE id = #{id}

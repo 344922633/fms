@@ -14,6 +14,11 @@ public class FileType {
      * 文件分类名称
      */
     private String name;
+
+    /**
+     * 文件父分类
+     */
+    private String type;
     /**
      * 文件后缀，多个用,分隔
      */
