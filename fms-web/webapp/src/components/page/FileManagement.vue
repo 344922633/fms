@@ -274,9 +274,8 @@
     import SingleParser from '@/components/page/fileParser/SingleFileParser.vue'
     import Bus from '@/components/common/bus'
     import qs from 'qs';
-    import BMF from 'browser-md5-file';
+    import fileMd5 from 'browser-md5-file';
    
-    const bmf = new BMF();
 
     export default {
         name: "FileManagement",
@@ -475,13 +474,10 @@
             //文件md5
             preprocess(chunk){
                if (chunk.file.md5 === '' || chunk.file.md5 == null) {
-                    bmf.md5(chunk.file.file, function (err, md5) {
+                    fileMd5(chunk.file.file, function (err, md5)  {
                         chunk.file.uniqueIdentifier=md5;
                         chunk.preprocessFinished()
-                    },
-                         progress => {
-                           console.log('progress number:', progress);
-                         },)
+                   })
                 } else {
                     chunk.preprocessFinished()
                 }
