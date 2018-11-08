@@ -562,8 +562,16 @@
                         this.$axios.post('mvc/fileParser/multiParse', {
                             selection: JSON.stringify([this.preSelection[index]])
                         }).then(res => {
-                            this.afterPreClassData=this.afterPreClassData.concat(res.data);
-                            this.parsed++;
+                            if(res.data.success===false){
+                                this.$notify({
+                                    title: '提示',
+                                    message: '文件'+this.preSelection[index].name+'解析失败:'+res.data.data,
+                                    type: 'error'
+                                });
+                            }else{
+                                this.afterPreClassData=this.afterPreClassData.concat(res.data);
+                                this.parsed++;
+                            }
                         }).catch(e=>{
                             this.$notify({
                                 title: '提示',
@@ -579,8 +587,16 @@
                         this.$axios.post('mvc/fileParser/multiParse', {
                             selection: JSON.stringify([this.waitSelection[index]])
                         }).then(res => {
-                            this.afterWaitClassData=this.afterWaitClassData.concat(res.data);
-                            this.parsed++;
+                            if(res.data.success===false){
+                                this.$notify({
+                                    title: '提示',
+                                    message: '文件'+this.waitSelection[index].name+'解析失败:'+res.data.data,
+                                    type: 'error'
+                                });
+                            }else{
+                                this.afterWaitClassData=this.afterWaitClassData.concat(res.data);
+                                this.parsed++;
+                            }
                         }).catch(e=>{
                             this.$notify({
                                 title: '提示',
@@ -596,8 +612,16 @@
                         this.$axios.post('mvc/fileParser/multiParse', {
                             selection: JSON.stringify([this.otherSelection[index]])
                         }).then(res => {
-                            this.afterOtherData=this.afterOtherData.concat(res.data);
-                            this.parsed++;
+                            if(res.data.success===false){
+                                this.$notify({
+                                    title: '提示',
+                                    message: '文件'+this.otherSelection[index].name+'解析失败:'+res.data.data,
+                                    type: 'error'
+                                });
+                            }else{
+                                this.afterOtherData=this.afterOtherData.concat(res.data);
+                                this.parsed++;
+                            }
                         }).catch(e=>{
                             this.$notify({
                                 title: '提示',
