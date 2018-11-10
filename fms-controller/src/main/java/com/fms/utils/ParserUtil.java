@@ -67,7 +67,7 @@ public class ParserUtil {
                     else if ("File".equals(parserExt.getParameterName()))
                     {
                         classes[i+1]=java.io.File.class;
-                        params[i+1] =  new java.io.File(parserExtList.get(i).getParameterValue()) ;;
+                        params[i+1] =  new java.io.File(parserExtList.get(i).getParameterValue()) ;
                     }
                     else if (parserExt.getParameterName().indexOf("List") >-1)
                     {

@@ -32,7 +32,7 @@
                 </i-col>
                 <i-col span="6">
                     <FormItem label="解析器">
-                        <Select v-if="file" v-model="file.recommendParserId">
+                        <Select v-if="file" v-model="file.recommendParserId" @on-change="getparamList">
                             <Option v-for="item in parserData" :value="item.id" :key="item.id">{{ item.name }}</Option>
                         </Select>
                     </FormItem>
@@ -286,6 +286,15 @@
                     }
                 })
             },
+            getparamList(){
+                if(this.file.recommendParserId){
+                    this.$axios.post('mvc/fileParser/getParamList', {
+                          parserId:this.file.recommendParserId
+                     }).then(res => {
+                         this.parserExtList = res.data;
+                      });
+                 }
+            },
             //解析处理
             handleParse() {
 
@@ -301,7 +310,8 @@
                 }
                 this.$axios.post('mvc/fileParser/singleParse', {
                     id: this.file.recommendParserId,
-                    params: this.file.id
+                    params: this.file.id,
+                    parserExt: JSON.stringify(this.parserExtList)
                 }).then(res => {
                     this.loading = false;
                     if(res.data.success==false){

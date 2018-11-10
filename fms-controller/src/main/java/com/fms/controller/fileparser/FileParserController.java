@@ -364,11 +364,11 @@ public class FileParserController {
 			File temp = FileUtil.createTempFile(fileName);
 			FileUtils.writeByteArrayToFile(temp, buf);
 
-			Map<String, Object> params = new HashMap<>();
+			String parserExtstr = fileParser.getParserExt();
 
-			params.put("parserId",fileParser.getId());
-
-			List<FileParserExt> parserExtList = fileParserExtService.getList(params);
+			JSONArray arrayList= JSONArray.parseArray(parserExtstr);
+			//转换为目标对象list
+			List<FileParserExt> parserExtList = JSONObject.parseArray(arrayList.toJSONString(), FileParserExt.class);
 
 
 			Map<String, Object> extParams = new HashMap<>();
@@ -593,4 +593,5 @@ public class FileParserController {
 				return ExtUtil.failure("入库失败");
 			}
 	}
+
 }

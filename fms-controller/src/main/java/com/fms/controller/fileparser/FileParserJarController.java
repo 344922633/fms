@@ -3,12 +3,10 @@ package com.fms.controller.fileparser;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fms.domain.filemanage.BlockManage;
+import com.fms.domain.filemanage.FileParser;
 import com.fms.domain.filemanage.FileParserExt;
 import com.fms.domain.filemanage.FileParserJar;
-import com.fms.service.filemanage.BlockManageService;
-import com.fms.service.filemanage.FileParserExtService;
-import com.fms.service.filemanage.FileParserJarService;
-import com.fms.service.filemanage.FileTypeService;
+import com.fms.service.filemanage.*;
 import com.fms.utils.JarLoadUtil;
 import com.fms.utils.PakageScanUtil;
 import com.fms.utils.ParamUtil;
@@ -47,6 +45,12 @@ public class FileParserJarController {
 
     @Autowired
     private Environment env;
+
+    /**
+     * 文件解析器service
+     */
+    @Autowired
+    private FileParserService fileParserService;
 
     @RequestMapping("getJarList")
     public Object getFileParserJar(Map<String, Object> params){
@@ -123,8 +127,6 @@ public class FileParserJarController {
                         parserExt.setParameterDesc(value);
 
                         parserExtList.add(parserExt);
-
-
                 }
             }
 
@@ -133,6 +135,58 @@ public class FileParserJarController {
         catch(Exception e)
         {
             e.printStackTrace();
+        }
+
+
+        return parserExtList;
+    }
+
+    @RequestMapping("getJarClassParamListById")
+    public Object getJarClassParamListById(Long recommendParserId){
+        FileParser fileParser = fileParserService.get(recommendParserId);
+        List<FileParserExt> parserExtList = new ArrayList<FileParserExt>();
+        if (null != fileParser)
+        {
+            try
+            {
+                JarLoadUtil.loadJar(fileParser.getSource());
+
+                Class clz = Class.forName(fileParser.getClassName());
+
+                //
+                Object obj = clz.newInstance();
+                //获取方法
+                Method m = obj.getClass().getDeclaredMethod("getParmsInfo");
+
+                String  jsonResult = (String) m.invoke(obj);
+
+                JSONArray arrayList= JSONArray.parseArray(jsonResult);
+
+                for(int i=0;i<arrayList.size();i++){
+                    // 遍历 jsonarray 数组，把每一个对象转成 json 对象
+                    JSONObject jsonObject = arrayList.getJSONObject(i);
+                    Iterator<String> it = jsonObject.keySet().iterator();
+                    if (it.hasNext()){
+                        // 获得key
+                        String key = it.next();
+                        String value = jsonObject.getString(key);
+
+                        FileParserExt parserExt = new FileParserExt();
+                        parserExt.setParameterName(key);
+                        parserExt.setParameterDesc(value);
+
+                        parserExtList.add(parserExt);
+
+
+                    }
+                }
+
+                parserExtList.remove(0);
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
         }
 
 

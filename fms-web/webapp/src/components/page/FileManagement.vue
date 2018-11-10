@@ -963,6 +963,16 @@
                 let newFile = JSON.parse(fileJson)
                 this.currentFile = newFile ? newFile : { name: '' };
                 this.getParsers(file.classId);
+
+                if(file.recommendParserId){
+                    this.$axios.post('mvc/fileParserJar/getJarClassParamListById', {
+                          recommendParserId:file.recommendParserId
+                     }).then(res => {
+                         this.parserExtList = res.data;
+                      });
+                 }
+
+
                 /*this.$axios.post('mvc/listColumns', {
                     tableName: 'WL_JBSX'
                 }).then(res => {
@@ -978,19 +988,20 @@
             },
             //解析窗口，解析器下拉列表
             getParsers(classId) {
+
                 this.$axios.post('mvc/fileParser/getOrderList', {
                     id: classId
                 }).then(res => {
                     this.parserData = res.data ? res.data : [];
                 });
-                this.parserExtList=[
-                   {parameterName:"File",parameterDesc:"文件上传",parameterValue:"1111"},
-                   {parameterName:"参数1",parameterDesc:"参数描述1",parameterValue:"1111"},
-                   {parameterName:"参数2",parameterDesc:"参数描述2",parameterValue:"111"},
-                   {parameterName:"参数3",parameterDesc:"参数描述3",parameterValue:"111"},
-                   {parameterName:"参数4",parameterDesc:"参数描述4",parameterValue:"111"},
+               // this.parserExtList=[
+               //    {parameterName:"File",parameterDesc:"文件上传",parameterValue:"1111"},
+               //    {parameterName:"参数1",parameterDesc:"参数描述1",parameterValue:"1111"},
+               //    {parameterName:"参数2",parameterDesc:"参数描述2",parameterValue:"111"},
+               //   {parameterName:"参数3",parameterDesc:"参数描述3",parameterValue:"111"},
+               //    {parameterName:"参数4",parameterDesc:"参数描述4",parameterValue:"111"},
 
-               ]
+               // ]
             },
             //关闭解析页面，初始化数据
             changeParserVisible(val) {
