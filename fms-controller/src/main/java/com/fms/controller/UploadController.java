@@ -264,7 +264,7 @@ public class UploadController {
             String recommendParserId = "";
 //            List<FileParser> fPs = new ArrayList<FileParser>();
             Set<String> filePK =  fileParserIds.keySet();
-            if(filePK.size()>0) {
+            if(filePK.size()==1) {
                 Iterator<String> it = filePK.iterator();
                 while(it.hasNext()){
                     recommendParserId=it.next();

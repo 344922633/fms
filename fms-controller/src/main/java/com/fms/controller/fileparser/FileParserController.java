@@ -1,6 +1,5 @@
 package com.fms.controller.fileparser;
 
-import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.anniweiya.fastdfs.FastDFSTemplate;
@@ -23,6 +22,7 @@ import com.handu.apollo.utils.StringUtil;
 import com.handu.apollo.utils.exception.ApolloRuntimeException;
 import com.handu.apollo.utils.json.JsonUtil;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -459,22 +459,71 @@ public class FileParserController {
 		List<com.fms.domain.filemanage.File> preFiles = null;
 		try {
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            preFiles = mapper.readValue(preSel, new TypeReference<List<com.fms.domain.filemanage.File>>() {});
+			preFiles = mapper.readValue(preSel, new TypeReference<List<com.fms.domain.filemanage.File>>() {});
+			List<com.fms.domain.filemanage.File> newFileList = new ArrayList<com.fms.domain.filemanage.File>();
 			for (com.fms.domain.filemanage.File file: preFiles) {
-				FileParser localParser = fileParserService.get(file.getRecommendParserId());
-				localParser.setParams(file.getId().toString());
-				Map<String, String> data = this.readFileContent(localParser);
-				if(data==null){
-					return ExtUtil.failure("解析失败");
-				}else if(data.get("validateFileType")!=null&&data.get("validateFileType").equals("false")){
-					return ExtUtil.failure("文件格式不匹配");
+				if ("待分类".equals(file.getClassType()) && null ==file.getRecommendParserId())
+				{
+					Map<String, Object> paramsForQuery = Maps.newHashMap();
+					paramsForQuery.put("fileSuffix", "<"+file.getType()+">");
+					List<FileType> fileTypeList =  fileTypeService.getListBySuffix(paramsForQuery);
+					for(FileType ftype:fileTypeList){
+						String fileParseId = ftype.getFileParserIds();
+						if(!Strings.isNullOrEmpty(fileParseId)){
+							String [] tFileParserIds = fileParseId.split(",");
+							int count = 0;
+							for(String tFP:tFileParserIds){
+								if (StringUtils.isNotEmpty(tFP))
+								{
+									FileParser localParser = fileParserService.get(Long.valueOf(tFP));
+									localParser.setParams(file.getId().toString());
+									Map<String, String> data = this.readFileContent(localParser);
+									if(data==null){
+										return ExtUtil.failure("解析失败");
+									}else if(data.get("validateFileType")!=null&&data.get("validateFileType").equals("false")){
+										return ExtUtil.failure("文件格式不匹配");
+									}
+									if(data.get("jsonBottomLevel")==null){
+										throw new ApolloRuntimeException("文件解析失败");
+									}else{
+										if (count >0)
+										{
+											com.fms.domain.filemanage.File cloneFile = (com.fms.domain.filemanage.File)file.clone();
+											cloneFile.setParseResult(data.get("jsonBottomLevel"));
+											newFileList.add(cloneFile);
+										}
+										else
+										{
+											file.setParseResult(data.get("jsonBottomLevel"));
+										}
+									}
+									count++;
+								}
+							}
+						}
+					}
 				}
-				if(data.get("jsonBottomLevel")==null){
-					throw new ApolloRuntimeException("文件解析失败");
-				}else{
-					file.setParseResult(data.get("jsonBottomLevel"));
+				else
+				{
+					FileParser localParser = fileParserService.get(file.getRecommendParserId());
+					localParser.setParams(file.getId().toString());
+					Map<String, String> data = this.readFileContent(localParser);
+					if(data==null){
+						return ExtUtil.failure("解析失败");
+					}else if(data.get("validateFileType")!=null&&data.get("validateFileType").equals("false")){
+						return ExtUtil.failure("文件格式不匹配");
+					}
+					if(data.get("jsonBottomLevel")==null){
+						throw new ApolloRuntimeException("文件解析失败");
+					}else{
+						file.setParseResult(data.get("jsonBottomLevel"));
+					}
 				}
+
+
 			}
+
+			preFiles.addAll(newFileList);
 //            for (com.fms.domain.filemanage.File file: preFiles) {
 //                byte[] buf = fastDFSTemplate.loadFile(file.getGroups(), file.getRealPath());
 //                FileParser localParser = fileParserService.get(file.getRecommendParserId());

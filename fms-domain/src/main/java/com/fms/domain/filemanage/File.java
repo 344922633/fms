@@ -4,7 +4,7 @@ import com.handu.apollo.base.LongVo;
 import lombok.Data;
 
 @Data
-public class File extends LongVo{
+public class File extends LongVo implements Cloneable{
     //文件名称
     private String name;
     //真实路径
@@ -34,4 +34,15 @@ public class File extends LongVo{
     private String fileMd5;
     //解析结果
     private String parseResult;
+
+    public Object clone() {
+        File file = null;
+        try {
+            file = (File) super.clone();
+            } catch (CloneNotSupportedException e) {
+                 System.out.println(e.toString());
+           }
+
+        return file;
+    }
 }
