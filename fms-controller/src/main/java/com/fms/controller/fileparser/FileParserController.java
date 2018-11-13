@@ -7,10 +7,8 @@ import com.anniweiya.fastdfs.exception.FastDFSException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fms.domain.filemanage.BlockManage;
-import com.fms.domain.filemanage.FileParser;
-import com.fms.domain.filemanage.FileParserExt;
-import com.fms.domain.filemanage.FileType;
+import com.fms.domain.filemanage.*;
+import com.fms.service.ParserDefault.ParserDefaultService;
 import com.fms.service.filemanage.*;
 import com.fms.utils.*;
 import com.google.common.base.Strings;
@@ -74,6 +72,9 @@ public class FileParserController {
 
     @Autowired
     private Environment env;
+
+	@Autowired
+	private ParserDefaultService parserDefaultService;
 
     /**
      * 查询文件解析器列表.
@@ -462,13 +463,54 @@ public class FileParserController {
 			preFiles = mapper.readValue(preSel, new TypeReference<List<com.fms.domain.filemanage.File>>() {});
 			List<com.fms.domain.filemanage.File> newFileList = new ArrayList<com.fms.domain.filemanage.File>();
 			for (com.fms.domain.filemanage.File file: preFiles) {
-				if ("待分类".equals(file.getClassType()) && null ==file.getRecommendParserId())
+				if ( null ==file.getRecommendParserId())
 				{
-					Map<String, Object> paramsForQuery = Maps.newHashMap();
-					paramsForQuery.put("fileSuffix", "<"+file.getType()+">");
-					List<FileType> fileTypeList =  fileTypeService.getListBySuffix(paramsForQuery);
-					for(FileType ftype:fileTypeList){
-						String fileParseId = ftype.getFileParserIds();
+					if ("待分类".equals(file.getClassType()))
+					{
+						Map<String, Object> paramsForQuery = Maps.newHashMap();
+						paramsForQuery.put("fileSuffix", "<"+file.getType()+">");
+						List<FileType> fileTypeList =  fileTypeService.getListBySuffix(paramsForQuery);
+						for(FileType ftype:fileTypeList){
+							String fileParseId = ftype.getFileParserIds();
+							if(!Strings.isNullOrEmpty(fileParseId)){
+								String [] tFileParserIds = fileParseId.split(",");
+								int count = 0;
+								for(String tFP:tFileParserIds){
+									if (StringUtils.isNotEmpty(tFP))
+									{
+										FileParser localParser = fileParserService.get(Long.valueOf(tFP));
+										localParser.setParams(file.getId().toString());
+										Map<String, String> data = this.readFileContent(localParser);
+										if(data==null){
+											return ExtUtil.failure("解析失败");
+										}else if(data.get("validateFileType")!=null&&data.get("validateFileType").equals("false")){
+											return ExtUtil.failure("文件格式不匹配");
+										}
+										if(data.get("jsonBottomLevel")==null){
+											throw new ApolloRuntimeException("文件解析失败");
+										}else{
+											if (count >0)
+											{
+												com.fms.domain.filemanage.File cloneFile = (com.fms.domain.filemanage.File)file.clone();
+												cloneFile.setParseResult(data.get("jsonBottomLevel"));
+												newFileList.add(cloneFile);
+											}
+											else
+											{
+												file.setParseResult(data.get("jsonBottomLevel"));
+											}
+										}
+										count++;
+									}
+								}
+							}
+						}
+					}
+					if ("其他".equals(file.getClassType()))
+					{
+						String user = ParamUtil.get(request, "user", null);
+						ParserDefaultDo parserDefaultDo = parserDefaultService.getByName(user);
+						String fileParseId = parserDefaultDo.getFileParserIds();
 						if(!Strings.isNullOrEmpty(fileParseId)){
 							String [] tFileParserIds = fileParseId.split(",");
 							int count = 0;
@@ -594,4 +636,16 @@ public class FileParserController {
 			}
 	}
 
+	@RequestMapping("getDefaultParser")
+	public Object getDefaultParser(String user)
+	{
+		return parserDefaultService.getByName(user);
+	}
+
+	@RequestMapping("updateDefaultParser")
+	public Object updateDefaultParser(@ModelAttribute ParserDefaultDo parserDefaultDo) {
+		parserDefaultService.delete(parserDefaultDo.getUser());
+		parserDefaultService.add(parserDefaultDo);
+		return ExtUtil.success("修改成功！");
+	}
 }

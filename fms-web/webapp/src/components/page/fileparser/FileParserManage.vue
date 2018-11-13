@@ -5,7 +5,7 @@
             <Button class="tableBtn" @click="handleAddJarClick">新增解析器jar</Button>
             <!--<Button class="tableBtn" @click="handleBlock">维护黑白名单</Button>-->
             <router-link to="/block_manage"><Button class="tableBtn">黑白名单管理</Button></router-link>
-
+            <Button class="tableBtn" @click="handleConfigDefault">会员默认解析器</Button>
 
             <!--<Button class="tableBtn" @click="downloadFile">调用</Button>-->
         </Row>
@@ -100,6 +100,20 @@
         <Modal v-model="blockVisible" title="黑白名单" width="700" footer-hide>
             <block-manage :parser="current" :blockInfo="blockInfo" @after-close="blockVisible=false"></block-manage>
         </Modal>
+
+        <Modal v-model="configDefault" :title="会员默认解析器" :model="parserDefaultPaform" @on-visible-change="handleVisibleChange" footer-hide>
+            <el-form ref="parserDefaultForm" :model="parserDefaultPaform" label-width="80px">
+               <el-form-item label="文件解析器" label-width="100px">
+
+                   <el-checkbox v-for="item in fileParserList" :label="item.id" :key="item.id" v-model="checked">{{item.name}}</el-checkbox>
+                </el-form-item>
+            </el-form>
+                <div style="text-align:right">
+                    <el-button @click="configDefault = false">取 消</el-button>
+                    <el-button type="primary" @click="saveEdit">确 定</el-button>
+                </div>
+        </Modal>
+
     </div>
 </template>
 <script>
@@ -148,9 +162,17 @@
                     parserExt:'',
                     getClassNameType:0
                 },
+                parserDefaultPaform: {
+                    name: '',
+                    fileSuffix: '',
+                    fileParserIds: ''
+                },
+                fileParserList:[],
                 blockInfo: {},
                 //编辑框显示标示
                 formVisible: false,
+                configDefault: false,
+                checked: [],
                 //编辑框form校验
                 ruleValidate: {
                     name: [
@@ -637,6 +659,41 @@
                     this.blockVisible = true;
                 })
             },
+            handleConfigDefault() {
+                this.checked=[];
+               this.$axios.get("mvc/fileParser/getList",{
+               }).then((res) => {
+                   this.fileParserList = res.data;
+               });
+               this.$axios.get("mvc/fileParser/getDefaultParser?user="+localStorage.getItem('ms_username'),{
+              }).then((res) => {
+                  var fileParserIdsArr = [];
+                  if (res.data.fileParserIds.length > 0) {
+                      fileParserIdsArr =  res.data.fileParserIds.split(",");
+                  }
+                  for(let parserId of fileParserIdsArr) {
+                      this.checked.push(Number(parserId));
+                  }
+              });
+               this.configDefault = true;
+           },
+           //保存会员专属解析器
+            saveEdit() {
+           var fileParserIds = this.checked.join(",");
+           this.$axios.post("mvc/fileParser/updateDefaultParser", {
+               user: localStorage.getItem('ms_username'),
+               fileParserIds: fileParserIds
+           }).then((res) => {
+               if(res.data.success) {
+                   //this.$set(this.tableData, this.idx, this.form);
+                   this.$message.success(`操作成功`);
+                   this.configDefault = false;
+                   this.getData();
+               } else {
+                   this.$message.success(res.data.data);
+               }
+           })
+       },
             // 上传完成
             complete() {
             },

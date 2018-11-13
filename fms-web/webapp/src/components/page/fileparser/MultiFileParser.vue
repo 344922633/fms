@@ -1094,7 +1094,8 @@
                     this.afterOtherData=[];
                     this.otherSelection.forEach((item,index)=>{
                         this.$axios.post('mvc/fileParser/multiParse', {
-                            selection: JSON.stringify([this.otherSelection[index]])
+                            selection: JSON.stringify([this.otherSelection[index]]),
+                            user: localStorage.getItem('ms_username')
                         }).then(res => {
                             if(res.data.success===false){
                                 this.$notify({

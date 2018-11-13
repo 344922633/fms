@@ -254,7 +254,6 @@
 
             // 保存编辑
             saveEdit() {
-            alert(1);
                 var fileParserIds = this.checked.join(",");
                 this.$axios.post(this.addOrupdateUrl, {
                     id: this.id,
