@@ -85,20 +85,17 @@
         <Modal
             v-model="uploadJarMod"
             title="解析器jar包上传"
-            width="300">
-            <Upload
-                ref="upload"
-                multiple
-                :before-upload="handleUpload"
-                action="mvc/uploadJars"
-                :on-success="uploadSuccess"
-                :on-remove="handleRemove"
-                :on-error="uploadError">
-                <Button icon="ios-cloud-upload-outline">上传</Button>
-
-            </Upload>
-            <Button style="margin-top: 5px" type="text" @click="jarFileUpload" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : '上传' }}</Button>
-
+            width="420">
+             <uploader :options="options" :file-status-text="statusText" class="uploader-example" ref="uploader"
+                  @file-complete="fileComplete" @complete="complete" @file-success="fileSuccess">
+            <uploader-unsupport></uploader-unsupport>
+            <uploader-drop>
+                <p>拖拽文件或文件夹到这里 或者</p>
+                <uploader-btn>选择文件</uploader-btn>
+                <uploader-btn :directory="true">选择文件夹</uploader-btn>
+            </uploader-drop>
+            <uploader-list></uploader-list>
+   请选则一个目录！     </uploader>
         </Modal>
         <Modal v-model="blockVisible" title="黑白名单" width="700" footer-hide>
             <block-manage :parser="current" :blockInfo="blockInfo" @after-close="blockVisible=false"></block-manage>
@@ -286,7 +283,7 @@
             handleUpload(file){
                 this.uploadList.push(file);
                 file.status = 'finished'
-                this.$refs.upload.fileList.push(file);
+                //this.$refs.upload.fileList.push(file);
 
                 // this.$refs.upload.fileList.push(file);
                 return false;
@@ -294,7 +291,7 @@
             handleUploadFile(file){
                 this.uploadListFile.push(file);
                 file.status = 'finished'
-                this.$refs.uploadFile[0].fileList.push(file);
+                //this.$refs.uploadFile[0].fileList.push(file);
                 return false;
                 console.info("文件地址集合："+this.uploadListFile);
             },
@@ -308,12 +305,12 @@
                 }
                 this.loadingStatus = true;
                 let FileNameList=[];
-                this.$refs.uploadFile[0].clearFiles();
-                    if (this.uploadListFile) {
-                        this.uploadListFile.forEach(file => {
-                            this.$refs.uploadFile[0].post(file);
-                        })
-                    }
+                //this.$refs.uploadFile[0].clearFiles();
+                    //if (this.uploadListFile) {
+                        //this.uploadListFile.forEach(file => {
+                            //this.$refs.uploadFile[0].post(file);
+                        //})
+                   // }
 
             },
             jarFileUpload () {
@@ -341,21 +338,21 @@
                     fileNameList:jarFileNameList.join(',')
                 }).then(res => {
                     if(res.data.success){
-                        this.$refs.upload.clearFiles();
-                        if (this.uploadList) {
-                            this.uploadList.forEach(file => {
-                                this.$refs.upload.post(file);
-                            })
-                        }
+                        //this.$refs.upload.clearFiles();
+                        //if (this.uploadList) {
+                            //this.uploadList.forEach(file => {
+                             //   this.$refs.upload.post(file);
+                           // })
+                       // }
                     }else{
                         this.$Modal.confirm({
                             title:'确认窗口',
                             content:res.data.data,
                             onOk: () => {
-                                this.$refs.upload.clearFiles();
+                               // this.$refs.upload.clearFiles();
                                 if (this.uploadList) {
                                     this.uploadList.forEach(file => {
-                                        this.$refs.upload.post(file);
+                                        //this.$refs.upload.post(file);
                                     })
                                 }
                                 this.loadingStatus = false;
@@ -402,7 +399,7 @@
                 this.$Message.error('上传文件失败');
             },
             handleAddJarClick(){
-                this.$refs.upload.clearFiles();
+                //this.$refs.upload.clearFiles();
                 this.uploadList = [];
                 this.uploadJarMod=true
             },
@@ -566,7 +563,7 @@
                     return ;
                 }
                 if (this.parser.file) {
-                    this.$refs.upload.post(this.parser.file);
+                    //this.$refs.upload.post(this.parser.file);
                 } else {
                     if (this.parser.id) {
                         this.postOperate('mvc/fileParser/updateParser');
@@ -639,7 +636,36 @@
 
                     this.blockVisible = true;
                 })
+            },
+            // 上传完成
+            complete() {
+            },
+            //上传合并
+            fileSuccess(rootFile, file, message, chunk) {
+                this.$axios.post('mvc/mergeFileForJar', {
+                    filename: file.name,
+                    identifier: file.uniqueIdentifier,
+                    totalSize: file.size,
+                    type: file.type,
+                    location: rootFile.path,
+                    webkitRelativePath:file.file.webkitRelativePath,
+                    directoryId:this.tDirectoryId,
+                }).then(function (response) {
+
+                }).catch(function (error) {
+
+                });
+            },
+            // 一个根文件（文件夹）成功上传完成。
+            fileComplete() {
+
+            },
+             mounted() {
+                this.$nextTick(() => {
+                    window.uploader = this.$refs.uploader.uploader
+                })
             }
+
         }
     }
 </script>

@@ -198,6 +198,74 @@ public class UploadController {
         return "合并成功";
     }
 
+
+    /**
+     * 文件合并
+     * @param fileInfo
+     * @return
+     */
+    @PostMapping("/mergeFileForJar")
+    public String mergeFileForJar(FileInfo fileInfo) {
+
+        String fileTmp = env.getProperty("parser.path") + "/";
+
+        String name = fileInfo.getFilename();
+
+        if(!name.endsWith(".jar")){
+            return "非jar文件不作处理";
+        }
+
+        try
+        {
+            String uploadFolder = env.getProperty("file.tmpPath");
+
+            String path = uploadFolder + "/" + fileInfo.getIdentifier() + "/" + fileInfo.getFilename();
+            String folder = uploadFolder + "/" + fileInfo.getIdentifier();
+            merge(path, folder);
+            fileInfo.setLocation(path);
+            FileInputStream fis = null;
+            ByteArrayOutputStream bos = null;
+            byte[] bytes = null;
+            fis = new FileInputStream(fileInfo.getLocation());
+            bos = new ByteArrayOutputStream();
+
+            byte[] b = new byte[1024];
+
+            int n;
+
+            while ((n = fis.read(b)) != -1) {
+                bos.write(b, 0, n);
+            }
+
+            bytes = bos.toByteArray();
+
+            Path pathPath = Paths.get(fileTmp+name);
+            Files.write(pathPath, bytes);
+
+            FileParserJar fileParserJar = new FileParserJar();
+            fileParserJar.setName(name);
+            Map<String,Object> params = new HashMap<String,Object>() ;
+            params.put("name",name);
+            List<FileParserJar> fileParserJarList = fileParserJarService.query(params);
+            if(!CollectionUtil.isNotEmpty(fileParserJarList)){
+                fileParserJar.setPath(pathPath.toString());
+                fileParserJarService.add(fileParserJar);
+            }
+            chunkService.delete(fileInfo.getIdentifier());
+            // 清除文件夹
+            File tempFile = new File(path);
+            if (tempFile.isDirectory() && tempFile.exists()) {
+                tempFile.delete();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "后端异常...";
+        }
+
+
+        return "合并成功";
+    }
+
     /**
      * 保存文件
      * @param info
