@@ -169,7 +169,7 @@
                                             <tr>
                                                 <td>文件名：</td>
                                                 <td>
-                                                    <Input v-model="ftpInfo.ip" style="width:300px;"/>
+                                                    <Input v-model="selectNFile.selectFileName" style="width:300px;"/>
                                                 </td>
                                             </tr>
                                             <tr>
