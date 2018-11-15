@@ -36,6 +36,24 @@ public class SchemaController {
         return masterSlaveService.query(masterSlaveDo);
     }
 
+    @RequestMapping("getMenuListFormasterslave")
+    public Object getMenuListFormasterslave() {
+        List<MasterSlaveDo> masterSlaveDoList = new ArrayList<MasterSlaveDo>();
+        List<String> parentList = masterSlaveService.queryType();
+        for (String parentType : parentList)
+        {
+            MasterSlaveDo masterSlaveDo = new MasterSlaveDo();
+            masterSlaveDo.setName(parentType);
+
+            MasterSlaveDo masterSlaveDoForQuery = new MasterSlaveDo();
+            masterSlaveDoForQuery.setType(parentType);
+            List<MasterSlaveDo> child = masterSlaveService.query(masterSlaveDoForQuery);
+            masterSlaveDo.setChildren(child);
+            masterSlaveDoList.add(masterSlaveDo);
+        }
+        return masterSlaveDoList;
+    }
+
     @RequestMapping("listColumnsFormasterslave")
     public List<Map<String,Object>> listColumnsFormasterslave(String masterslavename) {
         MasterSlaveDo masterSlaveDoForQuery = new MasterSlaveDo();

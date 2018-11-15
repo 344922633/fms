@@ -19,6 +19,6 @@ public class MasterSlaveService {
     }
 
     public List<String> queryType() {
-        return dao.getList(CLASSNAME, "query", null);
+        return dao.getList(CLASSNAME, "queryType", null);
     }
 }

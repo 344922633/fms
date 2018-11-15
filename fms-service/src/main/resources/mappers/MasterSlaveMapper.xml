@@ -6,6 +6,9 @@
         <if test="name != null and name != ''">
             AND name = #{name}
         </if>
+        <if test="name != null and name != ''">
+            AND name = #{name}
+        </if>
         <if test="masterTable != null and masterTable != ''">
             AND masterTable = #{masterTable}
         </if>
