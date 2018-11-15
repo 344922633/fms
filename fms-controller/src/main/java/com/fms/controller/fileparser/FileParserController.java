@@ -482,26 +482,35 @@ public class FileParserController {
 										localParser.setParams(file.getId().toString());
 										Map<String, String> data = this.readFileContent(localParser);
 										if(data==null){
-											return ExtUtil.failure("解析失败");
+											continue;
+											//return ExtUtil.failure("解析失败");
 										}else if(data.get("validateFileType")!=null&&data.get("validateFileType").equals("false")){
-											return ExtUtil.failure("文件格式不匹配");
+											continue;
+											//return ExtUtil.failure("文件格式不匹配");
 										}
 										if(data.get("jsonBottomLevel")==null){
-											throw new ApolloRuntimeException("文件解析失败");
+											continue;
+											//throw new ApolloRuntimeException("文件解析失败");
 										}else{
 											if (count >0)
 											{
 												com.fms.domain.filemanage.File cloneFile = (com.fms.domain.filemanage.File)file.clone();
+												cloneFile.setRecommendParserId(Long.valueOf(tFP));
 												cloneFile.setParseResult(data.get("jsonBottomLevel"));
 												newFileList.add(cloneFile);
 											}
 											else
 											{
+												file.setRecommendParserId(Long.valueOf(tFP));
 												file.setParseResult(data.get("jsonBottomLevel"));
 											}
 										}
 										count++;
 									}
+								}
+
+								if (count == 0){
+									return ExtUtil.failure("解析失败");
 								}
 							}
 						}
@@ -521,27 +530,36 @@ public class FileParserController {
 									localParser.setParams(file.getId().toString());
 									Map<String, String> data = this.readFileContent(localParser);
 									if(data==null){
-										return ExtUtil.failure("解析失败");
+										continue;
+										//return ExtUtil.failure("解析失败");
 									}else if(data.get("validateFileType")!=null&&data.get("validateFileType").equals("false")){
-										return ExtUtil.failure("文件格式不匹配");
+										continue;
+										//return ExtUtil.failure("文件格式不匹配");
 									}
 									if(data.get("jsonBottomLevel")==null){
-										throw new ApolloRuntimeException("文件解析失败");
+										continue;
+										//throw new ApolloRuntimeException("文件解析失败");
 									}else{
 										if (count >0)
 										{
 											com.fms.domain.filemanage.File cloneFile = (com.fms.domain.filemanage.File)file.clone();
+											cloneFile.setRecommendParserId(Long.valueOf(tFP));
 											cloneFile.setParseResult(data.get("jsonBottomLevel"));
 											newFileList.add(cloneFile);
 										}
 										else
 										{
+											file.setRecommendParserId(Long.valueOf(tFP));
 											file.setParseResult(data.get("jsonBottomLevel"));
 										}
 									}
 									count++;
 								}
 							}
+							if (count == 0){
+								return ExtUtil.failure("解析失败");
+							}
+
 						}
 					}
 				}
