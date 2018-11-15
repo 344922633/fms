@@ -39,7 +39,7 @@
             <FormItem v-for="(item, index) in tableColumns" :key="item.column_name" :label="item.column_desc">
                 <Input v-model="item.value"/>
             </FormItem>
-
+            <Divider>操作</Divider>
             <Button @click="handleSave">保存</Button>
         </Form>
          </Layout>
