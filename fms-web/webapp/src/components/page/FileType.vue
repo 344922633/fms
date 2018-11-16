@@ -85,6 +85,10 @@
                         key: 'name'
                     },
                     {
+                        title: '父分类',
+                        key: 'type'
+                    },
+                    {
                         title: '文件后缀',
                         key: 'fileSuffix'
                     },

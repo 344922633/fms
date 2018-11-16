@@ -55,6 +55,34 @@ public class FileTypeController {
         List<FileType> list = p.getList();
         if (list != null) {
             for (FileType ft : list) {
+                if ("1".equals(ft.getType()))
+                {
+                    ft.setType("数据库类文件");
+                }
+                else if ("2".equals(ft.getType()))
+                {
+                    ft.setType("拓扑结构类文件");
+                }
+                else if ("3".equals(ft.getType()))
+                {
+                    ft.setType("结构化文件");
+                }
+                else if ("4".equals(ft.getType()))
+                {
+                    ft.setType("文本类文件");
+                }
+                else if ("5".equals(ft.getType()))
+                {
+                    ft.setType("配置类文件");
+                }
+                else if ("6".equals(ft.getType()))
+                {
+                    ft.setType("日志类文件");
+                }
+                else if ("7".equals(ft.getType()))
+                {
+                    ft.setType("程序类文件");
+                }
                 String fileParserIds = ft.getFileParserIds();
                 if (StringUtils.isEmpty(fileParserIds)) {
                     continue;
@@ -83,6 +111,8 @@ public class FileTypeController {
         List<FileType> list = fileTypeService.query(params);
         if (list != null) {
             for (FileType ft : list) {
+
+
                 String fileParserIds = ft.getFileParserIds();
                 if (StringUtils.isEmpty(fileParserIds)) {
                     continue;
