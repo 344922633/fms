@@ -478,6 +478,64 @@ public class FileParserController {
 								for(String tFP:tFileParserIds){
 									if (StringUtils.isNotEmpty(tFP))
 									{
+										try
+										{
+											FileParser localParser = fileParserService.get(Long.valueOf(tFP));
+											localParser.setParams(file.getId().toString());
+											Map<String, String> data = this.readFileContent(localParser);
+											if(data==null){
+												continue;
+												//return ExtUtil.failure("解析失败");
+											}else if(data.get("validateFileType")!=null&&data.get("validateFileType").equals("false")){
+												continue;
+												//return ExtUtil.failure("文件格式不匹配");
+											}
+											if(data.get("jsonBottomLevel")==null){
+												continue;
+												//throw new ApolloRuntimeException("文件解析失败");
+											}else{
+												if (count >0)
+												{
+													com.fms.domain.filemanage.File cloneFile = (com.fms.domain.filemanage.File)file.clone();
+													cloneFile.setRecommendParserId(Long.valueOf(tFP));
+													cloneFile.setParseResult(data.get("jsonBottomLevel"));
+													newFileList.add(cloneFile);
+												}
+												else
+												{
+													file.setRecommendParserId(Long.valueOf(tFP));
+													file.setParseResult(data.get("jsonBottomLevel"));
+												}
+											}
+											count++;
+										}
+										catch (Exception e)
+										{
+											continue;
+										}
+									}
+								}
+
+								if (count == 0){
+									return ExtUtil.failure("解析失败");
+								}
+							}
+						}
+					}
+					if ("其他".equals(file.getClassType()))
+					{
+						String user = ParamUtil.get(request, "user", null);
+						ParserDefaultDo parserDefaultDo = parserDefaultService.getByName(user);
+						String fileParseId = parserDefaultDo.getFileParserIds();
+						if(!Strings.isNullOrEmpty(fileParseId)){
+							String [] tFileParserIds = fileParseId.split(",");
+							int count = 0;
+							for(String tFP:tFileParserIds){
+								if (StringUtils.isNotEmpty(tFP))
+								{
+									try
+									{
+
 										FileParser localParser = fileParserService.get(Long.valueOf(tFP));
 										localParser.setParams(file.getId().toString());
 										Map<String, String> data = this.readFileContent(localParser);
@@ -507,53 +565,10 @@ public class FileParserController {
 										}
 										count++;
 									}
-								}
-
-								if (count == 0){
-									return ExtUtil.failure("解析失败");
-								}
-							}
-						}
-					}
-					if ("其他".equals(file.getClassType()))
-					{
-						String user = ParamUtil.get(request, "user", null);
-						ParserDefaultDo parserDefaultDo = parserDefaultService.getByName(user);
-						String fileParseId = parserDefaultDo.getFileParserIds();
-						if(!Strings.isNullOrEmpty(fileParseId)){
-							String [] tFileParserIds = fileParseId.split(",");
-							int count = 0;
-							for(String tFP:tFileParserIds){
-								if (StringUtils.isNotEmpty(tFP))
-								{
-									FileParser localParser = fileParserService.get(Long.valueOf(tFP));
-									localParser.setParams(file.getId().toString());
-									Map<String, String> data = this.readFileContent(localParser);
-									if(data==null){
+									catch (Exception e)
+									{
 										continue;
-										//return ExtUtil.failure("解析失败");
-									}else if(data.get("validateFileType")!=null&&data.get("validateFileType").equals("false")){
-										continue;
-										//return ExtUtil.failure("文件格式不匹配");
 									}
-									if(data.get("jsonBottomLevel")==null){
-										continue;
-										//throw new ApolloRuntimeException("文件解析失败");
-									}else{
-										if (count >0)
-										{
-											com.fms.domain.filemanage.File cloneFile = (com.fms.domain.filemanage.File)file.clone();
-											cloneFile.setRecommendParserId(Long.valueOf(tFP));
-											cloneFile.setParseResult(data.get("jsonBottomLevel"));
-											newFileList.add(cloneFile);
-										}
-										else
-										{
-											file.setRecommendParserId(Long.valueOf(tFP));
-											file.setParseResult(data.get("jsonBottomLevel"));
-										}
-									}
-									count++;
 								}
 							}
 							if (count == 0){
