@@ -202,6 +202,10 @@
                                 h('a', {
                                     on: {
                                         click: () => {
+                                        this.$axios.post('mvc/fileParser/getList', {
+                                                                                 }).then(res => {
+                                                                                     this.parsers = res.data;
+                                                                                     });
                                             event.stopPropagation()
                                             this.currentIndex = params.index;
                                             this.currentParser = params.row.recommendParserId;
@@ -238,6 +242,10 @@
                                 h('a', {
                                     on: {
                                         click: () => {
+                                        this.$axios.post('mvc/fileParser/getList', {
+                                                                                 }).then(res => {
+                                                                                     this.parsers = res.data;
+                                                                                     });
                                             event.stopPropagation()
                                             this.currentIndex = params.index;
                                             this.currentParser = params.row.recommendParserId;
@@ -274,6 +282,10 @@
                                 h('a', {
                                     on: {
                                         click: () => {
+                                        this.$axios.post('mvc/fileParser/getList', {
+                                                                                 }).then(res => {
+                                                                                     this.parsers = res.data;
+                                                                                     });
                                             event.stopPropagation()
                                             this.currentIndex = params.index;
                                             this.currentParser = params.row.recommendParserId;
@@ -310,6 +322,10 @@
                                 h('a', {
                                     on: {
                                         click: () => {
+                                        this.$axios.post('mvc/fileParser/getList', {
+                                                                                 }).then(res => {
+                                                                                     this.parsers = res.data;
+                                                                                     });
                                             event.stopPropagation()
                                             this.currentIndex = params.index;
                                             this.currentParser = params.row.recommendParserId;
@@ -346,6 +362,10 @@
                                 h('a', {
                                     on: {
                                         click: () => {
+                                        this.$axios.post('mvc/fileParser/getList', {
+                                                                                 }).then(res => {
+                                                                                     this.parsers = res.data;
+                                                                                     });
                                             event.stopPropagation()
                                             this.currentIndex = params.index;
                                             this.currentParser = params.row.recommendParserId;
@@ -382,6 +402,10 @@
                                 h('a', {
                                     on: {
                                         click: () => {
+                                        this.$axios.post('mvc/fileParser/getList', {
+                                                                                 }).then(res => {
+                                                                                     this.parsers = res.data;
+                                                                                     });
                                             event.stopPropagation()
                                             this.currentIndex = params.index;
                                             this.currentParser = params.row.recommendParserId;
@@ -418,6 +442,10 @@
                                 h('a', {
                                     on: {
                                         click: () => {
+                                        this.$axios.post('mvc/fileParser/getList', {
+                                         }).then(res => {
+                                             this.parsers = res.data;
+                                             });
                                             event.stopPropagation()
                                             this.currentIndex = params.index;
                                             this.currentParser = params.row.recommendParserId;
@@ -456,9 +484,9 @@
                                         click: () => {
                                         //alert(waitClassData[params.index].type);
                                          this.$axios.post('mvc/fileParser/getListForWaitClass?fileSuffix=' + this.waitClassData[params.index].type, {
-                                                                                                 }).then(res => {
-                                                                                                     this.parsers = res.data;
-                                                                                                     });
+                                         }).then(res => {
+                                             this.parsers = res.data;
+                                             });
                                             event.stopPropagation()
                                             this.currentIndex = params.index;
                                             this.currentParser = params.row.recommendParserId;
@@ -496,6 +524,10 @@
                                 h('a', {
                                     on: {
                                         click: () => {
+                                        this.$axios.post('mvc/fileParser/getList', {
+                                                                                 }).then(res => {
+                                                                                     this.parsers = res.data;
+                                                                                     });
                                             event.stopPropagation()
                                             this.currentIndex = params.index;
                                             this.currentParser = params.row.recommendParserId;
