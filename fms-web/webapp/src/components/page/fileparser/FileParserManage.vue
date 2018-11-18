@@ -51,7 +51,7 @@
                         <!--</el-option>-->
                     <!--</el-select>-->
                 </FormItem>
-                 <FormItem prop="parserExtList"  v-for="item in parserExtList" :label="item.parameterDesc" :key="Math.random()">
+                 <FormItem prop="parserExtList"  v-for="item in parserExtList" :label="item.parameterDesc" >
 
                     <Input v-if="item.parameterName != 'File'" v-model="item.parameterValue" :placeholder="item.parameterDesc"/>
                     <div v-if="item.parameterName == 'File'">
