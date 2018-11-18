@@ -45,7 +45,7 @@
                     </FormItem>
                 </i-col>
                 <i-col span="6" prop="parserExtList"  v-for="item in parserExtList">
-                    <FormItem :label="item.parameterName">
+                    <FormItem :label="item.parameterDesc">
                         <Input v-if="item.parameterName != 'File'" v-model="item.parameterValue" :placeholder="item.parameterDesc"/>
                         <div v-if="item.parameterName == 'File'">
                         <Upload
