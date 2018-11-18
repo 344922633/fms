@@ -37,7 +37,10 @@
         <Form :label-width="100">
             <Divider>字段信息({{masterslave_name}})</Divider>
             <FormItem v-for="(item, index) in tableColumns" :key="item.column_name" :label="item.column_desc">
-                <Input v-model="item.value"/>
+                <Input v-if="item.inputType != 'select'" v-model="item.value" v-validate="item.validate"/>
+                <Select v-if="item.inputType == 'select'" v-model="item.value" >
+                    <Option :value="singlevalue.selectValue" v-for="singlevalue in item.selectvalue" >{{singlevalue.selectLable}}</option>
+                </select>
             </FormItem>
             <Button @click="handleSave">保存</Button>
         </Form>
@@ -54,7 +57,7 @@
                 tableName: '',
                 tableNames: [],
                 masterslaveList: [],
-                tableColumns: [],
+                tableColumns:[],
                 treedata: [],
                 defaultProps: {
                   children: 'children',

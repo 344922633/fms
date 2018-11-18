@@ -1,7 +1,9 @@
 package com.fms.controller.schema;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fms.domain.filemanage.ColumnValuesDo;
 import com.fms.domain.filemanage.MasterSlaveDo;
+import com.fms.service.masterSlave.ColumnValuesService;
 import com.fms.service.masterSlave.MasterSlaveService;
 import com.fms.service.schema.SchemaService;
 import com.handu.apollo.utils.ExtUtil;
@@ -24,6 +26,10 @@ public class SchemaController {
 
     @Autowired
     private MasterSlaveService masterSlaveService;
+
+    @Autowired
+    private ColumnValuesService columnValuesService;
+
 
     @RequestMapping("listColumns")
     public List<Map<String,Object>> listColumns(String tableName) {
@@ -66,9 +72,34 @@ public class SchemaController {
             if (StringUtils.isNotEmpty(masterSlaveDo.getMasterTable()))
             {
                 List<Map<String,Object>> returnList = schemaService.listColumns(masterSlaveDo.getMasterTable());
+                for (Map<String,Object> single : returnList)
+                {
+                    ColumnValuesDo ColumnValuesDoForQuery = new ColumnValuesDo();
+                    ColumnValuesDoForQuery.setTableName(masterSlaveDo.getMasterTable());
+                    ColumnValuesDoForQuery.setColumnvalue(String.valueOf(single.get("column_name")));
+                    List<ColumnValuesDo> columnValuesDoList = columnValuesService.query(ColumnValuesDoForQuery);
+                    if (columnValuesDoList != null && columnValuesDoList.size() > 0)
+                    {
+                        single.put("inputType","select");
+                        single.put("selectvalue",columnValuesDoList);
+                    }
+                }
                 if (StringUtils.isNotEmpty(masterSlaveDo.getSlaveTable()))
                 {
-                    returnList.addAll(schemaService.listColumns(masterSlaveDo.getSlaveTable()));
+                    List<Map<String,Object>> returnListForSLave = schemaService.listColumns(masterSlaveDo.getSlaveTable());
+                    for (Map<String,Object> single : returnListForSLave)
+                    {
+                        ColumnValuesDo ColumnValuesDoForQuery = new ColumnValuesDo();
+                        ColumnValuesDoForQuery.setTableName(masterSlaveDo.getSlaveTable());
+                        ColumnValuesDoForQuery.setColumnvalue(String.valueOf(single.get("column_name")));
+                        List<ColumnValuesDo> columnValuesDoList = columnValuesService.query(ColumnValuesDoForQuery);
+                        if (columnValuesDoList != null && columnValuesDoList.size() > 0)
+                        {
+                            single.put("inputType","select");
+                            single.put("selectvalue",columnValuesDoList);
+                        }
+                    }
+                    returnList.addAll(returnListForSLave);
                 }
                 return returnList;
             }
