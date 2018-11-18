@@ -40,7 +40,7 @@
                 <Input v-if="item.inputType != 'select'" v-model="item.value" v-validate="item.validate"/>
                 <Select v-if="item.inputType == 'select'" v-model="item.value" >
                     <Option :value="singlevalue.selectValue" v-for="singlevalue in item.selectvalue" >{{singlevalue.selectLable}}</option>
-                </select>
+                </Select>
             </FormItem>
             <Button @click="handleSave">保存</Button>
         </Form>
