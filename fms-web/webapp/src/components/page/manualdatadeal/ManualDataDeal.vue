@@ -37,7 +37,8 @@
         <Form :label-width="100">
             <Divider>字段信息({{masterslave_name}})</Divider>
             <FormItem v-for="(item, index) in tableColumns" :key="item.column_name" :label="item.column_desc">
-                <Input v-if="item.inputType != 'select'" v-model="item.value" v-validate="item.validate"/>
+                <Input v-if="item.inputType != 'select' && !(item.max_length > 100) " v-model="item.value"/>
+                <Input  type="textarea" v-if="item.inputType != 'select' && item.max_length > 100" v-model="item.value"/>
                 <Select v-if="item.inputType == 'select'" v-model="item.value" >
                     <Option :value="singlevalue.selectValue" v-for="singlevalue in item.selectvalue" >{{singlevalue.selectLable}}</option>
                 </Select>
