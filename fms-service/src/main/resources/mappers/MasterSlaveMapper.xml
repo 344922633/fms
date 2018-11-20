@@ -3,8 +3,8 @@
 <mapper namespace="com.fms.service.masterSlave.MasterSlaveService">
 
     <sql id="condition">
-        <if test="name != null and name != ''">
-            AND name = #{name}
+        <if test="id != null and id != ''">
+            AND id = #{id}
         </if>
         <if test="name != null and name != ''">
             AND name = #{name}
@@ -22,6 +22,36 @@
        select * from fms_masterslave where 1=1
         <include refid="condition" />
     </select>
+
+    <select id="queryCount" parameterType="com.fms.domain.filemanage.MasterSlaveDo" resultType="int">
+        SELECT COUNT(1)
+        FROM fms_masterslave
+        WHERE 1 = 1
+        <include refid="condition" />
+    </select>
+
+    <insert id="add" parameterType="com.fms.domain.filemanage.MasterSlaveDo">
+        INSERT INTO fms_masterslave (name,type,masterTable,slaveTable)
+        VALUES (
+        #{name},
+        #{type},
+        #{masterTable},
+        #{slaveTable}
+        )
+    </insert>
+    <update id="update" parameterType="com.fms.domain.filemanage.MasterSlaveDo">
+        UPDATE fms_masterslave
+        SET name = #{name},
+        type = #{type},
+        masterTable = #{masterTable},
+        slaveTable = #{slaveTable},
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="String">
+        DELETE FROM fms_masterslave
+        WHERE id = #{id}
+    </delete>
 
     <select id="queryType"  resultType="String">
         select distinct type from fms_masterslave

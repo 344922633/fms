@@ -9,19 +9,22 @@
               show-total />
 
         <Modal v-model="formVisible" :title="formTitle" :model="parser" @on-visible-change="handleVisibleChange" @on-ok="handleFormOk" footer-hide>
-            <Form :label-width="80" ref="parserForm" :model="parser" :rules="ruleValidate">
+            <Form :label-width="80" ref="parserForm" :model="masterSlave" :rules="ruleValidate">
                 <FormItem prop="name" label="关系名称">
-                    <Input v-model="parser.name"/>
+                    <Input v-model="masterSlave.name"/>
                 </FormItem>
-                <FormItem prop="source" label="主表">
-                    <!--<Input v-model="parser.name"/>-->
-                    <Select v-model="parser.mainTable" @on-change="getParserClassNameList" clearable>
-                        <Option v-for="(item,index) in parserNameList" :value="item.path" :key="index" >{{ item.name }}</Option>
+                <FormItem prop="type" label="关系名称">
+                    <Input v-model="masterSlave.type"/>
+                </FormItem>
+
+                <FormItem prop="masterTable" label="主表">
+                     <Select v-model="masterSlave.masterTable" >
+                        <Option v-for="item in tableNames" :value="item" :key="item">{{ item }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="从表">
-                    <Select v-model="parser.fromTbale" @on-change="getParserClassNameList" clearable>
-                        <Option v-for="(item,index) in parserNameList" :value="item.path" :key="index" >{{ item.name }}</Option>
+                    <Select v-model="masterSlave.slaveTable" >
+                        <Option v-for="item in tableNames" :value="item" :key="item">{{ item }}</Option>
                     </Select>
                 </FormItem>
 
@@ -37,23 +40,6 @@
             @on-ok="remove">
             <p>确认要删除数据吗？</p>
         </Modal>
-        <Modal
-            v-model="uploadJarMod"
-            title="解析器jar包上传"
-            width="300">
-            <Upload
-                ref="upload"
-                multiple
-                :before-upload="handleUpload"
-                action="mvc/uploadJars"
-                :on-success="uploadSuccess"
-                :on-remove="handleRemove"
-                :on-error="uploadError">
-                <Button icon="ios-cloud-upload-outline">上传</Button>
-
-            </Upload>
-            <Button style="margin-top: 5px" type="text" @click="jarFileUpload" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : '上传' }}</Button>
-        </Modal>
     </div>
 </template>
 <script>
@@ -64,9 +50,15 @@
         },
         data () {
             return {
-                parserExtList:[
+                tableNames:[],
+                 masterSlave: {
+                    name: '',
+                    type: '',
+                    masterTable:'',
+                    slaveTable:''
+                },
 
-                ],
+
                 param1:"参数1",
                 paramDesc1:"参数1的描述",
                 parserNameList:[],
@@ -106,12 +98,13 @@
                     name: [
                         { required: true, message: '关系名称为必填项', trigger: 'blur' }
                     ],
-                    mainTable: [
-                        { required: true, message: '主表为必填项', trigger: 'blur' }
+                    type: [
+                        { required: true, message: '类别为必填项', trigger: 'blur' }
                     ],
-                    fromTbale: [
-                        { required: true, message: '从表为必填项', trigger: 'blur' }
+                    masterTable: [
+                        { required: true, message: '主表为必填项', trigger: 'blur' }
                     ]
+
                 },
                 //编辑框标题
                 formTitle: '新增',
@@ -122,11 +115,11 @@
                     },
                     {
                         title: '主表',
-                        key: 'mainTable'
+                        key: 'masterTable'
                     },
                     {
                         title: '从表',
-                        key: 'fromTbale'
+                        key: 'slaveTable'
                     },
                     {
                         title: '操作',
@@ -164,158 +157,30 @@
                         }
                     }
                 ],
-                data: [
-                    {
-                        name: 'John Brown',
-                        age: 18,
-                        address: 'New York No. 1 Lake Park'
-                    },
-                    {
-                        name: 'Jim Green',
-                        age: 24,
-                        address: 'London No. 1 Lake Park'
-                    },
-                    {
-                        name: 'Joe Black',
-                        age: 30,
-                        address: 'Sydney No. 1 Lake Park'
-                    },
-                    {
-                        name: 'Jon Snow',
-                        age: 26,
-                        address: 'Ottawa No. 2 Lake Park'
-                    }
-                ],
-                options: {//文件分片上传数据配置
-                    target: process.env.BASE_UPLOAD + 'mvc/chunk',
-                    testChunks: true,
-                    simultaneousUploads: 1,
-                    preprocess: this.preprocess,
-                    chunkSize: 1024 * 1024 * 5
-                },
-                statusText: {
-                    success: '成功了',
-                    error: '出错了',
-                    uploading: '上传中',
-                    paused: '暂停中',
-                    waiting: '等待中'
-                },
                 uploadList:[],
                 loadingStatus: false
             }
         },
         created() {
             this.getData();
+            this.getTables();
         },
         methods: {
-            handleUpload(file){
-                this.uploadList.push(file);
-                file.status = 'finished'
-                this.$refs.upload.fileList.push(file)
-
-                // this.$refs.upload.fileList.push(file);
-                return false;
-            },
-            jarFileUpload () {
-                this.loadingStatus = true;
-                let jarFileNameList=[];
-                let flag = true;
-
-                this.uploadList.forEach(file => {
-                    if(!file.name.endsWith('.jar')){
-                        flag = false;
-                    }
-                    jarFileNameList.push(file.name)
-                })
-                if (!flag) {
-                    this.$notify({
-                        title: '提示',
-                        message: '只允许上传jar文件！',
-                        type: 'error'
-                    })
-                    this.loadingStatus = false;
-                    return ;
-                }
-
-                this.$axios.post('mvc/fileParserJar/checkJarList', {
-                    fileNameList:jarFileNameList.join(',')
-                }).then(res => {
-                    if(res.data.success){
-                        this.$refs.upload.clearFiles();
-                        if (this.uploadList) {
-                            this.uploadList.forEach(file => {
-                                this.$refs.upload.post(file);
-                            })
-                        }
-                    }else{
-                        this.$Modal.confirm({
-                            title:'确认窗口',
-                            content:res.data.data,
-                            onOk: () => {
-                                this.$refs.upload.clearFiles();
-                                if (this.uploadList) {
-                                    this.uploadList.forEach(file => {
-                                        this.$refs.upload.post(file);
-                                    })
-                                }
-                                this.loadingStatus = false;
-                            },
-                            onCancel:()=>{
-                                this.loadingStatus = false;
-                            }
-                        })
-                    }
-                });
-            },
-            handleRemove(file, fileList) {
-                let idx = this.uploadList.findIndex((f) => {
-                    return f.name == file.name;
-                })
-                this.uploadList.splice(idx, 1);
-            },
-            uploadSuccess(response, file, fileList){
-                console.log(file)
-                console.log(fileList)
-                this.loadingStatus = false;
-                this.$Message.success('This is a success tip');
-            },
-            uploadError(){
-                this.loadingStatus = false;
-                this.$Message.error('This is an error tip');
-            },
-            handleAddJarClick(){
-                this.$refs.upload.clearFiles();
-                this.uploadList = [];
-                this.uploadJarMod=true
-            },
             //修改操作
             update (row) {
-                this.getParserNameList();
                 row.file = null;
                 this.formTitle = '修改';
-                if(row.source){
-                    this.$axios.post('mvc/fileParserJar/getJarClassAndMethodList', {
-                        path:row.source
+                if(row.id){
+                    this.$axios.post('mvc/masterSlave/detail', {
+                        id:row.id
                     }).then(res => {
-                        this.parserClassAndMethods = res.data;
-                        this.parserClassNameList = this.parserClassAndMethods.classNames;
-                        this.parserMethodNameList = this.parserClassAndMethods[row.className]
-                        // this.parser.methodName='';
-                        this.parser = JSON.parse(JSON.stringify(row));
-                        this.parser.inputType = this.parser.inputType + '';
+                        this.masterSlave.name = res.data.name;
+                        this.masterSlave.type = res.data.type;
+                        this.masterSlave.masterTable = res.data.masterTable;
+                        this.masterSlave.slaveTable = res.data.slaveTable;
                         this.formVisible = true;
                     }).catch(e => {
 
-                        this.parser = JSON.parse(JSON.stringify(row));
-                        this.parser.inputType = this.parser.inputType + '';
-                        this.formVisible = true;
-                    });
-                    this.$axios.post('mvc/fileParser/getParamList', {
-                        parserId:row.id
-                    }).then(res => {
-                        this.parserExtList = res.data;
-                        this.formVisible = true;
-                    }).catch(e => {
                         this.formVisible = true;
                     });
 
@@ -329,7 +194,7 @@
             //删除确认
             remove (row) {
                 var me = this;
-                this.$axios.post('mvc/fileParser/deleteParser', {
+                this.$axios.post('mvc/masterSlave/delete', {
                     id: this.seleteId
                 }).then(res => {
                     me.$notify({
@@ -350,7 +215,7 @@
             },
             //加载数据
             getData() {
-                this.$axios.post('mvc/fileParser/page', {
+                this.$axios.post('mvc/masterSlave/page', {
                     page: this.curPage,
                     limit: this.pageSize
                 }).then(res => {
@@ -358,57 +223,16 @@
                     this.totalCount = res.data.count;
                 });
             },
-            getParserNameList(){
-                this.$axios.post('mvc/fileParserJar/getJarList', {
-                }).then(res => {
-                    this.parserNameList = res.data;
-                });
-            },
-            getParserClassNameList(){
-                if (this.$refs.parserClassNameRef) {
-                    this.$refs.parserClassNameRef.clearSingleSelect();
-                    this.$refs.parserMethodNameRef.clearSingleSelect();
-                }
-                // this.parser.methodName='';
-                // this.parser.className='';
-                if(this.parser.source){
-                    this.$axios.post('mvc/fileParserJar/getJarClassAndMethodList', {
-                        path:this.parser.source
-                    }).then(res => {
-                        this.parserClassAndMethods = res.data;
-                        this.parserClassNameList = this.parserClassAndMethods.classNames;
-                        // this.parser.methodName='';
-                    });
-                }
-
-            },
-            getParserMethodNameList(){
-                // this.parser.methodName='';
-                // if(this.parser.className!=''){
-                    this.parserMethodNameList = this.parserClassAndMethods[this.parser.className]
-                // }
-
-                if(this.parser.className){
-                    this.$axios.post('mvc/fileParserJar/getJarClassParamList', {
-                          path:this.parser.source,
-                          className:this.parser.className
-                     }).then(res => {
-                         this.parserExtList = res.data;
-                      });
-                 }
-
-            },
             //添加按钮点击
             handleAddClick() {
-                this.parser = {
+                this.masterSlave ={
                     name: '',
-                    inputType: '0',
-                    file: null
+                    type: '',
+                    masterTable:'',
+                    slaveTable:''
                 };
-                this.parserClassAndMethods = [];
-                this.parserClassNameList = [];
-                this.getParserNameList();
                 this.formVisible = true;
+                this.getTables();
 
             },
             //编辑弹框显示状态监听
@@ -417,23 +241,9 @@
                     this.$refs['parserForm'].resetFields();
                 }
             },
-            //上传文件格式校验
-            handleFormatError(file) {
-                this.$notify({
-                    title: '提示',
-                    message: '文件格式不正确！',
-                    type: 'error'
-                });
-            },
-            //处理文件上传前操作
-            handleBeforeUpload(file) {
-                this.parser.file = file;
-                return false;
-            },
             //处理编辑弹框确认操作
             handleFormOk() {
 
-                console.info(this.paramList)
                 let isValid = true;
                 this.$refs['parserForm'].validate((valid) => {
                     if (!valid) {
@@ -443,38 +253,16 @@
                 if (!isValid) {
                     return ;
                 }
-                if (this.parser.file) {
-                    this.$refs.upload.post(this.parser.file);
+                if (this.masterSlave.id) {
+                    this.postOperate('mvc/masterSlave/update');
                 } else {
-                    if (this.parser.id) {
-                        this.postOperate('mvc/fileParser/updateParser');
-                    } else {
-                        this.postOperate('mvc/fileParser/addParser');
-                    }
-                }
-            },
-            //文件上传成功回掉
-            handleUploadSuccess(response, file, fileList) {
-                if (response.success) {
-                    this.parser.source = response.data;
-                    if (this.parser.id) {
-                        this.postOperate('mvc/fileParser/updateParser');
-                    } else {
-                        this.postOperate('mvc/fileParser/addParser');
-                    }
-                } else {
-                    this.$notify({
-                        title: '提示',
-                        message: response.data,
-                        type: 'error'
-                    });
+                    this.postOperate('mvc/masterSlave/add');
                 }
             },
             //请求后台
             postOperate(url) {
                 var me = this;
-                this.parser.parserExt = JSON.stringify(this.parserExtList);
-                this.$axios.post(url,this.parser)
+                this.$axios.post(url,this.masterSlave)
                     .then(res => {
                         me.$notify({
                             title: '提示',
@@ -491,26 +279,9 @@
             handleCurrentChange(c) {
                 this.current = c;
             },
-            //打开黑白名单弹框
-            handleBlock() {
-                if (!(this.current && this.current.id)) {
-                    this.$notify({
-                        title: '提示',
-                        message: '请选择一条数据',
-                        type: 'error'
-                    })
-                    return ;
-                }
-                let me = this;
-                me.blockInfo = {};
-                this.$axios.post('mvc/blockManage/getList', {
-                    fileParserId: this.current.id
-                }).then(res => {
-                    if (res.data.length > 0) {
-                        me.blockInfo = res.data[0];
-                    }
-
-                    this.blockVisible = true;
+             getTables() {
+                this.$axios.post('mvc/getTables').then(res => {
+                    this.tableNames = res.data;
                 })
             }
         }

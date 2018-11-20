@@ -6,13 +6,17 @@ import com.fms.domain.filemanage.MasterSlaveDo;
 import com.fms.service.masterSlave.ColumnValuesService;
 import com.fms.service.masterSlave.MasterSlaveService;
 import com.fms.service.schema.SchemaService;
+import com.fms.utils.ParamUtil;
+import com.handu.apollo.base.Page;
 import com.handu.apollo.utils.ExtUtil;
 import com.handu.apollo.utils.json.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -149,6 +153,57 @@ public class SchemaController {
         } catch (Exception e) {
             return ExtUtil.failure(e.getCause().getMessage());
         }
+        return ExtUtil.success("操作成功");
+    }
+
+    /**
+     * 分页查询解析器
+     * @param request
+     * @return
+     */
+    @RequestMapping("/masterSlave/page")
+    public Object page(HttpServletRequest request) {
+        MasterSlaveDo masterSlaveDo = new MasterSlaveDo();
+        Page page = ParamUtil.getPager(request);
+        return masterSlaveService.page(masterSlaveDo, page);
+    }
+
+    @RequestMapping("/masterSlave/detail")
+    public Object detail(String id,HttpServletRequest request) {
+        MasterSlaveDo masterSlaveDo = new MasterSlaveDo();
+        masterSlaveDo.setId(id);
+        List<MasterSlaveDo> list = masterSlaveService.query(masterSlaveDo);
+        MasterSlaveDo masterSlaveDoForDetail = new MasterSlaveDo();
+        if (list != null && list.size() > 0)
+        {
+            masterSlaveDoForDetail = list.get(0);
+        }
+        return masterSlaveDoForDetail;
+    }
+
+    @RequestMapping("/masterSlave/add")
+    public Object addmasterSlave(MasterSlaveDo masterSlaveDo) {
+        try {
+            masterSlaveService.add(masterSlaveDo);
+        } catch (Exception e) {
+            return ExtUtil.failure(e.getCause().getMessage());
+        }
+        return ExtUtil.success("操作成功");
+    }
+
+    @RequestMapping("/masterSlave/update")
+    public Object updatemasterSlave(MasterSlaveDo masterSlaveDo) {
+        try {
+            masterSlaveService.update(masterSlaveDo);
+        } catch (Exception e) {
+            return ExtUtil.failure(e.getCause().getMessage());
+        }
+        return ExtUtil.success("操作成功");
+    }
+
+    @RequestMapping("/masterSlave/delete")
+    public Object delete(String id,HttpServletRequest request) {
+        masterSlaveService.delete(id);
         return ExtUtil.success("操作成功");
     }
 }
