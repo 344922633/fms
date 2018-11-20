@@ -53,7 +53,11 @@
                 </FormItem>
                  <FormItem prop="parserExtList"  v-for="item in parserExtList" :label="item.parameterDesc" >
 
-                    <Input v-if="item.parameterName != 'File'" v-model="item.parameterValue" :placeholder="item.parameterDesc"/>
+                    <Input v-if="item.parameterName != 'File' && item.parameterName != 'boolean'" v-model="item.parameterValue" :placeholder="item.parameterDesc"/>
+                    <Select v-if="item.parameterName == 'boolean'" value="1" v-model="item.parameterValue" >
+                        <Option value="1"  >是</Option>
+                        <Option value="0"  >否</Option>
+                    </Select>
                     <div v-if="item.parameterName == 'File'">
                     <Upload
                         ref="uploadFile"
