@@ -365,22 +365,23 @@ public class FileParserController {
 			File temp = FileUtil.createTempFile(fileName);
 			FileUtils.writeByteArrayToFile(temp, buf);
 
-			String parserExtstr = fileParser.getParserExt();
-
-			JSONArray arrayList= JSONArray.parseArray(parserExtstr);
-			//转换为目标对象list
-			List<FileParserExt> parserExtList = JSONObject.parseArray(arrayList.toJSONString(), FileParserExt.class);
-
-
 			Map<String, Object> extParams = new HashMap<>();
 
+			String parserExtstr = fileParser.getParserExt();
+			JSONArray arrayList= JSONArray.parseArray(parserExtstr);
+			if (arrayList != null)
+			{
+				//转换为目标对象list
+				List<FileParserExt> parserExtList = JSONObject.parseArray(arrayList.toJSONString(), FileParserExt.class);
+
+				extParams.put("parserExtList",parserExtList);
+			}
 			BlockManage condition = new BlockManage();
 
 			condition.setFileParserId(fileParser.getId());
 
 			BlockManage block = blockManageService.get(condition);
 
-			extParams.put("parserExtList",parserExtList);
 
 			if (null != block)
 			{
