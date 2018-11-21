@@ -516,12 +516,12 @@
                     return;
                 }
                 this.loading = true;
-                this.$axios.post('mvc/fileParser/parseDataSaveDatabase', {
+                this.$axios.post('mvc/fileParser/parseDataSaveHBase', {
                     parserId: this.file.recommendParserId,
                     file_id: this.file.id,
                     customKeys: JSON.stringify(this.selectData),
                     table_name: this.table_name,
-                    jsonStr: JSON.stringify(this.tableShowData)
+                    jsonStr: this.jsonStr
                 }).then(res => {
                     this.loading = false;
                     this.$notify({

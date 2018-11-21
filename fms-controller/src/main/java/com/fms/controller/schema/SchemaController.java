@@ -12,6 +12,7 @@ import com.handu.apollo.utils.ExtUtil;
 import com.handu.apollo.utils.json.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,8 @@ public class SchemaController {
     @Autowired
     private ColumnValuesService columnValuesService;
 
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
 
     @RequestMapping("listColumns")
     public List<Map<String,Object>> listColumns(String tableName) {
@@ -120,28 +123,33 @@ public class SchemaController {
 
     @RequestMapping("insertDataFormasterslave")
     public Object insertDataFormasterslave(String masterslavename, String data) {
-        ObjectMapper mapper = JsonUtil.getMapper();
-        MasterSlaveDo masterSlaveDoForQuery = new MasterSlaveDo();
-        masterSlaveDoForQuery.setName(masterslavename);
-        List<MasterSlaveDo> list = masterSlaveService.query(masterSlaveDoForQuery);
+        if(true){
+            kafkaTemplate.send("schema",data);
+        }else{
+            ObjectMapper mapper = JsonUtil.getMapper();
+            MasterSlaveDo masterSlaveDoForQuery = new MasterSlaveDo();
+            masterSlaveDoForQuery.setName(masterslavename);
+            List<MasterSlaveDo> list = masterSlaveService.query(masterSlaveDoForQuery);
 
-        if (list != null && list.size() > 0)
-        {
-            MasterSlaveDo masterSlaveDo = list.get(0);
+            if (list != null && list.size() > 0)
+            {
+                MasterSlaveDo masterSlaveDo = list.get(0);
 
-            try {
-                if (StringUtils.isNotEmpty(masterSlaveDo.getMasterTable()))
-                {
-                    schemaService.insertData(masterSlaveDo.getMasterTable(), mapper.readValue(data, List.class));
-                    if (StringUtils.isNotEmpty(masterSlaveDo.getSlaveTable()))
+                try {
+                    if (StringUtils.isNotEmpty(masterSlaveDo.getMasterTable()))
                     {
-                        schemaService.insertData(masterSlaveDo.getSlaveTable(), mapper.readValue(data, List.class));
+                        schemaService.insertData(masterSlaveDo.getMasterTable(), mapper.readValue(data, List.class));
+                        if (StringUtils.isNotEmpty(masterSlaveDo.getSlaveTable()))
+                        {
+                            schemaService.insertData(masterSlaveDo.getSlaveTable(), mapper.readValue(data, List.class));
+                        }
                     }
+                } catch (Exception e) {
+                    return ExtUtil.failure(e.getCause().getMessage());
                 }
-            } catch (Exception e) {
-                return ExtUtil.failure(e.getCause().getMessage());
             }
         }
+
         return ExtUtil.success("操作成功");
     }
 

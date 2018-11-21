@@ -682,4 +682,64 @@ public class FileParserController {
 		parserDefaultService.add(parserDefaultDo);
 		return ExtUtil.success("修改成功！");
 	}
+
+    /**
+     * 单文件解析入HBase库
+     * @param jsonStr
+     * @param table_name
+     * @param customKeys
+     * @param file_id
+     * @param parserId
+     * @return
+     */
+    @RequestMapping("parseDataSaveHBase")
+    public Object parseDataSaveHBase(String jsonStr,String table_name,String customKeys,Long file_id,Long parserId){
+
+        com.fms.domain.filemanage.File file=fileService.get(file_id);
+        String fileMD5=file.getFileMd5();
+        String fileName=file.getName();
+        String fileInfo=file.toString();
+        List<FileType> typeList=fileTypeService.getListByFileParserId(parserId);
+        String fileType=typeList.get(0).getType();
+
+        //数据入库
+        boolean result = fileParserService.parseDataSaveDataHBase(jsonStr,fileInfo,fileType,fileMD5,fileName);
+        if (result) {
+            return ExtUtil.success("入库成功");
+        } else {
+            return ExtUtil.failure("入库失败");
+        }
+    }
+
+	/**
+	 * 多文件解析入HBase库
+	 */
+	@RequestMapping("multiParseSaveDataToHBase")
+	public Object multiParseSaveDataToHBase(String dataJSON,String parserDataJSON){
+		boolean result=false;
+		//解析器和文件信息
+		List<Map<String,Long>> parserData=JSONUtils.jsonToObject(parserDataJSON,List.class,Map.class);
+		//多个解析结果拆分开
+		String s[]=dataJSON.split("#");
+		//解析结果从json转成对象
+		for(int i=0;i<s.length;i++){
+			if(i%2==0){
+				com.fms.domain.filemanage.File file=fileService.get(parserData.get(i).get("fileId"));
+				String fileMD5=file.getFileMd5();
+				String fileName=file.getName();
+				String fileInfo=file.toString();
+				List<FileType> typeList=fileTypeService.getListByFileParserId(parserData.get(i).get("parserId"));
+				String fileType=typeList.get(0).getType();
+				//数据入库
+				result = fileParserService.parseDataSaveDataHBase(s[i],fileInfo,fileType,fileMD5,fileName);
+
+			}
+
+		}
+		if (result) {
+			return ExtUtil.success("入库成功");
+		} else {
+			return ExtUtil.failure("入库失败");
+		}
+	}
 }

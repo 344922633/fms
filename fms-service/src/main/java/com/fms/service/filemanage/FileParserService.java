@@ -3,6 +3,7 @@ package com.fms.service.filemanage;
 import com.fms.domain.filemanage.File;
 import com.fms.domain.filemanage.FileParser;
 import com.fms.domain.filemanage.TableInfo;
+import com.fms.utils.HbaseUtil;
 import com.handu.apollo.base.Page;
 import com.handu.apollo.data.mybatis.Dao;
 import com.handu.apollo.data.utils.Param;
@@ -305,5 +306,19 @@ public class FileParserService {
 		result.put("customKey",maxFieldMapInfo);
 		result.put("table_name",maxTable);
 		return result;
+	}
+
+	/**
+	 * 解析数据并入HBase库
+	 */
+	public boolean parseDataSaveDataHBase(String jsonStr, String fileInfo, String fileType, String fileMD5, String fileName) {
+
+
+		HbaseUtil.getHbaseConnection();
+
+		HbaseUtil.addMoreRecordFromJSON("ns_fms:tb_file","cf0",jsonStr,fileType,fileInfo,fileName,fileMD5);
+
+		HbaseUtil.close();
+		return true;
 	}
 }

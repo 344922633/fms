@@ -1325,7 +1325,7 @@
                     });
                     return;
                 }
-                this.$axios.post('mvc/fileParser/multiParseSaveData', {
+                this.$axios.post('mvc/fileParser/multiParseSaveDataToHBase', {
                     dataJSON: data.join('#'),
                     parserDataJSON:JSON.stringify(parserData)
                 }).then(res => {
