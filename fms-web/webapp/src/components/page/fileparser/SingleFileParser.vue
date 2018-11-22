@@ -83,17 +83,18 @@
                :class="{tableActive:index == tableIndex}" v-for="(value,key,index) in jsonTables" @click="toggleTab(index)"><a>{{key}}</a></div>
            </div>
          <div>
-           <table style="border-right:1px solid #ddd;border-bottom:1px solid #ddd;width:100%" v-for="(value,key,index) in jsonTables" :key="item1" :label="item" :value="item1" v-show="index == tableIndex" border="0" cellspacing="0" cellpadding="0">
+           <table style="border-right:1px solid #ddd;border-bottom:1px solid #ddd;width:100%;overflow-x:scroll;" v-for="(value,key,index) in jsonTables" :key="item1" :label="item" :value="item1" v-show="index == tableIndex" border="0" cellspacing="0" cellpadding="0">
                    <thead>
                    <tr>
-                       <th style="background: #c0c4cc;border: 1px solid #ddd;" v-for="(value, key) in value[0]">
-                            {{key}}
+                       <th style="background: #c0c4cc;border: 1px solid #ddd;" v-for="keyvalue in allKeyForDisplay">
+                            {{keyvalue}}
                        </th>
                    </tr>
                    </thead>
                    <tbody>
                    <tr v-for="(value, key) in value">
-                       <td v-for="(value, key) in value" style="text-align: center;border-left:1px solid #ddd;border-top:1px solid #ddd">{{value}}</td>
+
+                       <td v-for="keyvalue in allKeyForDisplay" style="text-align: center;border-left:1px solid #ddd;border-top:1px solid #ddd">{{value[keyvalue]}}</td>
                    </tr>
                </tbody>
               </table>
@@ -101,8 +102,8 @@
 
 
 
-            <Table :columns="tableShowColumns" :data="tableShowData" style="width:100%;overflow-x:scroll;"
-                   @on-row-dblclick="tableRowDoubleClick"></Table>
+           <!-- <Table :columns="tableShowColumns" :data="tableShowData" style="width:100%;overflow-x:scroll;"
+                   @on-row-dblclick="tableRowDoubleClick"></Table> -->
             <Divider> 解析字段</Divider>
             <FormItem v-for="(data,key) in columnData" :label="key" :key="key">
                 <Select v-model="selectData[key]" :clearable="true">
@@ -351,6 +352,7 @@
                     this.getColumns(this.table_name);
                     delete res.data.data.table_name;
                     this.allKey = res.data.data.allKey;
+                    this.allKeyForDisplay = res.data.data.allKeyForDisplay;
                     delete res.data.data.allKey;
                     //key的映射关系
                     this.columnData = res.data.data;
