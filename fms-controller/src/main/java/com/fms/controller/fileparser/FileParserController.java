@@ -438,12 +438,21 @@ public class FileParserController {
 					json.addAll(JSONUtils.jsonToObject(value,List.class,Map.class));
 
 				}
+
 			}
 			//json=JSONUtils.jsonToObject(data.get("jsonBottomLevel"),List.class,Map.class);
 		}catch (Exception e){
 			return ExtUtil.failure(e.getMessage());
 		}
 		Map<String,Object> result=fileParserService.parseData(json);
+        //json中所有的key
+        Set<String> set=new HashSet<>();
+        for (Map<String,Object> child : json) {
+            for (Map.Entry<String, Object> entry : child.entrySet()) {
+                set.add(entry.getKey());
+            }
+        }
+        result.put("allKeyForDisplay",set);
 		result.put("jsonStr",data.get("jsonBottomLevel"));
 		return ExtUtil.success(result);
 	}

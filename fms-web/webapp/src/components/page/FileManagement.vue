@@ -132,7 +132,7 @@
                                              <tr>
                                                  <td>端口号：</td>
                                                  <td>
-                                                     <Input v-model="ftpInfo.port" style="width:300px;"/>
+                                                     <Input v-model="ftpInfo.port"  style="width:300px;"/>
                                                  </td>
                                              </tr>
                                              <tr>
@@ -311,7 +311,7 @@
                     ip:'',
                     userName:'',
                     password:'',
-                    port:'',
+                    port:'22',
                     path:''
                 },
                 currentFile: null,//解析窗口需要的选中操作文件
