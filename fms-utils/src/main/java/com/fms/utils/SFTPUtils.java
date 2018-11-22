@@ -168,11 +168,11 @@ public class SFTPUtils {
  
     public static void main(String[] args) throws IOException {
     	 Ftp f=new Ftp();
-         f.setIpAddr("114.115.177.163");
+         f.setIpAddr("47.93.40.219");
          f.setUserName("root");
-         f.setPwd("Hosting@2018");
+         f.setPwd("admin!123");
          f.setPort(22);
-         String directory = "/usr/local/test";
+         String directory = "/home/xuhubin";
          
         SFTPUtils sf = SFTPUtils.getInstance(f);
        
@@ -185,7 +185,7 @@ public class SFTPUtils {
             {
             	for (LsEntry lsEntry : files)
             	{
-            		 File download = sf.download("/usr/local/test/" + lsEntry.getFilename(), "F:\\Users\\"+ lsEntry.getFilename());
+            		 File download = sf.download("/home/xuhubin" + lsEntry.getFilename(), "F:\\Users\\"+ lsEntry.getFilename());
             	}
             }
         } catch (SftpException e) {

@@ -117,6 +117,27 @@ export default new Router({
                     meta: { title: '单文件解析' }
                 },
                 {
+                    path: '/tuopu',
+                    component: resolve => require(['../components/page/tuopu/Tuopu.vue'], resolve),
+                    meta: { title: '拓扑图' }
+                },
+
+                {
+                    path: '/tuopuManage',
+                    component: resolve => require(['../components/page/tuopu/TuopuManage.vue'], resolve),
+                    meta: { title: '拓扑图管理' }
+                },
+                {
+                    path: '/control',
+                    component: resolve => require(['../components/page/tuopu/Control.vue'], resolve),
+                    meta: { title: '控件管理' }
+                },
+                {
+                    path: '/fileInput',
+                    component: resolve => require(['../components/page/fileInput.vue'], resolve),
+                    meta: { title: '离线文件导入' }
+                },
+                {
                     //布局测试
                     path: '/doLayout',
                     component: resolve => require(['../components/page/demo/Layout.vue'], resolve),

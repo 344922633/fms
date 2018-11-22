@@ -69,19 +69,22 @@ public class HbaseUtil {
     /**
      * @desc 创建表
      */
-    public static void createTable(String nameSpace, String tableName, String family, byte[][] splitKeys) {
+    public static String createTable(String tableName, String family) {
+        String res="";
         try {
 //			创建表空间
 
 //			NamespaceDescriptor descriptor=NamespaceDescriptor.create(nameSpace).build();
 //			admin.createNamespace(descriptor);
 
-            TableName tName = TableName.valueOf(nameSpace, tableName);
+
+            TableName tName = TableName.valueOf("ns_fms", tableName);
 
             //如果表存在，删除表
             if (admin.tableExists(tName)) {
-                admin.disableTable(tName);
-                admin.deleteTable(tName);
+//                admin.disableTable(tName);
+////                admin.deleteTable(tName);
+                res="该表已存在";
             } else {
 
 
@@ -94,11 +97,15 @@ public class HbaseUtil {
                 tableDesc.addFamily(colDesc);
                 admin.createTable(tableDesc);//直接创建表
 //				admin.createTable(tableDesc, splitKeys);//创建表，添加预分区，避免热点写,若不指定splitKeys为空即可
+                res="操作成功";
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return res;
     }
+
 
     /**
      * @description 删除row列族下的某列值

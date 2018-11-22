@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.filemanage.FileInputService">
+
+    <sql id="cols">
+        id,
+        ip,
+        userName,
+        password,
+        port,
+        path,
+        format
+    </sql>
+
+
+    <insert id="addFileInput" parameterType="com.fms.domain.filemanage.FileInput" >
+        INSERT INTO t_fileInput(ip,userName,password,port,path,format)
+        VALUES (
+        #{ip},
+        #{userName},
+        #{password},
+        #{port},
+        #{path},
+        #{format}
+        )
+    </insert>
+
+    <update id="updateFInput" parameterType="com.fms.domain.filemanage.FileInput">
+        UPDATE t_fileInput
+        SET
+        <if test="ip != null">
+            ip = #{ip},
+        </if>
+        <if test="userName != null">
+            userName = #{userName},
+        </if>
+        <if test="password != null">
+            password = #{password},
+        </if>
+        <if test="port != null">
+            port = #{port},
+        </if>
+        <if test="path != null">
+            path = #{path},
+        </if>
+        <if test="format != null">
+            format = #{format},
+        </if>
+        id = #{id}
+        where id = #{id}
+    </update>
+
+    <select id="getFileInput" parameterType="long" resultType="com.fms.domain.filemanage.FileInput">
+        SELECT <include refid="cols" />
+        FROM t_fileInput
+        where id=#{id}
+    </select>
+
+
+    <select id="getFileInputById" parameterType="long" resultType="com.fms.domain.filemanage.FileInput">
+        SELECT <include refid="cols" />
+        FROM t_fileInput
+        where id=#{id}
+    </select>
+
+
+    <delete id="deleteFileInput" parameterType="long">
+        DELETE FROM t_fileInput
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getFileInputList" parameterType="map" resultType="com.fms.domain.filemanage.FileInput">
+        SELECT <include refid="cols" />
+        FROM t_fileInput
+    </select>
+
+</mapper>

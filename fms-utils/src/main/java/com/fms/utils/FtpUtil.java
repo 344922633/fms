@@ -4,8 +4,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.caeit.parser.excel.ExcelParser;
+import com.caeit.parser.json.JsonParser;
+import com.caeit.parser.xml.XmlParser;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
@@ -115,7 +121,80 @@ public class FtpUtil {
         }
         
     }
-    
+
+    public static JSONArray handleFile(Ftp f,String remoteBaseDir) throws Exception {
+        JSONArray result = new JSONArray();
+
+        if (FtpUtil.connectFtp(f)) {
+//            OutputStream outputStream = null;
+
+            try {
+                FTPFile[] files = null;
+                boolean changedir = ftp.changeWorkingDirectory(remoteBaseDir);
+                if (changedir) {
+                    ftp.setControlEncoding("GBK");
+                    files = ftp.listFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        try {
+                            FTPFile ftpFile = files[i];
+                            String fileName = ftpFile.getName();
+                            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+//                            String relativeLocalPath = "e:/temp";
+//
+//                    outputStream = new FileOutputStream(relativeLocalPath + ftpFile.getName());
+//                    ftp.retrieveFile(ftpFile.getName(), outputStream);
+//                    outputStream.flush();
+//                    outputStream.close();
+
+//                    File tempFile = new File(relativeLocalPath + ftpFile.getName());
+
+                            JSONObject obj = new JSONObject();
+                            JSONObject obj1 = new JSONObject();
+                            JSONArray data = new JSONArray();
+                            JSONArray columns = new JSONArray();
+//                    JSONObject obj2 = new JSONObject();
+//                    JSONObject obj3 = new JSONObject();
+
+                            obj.put("operationSource", "HuiJu_PLATFORM");
+                            obj.put("data", data);
+                            obj1.put("operationType", "UPDATE");
+                            obj1.put("objectCode", "dxbm");
+                            obj1.put("objectCodeValue", "sbqg002");
+                            obj1.put("schema", "wltsfx_analysis");
+                            obj1.put("table", "nz_sb_jbsx");
+                            obj1.put("columns", columns);
+                            data.add(obj1);
+
+                            if (suffix.equals("xml")) {
+                                Map<String, String> map = new XmlParser().parseXml(new File("D:\\XmlParser_testFile.xml"));
+                                String outPut = map.get("jsonBottomLevel");
+                                String str = outPut.replace("=", ":");
+                                JSONObject jsonObject = JSONObject.parseObject(str);
+                                JSONObject jsonBottomLevel = jsonObject.getJSONObject("jsonBottomLevel");
+                                JSONArray rootUserArray = jsonBottomLevel.getJSONArray("root user");
+                                for (int j = 0; j < rootUserArray.size(); j++) {
+                                    JSONObject ob = rootUserArray.getJSONObject(j);
+                                    columns.add(ob);
+                                }
+                            } else if (suffix.equals("json")) {
+                                Map<String, String> map = new JsonParser().parseJson(new File("D:\\JsonParser_testFile.json"));
+                                String outPut = map.get("jsonBottomLevel");
+                            } else if (suffix.equals("xls") || suffix.equals("xlsx")) {
+                                Map<String, String> map = new ExcelParser().parseExcel(new File("D:\\XlsParser_testFile.xls"), true); //true 表示是否行排列，false表示列排列，目前仅支持行排列即可
+                                String outPut = map.get("jsonBottomLevel");
+                            }
+                            result.add(obj);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }else{
+        }
+        return result;
+    }
     
     /** 
      * 

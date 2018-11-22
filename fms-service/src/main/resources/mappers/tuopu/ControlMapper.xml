@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.tuopu.ControlService">
+
+    <sql id="all">
+        id,
+        name,
+        type,
+        image
+    </sql>
+
+
+    <insert id="add" parameterType="com.fms.domain.tuopu.Control" >
+        INSERT INTO t_control (id,name,type,image)
+        VALUES (
+        #{id},
+        #{name},
+        #{type},
+        #{image}
+        )
+    </insert>
+
+    <select id="getList" parameterType="map" resultType="com.fms.domain.tuopu.Control">
+        SELECT <include refid="all" />
+        FROM t_control
+    </select>
+
+</mapper>

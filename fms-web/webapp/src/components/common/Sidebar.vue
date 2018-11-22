@@ -141,6 +141,17 @@
                         index: 'prinSuboRelation',
                         title: '主从关系管理',
                         icon: 'el-icon-upload'
+                    },
+                    {
+                        index: 'tuopu',
+                        title: '拓扑图管理',
+                        icon: 'el-icon-upload'
+                    },
+
+                    {
+                        index: 'fileInput',
+                        title: '离线文件导入',
+                        icon: 'el-icon-upload'
                     }
 
                     /*,

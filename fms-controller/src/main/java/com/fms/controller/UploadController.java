@@ -1,5 +1,6 @@
 package com.fms.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.anniweiya.fastdfs.FastDFSTemplate;
 import com.anniweiya.fastdfs.FastDfsInfo;
 import com.anniweiya.fastdfs.exception.FastDFSException;
@@ -20,6 +21,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +33,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
@@ -56,6 +61,121 @@ public class UploadController {
     private Environment env;
     @Autowired
     private FileParserJarService fileParserJarService;
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
+
+    @RequestMapping(value = "/uploadFromFtpFile", method = RequestMethod.POST)
+    public void uploadFromFtpFile(@RequestParam String ipAddr, @RequestParam int port,@RequestParam String userName,@RequestParam String pwd,@RequestParam String path,HttpServletResponse response) {
+        Runnable runnable = new Runnable() {
+            public void run() {
+                Ftp ftp=new Ftp();
+                ftp.setIpAddr(ipAddr);
+                ftp.setPort(port);
+                ftp.setUserName(userName);
+                ftp.setPwd(pwd);
+                ftp.setPath(path);
+                ftp.setDirectoryId(1L);
+                //下载ftp到本地临时目录
+                String directory = ftp.getPath();
+
+                String tempFold = env.getProperty("file.tmpPath") + "/ftpFile/" + UUID.randomUUID().toString().replaceAll("-", "");
+
+                Path dirPath = Paths.get(tempFold);
+                if (!Files.exists(dirPath)) {
+                    try {
+                        Files.createDirectories(dirPath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (21 == ftp.getPort())
+                {
+                    try {
+                        FtpUtil.connectFtp(ftp);
+                        FtpUtil.startDown(ftp, tempFold, directory);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    SFTPUtils sf = SFTPUtils.getInstance(ftp);
+                    Vector<ChannelSftp.LsEntry> files = null;        //查看文件列表
+                    try {
+                        files = sf.listFiles(directory);
+                        if (files != null && files.size() > 0)
+                        {
+                            for (ChannelSftp.LsEntry lsEntry : files)
+                            {
+                                String fileName = lsEntry.getFilename();
+                                if(!fileName.equals(".") && !fileName.equals("..")) {
+                                    if (!lsEntry.getAttrs().isDir()) {
+                                        File download = sf.download(directory + "/" + lsEntry.getFilename(), tempFold + "/" + fileName);
+                                        try {
+                                            FileInputStream fis = null;
+                                            ByteArrayOutputStream bos = null;
+                                            byte[] buffer = null;
+                                            fis = new FileInputStream(download.getAbsolutePath());
+                                            bos = new ByteArrayOutputStream();
+
+                                            byte[] b = new byte[1024];
+
+                                            int n;
+
+                                            while ((n = fis.read(b)) != -1) {
+                                                bos.write(b, 0, n);
+                                            }
+
+                                            buffer = bos.toByteArray();
+                                            String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" :fileName.substring(fileName.lastIndexOf(".") + 1);
+                                            FastDfsInfo info = fastDFSTemplate.upload(buffer, suffix);
+                                            if (info != null) {
+                                                Long dirId = ftp.getDirectoryId();
+//                                String relativePath = fileInfo.getWebkitRelativePath();
+
+
+                                                //test
+//                                if (!Strings.isNullOrEmpty(relativePath)) {
+//                                }
+                                                Date currentDate = new Date();
+                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                                                String relativePath = sdf.format(currentDate);
+                                                dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                                                saveFile(info,fileName,suffix,dirId,null);
+
+                                                // 清除文件夹
+                                                File tempFile = new File(tempFold);
+                                                if (tempFile.isDirectory() && tempFile.exists()) {
+                                                    tempFile.delete();
+                                                }
+
+                                            }
+                                        } catch (FastDFSException e) {
+                                            e.printStackTrace();
+                                        } catch (FileNotFoundException e) {
+                                            e.printStackTrace();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (SftpException e) {
+                        e.printStackTrace();
+                    }
+                    sf.disconnect();
+                }
+
+            }
+        };
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
+        service.scheduleAtFixedRate(runnable, 0, 5, TimeUnit.SECONDS);
+    }
+
 
     /**
      * 上传分片文件
