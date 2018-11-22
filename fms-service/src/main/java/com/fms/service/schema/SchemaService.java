@@ -1,9 +1,11 @@
 package com.fms.service.schema;
 
+import com.fms.utils.SchemaUtil;
 import com.handu.apollo.data.mybatis.Dao;
 import com.handu.apollo.data.utils.Param;
 import com.handu.apollo.utils.CharPool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +16,9 @@ public class SchemaService {
     public static final String CLASSNAME = SchemaService.class.getName() + CharPool.PERIOD;
     @Autowired
     private Dao dao;
+
+    @Autowired
+    KafkaTemplate kafkaTemplate;
 
     public List<Map<String,Object>> listColumns(String tableName) {
         Map<String, Object> params = Param.get()
@@ -44,7 +49,9 @@ public class SchemaService {
                 .put("tableName", tableName)
                 .put("data", tableColumnTemp)
                 .build();
-        dao.insert(CLASSNAME, "insertData", params);
+//        dao.insert(CLASSNAME, "insertData", params);
+        //发送kafka消息
+        kafkaTemplate.send("operation_3rd1",SchemaUtil.schemaStrFormat(tableName,tableColumnTemp));
     }
 
 }

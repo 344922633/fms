@@ -123,9 +123,9 @@ public class SchemaController {
 
     @RequestMapping("insertDataFormasterslave")
     public Object insertDataFormasterslave(String masterslavename, String data) {
-        if(true){
-            kafkaTemplate.send("schema",data);
-        }else{
+//        if(true){
+//            kafkaTemplate.send("schema",data);
+//        }else{
             ObjectMapper mapper = JsonUtil.getMapper();
             MasterSlaveDo masterSlaveDoForQuery = new MasterSlaveDo();
             masterSlaveDoForQuery.setName(masterslavename);
@@ -148,7 +148,7 @@ public class SchemaController {
                     return ExtUtil.failure(e.getCause().getMessage());
                 }
             }
-        }
+//        }
 
         return ExtUtil.success("操作成功");
     }
