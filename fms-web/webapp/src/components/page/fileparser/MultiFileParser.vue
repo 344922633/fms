@@ -13,20 +13,41 @@
                     <Button type="success" shape="circle" ghost size="small" style="margin: 5px" @click="handleMultiParse">执行解析</Button>
                     <Button type="success" shape="circle" ghost size="small" style="margin: 5px" @click="isFileUp=true">文件上传</Button>
                     <Card title="预分类">
-                        数据库类文件
-                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor1" :columns="preClassColumns1" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange1"></Table>
-                        拓扑结构类文件
-                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor2" :columns="preClassColumns2" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange2"></Table>
-                        结构化文件
-                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor3" :columns="preClassColumns3" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange3"></Table>
-                        文本类文件
-                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor4" :columns="preClassColumns4" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange4"></Table>
-                        配置类文件
-                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor5" :columns="preClassColumns5" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange5"></Table>
-                        日志类文件
-                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor6" :columns="preClassColumns6" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange6"></Table>
-                        程序类文件
-                        <Table highlight-row ref="currentRowTable1" :data="preClassDataFor7" :columns="preClassColumns7" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange7"></Table>
+                        <div style="cursor:pointer" @click="choseDbFile">数据库类文件 <i v-show="!dBshow" data-v-1f234af1="" class="el-icon-caret-right"></i> <i v-show="dBshow" data-v-1f234af1="" class="el-icon-caret-bottom"></i></div>
+                        <div v-show="dBshow">
+                            <Table highlight-row ref="currentRowTable1" :data="preClassDataFor1" :columns="preClassColumns1" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange1"></Table>
+                        </div>
+                        <div style="border:1px dashed #c0c4cc"></div>
+                        <div style="cursor:pointer" @click="choseTbFile">拓扑结构类文件 <i v-show="!tPshow" data-v-1f234af1="" class="el-icon-caret-right"></i> <i v-show="tPshow" data-v-1f234af1="" class="el-icon-caret-bottom"></i></div>
+                        <div v-show="tPshow">
+                            <Table highlight-row ref="currentRowTable1" :data="preClassDataFor2" :columns="preClassColumns2" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange2"></Table>
+                        </div>
+                        <div style="border:1px dashed #c0c4cc"></div>
+                        <div style="cursor:pointer" @click="choseJgFile">结构化文件 <i v-show="!jGshow" data-v-1f234af1="" class="el-icon-caret-right"></i> <i v-show="jGshow" data-v-1f234af1="" class="el-icon-caret-bottom"></i></div>
+                        <div v-show="jGshow">
+                            <Table highlight-row ref="currentRowTable1" :data="preClassDataFor3" :columns="preClassColumns3" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange3"></Table>
+                        </div>
+                        <div style="border:1px dashed #c0c4cc"></div>
+                        <div style="cursor:pointer" @click="choseTxFile">文本类文件 <i v-show="!tXshow" data-v-1f234af1="" class="el-icon-caret-right"></i> <i v-show="tXshow" data-v-1f234af1="" class="el-icon-caret-bottom"></i></div>
+                        <div v-show="tXshow">
+                            <Table highlight-row ref="currentRowTable1" :data="preClassDataFor4" :columns="preClassColumns4" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange4"></Table>
+                        </div>
+                        <div style="border:1px dashed #c0c4cc"></div>
+                        <div style="cursor:pointer" @click="choseCfFile">配置类文件 <i v-show="!cFshow" data-v-1f234af1="" class="el-icon-caret-right"></i> <i v-show="cFshow" data-v-1f234af1="" class="el-icon-caret-bottom"></i></div>
+                        <div v-show="cFshow">
+                            <Table highlight-row ref="currentRowTable1" :data="preClassDataFor5" :columns="preClassColumns5" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange5"></Table>
+                        </div>
+                        <div style="border:1px dashed #c0c4cc"></div>
+                        <div style="cursor:pointer" @click="choseLgFile">日志类文件 <i v-show="!lGshow" data-v-1f234af1="" class="el-icon-caret-right"></i> <i v-show="lGshow" data-v-1f234af1="" class="el-icon-caret-bottom"></i></div>
+                        <div v-show="lGshow">
+                            <Table highlight-row ref="currentRowTable1" :data="preClassDataFor6" :columns="preClassColumns6" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange6"></Table>
+                        </div>
+                        <div style="border:1px dashed #c0c4cc"></div>
+                        <div style="cursor:pointer" @click="chosePrFile">程序类文件 <i v-show="!pRshow" data-v-1f234af1="" class="el-icon-caret-right"></i> <i v-show="pRshow" data-v-1f234af1="" class="el-icon-caret-bottom"></i></div>
+                        <div v-show="pRshow">
+                            <Table highlight-row ref="currentRowTable1" :data="preClassDataFor7" :columns="preClassColumns7" min-height="300" height="400" tref="1"   @on-row-click="handleLeftRowClick"  @on-selection-change="handlePreSelectionChange7"></Table>
+                        </div>
+                        <div style="border:1px dashed #c0c4cc"></div>
                     </Card>
                     <Card title="待分类">
                         <Table highlight-row ref="currentRowTable2" :data="waitClassData" :columns="waitClassColumns" min-height="300"  height="400" tref="2"  @on-row-click="handleLeftRowClick" @on-selection-change="handleWaitSelectionChange"></Table>
@@ -101,6 +122,14 @@
         name: 'draglist',
         data() {
             return {
+                dBshow:false,
+                tPshow:false,
+                jGshow:false,
+                tXshow:false,
+                cFshow:false,
+                lGshow:false,
+                pRshow:false,
+
                 config: {},
                 fixCon:false,
                 viewFileName:'',
@@ -678,6 +707,43 @@
             }
         },
         methods: {
+
+            //数据库类文件
+            choseDbFile(){
+                this.dBshow = !this.dBshow;
+            },
+            //拓扑结构类文件
+            choseTbFile(){
+                this.tPshow = !this.tPshow;
+            },
+            //结构化文件
+            choseJgFile(){
+                this.jGshow = !this.jGshow;
+            },
+            //文本类文件
+            choseTxFile(){
+                this.tXshow = !this.tXshow;
+            },
+            //配置类文件
+            choseCfFile(){
+                this.cFshow = !this.cFshow;
+            },
+            //日志类文件
+            choseLgFile(){
+                this.lGshow = !this.lGshow;
+            },
+            //程序类文件
+            chosePrFile(){
+                this.pRshow = !this.pRshow;
+            },
+
+
+
+
+
+
+
+
             //上传合并
             fileSuccess(rootFile, file, message, chunk) {
                 this.$axios.post('mvc/mergeFile', {
