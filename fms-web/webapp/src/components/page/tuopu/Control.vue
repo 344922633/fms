@@ -17,7 +17,8 @@
                     <el-form-item label="控件名称" label-width="100px">
                         <el-input v-model="form.name" style="width:200px;"></el-input>
                     </el-form-item>
-                    <el-form-item label-width="100px" :label="`控件属性${index || ''}`" v-for="(item, index) in inputs" :key="index">
+                    <el-form-item label-width="100px" :label="`控件属性${index || ''}`" v-for="(item, index) in inputs"
+                                  :key="index">
                         <div class="proper-wrap">
                             <el-input v-model="item.text" style="width:200px;"></el-input>
                             <i v-if="index === 0" class="el-icon-plus" @click="addInput"></i>
@@ -34,33 +35,33 @@
                     <el-form-item label="控件上传" label-width="100px">
                         <el-upload
                             ref="elUpload"
-                        action="mvc/control/imgUpload"
-                        list-type="picture-card"
-                        accept="image/*"
-                        :limit="imgLimit"
-                        :file-list="productImgs"
-                        :multiple="isMultiple"
-                        :on-preview="handlePictureCardPreview"
-                        :on-remove="handleRemove"
-                        :on-success="handleUploadSuccess"
-                        :before-upload="beforeAvatarUpload"
-                        :on-exceed="handleExceed"
-                        :on-error="imgUploadError">
-                        <i class="el-icon-plus"></i>
+                            action="mvc/control/imgUpload"
+                            list-type="picture-card"
+                            accept="image/*"
+                            :limit="imgLimit"
+                            :file-list="productImgs"
+                            :multiple="isMultiple"
+                            :on-preview="handlePictureCardPreview"
+                            :on-remove="handleRemove"
+                            :on-success="handleUploadSuccess"
+                            :before-upload="beforeAvatarUpload"
+                            :on-exceed="handleExceed"
+                            :on-error="imgUploadError">
+                            <i class="el-icon-plus"></i>
                         </el-upload>
-                    <!--    <el-dialog :visible.sync="dialogVisible">
-                            <img width="100%" :src="dialogImageUrl" alt="">
-                        </el-dialog>
--->
-                    <!--    <el-upload
-                            class="avatar-uploader"
-                            action="mvc/sd"
-                            :show-file-list="false"
-                            :on-success="handleAvatarSuccess"
-                            :before-upload="beforeAvatarUpload">
-                            <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                        </el-upload>-->
+                        <!--    <el-dialog :visible.sync="dialogVisible">
+                                <img width="100%" :src="dialogImageUrl" alt="">
+                            </el-dialog>
+    -->
+                        <!--    <el-upload
+                                class="avatar-uploader"
+                                action="mvc/sd"
+                                :show-file-list="false"
+                                :on-success="handleAvatarSuccess"
+                                :before-upload="beforeAvatarUpload">
+                                <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>-->
                     </el-form-item>
                     <el-form-item>
                         <el-button @click="cancelCrop">取 消</el-button>
@@ -161,7 +162,6 @@
                     spinner: 'el-icon-loading',
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
-
                 this.$axios.post("mvc/control/add", {
                     name: this.form.name,
                     type: this.form.type,
@@ -171,7 +171,7 @@
                     this.$message.success('提交成功')
                     this.reset()
                     loading.close()
-                }).catch(e =>{
+                }).catch(e => {
                     loading.close()
                 })
             },
@@ -203,7 +203,7 @@
     }
 
     .el-upload__input {
-        display: none!important;
+        display: none !important;
     }
 
     .avatar-uploader-icon {
@@ -215,12 +215,12 @@
         text-align: center;
     }
 
-   /* .avatar {
-        cancelCrop width: 178px;
-        height: 178px;
-        display: block;
-    }
-*/
+    /* .avatar {
+         cancelCrop width: 178px;
+         height: 178px;
+         display: block;
+     }
+ */
     .proper-wrap {
         margin-bottom: 12px;
     }

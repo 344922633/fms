@@ -124,11 +124,11 @@
                 tableData: [],
                 addVisible: false,
                 form: {
-                    ip: '',
-                    userName: '',
-                    password: '',
-                    port: '',
-                    path: '',
+                    ip: '47.93.40.219',
+                    userName: 'root',
+                    password: 'admin!123',
+                    port: '22',
+                    path: '/home/xuhubin',
                     format: ''
                 },
                 idx: -1,
@@ -149,22 +149,47 @@
         methods: {
             async uploadFile() {
                 await
-                    this.$axios.post('mvc/uploadFromFtpFile', {
-                        ipAddr: this.form.ip,
-                        port: this.form.port,
-                        userName: this.form.userName,
+                    this.$axios.post('mvc/uploadFromFtpFile',{
+                        ipAddr:this.form.ip,
+                        port:this.form.port,
+                        userName:this.form.userName,
                         pwd: this.form.password,
                         path: this.form.path,
-                        // directoryId:this.tDirectoryId
-
                     }).then(res => {
-                        if (res.data.success) {
+                        if(res.data.success){
                             this.$notify({
                                 title: '提示',
                                 message: '上传成功！',
                                 type: 'success'
                             });
-                        } else {
+                        }else{
+                            this.$notify({
+                                title: '提示',
+                                message: '上传失败！',
+                                type: 'error'
+                            });
+                        }
+                    }).catch(e => {
+
+                    });
+            },
+
+            async uploadFileToLocal() {
+                await
+                    this.$axios.post('mvc/uploadFileToLocal',{
+                        ipAddr:this.form.ip,
+                        port:this.form.port,
+                        userName:this.form.userName,
+                        pwd: this.form.password,
+                        path: this.form.path,
+                    }).then(res => {
+                        if(res.data.success){
+                            this.$notify({
+                                title: '提示',
+                                message: '上传成功！',
+                                type: 'success'
+                            });
+                        }else{
                             this.$notify({
                                 title: '提示',
                                 message: '上传失败！',
@@ -213,11 +238,15 @@
                     path: this.form.path,
                     format: this.form.format
                 });
-                await this.uploadFile();
                 await this.getData();
                 this.addVisible = false;
+                if (this.form.format == "格式化") {
+                    await this.uploadFile();
+                }
+                else{
+                    await this.uploadFileToLocal();
+                }
             },
-
 
             async submitEdit() {
                 await this.$axios.post('mvc/fileInput/update', {

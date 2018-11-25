@@ -37,9 +37,9 @@
         <Form :label-width="100">
             <Divider>字段信息({{masterslave_name}})</Divider>
             <FormItem v-for="(item, index) in tableColumns" :key="item.column_name" :label="item.column_desc">
-                <Input v-if="item.inputType != 'select' && !(item.max_length > 100) " v-model="item.value" :placeholder="item.placehlder" :readonly="item.readonly" :value="item.value"/>
+                <Input v-if="item.inputType != 'select' && !(item.max_length > 100) " v-model="item.value" :placeholder="item.data_type" :readonly="item.readonly" :value="item.value"/>
 
-                <Input  type="textarea" v-if="item.inputType != 'select' && item.max_length > 100" v-model="item.value" />
+                <Input type="textarea" v-if="item.inputType != 'select' && item.max_length > 100" v-model="item.value" :placeholder="item.data_type"/>
                 <Select v-if="item.inputType == 'select'" v-model="item.value" >
                     <Option :value="singlevalue.selectValue" v-for="singlevalue in item.selectvalue" >{{singlevalue.selectLable}}</option>
                 </Select>
@@ -95,6 +95,7 @@
                     masterslavename: masterslaveview_name
                 }).then(res => {
                     this.tableColumns = res.data;
+                    //alert(JSON.stringify(this.tableColumns));
                     this.tableColumns.forEach((item, index) => {
                     if(item.column_key=="PRI" ){
                          var val=this.tableColumns[index].placeholder;
