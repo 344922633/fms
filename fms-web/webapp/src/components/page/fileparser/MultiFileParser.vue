@@ -704,9 +704,9 @@
                         }
                     }
                 ],
-                limit:10,
-                numOfSelect:10,
-                numOfSelectOptions:[5,10,30,50],
+                limit:20,
+                numOfSelect:20,
+                numOfSelectOptions:[20,30,50],
 
             }
         },
