@@ -8,7 +8,25 @@
         <div class="container" style="padding: 2px">
             <div class="drag-box">
                 <div class="drag-box-item">
-                    <div class="item-title">待处理</div>
+                    <el-row >
+                        <el-col :span="15">
+                            <div class="item-title">待处理</div>
+                        </el-col>
+                        <el-col :span="4">
+                            <div class="item-title-sel">每页显示</div>
+                        </el-col>
+                        <el-col :span="3" >
+
+                            <Select v-model="numOfSelect">
+                                <Option v-for="(item,key) in numOfSelectOptions" :value="item" :key="item">{{ item }}</Option>
+                            </Select>
+
+                        </el-col>
+                        <el-col :span="2">
+                            <div class="item-title-sel">条</div>
+                        </el-col>
+                    </el-row>
+
                     <Progress :percent="parsePercent" />
                     <Button type="success" shape="circle" ghost size="small" style="margin: 5px" @click="handleMultiParse">执行解析</Button>
                     <Button type="success" shape="circle" ghost size="small" style="margin: 5px" @click="isFileUp=true">文件上传</Button>
@@ -685,7 +703,11 @@
                             ]);
                         }
                     }
-                ]
+                ],
+                limit:20,
+                numOfSelect:20,
+                numOfSelectOptions:[20,30,50],
+
             }
         },
         created() {
@@ -840,6 +862,7 @@
             },
             //获取页面table数据
             getAllData() {
+                let _self=this;
                 this.$axios.post('mvc/fileParser/getList', {
 
                 }).then(res => {
@@ -850,7 +873,7 @@
                         'isParser':0,
                         isExport:0,
                         page:1,
-                        limit:50
+                        limit:_self.limit
                     }).then(res => {
                         this.preClassDataFor1 = res.data.list;
                         for(var i=0;i<this.preClassDataFor1.length;i++){
@@ -865,7 +888,7 @@
                         'isParser':0,
                         isExport:0,
                         page:1,
-                        limit:50
+                        limit:_self.limit
                     }).then(res => {
                         this.preClassDataFor2 = res.data.list;
                         for(var i=0;i<this.preClassDataFor2.length;i++){
@@ -879,7 +902,7 @@
                         'isParser':0,
                         isExport:0,
                         page:1,
-                        limit:50
+                        limit:_self.limit
                     }).then(res => {
                         this.preClassDataFor3 = res.data.list;
                         for(var i=0;i<this.preClassDataFor3.length;i++){
@@ -893,7 +916,7 @@
                         'isParser':0,
                         isExport:0,
                         page:1,
-                        limit:50
+                        limit:_self.limit
                     }).then(res => {
                         this.preClassDataFor4 = res.data.list;
                         for(var i=0;i<this.preClassDataFor4.length;i++){
@@ -907,7 +930,7 @@
                         'isParser':0,
                         isExport:0,
                         page:1,
-                        limit:50
+                        limit:_self.limit
                     }).then(res => {
                         this.preClassDataFor5 = res.data.list;
                         for(var i=0;i<this.preClassDataFor5.length;i++){
@@ -921,7 +944,7 @@
                         'isParser':0,
                         isExport:0,
                         page:1,
-                        limit:50
+                        limit:_self.limit
                     }).then(res => {
                         this.preClassDataFor6 = res.data.list;
                         for(var i=0;i<this.preClassDataFor6.length;i++){
@@ -935,7 +958,7 @@
                         'isParser':0,
                         isExport:0,
                         page:1,
-                        limit:50
+                        limit:_self.limit
                     }).then(res => {
                         this.preClassDataFor7 = res.data.list;
                         for(var i=0;i<this.preClassDataFor7.length;i++){
@@ -953,7 +976,7 @@
                         'isParser':0,
                         isExport:0,
                         page:1,
-                        limit:50
+                        limit:_self.limit
                     }).then(res => {
                         this.waitClassData = res.data.list;
                     })
@@ -962,7 +985,7 @@
                         'isParser':0,
                         isExport:0,
                         page:1,
-                        limit:50
+                        limit:_self.limit
                     }).then(res => {
                         this.otherData = res.data.list;
                     })
@@ -1410,6 +1433,13 @@
                         type: 'error'
                     });
                 });
+            },
+        },
+        watch:{
+            numOfSelect(val,oldval){
+               this.limit=val;
+               this.getAllData();
+
             }
         }
     }
@@ -1441,5 +1471,12 @@
     }
     .ivu-spin-fix {
         top: 30px;
+    }
+    .item-title-sel{
+        padding: 8px 8px ;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #24292e;
+        font-weight: 200;
     }
 </style>
