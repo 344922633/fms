@@ -140,12 +140,7 @@ public class FtpUtil {
             JSONArray data = new JSONArray();
             JSONArray columns = new JSONArray();
 
-            obj.put("operationSource", "HuiJu_PLATFORM");
-            obj1.put("operationType", "INSERT");
-            obj1.put("objectCode", "dxbm");
-            obj1.put("objectCodeValue", "sbqg002");
-            obj1.put("columns", columns);
-            columns.add(obj2);
+
 
             if (suffix.equals("xml")) {
                 Map<String, String> map = new XmlParser().parseXml(file);
@@ -164,13 +159,19 @@ public class FtpUtil {
                                 String table="";
                                 if(jsonObject.containsKey("table")){
                                     table= jsonObject.getString("table");
-                                }
+                                }*/
 
-                                obj1.put("schema", schema);
-                                obj1.put("table", table);*/
 
                     for (int i = 0; i < array.size(); i++) {
                         columns.clear();
+                        obj.put("operationSource", "HuiJu_PLATFORM");
+                        obj1.put("operationType", "INSERT");
+                        obj1.put("objectCode", "dxbm");
+                        obj1.put("objectCodeValue", "sbqg002");
+                        obj1.put("columns", columns);
+                        //    obj1.put("schema", schema);
+                        obj1.put("table", "zw_kzsx_sb");
+
                         JSONObject jsonObject = array.getJSONObject(i);
                         Iterator<String> colIt = jsonObject.keySet().iterator();
                         while (colIt.hasNext()) {
@@ -180,13 +181,12 @@ public class FtpUtil {
                             jsonCol.put("value", jsonObject.get(jsonKey));
                             columns.add(jsonCol);
                         }
+
                         data.add(obj1);
                         obj.put("data", data);
 
                         kafka.send("operation_3rd3", obj.toJSONString());
 
-                        //kafkaArray.add(obj);
-                        System.out.println(obj);
 
                     }
                 }

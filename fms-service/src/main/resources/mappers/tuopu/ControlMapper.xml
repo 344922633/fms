@@ -25,4 +25,8 @@
         FROM t_control
     </select>
 
+    <select id="getControl" parameterType="String" resultType="com.fms.domain.tuopu.Control">
+        SELECT <include refid="all" />
+        FROM t_control
+    </select>
 </mapper>

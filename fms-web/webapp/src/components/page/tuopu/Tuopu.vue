@@ -128,6 +128,19 @@
                     console.log(error);
                 });
             },
+/*
+            getQueryData() {
+                const id = this.$route.query.id
+                this.$axios.post('mvc/picture/handlePicture',{id}).then((res) => {
+                    const {data} = res
+                    if (data) {
+                        const {json} = data
+                        this.loadJSONData(json)
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },*/
             loadJSONData(res) {
                 try{
                     res = JSON.parse(res)

@@ -13,6 +13,12 @@ import "babel-polyfill";
 import qs from 'qs'
 import VueContextMenu from 'vue-contextmenu'
 import 'vue-contextmenu/style/css/font-awesome.min.css'
+
+const config = require('../config')
+var http = require('http');
+var fs = require('fs');
+var url = require('url');
+
 Vue.use(VueContextMenu)
 Vue.use(ElementUI, { size: 'small' });
 Vue.use(iView);

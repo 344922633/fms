@@ -183,7 +183,7 @@
                         pwd: this.form.password,
                         path: this.form.path,
                     }).then(res => {
-                        if(res.data.success){
+                     /*   if(res.data.success){
                             this.$notify({
                                 title: '提示',
                                 message: '上传成功！',
@@ -195,7 +195,7 @@
                                 message: '上传失败！',
                                 type: 'error'
                             });
-                        }
+                        }*/
                     }).catch(e => {
 
                     });
@@ -260,6 +260,12 @@
                 });
                 await this.getData();
                 this.editVisible = false;
+                if (this.form.format == "格式化") {
+                    await this.uploadFile();
+                }
+                else{
+                    await this.uploadFileToLocal();
+                }
             },
 
 

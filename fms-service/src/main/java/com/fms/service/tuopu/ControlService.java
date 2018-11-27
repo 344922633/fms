@@ -48,4 +48,8 @@ public class ControlService {
 		dao.insert(CLASSNAME,"add",control);
 	}
 
+	public List<Control> getControl(String name) {
+		return dao.getList(CLASSNAME, "getControl", name);
+	}
+
 }

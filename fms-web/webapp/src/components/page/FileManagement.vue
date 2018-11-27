@@ -783,12 +783,29 @@
                         content: '一次只能预览一个文件！'
                     });
                 }else{
-                    // this.loadHtml();
-                    let fileServerPath = this.config.fileServerPath;
-                    let previewPath = this.config.previewPath;
-                    let fileUrl = fileServerPath + '/' +  this.selectFileList[0].groups + '/'+ this.selectFileList[0].realPath;
-                    this.previewFileData = previewPath + encodeURIComponent(fileUrl);
-                    this.modalPreviewFile = true
+                    var filePath = this.selectFileList[0].realPath;
+                    if (filePath.endsWith("doc") || filePath.endsWith("docx")
+                        || filePath.endsWith("xls") || filePath.endsWith("xlsx")
+                        || filePath.endsWith("ppt") || filePath.endsWith("pptx")){
+
+                        var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
+                        var ip = ipRex.exec(this.config.fileServerPath);
+
+                        // var a = "http://localhost:8080/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");
+                        //var a = "http://47.93.40.219:8888/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");
+                        // a = "http://47.93.40.219:8888/word?filePath="+"file://"+'/root/data/fdfs/storage/data/00/17/rBD8oFv1CICAW5D_AAIzZXIH65019.docx'
+                        var a = "http://"+ ip +":8888/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");
+
+                        POBrowser.openWindowModeless(a,'width=1200px;height=800px;');
+                    } else {
+                        // this.loadHtml();
+                        //alert("暂不支持此文件格式。。。")
+                        let fileServerPath = this.config.fileServerPath;
+                        let previewPath = this.config.previewPath;
+                        let fileUrl = fileServerPath + '/' +  this.selectFileList[0].groups + '/'+ this.selectFileList[0].realPath;
+                        this.previewFileData = previewPath + encodeURIComponent(fileUrl);
+                        this.modalPreviewFile = true
+                    }
                 }
             },
             //修改功能保存选中分类

@@ -28,6 +28,13 @@ module.exports = {
                 pathRewrite: {
                     '/mvc': ''
                 }
+            },
+            '/po': {
+                target: 'http://127.0.0.1:8088/fms/',
+                changeOrigin: true,
+                pathRewrite: {
+                    '/po': ''
+                }
             }
         },
         // Various Dev Server settings

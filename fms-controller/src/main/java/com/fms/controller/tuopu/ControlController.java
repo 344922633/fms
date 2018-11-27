@@ -124,7 +124,7 @@ public class ControlController {
                     Files.write(path, bytes);
 
                     result.put("success", true);
-                    result.put("url", "/static/img/" +  localFileName);
+                    result.put("url", "/fms/static/img/" +  localFileName);
                     result.put("info", "上传成功！");
                 /*
 
