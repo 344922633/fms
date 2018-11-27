@@ -94,22 +94,12 @@ public class UploadController {
                     try {
                         FtpUtil.connectFtp(ftp);
                         FtpUtil.startDown(ftp, tempFold, directory);
-                        FtpUtil.handleFile(ftp,directory);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
                 else
                 {
-
-                    try {
-                        JSONArray arr=FtpUtil.handleFile(ftp,directory);
-                        for(int i=0;i<arr.size();i++){
-                            kafkaTemplate.send("operation_3rd3",arr.getJSONObject(i).toJSONString());
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                     SFTPUtils sf = SFTPUtils.getInstance(ftp);
                     Vector<ChannelSftp.LsEntry> files = null;        //查看文件列表
                     try {
@@ -121,7 +111,10 @@ public class UploadController {
                                 String fileName = lsEntry.getFilename();
                                 if(!fileName.equals(".") && !fileName.equals("..")) {
                                     if (!lsEntry.getAttrs().isDir()) {
-                                        File download = sf.download(directory + "/" + lsEntry.getFilename(), tempFold + "/" + fileName);
+//                                        File download = sf.download(directory + "/" + lsEntry.getFilename(), tempFold + "/" + fileName);
+                                        File download = new File("d:\\zw_kzsx_sb.xml");
+
+                                        String jsonStr=FtpUtil.handleFile(kafkaTemplate, download);
                                         try {
                                             FileInputStream fis = null;
                                             ByteArrayOutputStream bos = null;
@@ -169,11 +162,14 @@ public class UploadController {
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
+//                                        kafkaTemplate.send("operation_3rd3", jsonStr);
                                     }
                                 }
                             }
                         }
                     } catch (SftpException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     sf.disconnect();
