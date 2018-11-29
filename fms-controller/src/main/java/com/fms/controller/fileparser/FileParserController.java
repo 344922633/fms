@@ -383,6 +383,16 @@ public class FileParserController {
 
                 extParams.put("parserExtList", parserExtList);
             }
+            else
+            {
+                Map<String, Object> params = new HashMap<String,Object>();
+                params.put("parserId",fileParser.getId());
+                List<FileParserExt> parserExtList = fileParserExtService.getList(params);
+                if (!ObjectUtils.isEmpty(parserExtList))
+                {
+                    extParams.put("parserExtList",parserExtList);
+                }
+            }
             BlockManage condition = new BlockManage();
 
             condition.setFileParserId(fileParser.getId());
