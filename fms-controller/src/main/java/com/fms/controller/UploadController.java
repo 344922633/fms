@@ -103,18 +103,37 @@ public class UploadController {
                     SFTPUtils sf = SFTPUtils.getInstance(ftp);
                     Vector<ChannelSftp.LsEntry> files = null;        //查看文件列表
                     try {
+                        Long directoryId = ftp.getDirectoryId();
+
                         files = sf.listFiles(directory);
                         if (files != null && files.size() > 0)
                         {
                             for (ChannelSftp.LsEntry lsEntry : files)
                             {
+                                Date currentDate = new Date();
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                                String relativePath = sdf.format(currentDate);
+                                Long dirId = directoryService.createRelativePath(directoryId, relativePath.split("/"));
+
                                 String fileName = lsEntry.getFilename();
+                                Map<String, Object> params = new HashMap<>();
+                                params.put("name",fileName);
+                                params.put("directoryId",dirId);
+
+                                // 去重
+                                int count=fileService.queryCount(params);
+                                if(count>0){
+                                    continue;
+                                }
                                 if(!fileName.equals(".") && !fileName.equals("..")) {
                                     if (!lsEntry.getAttrs().isDir()) {
-//                                        File download = sf.download(directory + "/" + lsEntry.getFilename(), tempFold + "/" + fileName);
-                                        File download = new File("d:\\zw_kzsx_sb.xml");
+                                          File download = sf.download(directory + "/" + lsEntry.getFilename(), tempFold + "/" + fileName);
+//                                        File download = new File("d:\\zw_kzsx_sb.xml");
+//                                        File download = new File("d:\\zw_kzsx_sb.xls");
 
-                                        String jsonStr=FtpUtil.handleFile(kafkaTemplate, download);
+                                        FtpUtil.handleFile(kafkaTemplate, download);
+
                                         try {
                                             FileInputStream fis = null;
                                             ByteArrayOutputStream bos = null;
@@ -134,18 +153,14 @@ public class UploadController {
                                             String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" :fileName.substring(fileName.lastIndexOf(".") + 1);
                                             FastDfsInfo info = fastDFSTemplate.upload(buffer, suffix);
                                             if (info != null) {
-                                                Long dirId = ftp.getDirectoryId();
+
 //                                String relativePath = fileInfo.getWebkitRelativePath();
 
 
                                                 //test
 //                                if (!Strings.isNullOrEmpty(relativePath)) {
 //                                }
-                                                Date currentDate = new Date();
-                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-                                                String relativePath = sdf.format(currentDate);
-                                                dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
                                                 saveFile(info,fileName,suffix,dirId,null);
 
                                                 // 清除文件夹
@@ -179,7 +194,7 @@ public class UploadController {
         };
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
-        service.scheduleAtFixedRate(runnable, 0, 5, TimeUnit.SECONDS);
+        service.scheduleAtFixedRate(runnable, 0, 1800, TimeUnit.SECONDS);
     }
 
 
@@ -222,15 +237,36 @@ public class UploadController {
                     SFTPUtils sf = SFTPUtils.getInstance(ftp);
                     Vector<ChannelSftp.LsEntry> files = null;        //查看文件列表
                     try {
+                        Long directoryId = ftp.getDirectoryId();
+
                         files = sf.listFiles(directory);
                         if (files != null && files.size() > 0)
                         {
                             for (ChannelSftp.LsEntry lsEntry : files)
                             {
+                                Date currentDate = new Date();
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                                String relativePath = sdf.format(currentDate);
+                                Long dirId = directoryService.createRelativePath(directoryId, relativePath.split("/"));
+
                                 String fileName = lsEntry.getFilename();
+                                Map<String, Object> params = new HashMap<>();
+                                params.put("name",fileName);
+                                params.put("directoryId",dirId);
+
+                                // 去重
+                                int count=fileService.queryCount(params);
+                                if(count>0){
+                                    continue;
+                                }
                                 if(!fileName.equals(".") && !fileName.equals("..")) {
                                     if (!lsEntry.getAttrs().isDir()) {
                                         File download = sf.download(directory + "/" + lsEntry.getFilename(), tempFold + "/" + fileName);
+//                                        File download = new File("d:\\zw_kzsx_sb.xml");
+//                                        File download = new File("d:\\zw_kzsx_sb.xls");
+
+
                                         try {
                                             FileInputStream fis = null;
                                             ByteArrayOutputStream bos = null;
@@ -250,18 +286,14 @@ public class UploadController {
                                             String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" :fileName.substring(fileName.lastIndexOf(".") + 1);
                                             FastDfsInfo info = fastDFSTemplate.upload(buffer, suffix);
                                             if (info != null) {
-                                                Long dirId = ftp.getDirectoryId();
+
 //                                String relativePath = fileInfo.getWebkitRelativePath();
 
 
                                                 //test
 //                                if (!Strings.isNullOrEmpty(relativePath)) {
 //                                }
-                                                Date currentDate = new Date();
-                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-                                                String relativePath = sdf.format(currentDate);
-                                                dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
                                                 saveFile(info,fileName,suffix,dirId,null);
 
                                                 // 清除文件夹
@@ -278,11 +310,14 @@ public class UploadController {
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
+//                                        kafkaTemplate.send("operation_3rd3", jsonStr);
                                     }
                                 }
                             }
                         }
                     } catch (SftpException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     sf.disconnect();
@@ -292,8 +327,9 @@ public class UploadController {
         };
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
-        service.scheduleAtFixedRate(runnable, 0, 5, TimeUnit.SECONDS);
+        service.scheduleAtFixedRate(runnable, 0, 1800, TimeUnit.SECONDS);
     }
+
 
 
     /**

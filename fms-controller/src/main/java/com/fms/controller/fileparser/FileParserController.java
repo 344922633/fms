@@ -1,5 +1,6 @@
 package com.fms.controller.fileparser;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.anniweiya.fastdfs.FastDFSTemplate;
@@ -23,6 +24,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -76,6 +78,8 @@ public class FileParserController {
 
     @Autowired
     private ParserDefaultService parserDefaultService;
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
 
     /**
      * 查询文件解析器列表.
@@ -692,7 +696,13 @@ public class FileParserController {
     public Object parseDataSaveHBase(String jsonStr, String table_name, String customKeys, Long file_id, Long parserId) {
 
 //        List<Map<String, Object>> data = JSONUtils.jsonToObject(jsonStr, List.class, Map.class);
-//        Map<String, String> customKey = JSONUtils.jsonToObject(customKeys, Map.class);
+        JSONObject data=JSONObject.parseObject(jsonStr);
+        JSONObject customKey = JSONObject.parseObject(customKeys);
+        JSONArray msg=SchemaUtil.singleFileStrFormat(table_name,data,customKey);
+        for(int i=0;i<msg.size();i++){
+            kafkaTemplate.send("operation_3rd1",msg.getJSONObject(i).toJSONString());
+
+        }
 
         com.fms.domain.filemanage.File file = fileService.get(file_id);
         String fileMD5 = file.getFileMd5();
@@ -700,6 +710,7 @@ public class FileParserController {
         String fileInfo = file.toString();
         List<FileType> typeList = fileTypeService.getListByFileParserId(parserId);
         String fileType = typeList.get(0).getType();
+
 
         //数据入库
         boolean result = fileParserService.parseDataSaveDataHBase(file_id, parserId,jsonStr, fileInfo, fileType, fileMD5, fileName);

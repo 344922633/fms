@@ -12,10 +12,12 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.caeit.parser.excel.ExcelParser;
 import com.caeit.parser.xml.XmlParser;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+import org.junit.jupiter.api.Test;
 import org.springframework.kafka.core.KafkaTemplate;
 
 public class FtpUtil {
@@ -128,18 +130,11 @@ public class FtpUtil {
     }
 
 
-    public static String handleFile(KafkaTemplate kafka, File file) throws Exception {
-        String jsonStr = "";
+    public static void handleFile(KafkaTemplate kafka, File file) throws Exception {
         try {
             String fileName = file.getName();
             String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
             //JSONArray kafkaArray = new JSONArray();
-            JSONObject obj = new JSONObject();
-            JSONObject obj1 = new JSONObject();
-            JSONObject obj2 = new JSONObject();
-            JSONArray data = new JSONArray();
-            JSONArray columns = new JSONArray();
-
 
 
             if (suffix.equals("xml")) {
@@ -163,32 +158,48 @@ public class FtpUtil {
 
 
                     for (int i = 0; i < array.size(); i++) {
-                        columns.clear();
-                        obj.put("operationSource", "HuiJu_PLATFORM");
+                        JSONObject obj = new JSONObject();
+                        JSONArray data = new JSONArray();
+
+                        JSONObject obj1 = new JSONObject();
                         obj1.put("operationType", "INSERT");
                         obj1.put("objectCode", "dxbm");
-                        obj1.put("objectCodeValue", "sbqg002");
-                        obj1.put("columns", columns);
-                        //    obj1.put("schema", schema);
+                        obj.put("operationSource", "XX_PLATFORM");
+                     /*       obj1.put("schema", schema);
                         obj1.put("table", "zw_kzsx_sb");
+*/
+                        JSONArray columns = new JSONArray();
 
                         JSONObject jsonObject = array.getJSONObject(i);
                         Iterator<String> colIt = jsonObject.keySet().iterator();
                         while (colIt.hasNext()) {
+
                             String jsonKey = colIt.next();
+                            if(jsonKey.equals("schema")){
+                                obj1.put("schema", jsonObject.get(jsonKey).toString());
+                                continue;
+                            }
+                            if(jsonKey.equals("table")){
+                                obj1.put("table", jsonObject.get(jsonKey).toString());
+                                continue;
+                            }
+                            if(jsonKey.equals("dxbm")){
+                                obj1.put("objectCodeValue", jsonObject.get(jsonKey).toString());
+                            }
+
                             JSONObject jsonCol = new JSONObject();
                             jsonCol.put("name", jsonKey);
                             jsonCol.put("value", jsonObject.get(jsonKey));
                             columns.add(jsonCol);
-                        }
 
+                        }
+                        obj1.put("columns", columns);
                         data.add(obj1);
                         obj.put("data", data);
-
-                        kafka.send("operation_3rd3", obj.toJSONString());
-
-
+                        System.out.println(obj.toJSONString());
+                        kafka.send("operation_3rd1", obj.toJSONString());
                     }
+
                 }
             }
                       /*     else if (suffix.equals("json")) {
@@ -197,39 +208,81 @@ public class FtpUtil {
                                 Map<String, String> map = new JsonParser().parseJson(new File("D:\\JsonParser_testFile.json"));
                                 String outPut = map.get("jsonBottomLevel");
                             }*/
-                       /*     else if (suffix.equals("xls") || suffix.equals("xlsx")) {
-                                Map<String, String> map = new ExcelParser().parseExcel(new File("D:\\XlsParser_testFile.xls"), true); //true 表示是否行排列，false表示列排列，目前仅支持行排列即可
-                                for (int j = 0; j < map.size(); j++) {
-                                    String outPut = map.get("");
-                                    JSONObject jsonObject = JSONObject.parseObject(outPut);
+                            else if (suffix.equals("xls") || suffix.equals("xlsx")) {
+                                Map<String, String> map = new ExcelParser().parseExcel(file, true); //true 表示是否行排列，false表示列排列，目前仅支持行排列即可
+                                String outPut = map.get("jsonBottomLevel");
+                                System.out.println(outPut);
+                                JSONObject outPutJson = JSONObject.parseObject(outPut);
+                                Iterator<String> it = outPutJson.keySet().iterator();
+                                if (it.hasNext()) {
+                                    String key = it.next();// entitys entity
+                                    JSONArray array = outPutJson.getJSONArray(key);
+                                    // JSONArray array = JSONArray.parseArray(tableStr);
+                                            /*    String schema="";
+                                                if(jsonObject.containsKey("schema")){
+                                                    schema= jsonObject.getString("schema");
+                                                }
+                                                String table="";
+                                                if(jsonObject.containsKey("table")){
+                                                    table= jsonObject.getString("table");
+                                                }*/
 
-                                    JSONArray array = JSON.parseArray(jsonObject.get("").toString());
-                                    JSONObject jo = JSON.parseObject(array.get(0).toString());
-                                    JSONObject DXBM = jo.getJSONObject("DXBM");
-                                    JSONObject SBMC = jo.getJSONObject("SBMC");
-                                    JSONObject SBLX = jo.getJSONObject("SBLX");
-                                    JSONObject JBXX = jo.getJSONObject("JBXX");
-                                    JSONObject KSZT = jo.getJSONObject("KSZT");
-                                    JSONObject SCCK = jo.getJSONObject("SCCK");
-                                    JSONObject SLSJ = jo.getJSONObject("SLSJ");
-                                    columns.add(DXBM);
-                                    columns.add(SBMC);
-                                    columns.add(SBLX);
-                                    columns.add(JBXX);
-                                    columns.add(KSZT);
-                                    columns.add(SCCK);
-                                    columns.add(SLSJ);
-                                   obj1.put("schema", schema);
-                                    obj1.put("table", table);
-                                    data.add(obj1);
+
+                                    for (int i = 0; i < array.size(); i++) {
+                                        JSONObject obj = new JSONObject();
+                                        JSONArray data = new JSONArray();
+
+                                        JSONObject obj1 = new JSONObject();
+                                        obj1.put("operationType", "INSERT");
+                                        obj1.put("objectCode", "dxbm");
+                                        obj.put("operationSource", "XX_PLATFORM");
+                                     /*       obj1.put("schema", schema);
+                                        obj1.put("table", "zw_kzsx_sb");
+                */
+                                        JSONArray columns = new JSONArray();
+
+                                        JSONObject jsonObject = array.getJSONObject(i);
+                                        Iterator<String> colIt = jsonObject.keySet().iterator();
+                                        while (colIt.hasNext()) {
+
+                                            String jsonKey = colIt.next();
+                                            if (jsonKey.equals("schema")) {
+                                                obj1.put("schema", jsonObject.get(jsonKey).toString());
+                                                continue;
+                                            }
+                                            if (jsonKey.equals("table")) {
+                                                obj1.put("table", jsonObject.get(jsonKey).toString());
+                                                continue;
+                                            }
+                                            if (jsonKey.equals("dxbm")) {
+                                                obj1.put("objectCodeValue", jsonObject.get(jsonKey).toString());
+                                            }
+
+                                            JSONObject jsonCol = new JSONObject();
+                                            jsonCol.put("name", jsonKey);
+                                            jsonCol.put("value", jsonObject.get(jsonKey));
+                                            columns.add(jsonCol);
+
+                                        }
+                                        obj1.put("columns", columns);
+                                        data.add(obj1);
+                                        obj.put("data", data);
+                                        System.out.println(obj.toJSONString());
+                                        kafka.send("operation_3rd1", obj.toJSONString());
+                                    }
                                 }
-                            }*/
-            //jsonStr = kafkaArray.toJSONString();
+                }
         } catch (Exception e) {
         }
-        return jsonStr;
     }
 
+
+    @Test
+    public void test(){
+        File download = new File("d:\\zw_kzsx_sb.xml");
+        Map<String, String> map = new XmlParser().parseXml(download);
+        System.out.println(map.toString());
+    }
     /**
      * 下载FTP文件
      * 当你需要下载FTP文件的时候，调用此方法

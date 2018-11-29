@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -92,19 +93,15 @@ public class PictureController {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 		String date = df.format(new Date());
 		Picture picture;
-        JSONObject obj = new JSONObject();
-        JSONObject obj1 = new JSONObject();
-        JSONArray data = new JSONArray();
-        JSONArray columns = new JSONArray();
 
-        obj.put("operationSource", "HuiJu_PLATFORM");
+     /*   obj.put("operationSource", "HuiJu_PLATFORM");
         obj.put("data", data);
         obj1.put("operationType", "INSERT");
         obj1.put("objectCode", "dxbm");
         obj1.put("objectCodeValue", "sbqg002");
         obj1.put("schema", "wltsfx_analysis");
         obj1.put("table", "nz_sb_jbsx");
-
+*/
 		if (jsonObject != null) {
 			// 取出所有控件读取属性
 			if (StringUtils.isEmpty(idStr)) {
@@ -126,18 +123,32 @@ public class PictureController {
 
             // 循环获取控件
             for (int i = 0; i < btnArray.size(); i++) {
+                String str="dwj_"+System.nanoTime();
 
                 JSONObject kongjianObj = btnArray.getJSONObject(i);
 
                 JSONObject json = kongjianObj.getJSONObject("json");// "json": {
                 // }
 
-                String controlName = "";
+             /*   String controlName = "";
                 if (json.containsKey("name")) {
                     controlName = json.getString("name");
-                }
+                }*/
+
+                JSONObject obj = new JSONObject();
+                JSONArray data = new JSONArray();
+
+                JSONObject obj1 = new JSONObject();
+                obj.put("operationSource", "XX_PLATFORM");
+                obj1.put("operationType", "INSERT");
+                obj1.put("objectCode", "dxbm");
+                obj1.put("objectCodeValue", str);
+
+                JSONArray columns = new JSONArray();
+
+                JSONObject jo = btnArray.getJSONObject(i);
                 JSONObject properties = null;
-                if (json.containsKey("properties")) {
+     /*           if (jo.containsKey("properties")) {
                     properties = JSON.parseObject(json.getString("properties"));
                     System.out.println(properties);
                     for (String key : properties.keySet()) {
@@ -145,13 +156,48 @@ public class PictureController {
                         obj3.put(key, properties.get(key));
                         columns.add(obj3);
                     }
-                }
+                }*/
+                JSONObject columnObj1 =new JSONObject();
+
+                if (json.containsKey("properties")) {
+                    properties = JSON.parseObject(json.getString("properties"));
+
+                    Iterator<String> colIt = properties.keySet().iterator();
+
+                    while (colIt.hasNext()) {
+
+                    String jsonKey = colIt.next();
+                    if(jsonKey.equals("id")){
+                            continue;
+                        }
+                    if(jsonKey.equals("schema")){
+                        obj1.put("schema", properties.get(jsonKey).toString());
+                        continue;
+                    }
+                    if(jsonKey.equals("table")){
+                        obj1.put("table", properties.get(jsonKey).toString());
+                        continue;
+                    }
+
+                        JSONObject jsonCol = new JSONObject();
+                        jsonCol.put("name", jsonKey);
+                        jsonCol.put("value", properties.get(jsonKey));
+                        columns.add(jsonCol);
+
+                    }
+                    columnObj1.put("name", "dxbm");
+                    columnObj1.put("value", str);
+                    columns.add(columnObj1);
+
+                    obj1.put("columns", columns);
+                    data.add(obj1);
+                    obj.put("data", data);
+
+                System.out.println(obj.toJSONString());
+//                kafkaTemplate.send("operation_3rd1", obj.toJSONString());
+            }
 
             }
-            obj1.put("columns", columns);
-            data.add(obj1);
-            System.out.println(obj);
-//			kafkaTemplate.send("test", obj);
         }
 	}
 

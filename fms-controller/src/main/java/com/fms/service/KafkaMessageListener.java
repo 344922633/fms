@@ -16,7 +16,7 @@ public class KafkaMessageListener {
 
     public final CountDownLatch latch1 = new CountDownLatch(1);
 
-    @KafkaListener(id = "0", topics = {"image","insert","log","operation_3rd3"})
+    @KafkaListener(id = "0", topics = {"image","insert","log","operation_3rd1"})
     public void listen1(ConsumerRecord<?, ?> record) {
         switch (record.topic()){
             case "image":
