@@ -63,7 +63,7 @@
     </sql>
     <sql id="condition">
         <if test="name != null and name != ''">
-            AND name = #{name}
+            AND name LIKE CONCAT('%',#{name},'%')
         </if>
         <if test="realPath != null and realPath != ''">
             AND real_path = #{realPath}
@@ -117,6 +117,7 @@
         SELECT <include refid="all" />
         FROM fms_file
         WHERE  1 = 1
+
         <include refid="condition" />
         order by name
     </select>
@@ -141,6 +142,11 @@
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
+    </select>
+
+    <select id="getAllFIles" parameterType="map" resultType="com.fms.domain.filemanage.File">
+        SELECT <include refid="all" />
+        FROM fms_file
     </select>
 
     <select id="queryCount" parameterType="map" resultType="int">

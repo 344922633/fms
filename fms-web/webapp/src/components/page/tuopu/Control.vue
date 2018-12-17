@@ -12,7 +12,36 @@
             </router-link>
         </Row>
         <div class="container">
-            <div class="form-box">
+            <Button @click="handleAdd">上传控件</Button>
+            <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table"
+                      ref="multipleTable">
+                <el-table-column prop="name" align="center" label="控件名称" width="120">
+                </el-table-column>
+                <el-table-column prop="type" align="center" label="控件类型" width="120">
+                </el-table-column>
+                <el-table-column prop="image" align="center" label="图片路径" width="240">
+                </el-table-column>
+                <el-table-column label="操作" align="center" width="240">
+                    <template slot-scope="scope">
+                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑
+                        </el-button>
+                        <el-button type="text" icon="el-icon-delete" class="red"
+                                   @click="handleDelete(scope.$index, scope.row)">删除
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <!-- 删除提示框 -->
+            <el-dialog title="提示" :visible.sync="delVisible" width="300px" center>
+                <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+                <span slot="footer" class="dialog-footer">
+                <el-button @click="delVisible = false">取 消</el-button>
+                <el-button type="primary" @click="deleteRow">确 定</el-button>
+            </span>
+            </el-dialog>
+
+            <el-dialog title="新增" :visible.sync="addVisible" width="40%">
                 <el-form ref="form" :model="form" label-width="100px">
                     <el-form-item label="控件名称" label-width="100px">
                         <el-input v-model="form.name" style="width:200px;"></el-input>
@@ -27,9 +56,9 @@
                     </el-form-item>
                     <el-form-item label="控件类型" label-width="100px">
                         <el-select v-model="form.type" placeholder="请选择" style="width:200px;">
-                            <el-option key="bbk" label="网络" value="bbk"></el-option>
-                            <el-option key="xtc" label="硬件" value="xtc"></el-option>
-                            <el-option key="imoo" label="区块" value="imoo"></el-option>
+                            <el-option key="网络" label="网络" value="网络"></el-option>
+                            <el-option key="硬件" label="硬件" value="硬件"></el-option>
+                            <el-option key="区块" label="区块" value="区块"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="控件上传" label-width="100px">
@@ -68,6 +97,79 @@
                         <el-button type="primary" @click="onSubmit">提交</el-button>
                     </el-form-item>
                 </el-form>
+                </el-dialog>
+
+                <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
+                    <el-form ref="form" :model="form" label-width="100px">
+                        <el-form-item label="控件名称" label-width="100px">
+                            <el-input v-model="form.name" style="width:200px;"></el-input>
+                        </el-form-item>
+                        <el-form-item label-width="100px" :label="`控件属性${index || ''}`" v-for="(item, index) in inputs"
+                                      :key="index">
+                            <div class="proper-wrap">
+                                <el-input v-model="item.text" style="width:200px;"></el-input>
+                                <i v-if="index === 0" class="el-icon-plus" @click="addInput"></i>
+                                <i v-else class="el-icon-minus" @click="removeInput(index)"></i>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="控件类型" label-width="100px">
+                            <el-select v-model="form.type" placeholder="请选择" style="width:200px;">
+                                <el-option key="bbk" label="网络" value="bbk"></el-option>
+                                <el-option key="xtc" label="硬件" value="xtc"></el-option>
+                                <el-option key="imoo" label="区块" value="imoo"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="控件上传" label-width="100px">
+                            <el-upload
+                                ref="elUpload"
+                                action="mvc/control/imgUpload"
+                                list-type="picture-card"
+                                accept="image/*"
+                                :limit="imgLimit"
+                                :file-list="productImgs"
+                                :multiple="isMultiple"
+                                :on-preview="handlePictureCardPreview"
+                                :on-remove="handleRemove"
+                                :on-success="handleUploadSuccess"
+                                :before-upload="beforeAvatarUpload"
+                                :on-exceed="handleExceed"
+                                :on-error="imgUploadError">
+                                <i class="el-icon-plus"></i>
+                            </el-upload>
+                            <!--    <el-dialog :visible.sync="dialogVisible">
+                                    <img width="100%" :src="dialogImageUrl" alt="">
+                                </el-dialog>
+        -->
+                            <!--    <el-upload
+                                    class="avatar-uploader"
+                                    action="mvc/sd"
+                                    :show-file-list="false"
+                                    :on-success="handleAvatarSuccess"
+                                    :before-upload="beforeAvatarUpload">
+                                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                </el-upload>-->
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button @click="cancelCrop">取 消</el-button>
+                            <el-button type="primary" @click="onSubmit">提交</el-button>
+                        </el-form-item>
+                    </el-form>
+
+                <span slot="footer" class="dialog-footer">
+                <el-button @click="addVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submitAdd">确 定</el-button>
+            </span>
+            </el-dialog>
+            <div class="pagination">
+                <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :total="tableData.length"
+                    :page-size="pageSize"
+                    :current-page="currentPage"
+                    @current-change="handleCurrentChange">
+                </el-pagination>
             </div>
         </div>
     </div>
@@ -78,11 +180,17 @@
     export default {
         data() {
             return {
+                tableData: [],
                 form: {
                     name: '',
                     type: '',
-                    imageUrl: ''
+                    image: ''
                 },
+                editVisible:false,
+                pageSize:20,
+                currentPage:1,
+                delVisible: false,
+                addVisible: false,
                 dialogImageUrl: '',
                 dialogVisible: false,
                 productImgs: [],
@@ -93,7 +201,55 @@
                 ],
             }
         },
+        created() {
+            this.getData();
+        },
         methods: {
+            handleCurrentChange(val) {
+                this.currentPage = val;
+            },
+
+            handleAdd() {
+                this.form = {
+                    name: "",
+                    type: "",
+                    imageUrl: ""
+                };
+                this.addVisible = true;
+
+            },
+
+            handleEdit(index, row) {
+                this.idx = index;
+                const item = this.tableData[index];
+                this.form = {
+                    name: item.name,
+                    type: item.type,
+                    imageUrl: item.imageUrl
+
+                };
+                this.editVisible = true;
+            },
+
+
+            async getData() {
+                let {data} = await this.$axios.post('mvc/control/getList');
+                this.tableData = data;
+            },
+
+            handleDelete(index, row) {
+                this.idx = index;
+                this.delVisible = true;
+            },
+
+            // 确定删除
+            async deleteRow(){
+                await this.$axios.post('mvc/control/delete', {id: this.tableData[this.idx].id});
+                await this.getData();
+                this.$message.success('删除成功');
+                this.delVisible = false;
+            },
+
             handleRemove(file, fileList) {//移除图片
                 console.log(file, fileList);
             },
@@ -169,6 +325,7 @@
                     url: this.form.imageUrl
                 }).then(function (result) {
                     this.$message.success('提交成功')
+                    // this.getData();
                     this.reset()
                     loading.close()
                 }).catch(e => {

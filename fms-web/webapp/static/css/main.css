@@ -216,3 +216,11 @@ a {
     flex-flow: column nowrap;
     justify-content: flex-end;
 }
+
+.ivu-modal-fullscreen {
+    width: 80%!important;
+    left: 50px;
+    top: 50px;
+    right: 50px;
+    bottom:50px;
+}

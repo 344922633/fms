@@ -3,9 +3,9 @@
         <Row>
             <Button class="tableBtn" @click="handleAddClick">新增解析器信息</Button>
             <Button class="tableBtn" @click="handleAddJarClick">新增解析器jar</Button>
-            <!--<Button class="tableBtn" @click="handleBlock">维护黑白名单</Button>-->
-            <router-link to="/block_manage"><Button class="tableBtn">黑白名单管理</Button></router-link>
-            <Button class="tableBtn" @click="handleConfigDefault">会员默认解析器</Button>
+            <Button class="tableBtn" @click="handleBlock">维护黑白名单</Button>
+            <!--<router-link to="/block_manage"><Button class="tableBtn">黑白名单管理</Button></router-link>-->
+            <!--<Button class="tableBtn" @click="handleConfigDefault">会员默认解析器</Button>-->
 
             <!--<Button class="tableBtn" @click="downloadFile">调用</Button>-->
         </Row>
@@ -79,6 +79,7 @@
                 </FormItem>
             </Form>
         </Modal>
+
         <Modal
             title="提示"
             v-model="modalDelete"
@@ -130,6 +131,7 @@
             return {
                 parserExtList:[],
                 param1:"参数1",
+                props:[],
                 paramDesc1:"参数1的描述",
                 parserNameList:[],
                 parserClassNameList:[],
@@ -148,7 +150,7 @@
                 //总条数
                 totalCount: 0,
                 //每页条数
-                pageSize: 5,
+                pageSize: 10,
                 //文件列表
                 fileList: [],
                 resultFils:"",
@@ -304,6 +306,13 @@
         },
         created() {
             this.getData();
+            this.$axios.post('mvc/fileParser/getParamList')
+            .then(res => {
+                 this.props = res.data;
+                 console.log(this.props)
+              });
+
+
         },
         methods: {
             handleUpload(file){
@@ -491,18 +500,25 @@
             },
             //加载数据
             getData() {
+
                 this.$axios.post('mvc/fileParser/page', {
                     page: this.curPage,
                     limit: this.pageSize
                 }).then(res => {
                     this.tableData = res.data.list;
                     this.totalCount = res.data.count;
+                //  this.tableData[0].params=this.props[0].parameterDesc;
+                //  this.tableData[1].params=this.props[1].parameterDesc;
+                //    this.tableData[2].params=this.props[2].parameterDesc;
+
                 });
+
             },
             getParserNameList(){
                 this.$axios.post('mvc/fileParserJar/getJarList', {
                 }).then(res => {
                     this.parserNameList = res.data;
+
                 });
             },
             getParserClassNameList(){
@@ -643,18 +659,18 @@
             },
             //打开黑白名单弹框
             handleBlock() {
-                if (!(this.current && this.current.id)) {
+           /*     if (!(this.current && this.current.id)) {
                     this.$notify({
                         title: '提示',
                         message: '请选择一条数据',
                         type: 'error'
                     })
                     return ;
-                }
+                }*/
                 let me = this;
                 me.blockInfo = {};
                 this.$axios.post('mvc/blockManage/getList', {
-                    fileParserId: this.current.id
+  //                  fileParserId: this.current.id
                 }).then(res => {
                     if (res.data.length > 0) {
                         me.blockInfo = res.data[0];

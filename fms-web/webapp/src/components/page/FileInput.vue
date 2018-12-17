@@ -15,19 +15,22 @@
             </el-table-column>
             <el-table-column prop="format" align="center" label="是否格式化" width="120">
             </el-table-column>
-            <el-table-column label="操作" align="center" width="160">
+            <el-table-column label="操作" align="center" width="240">
                 <template slot-scope="scope">
                     <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑
                     </el-button>
                     <el-button type="text" icon="el-icon-delete" class="red"
                                @click="handleDelete(scope.$index, scope.row)">删除
                     </el-button>
+                    <el-button type="text" icon="el-icon-caret-right" class="red"
+                               @click="handleStart(scope.$index, scope.row)">启动
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
 
         <el-dialog title="新增" :visible.sync="addVisible" width="40%">
-            <el-form ref="form" :model="form" label-width="100px" :rules="rules" @click="onSubmitAdd">
+            <el-form ref="form" :model="form"  :label-position="labelPosition" label-width="100px" :rules="rules" @click="onSubmitAdd">
                 <el-form-item label="ip：" prop="ip">
                     <el-input v-model="form.ip"></el-input>
                 </el-form-item>
@@ -56,8 +59,8 @@
             </span>
         </el-dialog>
 
-        <el-dialog title="编辑" :visible.sync="editVisible" width="40%" :rules="rules">
-            <el-form ref="form" :model="form" label-width="100px">
+        <el-dialog title="编辑" :visible.sync="editVisible" width="40%"  >
+            <el-form ref="form" :model="form" :label-position="labelPosition" label-width="100px" :rules="rules">
                 <el-form-item label="ip：" prop="ip">
                     <el-input v-model="form.ip"></el-input>
                 </el-form-item>
@@ -114,6 +117,7 @@
     export default {
         data() {
             return {
+                labelPosition:"left",
                 tDirectoryId: 0,//当前选中目录树node节点id
                 tDirectoryText: '',//当前选中目录树节点名称
 
@@ -230,16 +234,26 @@
             },
 
             async submitAdd() {
+
+                if (!this.form.ip || !this.form.userName || !this.form.password || !this.form.port|| !this.form.path) {
+                    this.$message.warning('请填写完整表单')
+                    return
+                }
+
                 await this.$axios.post('mvc/fileInput/add', {
-                    ip: this.form.ip,
-                    userName: this.form.userName,
-                    password: this.form.password,
-                    port: this.form.port,
-                    path: this.form.path,
+                    ip:this.form.ip,
+                    userName:this.form.userName,
+                    password:this.form.password,
+                    port:this.form.port,
+                    path:this.form.path,
                     format: this.form.format
+
                 });
                 await this.getData();
                 this.addVisible = false;
+            },
+
+            async handleStart() {
                 if (this.form.format == "格式化") {
                     await this.uploadFile();
                 }
@@ -248,7 +262,12 @@
                 }
             },
 
+
             async submitEdit() {
+                if (!this.form.ip || !this.form.userName || !this.form.password || !this.form.port|| !this.form.path) {
+                    this.$message.warning('请填写完整表单')
+                    return
+                }
                 await this.$axios.post('mvc/fileInput/update', {
                     id: this.form.id,
                     ip: this.form.ip,
@@ -260,12 +279,6 @@
                 });
                 await this.getData();
                 this.editVisible = false;
-                if (this.form.format == "格式化") {
-                    await this.uploadFile();
-                }
-                else{
-                    await this.uploadFileToLocal();
-                }
             },
 
 

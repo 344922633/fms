@@ -1,4 +1,7 @@
 <style scoped>
+    .layout{
+        width:100%;
+    }
     .tablePage {
         margin-top: 2px;
     }
@@ -63,7 +66,7 @@
             </Sider>
             <Layout>
                 <div class="table">
-                    <div class="container" style="padding: 0; border: none">
+                    <div class="container" style="padding: 0; border: none;width:100%">
                         <Card title="文件" style="padding: 0">
                             <div class="tableTop">
                                 <Button @click="fileUpload">文件上传</Button>
@@ -157,8 +160,8 @@
                                         <iframe :src="previewFileData" height="600px" width="800px"></iframe>
                                     </div>
                                 </Modal>
-                                <Button @click="updatebFile">修改</Button>
-                                <!--修改窗口-->
+      <!--                          <Button @click="updatebFile">修改</Button>
+                                &lt;!&ndash;修改窗口&ndash;&gt;
                                 <Modal
                                     title="修改"
                                     v-model="modalUpdate"
@@ -180,14 +183,14 @@
                                                     </Select>
                                                 </td>
                                             </tr>
-                                            <!--<tr>-->
-                                                <!--<td>推荐解析器：</td>-->
-                                                <!--<td>-->
-                                                    <!--<Select v-model="fileRecommendParserName" @on-change="updateSelectFileRecommendParserName" style="width:300px">-->
-                                                        <!--<Option v-for="item in fileParserData" :value="item.id" :key="item.id">{{ item.name }}</Option>-->
-                                                    <!--</Select>-->
-                                                <!--</td>-->
-                                            <!--</tr>-->
+                                            &lt;!&ndash;<tr>&ndash;&gt;
+                                                &lt;!&ndash;<td>推荐解析器：</td>&ndash;&gt;
+                                                &lt;!&ndash;<td>&ndash;&gt;
+                                                    &lt;!&ndash;<Select v-model="fileRecommendParserName" @on-change="updateSelectFileRecommendParserName" style="width:300px">&ndash;&gt;
+                                                        &lt;!&ndash;<Option v-for="item in fileParserData" :value="item.id" :key="item.id">{{ item.name }}</Option>&ndash;&gt;
+                                                    &lt;!&ndash;</Select>&ndash;&gt;
+                                                &lt;!&ndash;</td>&ndash;&gt;
+                                            &lt;!&ndash;</tr>&ndash;&gt;
                                             <tr>
                                                 <td>描述信息：</td>
                                                 <td>
@@ -196,7 +199,7 @@
                                             </tr>
                                         </table>
                                     </div>
-                                </Modal>
+                                </Modal>-->
                                 <Button @click="deletetFile">删除</Button>
                                 <!--删除确认窗口-->
                                 <Modal
@@ -207,6 +210,13 @@
                                    <p>确认要删除数据吗？</p>
                                 </Modal>
                                 <Button @click="removebFile">移动</Button>
+
+                                <div style="display:inline-block;">
+                                    <el-input v-model="input" placeholder="请输入内容" style="width:300px;" id="search" @keyup.enter.native = "clickEnter"></el-input>
+                                </div>
+                                <Button @click="btnFind">查询</Button>
+                                <Button @click="reset">重置</Button>
+
                                 <!--移动目标目录选择框-->
                                 <Modal
                                     title="目录"
@@ -255,9 +265,8 @@
             </el-dialog>
 
         <!--解析页面-->
-
         <Modal v-model="parserVisible" fullscreen footer-hide @on-visible-change="changeParserVisible">
-            <single-parser  :file="currentFile" :parserData="parserData" :parserExtList="parserExtList" :columnData="tableColumnData" @after-close="parserVisible = false"></single-parser>
+            <single-parser :configProp="config"  :file="currentFile" :parserData="parserData" :parserExtList="parserExtList" :columnData="tableColumnData" @after-close="parserVisible = false"></single-parser>
         </Modal>
         <!--遮罩-->
         <Spin size="large" fix v-if="loading">
@@ -275,7 +284,7 @@
     import Bus from '@/components/common/bus'
     import qs from 'qs';
     import fileMd5 from 'browser-md5-file';
-   
+
 
     export default {
         name: "FileManagement",
@@ -285,6 +294,7 @@
         },
         data() {
             return {
+                flag:0,
                 parserExtList:[],
                 config: {},
                 modal8: false,//上传弹出窗口
@@ -314,6 +324,7 @@
                     port:'22',
                     path:''
                 },
+                input: '',
                 currentFile: null,//解析窗口需要的选中操作文件
                 removeFileOfDirectoryId:'',//文件移动的目的地文件夹ID
 
@@ -485,12 +496,18 @@
             //分页页码
             handleCurrentChange(val) {
                 this.current = val;
-                this.getData();
+                    if(this.flag==0){
+                    this.getData()
+                    }
+                    else
+                    {
+                    this.btnFind()
+                    };
             },
             //分页单页条数
             handleSizeChange(val) {
                 this.pageSize = val;
-                this.getData();
+               if(this.flag==0){this.getData()}else{this.btnFind()};
             },
             //获取文件列表
             getData() {
@@ -498,12 +515,42 @@
                     directoryId:this.tDirectoryId,
                     page: this.current,
                     limit: this.pageSize
+
+                }).then((res) => {
+                    console.log(res.data)
+                    this.tableData = res.data.list;
+                    this.total = res.data.count;
+                    this.selectFileList=[];
+                    this.flag=0;
+                })
+            },
+
+            btnFind() {
+                let that = this;
+                let name=that.input;
+                this.$axios.post(this.url, {
+                    directoryId:this.tDirectoryId,
+                    page: this.current,
+                    limit: this.pageSize,
+                    name:name
                 }).then((res) => {
                     this.tableData = res.data.list;
                     this.total = res.data.count;
                     this.selectFileList=[];
+
+                    this.flag=1;
                 })
             },
+           clickEnter(){
+            this. btnFind();
+           },
+
+             reset(){
+                    let that = this;
+                    that.input="";
+                    this.getData();
+                },
+
             //递归格式化数据
             convert(childNodes){
                 for (var i = 0; i < childNodes.length; i++) {
@@ -549,6 +596,7 @@
                     // this.convert(this.treeData)
                 })
             },
+
             //列表选中时赋值
             selectRowChange(selection){
                 this.selectFileList = selection;
@@ -777,37 +825,39 @@
                         title: '提示',
                         content: '请选则一条记录'
                     });
-                }else if(this.selectFileList.length>1) {
-                    this.$Modal.info({
-                        title: '提示',
-                        content: '一次只能预览一个文件！'
-                    });
-                }else{
-                    var filePath = this.selectFileList[0].realPath;
-                    if (filePath.endsWith("doc") || filePath.endsWith("docx")
-                        || filePath.endsWith("xls") || filePath.endsWith("xlsx")
-                        || filePath.endsWith("ppt") || filePath.endsWith("pptx")){
+     }else if(this.selectFileList.length>1) {
+                         this.$Modal.info({
+                             title: '提示',
+                             content: '一次只能预览一个文件！'
+                         });
+                     }else{
 
-                        var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
-                        var ip = ipRex.exec(this.config.fileServerPath);
+                         let fileServerPath = this.config.fileServerPath;
+                         let previewPath = this.config.previewPath;
+                         let fileUrl = fileServerPath + '/' +  this.selectFileList[0].groups + '/'+ this.selectFileList[0].realPath;
+                         var filePath = this.selectFileList[0].realPath;
 
-                        // var a = "http://localhost:8080/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");
-                        //var a = "http://47.93.40.219:8888/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");
-                        // a = "http://47.93.40.219:8888/word?filePath="+"file://"+'/root/data/fdfs/storage/data/00/17/rBD8oFv1CICAW5D_AAIzZXIH65019.docx'
-                        var a = "http://"+ ip +":8888/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");
+     					// 拿到ip
+     					var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
+     					var ip = ipRex.exec(this.config.fileServerPath);
+     					//var a = "http://47.93.40.219:8888/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");
+     					var a = "http://"+ ip +":8888/index?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/home/huiju/data/fdfs/storage/data")
+     						+'&id='+this.selectFileList[0].id;
+     					var ifr = document.createElement('iframe');
+     					ifr.src = a;
+     					document.body.appendChild(ifr);
+                     }
+                 },
 
-                        POBrowser.openWindowModeless(a,'width=1200px;height=800px;');
-                    } else {
+        //            } else {
                         // this.loadHtml();
                         //alert("暂不支持此文件格式。。。")
-                        let fileServerPath = this.config.fileServerPath;
-                        let previewPath = this.config.previewPath;
-                        let fileUrl = fileServerPath + '/' +  this.selectFileList[0].groups + '/'+ this.selectFileList[0].realPath;
-                        this.previewFileData = previewPath + encodeURIComponent(fileUrl);
-                        this.modalPreviewFile = true
-                    }
-                }
-            },
+         //               let fileServerPath = this.config.fileServerPath;
+        //                let previewPath = this.config.previewPath;
+         //               let fileUrl = fileServerPath + '/' +  this.selectFileList[0].groups + '/'+ this.selectFileList[0].realPath;
+        //                this.previewFileData = previewPath + encodeURIComponent(fileUrl);
+       //                 this.modalPreviewFile = true
+        //            }
             //修改功能保存选中分类
             // updateSelectFileType(value){
             //     this.selectNFile.selectClassId=value;
@@ -966,9 +1016,10 @@
                 let fileName = ''
                 if (data.headers['content-disposition']) {
                     let str = data.headers['content-disposition'];
-                    fileName = str.substring(str.indexOf('=') + 1)
+                    fileName = str.substring(str.indexOf('=') + 1);
+                    fileName = decodeURI(fileName);
                 }
-                link.setAttribute('download', fileName)
+                link.setAttribute('download', fileName);
                 document.body.appendChild(link)
                 link.click()
                 document.body.removeChild(link)
@@ -985,6 +1036,7 @@
                     this.$axios.post('mvc/fileParserJar/getJarClassParamListById', {
                           recommendParserId:file.recommendParserId
                      }).then(res => {
+                         console.log(res.data);
                          this.parserExtList = res.data;
                       });
                  }
@@ -1027,9 +1079,8 @@
                 }
             },
 
-
-
         },
+
         mounted() {
             this.$nextTick(() => {
                 window.uploader = this.$refs.uploader.uploader

@@ -46,3 +46,9 @@
         }
     }
 </script>
+
+<style scoped>
+    .content {
+        background: #f5f7f9;
+    }
+</style>

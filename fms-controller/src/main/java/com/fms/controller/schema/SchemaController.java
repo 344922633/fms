@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +36,7 @@ public class SchemaController {
     @Autowired
     private KafkaTemplate kafkaTemplate;
 
+
     @RequestMapping("listColumns")
     public List<Map<String,Object>> listColumns(String tableName) {
         return schemaService.listColumns(tableName);
@@ -48,7 +47,6 @@ public class SchemaController {
         MasterSlaveDo masterSlaveDo = new MasterSlaveDo();
         return masterSlaveService.query(masterSlaveDo);
     }
-
     @RequestMapping("getMenuListFormasterslave")
     public Object getMenuListFormasterslave() {
         List<MasterSlaveDo> masterSlaveDoList = new ArrayList<MasterSlaveDo>();
@@ -214,4 +212,6 @@ public class SchemaController {
         masterSlaveService.delete(id);
         return ExtUtil.success("操作成功");
     }
+
+
 }

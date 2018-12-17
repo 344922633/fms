@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fms.service.columnSet.ColumnSetService" >
+ <!-- <resultMap id="dicColumnInfo" type="map">
+    <result column="COLUMN_NAME" property="column_name" />
+    <result column="COLUMN_KEY" property="column_key" />
+    <result column="DATA_TYPE" property="data_type" />
+    <result column="CHARACTER_MAXIMUM_LENGTH" property="max_length" />
+    <result column="COLUMN_DESC" property="column_desc" />
+  </resultMap>
+-->
+  <sql id="all">
+        id,
+        key,
+        schemaId,
+        tableId,
+        columnId,
+        parserId
+    </sql>
+
+  <select id="getColumnsForTable" parameterType="java.lang.Integer" resultType="com.fms.domain.columnSet.ColumnInfo">
+    select * from column_info where tableId = #{tid}
+  </select>
+
+  <select id="getAllSchemas" parameterType="map" resultType="com.fms.domain.columnSet.SchemaInfo">
+        select * from schema_info
+  </select>
+
+  <select id="getDicNameByTableId" parameterType="java.lang.Integer" resultType="com.fms.domain.columnSet.ColumnInfo">
+    select * from column_info where tableId = #{tid} and dicTableName is not null
+  </select>
+
+  <select id="getTablesBySchemaId" parameterType="java.lang.Integer" resultType="com.fms.domain.columnSet.TableInfo">
+        select * from table_info where schemaId = #{sid}
+  </select>
+
+  <select id="getDicColumnsByDicName" parameterType="java.lang.String" resultType="java.util.Map" >
+        select * from  ${_parameter}
+    </select>
+
+  <insert id="insertColumnMapRelation" parameterType="com.fms.domain.columnSet.ColumnMapRelation" >
+    INSERT INTO column_map_relation (id,columnKey,schemaId,tableId,columnId,parserId)
+    VALUES (
+    #{id},
+    #{columnKey},
+    #{schemaId},
+    #{tableId},
+    #{columnId},
+    #{parserId}
+    )
+  </insert>
+
+  <insert id="insertColumnDic" parameterType="com.fms.domain.columnSet.ColumnDic" >
+    INSERT INTO column_dic (dicName,dicValue,column_map_id)
+    VALUES (
+    #{dicName},
+    #{dicValue},
+    #{columnMapId}
+    )
+  </insert>
+
+  <select id="getColumnsInfo" parameterType="java.lang.Integer" resultType="com.fms.domain.columnSet.ColumnInfo" >
+        select * from column_info where tableId= #{tid}
+  </select>
+
+    <select id="getTableNameByTableId" parameterType="java.lang.Integer" resultType="com.fms.domain.columnSet.TableInfo" >
+        select * from table_info where id= #{table_id}
+  </select>
+
+    <select id="getColumnInfo" parameterType="java.lang.Integer" resultType="com.fms.domain.columnSet.ColumnInfo" >
+        select * from column_info where id= #{cid}
+  </select>
+</mapper>

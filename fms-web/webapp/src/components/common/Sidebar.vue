@@ -1,6 +1,6 @@
 <template>
     <div class="sidebar">
-        <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#324157"
+        <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#1c242f"
             text-color="#bfcbd9" active-text-color="#20a0ff" unique-opened router>
             <template v-for="item in items">
                 <template v-if="item.subs">
@@ -38,13 +38,13 @@
             return {
                 collapse: false,
                 items: [
-                    {
+                   {
                         icon: 'el-icon-lx-home',
                         index: 'dashboard',
                         title: '系统首页'
                     },
                     {
-                        icon: 'el-icon-lx-news',
+                         icon: 'el-icon-lx-copy',
                         index: 'file_type',
                         title: '文件分类管理'
                     },
@@ -54,7 +54,7 @@
                       //  title: '黑白名单管理'
                    // },
                     {
-                        icon: 'el-icon-lx-cascades',
+                        icon: 'el-icon-lx-file',
                         index: 'fileManagement',
                         title: '文件管理'
                     },
@@ -62,7 +62,7 @@
                         icon: 'el-icon-lx-cascades',
                         index: 'table',
                         title: '基础表格'
-                    },
+                    
                     {
                         icon: 'el-icon-lx-copy',
                         index: 'tabs',
@@ -125,34 +125,56 @@
                     {
                         index: 'parser',
                         title: '解析器管理',
-                        icon: 'el-icon-news'
+                        icon: 'el-icon-printer'
                     },
+
                     {
                         index: 'multiFileParser',
                         title: '多文件解析',
-                        icon: 'el-icon-lx-copy'
+                        icon: 'el-icon-lx-read'
                     },
                     {
                         index: 'manualDataDeal',
                         title: '手动录入',
-                        icon: 'el-icon-lx-text'
+                        icon: 'el-icon-edit'
                     },
                     {
                         index: 'prinSuboRelation',
                         title: '主从关系管理',
-                        icon: 'el-icon-upload'
+                        icon: 'el-icon-lx-settings'
                     },
                     {
                         index: 'tuopu',
                         title: '拓扑图管理',
-                        icon: 'el-icon-upload'
+                        icon: 'el-icon-lx-pic'
                     },
 
                     {
                         index: 'fileInput',
                         title: '离线文件导入',
                         icon: 'el-icon-upload'
-                    }
+                    },
+                    {
+                        index: 'tableSet',
+                        title: '表格映射',
+                        icon: 'el-icon-setting'
+                    },
+                /*    {
+                        index: 'columeSet',
+                        title: '字段映射',
+                        icon: 'el-icon-setting'
+                    },*/
+
+                    {
+                        index: 'sendFileToServer',
+                        title: '上传服务器',
+                        icon: 'el-icon-setting'
+                    },
+                    {
+                        index: 'applicationConf',
+                        title: '属性配置',
+                        icon: 'el-icon-setting'
+                    },
 
                     /*,
                     {
@@ -200,9 +222,32 @@
         width: 0;
     }
     .sidebar-el-menu:not(.el-menu--collapse){
-        width: 230px;
+        width: 250px;
     }
     .sidebar > ul {
         height:100%;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>

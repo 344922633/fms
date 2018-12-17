@@ -2,6 +2,7 @@ package com.fms.service.tuopu;
 
 import com.fms.domain.filemanage.*;
 import com.fms.domain.tuopu.Control;
+import com.fms.domain.tuopu.Picture;
 import com.handu.apollo.data.mybatis.Dao;
 import com.handu.apollo.utils.CharPool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,14 @@ public class ControlService {
 
 	public List<Control> getControl(String name) {
 		return dao.getList(CLASSNAME, "getControl", name);
+	}
+
+	public void delete(String id) {
+		dao.delete(CLASSNAME, "delete", id);
+	}
+
+	public void update(Picture picture) {
+		dao.update(CLASSNAME, "update", picture);
 	}
 
 }

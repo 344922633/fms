@@ -48,8 +48,10 @@ public class FileController {
     @RequestMapping("pageFiles")
     public Object pageFiles(@RequestParam Map<String, Object> params, HttpServletRequest request) {
         Page page = ParamUtil.getPager(request);
+        System.out.println(page);
         return fileService.page(params, page);
     }
+
     @RequestMapping("pageFilesByIsParser")
     public Object pageFilesByIsParser(@RequestParam Map<String, Object> params, HttpServletRequest request) {
         Page page = ParamUtil.getPager(request);
@@ -136,7 +138,6 @@ public class FileController {
             }
         }
     }
-
     /**
      * 修改文件分类
      * @param file

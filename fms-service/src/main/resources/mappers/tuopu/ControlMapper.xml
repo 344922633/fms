@@ -29,4 +29,17 @@
         SELECT <include refid="all" />
         FROM t_control
     </select>
+
+    <delete id="delete" parameterType="String">
+        DELETE FROM t_control
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.fms.domain.tuopu.Control">
+        UPDATE t_control
+        SET
+          name=#{name},type=#{type},image = #{image}
+        WHERE id=#{id}
+    </update>
+
 </mapper>

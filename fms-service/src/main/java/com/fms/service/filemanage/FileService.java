@@ -111,4 +111,10 @@ public class FileService {
     public List<Map> getFileSuffixStatistic() {
         return dao.getList(CLASSNAME, "getFileSuffixStatistic", null);
     }
+
+    public List<File> getAllFIles() {
+        List<File> list = dao.getList(CLASSNAME, "getAllFIles", null);
+        return list;
+    }
+
 }

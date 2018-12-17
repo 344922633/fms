@@ -20,8 +20,9 @@
         </div>
         <div class="form-wrap">
             <label>图片名称：</label>
-            <input class="save-input" v-model="saveName" style="width:75px"/>
-            <input class="save-btn" @click="submit" type="button" value="保存" />
+            <input class="save-input" v-model="saveName" style="width:75px;height:30px"/>
+            <input class="save-btn" @click="submit" type="button" value="保存" style="width:60px;height:30px"/>
+            <input class="save-btn" @click="sendInfo" type="button" value="发送拓扑图信息" style="width:150px;height:30px"/>
         </div>
     </div>
 </template>
@@ -46,6 +47,13 @@
                     saveName: '',
                 idPropertiesMap: {}
             }
+        },
+        created() {
+          const needRefresh = localStorage.getItem('__needRefresh__')
+          if (needRefresh) {
+              localStorage.setItem('__needRefresh__', '')
+              location.reload()
+          }
         },
         async mounted() {
             // 获取控件
@@ -88,6 +96,68 @@
             renderTopology() {
                 const that = this
 
+                Q.Editor.prototype.initToolbar = function (toolbar, graph) {
+                    var exportButtons = [{
+                        name: getI18NString('Export JSON'), iconClass: 'q-icon toolbar-json', action: this.showJSONPanel.bind(this)
+                    }
+                    ]
+                    if (Q.isFileSupported) {
+                        exportButtons.push({
+                            iconClass: 'q-icon toolbar-upload',
+                            name: getI18NString('Load File ...'), action: this.loadJSONFile.bind(this), type: 'file'
+                        })
+                    }
+                    if (window.saveAs) {
+                        exportButtons.push({
+                            iconClass: 'q-icon toolbar-download',
+                            name: getI18NString('Download File'), action: this.exportJSONFile.bind(this, window.saveAs)
+                        })
+                    }
+                    if (this.options.saveService) {
+                        exportButtons.push({
+                            iconClass: 'q-icon toolbar-save',
+                            name: getI18NString('Save'), action: this.save.bind(this)
+                        })
+                    }
+                    Q.createToolbar(graph, toolbar, {
+                        export: exportButtons,
+                        editor: [
+                            {
+                                name: '创建连线',
+                                interactionMode: Q.Consts.INTERACTION_MODE_CREATE_EDGE,
+                                iconClass: 'q-icon toolbar-edge',
+                                styles: {
+                                    'arrow.to': false,
+                                    'arrow.from': false
+                                },
+                            },
+                            {
+                                name: '创建单向连线',
+                                interactionMode: Q.Consts.INTERACTION_MODE_CREATE_EDGE,
+                                iconClass: 'q-icon toolbar-edge',
+                                styles: {
+                                    'arrow.to': true,
+                                    'arrow.from': false
+                                },
+                            },
+                            {
+                                name: '创建双向连线',
+                                interactionMode: Q.Consts.INTERACTION_MODE_CREATE_EDGE,
+                                iconClass: 'q-icon toolbar-edge',
+                                styles: {
+                                    'arrow.to': true,
+                                    'arrow.from': true
+                                },
+                            }
+                            // {
+                            //     name: '创建线条',
+                            //     interactionMode: Q.Consts.INTERACTION_MODE_CREATE_LINE,
+                            //     iconClass: 'q-icon toolbar-line'
+                            // },
+                        ]
+                    })
+                }
+
                 $('#editor').graphEditor({
                     images: {
                         name: '子网设备',
@@ -109,6 +179,20 @@
                             return {
                                 group: '属性',
                                 properties: properties
+                            }
+                        }
+                        //实现带箭头的线条
+                        graph.onElementCreated = function (data) {
+                            Q.Graph.prototype.onElementCreated.apply(this, arguments);
+                            if (this.interactionProperties) {
+                                if (this.interactionProperties.styles) {
+                                    data.putStyles(this.interactionProperties.styles)
+                                }
+                                if (this.interactionProperties.properties) {
+                                    for (var name in this.interactionProperties.properties) {
+                                        data[name] = this.interactionProperties.properties[name]
+                                    }
+                                }
                             }
                         }
                         graph.moveToCenter();
@@ -183,6 +267,14 @@
             init(graph, editor) {
                 editor.toolbox.hideDefaultGroups();
                 editor.toolbox.hideButtonBar();
+            },
+            sendInfo(){
+                const json = this.graphEditor.exportJSON()
+                this.$axios.post('mvc/picture/sendDataToKafka', {
+                    json:JSON.stringify(json)
+                }).then((res) => {  //接口返回数据
+                    this.$message.success('发送成功')
+                });
             }
         }
     }
@@ -198,7 +290,7 @@
         position: absolute;
         left: 800px;
         top: 40px;
-        width: 300px;
+        width: 400px;
     }
 
     .form-wrap .save-input {
@@ -211,7 +303,7 @@
 
     .layout {
         position: relative;
-        width: 1500px;
+        width: 100%;
         height: 800px;
     }
 

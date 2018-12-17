@@ -43,6 +43,11 @@
         WHERE id = #{id}
     </select>
 
+ <!--   <select id="getFile" parameterType="String" resultType="com.fms.domain.filemanage.FileParser">
+        SELECT <include refid="all" />
+        FROM file_parser
+        WHERE name LIKE CONCAT('%',#{name},'%')
+    </select>-->
     <sql id="condition">
         <if test="name != null and name != ''">
             AND name = #{name}

@@ -12,8 +12,8 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.caeit.parser.excel.ExcelParser;
-import com.caeit.parser.xml.XmlParser;
+/*import com.caeit.parser.excel.ExcelParser;
+import com.caeit.parser.xml.XmlParser;*/
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
@@ -129,6 +129,20 @@ public class FtpUtil {
 
     }
 
+    /**
+     * ftp上传文件
+     *
+     * @param f
+     * @throws Exception
+     */
+    public static void uploadFTP(String fileDir) throws Exception {
+        File file1 = new File(fileDir);
+        FileInputStream input = new FileInputStream(file1);
+        ftp.storeFile(file1.getName(), input);
+        input.close();
+    }
+
+/*
 
     public static void handleFile(KafkaTemplate kafka, File file) throws Exception {
         try {
@@ -147,14 +161,16 @@ public class FtpUtil {
                     String key = it.next();// entitys entity
                     JSONArray array = outPutJson.getJSONArray(key);
                    // JSONArray array = JSONArray.parseArray(tableStr);
-                            /*    String schema="";
+                            */
+/*    String schema="";
                                 if(jsonObject.containsKey("schema")){
                                     schema= jsonObject.getString("schema");
                                 }
                                 String table="";
                                 if(jsonObject.containsKey("table")){
                                     table= jsonObject.getString("table");
-                                }*/
+                                }*//*
+
 
 
                     for (int i = 0; i < array.size(); i++) {
@@ -165,9 +181,11 @@ public class FtpUtil {
                         obj1.put("operationType", "INSERT");
                         obj1.put("objectCode", "dxbm");
                         obj.put("operationSource", "XX_PLATFORM");
-                     /*       obj1.put("schema", schema);
+                     */
+/*       obj1.put("schema", schema);
                         obj1.put("table", "zw_kzsx_sb");
-*/
+*//*
+
                         JSONArray columns = new JSONArray();
 
                         JSONObject jsonObject = array.getJSONObject(i);
@@ -202,12 +220,14 @@ public class FtpUtil {
 
                 }
             }
-                      /*     else if (suffix.equals("json")) {
+                      */
+/*     else if (suffix.equals("json")) {
 
 
                                 Map<String, String> map = new JsonParser().parseJson(new File("D:\\JsonParser_testFile.json"));
                                 String outPut = map.get("jsonBottomLevel");
-                            }*/
+                            }*//*
+
                             else if (suffix.equals("xls") || suffix.equals("xlsx")) {
                                 Map<String, String> map = new ExcelParser().parseExcel(file, true); //true 表示是否行排列，false表示列排列，目前仅支持行排列即可
                                 String outPut = map.get("jsonBottomLevel");
@@ -218,14 +238,16 @@ public class FtpUtil {
                                     String key = it.next();// entitys entity
                                     JSONArray array = outPutJson.getJSONArray(key);
                                     // JSONArray array = JSONArray.parseArray(tableStr);
-                                            /*    String schema="";
+                                            */
+/*    String schema="";
                                                 if(jsonObject.containsKey("schema")){
                                                     schema= jsonObject.getString("schema");
                                                 }
                                                 String table="";
                                                 if(jsonObject.containsKey("table")){
                                                     table= jsonObject.getString("table");
-                                                }*/
+                                                }*//*
+
 
 
                                     for (int i = 0; i < array.size(); i++) {
@@ -236,9 +258,11 @@ public class FtpUtil {
                                         obj1.put("operationType", "INSERT");
                                         obj1.put("objectCode", "dxbm");
                                         obj.put("operationSource", "XX_PLATFORM");
-                                     /*       obj1.put("schema", schema);
+                                     */
+/*       obj1.put("schema", schema);
                                         obj1.put("table", "zw_kzsx_sb");
-                */
+                *//*
+
                                         JSONArray columns = new JSONArray();
 
                                         JSONObject jsonObject = array.getJSONObject(i);
@@ -275,14 +299,15 @@ public class FtpUtil {
         } catch (Exception e) {
         }
     }
+*/
 
-
+/*
     @Test
     public void test(){
         File download = new File("d:\\zw_kzsx_sb.xml");
         Map<String, String> map = new XmlParser().parseXml(download);
         System.out.println(map.toString());
-    }
+    }*/
     /**
      * 下载FTP文件
      * 当你需要下载FTP文件的时候，调用此方法

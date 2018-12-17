@@ -41,54 +41,12 @@ public class ControlController {
         return controlService.getList(params);
     }
 
-  /*  @RequestMapping("add")
-    public void add(Control control) {
-        switch(control.getType()){
-            case "网络":
-                control.setRemark("net");
-                break;
-            case "硬件":
-                control.setRemark("hardware");
-                break;
-            case "区块":
-                control.setRemark("block");
-                break;
-        }
-        controlService.add(control);
-    }*/
-
-
-   /* *//**
-     * 上传控件
-     * @param
-     * @return
-     *//*
-    @RequestMapping("uploadControl")
-    public Object uploadControl(HttpServletRequest req, MultipartHttpServletRequest multiReq)
-    throws IOException {
-        MultipartFile file = multiReq.getFile("file");
-        String parserPath = env.getProperty("parser.path");
-        Path filePath = null;
-        try {
-            Path dir = Paths.get(parserPath);
-            if (!Files.exists(dir) || !Files.isDirectory(dir)) {
-                Files.createDirectories(dir);
-            }
-
-            String fileName = file.getOriginalFilename();
-            filePath = Paths.get(parserPath + "/" + fileName);
-            if (!Files.exists(filePath) || Files.isDirectory(filePath)) {
-                Files.createFile(filePath);
-            } else {
-                return ExtUtil.failure("该控件已经存在！");
-            }
-            file.transferTo(filePath.toFile());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return ExtUtil.success(filePath.toString());
+    @RequestMapping("delete")
+    public void delete(String id) {
+        controlService.delete(id);
     }
-*/
+
+
 
     @Value("${fileUploadPath}")
     private String fileUploadPath;

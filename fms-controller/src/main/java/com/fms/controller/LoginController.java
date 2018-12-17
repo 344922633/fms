@@ -39,6 +39,26 @@ public class LoginController {
     @Autowired
     private Environment env;
 
+/*
+
+    @RequestMapping("loginFromRemote")
+    public Object loginFromRemote(String username,String password) {
+
+        User gUser = userService.queryName(user);
+
+        String psd = user.getPassword();
+        String md5Password = MD5.md5for32(psd);
+
+        if(md5Password.equals(gUser.getPassword()) && "1".equals(gUser.getState())){
+            return "success";
+        }
+
+        return "fail";
+    }
+
+*/
+
+
     @RequestMapping("login")
     public Object login(User user) {
 //        userService.getUser();

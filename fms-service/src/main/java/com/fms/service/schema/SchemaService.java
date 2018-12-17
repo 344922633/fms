@@ -54,4 +54,5 @@ public class SchemaService {
         kafkaTemplate.send("operation_3rd1",SchemaUtil.schemaStrFormat(tableName,tableColumnTemp));
     }
 
+
 }

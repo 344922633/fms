@@ -31,8 +31,7 @@ poCtrl.webOpen(filePath,OpenModeType.docNormalEdit,"张佚名");
         }
     </script>
  
- <header>
-   
+
 
     <div style=" width:auto; height:700px;">
        <%=poCtrl.getHtmlCode("PageOfficeCtrl1")%>

@@ -134,8 +134,33 @@ export default new Router({
                 },
                 {
                     path: '/fileInput',
-                    component: resolve => require(['../components/page/fileInput.vue'], resolve),
+                    component: resolve => require(['../components/page/FileInput.vue'], resolve),
                     meta: { title: '离线文件导入' }
+                },
+                {
+                    path: '/applicationConf',
+                    component: resolve => require(['../components/page/confProperty/applicationConf.vue'], resolve),
+                    meta: { title: 'application配置' }
+                },
+                {
+                    path: '/kafkaHbaseConf',
+                    component: resolve => require(['../components/page/confProperty/kafkaHbaseConf.vue'], resolve),
+                    meta: { title: 'kafka,hbase配置' }
+                },
+          /*      {
+                    path: '/columeSet',
+                    component: resolve => require(['../components/page/ColumeSet.vue'], resolve),
+                    meta: { title: '字段映射' }
+                },*/
+                {
+                    path: '/sendFileToServer',
+                    component: resolve => require(['../components/page/SendFileToServer.vue'], resolve),
+                    meta: { title: '上传服务器' }
+                },
+                {
+                    path: '/tableSet',
+                    component: resolve => require(['../components/page/TableSet.vue'], resolve),
+                    meta: { title: '表格映射' }
                 },
                 {
                     //布局测试

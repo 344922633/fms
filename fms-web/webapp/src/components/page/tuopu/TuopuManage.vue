@@ -92,6 +92,8 @@
             },
 
            handleEdit(index, row) {
+               localStorage.setItem('__needRefresh__', '1')
+               localStorage.getItem('__needRefresh__')
                this.$router.push(`tuopu?id=${row.id}`);
            },
 
