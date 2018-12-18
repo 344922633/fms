@@ -176,7 +176,30 @@ public class FileParserController {
 
         params.put("parserId", parserId);
 
-        return fileParserExtService.getList(params);
+        List<FileParserExt> list = fileParserExtService.getList(params);
+
+        if (!ObjectUtils.isEmpty(list))
+        {
+            Map<String, Object> paramsForBlock = new HashMap<>();
+            List<BlockManage> blocklist = blockManageService.getList(paramsForBlock);
+            if (!ObjectUtils.isEmpty(blocklist))
+            {
+                BlockManage block = blocklist.get(0);
+                for (FileParserExt fileParserExt : list)
+                {
+                    if ("黑名单".equals(fileParserExt.getParameterName()))
+                    {
+                        fileParserExt.setParameterValue(block.getBlackContent());
+                    }
+                    if ("白名单".equals(fileParserExt.getParameterName()))
+                    {
+                        fileParserExt.setParameterValue(block.getWhiteContent());
+                    }
+                }
+            }
+        }
+
+        return list;
     }
 
     /**
