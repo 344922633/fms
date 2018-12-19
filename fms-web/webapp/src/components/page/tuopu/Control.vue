@@ -156,10 +156,10 @@
                         </el-form-item>
                     </el-form>
 
-                <span slot="footer" class="dialog-footer">
+             <!--   <span slot="footer" class="dialog-footer">
                 <el-button @click="addVisible = false">取 消</el-button>
                 <el-button type="primary" @click="submitAdd">确 定</el-button>
-            </span>
+            </span>-->
             </el-dialog>
             <div class="pagination">
                 <el-pagination

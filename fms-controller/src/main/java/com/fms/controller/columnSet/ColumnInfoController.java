@@ -79,9 +79,9 @@ public class ColumnInfoController {
             for (int i = 0; i < btnArray.size(); i++) {
                 ColumnInfo columnInfo = new ColumnInfo();
                 JSONObject obj = btnArray.getJSONObject(i);
-                String dicName = obj.getString("dicName");
-                String columnEnglish = obj.getString("column_name");
-                String columnChinese = obj.getString("value");
+                String dicName = obj.getString("dicTableName");
+                String columnEnglish = obj.getString("columnEnglish");
+                String columnChinese = obj.getString("columnChinese");
                 Boolean isDicBoolean = obj.getBoolean("isDic");
                 Boolean isMasterKeyBoolean = obj.getBoolean("isMasterKey");
 

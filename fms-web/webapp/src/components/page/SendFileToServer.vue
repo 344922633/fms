@@ -119,7 +119,6 @@
                     password: 'admin!123',
                     port: '22',
                     path: '/home/xuhubin',
-                    format: ''
                 },
                 idx: -1,
                 rules: {
@@ -128,7 +127,6 @@
                     password: [{required: true, message: '请输入密码', trigger: 'blur'}],
                     port: [{required: true, message: '请输入端口号', trigger: 'blur'}],
                     path: [{required: true, message: '请输入路径', trigger: 'blur'}],
-                    format: [{required: true, message: '请选择文件格式', trigger: 'change'}]
                 }
             }
         },
@@ -153,7 +151,7 @@
 
 
             async getData() {
-                let {data} = await this.$axios.post('mvc/fileInput/getList');
+                let {data} = await this.$axios.post('mvc/fileReport/getList');
                 this.tableData = data;
             },
 
@@ -168,7 +166,6 @@
                     password: item.password,
                     port: item.port,
                     path: item.path,
-                    format: item.format
 
                 };
                 this.editVisible = true;
@@ -180,13 +177,12 @@
                     return
                 }
 
-                await this.$axios.post('mvc/fileInput/add', {
+                await this.$axios.post('mvc/fileReport/add', {
                     ip:this.form.ip,
                     userName:this.form.userName,
                     password:this.form.password,
                     port:this.form.port,
                     path:this.form.path,
-                    format: this.form.format
 
                 });
                 await this.getData();
@@ -199,14 +195,13 @@
                     this.$message.warning('请填写完整表单')
                     return
                 }
-                await this.$axios.post('mvc/fileInput/update', {
+                await this.$axios.post('mvc/fileReport/update', {
                     id: this.form.id,
                     ip: this.form.ip,
                     userName: this.form.userName,
                     password: this.form.password,
                     port: this.form.port,
                     path: this.form.path,
-                    format: this.form.format
                 });
                 await this.getData();
                 this.editVisible = false;
@@ -221,7 +216,6 @@
                     password: "",
                     port: "",
                     path: "",
-                    format: ''
                 };
                 this.addVisible = true;
 
@@ -234,7 +228,7 @@
 
             // 确定删除
             async deleteRow() {
-                await this.$axios.post('mvc/fileInput/delete', {id: this.tableData[this.idx].id});
+                await this.$axios.post('mvc/fileReport/delete', {id: this.tableData[this.idx].id});
                 await this.getData();
                 this.$message.success('删除成功');
                 this.delVisible = false;

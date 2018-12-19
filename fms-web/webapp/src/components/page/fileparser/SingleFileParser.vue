@@ -91,6 +91,11 @@
                 <!--<div class="layout">-->
                     <div id="editor" data-options="region:'center'"></div>
                 <!--</div>-->
+                <div slot="footer">
+                    <Input style="width: 150px" v-model="topologyName" placeholder="请输入拓扑图名称" />
+                    <Button @click="submitTopology" type="primary">保存</Button>
+                    <Button @click="modalPreviewFile = false">取消</Button>
+                </div>
             </Modal>
 
             <div ref="parsejson"></div>
@@ -158,13 +163,13 @@
                     </Select>
                 </FormItem>
                 <template v-if="columnSelectMap[key] && columnSelectMap[key].dicTables">
-                    <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.dicTableName">
+                    <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.columnChinese">
                         <Select
                             style="width: 180px"
-                            v-model="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
+                            v-model="columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]"
                             :clearable="true"
                         >
-                            <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.MC" :key="dic.MC"> {{ dic.MC }}</Option>
+                            <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM" :key="dic.DM"> {{ dic.MC }}</Option>
                         </Select>
                     </FormItem>
                 </template>
@@ -252,6 +257,7 @@
         columnKeyNamesMap: {},
         columnSelectMap: {},
         schemas: [],
+        topologyName: '',
     }
 
     export default {
@@ -342,6 +348,30 @@
         async mounted() {
         },
         methods: {
+            submitTopology() {
+                const name = this.topologyName
+                if (!name) {
+                    this.$message.error('请输入图片名称')
+                    return
+                }
+                const json = this.graphEditor.exportJSON()
+
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在保存',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                this.$axios.post('mvc/picture/insertData', {
+                    name,
+                    json:JSON.stringify(json)
+                }).then((res) => {  //接口返回数据
+                    this.$message.success('保存成功')
+                    loading.close()
+                }).catch(function (error) {
+                    loading.close()
+                });
+            },
             resetData() {
               Object.keys(originData).forEach(key =>{
                   const copy = JSON.parse(JSON.stringify(originData))
@@ -596,8 +626,6 @@
                     delete res.data.data.table_name;
                     this.allKey = res.data.data.allKey;
                     this.allKeyForDisplay = res.data.data.allKeyForDisplay;
-                    console.log('allkey!!')
-                    console.log(res.data.data)
 
                     delete res.data.data.allKey;
                     //key的映射关系
@@ -609,6 +637,7 @@
                         }
                     }
                     this.selectData = selectData;
+                    this.changeDefaultTab()
                 }).catch(e => {
                     this.loading = false;
                 }).finally(() => {
@@ -616,6 +645,10 @@
 
                     this.genParamsByAllKey()
                 })
+            },
+            changeDefaultTab() {
+              const defaultKey = Object.keys(this.jsonTables)[0]
+                this.toggleTab(0, defaultKey)
             },
             async genParamsByAllKey() {
                 // 获取库
@@ -660,17 +693,20 @@
                 this.$axios.post('mvc/getColumnsForTable', {
                     tableId
                 }).then(res => {
-                    this.$set(this.columnSelectMap[key], 'columns', res.data)
+                    const data = res.data || []
+                    const dicData = data.filter(v => v.isDic === 0)
+                    this.$set(this.columnSelectMap[key], 'columns',dicData)
                     this.$set(this.columnKeyNamesMap[key], 'columnId', '')
                     this.$set(this.columnSelectMap[key], 'dicTables', null)
                     this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
                 })
+                this.getDicByTableId(tableId, key)
             },
             getDicByColumn(columnId, key) {
-                const column = this.columnSelectMap[key]['columns'].find(c => c.id === columnId)
-                console.log(column)
-                const {isDic, tableId} = column || {}
-                    this.getDicByTableId(tableId, key)
+                // const column = this.columnSelectMap[key]['columns'].find(c => c.id === columnId)
+                // console.log(column)
+                // const {isDic, tableId} = column || {}
+                //     this.getDicByTableId(tableId, key)
             },
             getDicByTableId(tableId, key) {
                 this.$axios.post('mvc/getDicNameByTableId', {
@@ -681,8 +717,8 @@
                     this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
 
                     dicTables.forEach(dicTable => {
-                        const { dicTableName } = dicTable
-                        this.$set(this.columnKeyNamesMap[key]['dicMap'], dicTableName, '')
+                        const { columnEnglish } = dicTable
+                        this.$set(this.columnKeyNamesMap[key]['dicMap'], columnEnglish, '')
                     })
                     this.getDicColumnsByDicName(dicTable,key);
                 })

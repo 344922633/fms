@@ -746,6 +746,7 @@ public class FileParserController {
 
         Map<String, Set<String>> map = new HashMap<String, Set<String>>();
         Map<String, String> valueMap = new HashMap<String, String>();
+        Map<String, JSONObject> dicMap = new HashMap<String, JSONObject>();
 
         for(String key : data.keySet()){
             JSONObject colJson = data.getJSONObject(key);
@@ -765,7 +766,8 @@ public class FileParserController {
                 map.put(table_schema, column);
 
                 String valueKey = table_schema + "_" + colJson.getString("columnId");
-                valueMap.put(valueKey, key);
+                valueMap.put(valueKey, key.toLowerCase());
+                dicMap.put(table_schema, colJson.getJSONObject("dicMap"));
             }
         }
 
@@ -785,12 +787,14 @@ public class FileParserController {
                 infoObj.put("objectCodeValue", objectCodeValue);// 时间戳
                 infoObj.put("schema", "renzhi");//库名
 
-                JSONObject columnObj =null;
                 JSONObject columnPublic =new JSONObject();
 
                 JSONArray columnArr = new JSONArray();
 
                 String mapKey = entry.getKey();// schemaId_tableId
+
+                JSONObject dicJSON = dicMap.get(mapKey);// dicMap "dicMap": { "fghj": "1", "fghk": "2"  }
+
                 String schemaId = mapKey.split("_")[0];
                 String tableId = mapKey.split("_")[1];
 
@@ -803,13 +807,23 @@ public class FileParserController {
                     // 75 29 10
 
                     ColumnInfo columnInfo = columnSetService.getColumnInfo(Integer.valueOf(colId));
-                    columnJson.put("name", columnInfo.getColumnEnglish());// 获取column名称  ： 你好  你坏
+                    columnJson.put("name", columnInfo.getColumnEnglish().toLowerCase());// 获取column名称  ：非枚举字段
 
                     String valueKey = mapKey + "_" + colId;// schemaId_tableId_columnId
                     String logKey = valueMap.get(valueKey);// bytes
                     columnJson.put("value", appacheLog.get(logKey));
 
                     columnArr.add(columnJson);
+                }
+
+                if(dicJSON != null){
+                    for(String dicKey : dicJSON.keySet()){
+                        JSONObject columnJson = new JSONObject();
+                        columnJson.put("name", dicKey.toLowerCase());// 获取枚举字段
+                        columnJson.put("value", dicJSON.getString(dicKey));
+
+                        columnArr.add(columnJson);
+                    }
                 }
 
                 columnPublic.put("name", "dxbm");

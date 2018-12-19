@@ -153,6 +153,37 @@
                 <div class="item-title">结果<p>文件名：{{ viewFileName }}</p></div>
                 <div ref="result"></div>
             </div>
+            <!--表格tab-->
+
+            <div class="tabs" style="height:20px">
+                <div
+                    style="float: left;margin-right: 10px; width: 100px;float: left; margin: 3px 5px 2px 3px;border-radius: 3px;font-size: 12px;overflow: hidden;cursor: pointer;height: 23px;line-height: 23px;border: 1px solid #e9eaec;background: #fff;padding: 0 5px 0 12px;vertical-align: middle;color: #666;transition: all .3s ease-in;"
+                    :class="{tableActive:index == tableIndex}" v-for="(value,key,index) in jsonTables"
+                    @click="toggleTab(index)"><a>{{key}}</a></div>
+            </div>
+            <!--改表格高度-->
+            <div v-if="jsonTables && Object.keys(jsonTables).length" style="height: 300px; overflow-y: auto;">
+                <table style="border-right:1px solid #ddd;border-bottom:1px solid #ddd;width:100%;overflow-x:scroll;"
+                       v-for="(value,key,index) in jsonTables" :key="key" :label="value" :value="key"
+                       v-show="index == tableIndex" border="0" cellspacing="0" cellpadding="0">
+                    <thead>
+                    <tr>
+                        <th style="background: #c0c4cc;border: 1px solid #ddd;" v-for="keyvalue in allKey">
+                            {{keyvalue}}
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(value, key) in [...value]">
+
+                        <td v-for="keyvalue in allKey"
+                            style="text-align: center;border-left:1px solid #ddd;border-top:1px solid #ddd">
+                            {{value[keyvalue]}}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
             <Divider> 解析字段</Divider>
             <div v-if="allKey && allKey.length>0" style="height: 300px; overflow-y: auto;">
                 <Form inline v-for="(key,index) in allKey" :key="key">
@@ -195,15 +226,13 @@
                         </Select>
                     </FormItem>
                     <template v-if="columnSelectMap[key] && columnSelectMap[key].dicTables">
-                        <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.dicTableName">
+                        <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.columnChinese">
                             <Select
                                 style="width: 180px"
-                                v-model="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
+                                v-model="columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]"
                                 :clearable="true"
                             >
-                                <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.MC" :key="dic.MC"> {{
-                                    dic.MC }}
-                                </Option>
+                                <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM" :key="dic.DM"> {{ dic.MC }}</Option>
                             </Select>
                         </FormItem>
                     </template>
@@ -938,7 +967,9 @@
                 schemas: [],
                 tempFileId:'',//当点开预览时候把文件id临时存放在此变量中
                 customKeysObj:{},//每个文件keys存储
-                columnKeyNamesMapObj:{}//每个文件映射关系存储
+                columnKeyNamesMapObj:{},//每个文件映射关系存储
+                tableIndex: 0,
+                jsonTables: {},
             };
         },
         created() {
@@ -1678,6 +1709,8 @@
                         console.log(this.idPropertiesMap);
                     });
             },
+
+            //****多文件解析添加映射******
             bcysgx(){
                 this.$set(this.customKeysObj, this.tempFileId, this.selectData);
                 this.$set(this.columnKeyNamesMapObj, this.tempFileId, this.columnKeyNamesMap);
@@ -1743,21 +1776,34 @@
                 })
             },
 
+            // getColumnsByTable(tableId, key) {
+            //     this.$axios.post('mvc/getColumnsForTable', {
+            //         tableId
+            //     }).then(res => {
+            //         this.$set(this.columnSelectMap[key], 'columns', res.data)
+            //         this.$set(this.columnKeyNamesMap[key], 'columnId', '')
+            //         this.$set(this.columnSelectMap[key], 'dicTables', null)
+            //         this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
+            //     })
+            // },
             getColumnsByTable(tableId, key) {
                 this.$axios.post('mvc/getColumnsForTable', {
                     tableId
                 }).then(res => {
-                    this.$set(this.columnSelectMap[key], 'columns', res.data)
+                    const data = res.data || []
+                    const dicData = data.filter(v => v.isDic === 0)
+                    this.$set(this.columnSelectMap[key], 'columns',dicData)
                     this.$set(this.columnKeyNamesMap[key], 'columnId', '')
                     this.$set(this.columnSelectMap[key], 'dicTables', null)
                     this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
                 })
+                this.getDicByTableId(tableId, key)
             },
             getDicByColumn(columnId, key) {
-                const column = this.columnSelectMap[key]['columns'].find(c => c.id === columnId)
-                console.log(column)
-                const {isDic, tableId} = column || {}
-                this.getDicByTableId(tableId, key)
+                // const column = this.columnSelectMap[key]['columns'].find(c => c.id === columnId)
+                // console.log(column)
+                // const {isDic, tableId} = column || {}
+                // this.getDicByTableId(tableId, key)
             },
             getDicByTableId(tableId, key) {
                 this.$axios.post('mvc/getDicNameByTableId', {
@@ -1767,10 +1813,10 @@
                     this.$set(this.columnSelectMap[key], 'dicTables', dicTables)
                     this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
 
-                    dicTables.forEach(dicTable => {
-                        const {dicTableName} = dicTable
-                        this.$set(this.columnKeyNamesMap[key]['dicMap'], dicTableName, '')
-                    })
+                    //dicTables.forEach(dicTable => {
+                     //   const {dicTableName} = dicTable
+                     //   this.$set(this.columnKeyNamesMap[key]['dicMap'], dicTableName, '')
+                   // })
                     this.getDicColumnsByDicName(dicTable, key);
                 })
 
@@ -1785,19 +1831,23 @@
                 });
             },
 
-            handleSaveMapInfo() {
-                console.log(this.columnKeyNamesMap)
-                this.$axios.post('mvc/saveColumnMapInfos', {
-                    columnKeyNamesMap: JSON.stringify(this.columnKeyNamesMap),
-                    parserId: this.file.recommendParserId
-                }).then(res => {
-                    this.$notify({
-                        title: '提示',
-                        message: res.data.data,
-                        type: res.data.success ? 'success' : 'error'
-                    });
-                })
+            toggleTab(index) {
+                this.tableIndex = index;
             },
+            // handleSaveMapInfo() {
+            //     console.log(this.columnKeyNamesMap)
+            //     this.$axios.post('mvc/saveColumnMapInfos', {
+            //         columnKeyNamesMap: JSON.stringify(this.columnKeyNamesMap),
+            //         parserId: this.file.recommendParserId
+            //     }).then(res => {
+            //         this.$notify({
+            //             title: '提示',
+            //             message: res.data.data,
+            //             type: res.data.success ? 'success' : 'error'
+            //         });
+            //     })
+            // },
+            //*******多文件添加映射结束*******
             //右列table rowclick事件
             handleRightRowClick(row) {
                 console.info("row------");
@@ -1815,6 +1865,7 @@
                 }
                 this.columnKeyNamesMap={};
                 //alert(this.tempFileId);
+                this.jsonTables = JSON.parse(row.parseResult);
                 this.genParamsByAllKey();
             },
             //左列table rowclick 事件1
@@ -1961,6 +2012,10 @@
         border: 1px #e1e4e8 solid;
     }
 
+    .tableActive {
+        border: 1px solid #409eff;
+        background-color: #409eff;
+    }
     .title-fixed {
         position: fixed;
         top: 70px;

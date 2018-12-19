@@ -43,11 +43,12 @@
             <Form :label-width="100">
                 <Divider>字段信息({{tableMapItem.tableChinese}})
                 </Divider>
-                <FormItem v-for="(item, index) in tableColumns" :key="item.column_name" :label="item.column_name">
+                <FormItem v-for="(item, index) in tableColumns" :key="item.columnEnglish" :label="item.columnEnglish">
                     <!--<Input v-if="item.inputType != 'select' && !(item.max_length > 100) " v-model="item.value" :placeholder="item.data_type" :readonly="item.readonly" :value="item.value" style="width:300px;"/>-->
-                    <Input v-model="item.value" :placeholder="item.data_type" :value="item.value" style="width:300px;"/>
 
-                    <Select v-if="checkedArr[index]" filterable v-model="dicName" style="width:300px;">
+                    <Input v-model="item.columnChinese" :placeholder="item.data_type" :value="item.columnChinese" style="width:300px;"/>
+
+                    <Select v-if="checkedArr[index]" filterable v-model="item.dicTableName" style="width:300px;">
                         <Option v-for="item in dicTableName" :value="item" :key="item">{{ item }}</Option>
                     </Select>
 
@@ -218,14 +219,15 @@
 
             getColumns(index, row) {
                 this.tableMapItem = row
-                this.$axios.post('mvc/listColumnsForTable', {
+                this.$axios.post('mvc/getColumnsInfo', {
+                    id: this.tableData[index].id,
                     tableName: row.tableEnglish
                 }).then(res => {
                     // console.log(res.data);
                     this.tableColumns = res.data;
                     res.data.forEach((val, idx) => {
-                        this.$set(this.checkedArr, idx, false)
-                        this.$set(this.checkedArr1, idx, false)
+                        this.$set(this.checkedArr, idx, !!val.isDic)
+                        this.$set(this.checkedArr1, idx, !!val.isMasterKey)
                     })
                 })
                 this.columnSetVisible=true;
@@ -235,7 +237,6 @@
                 this.tableColumns.forEach((column, idx) => {
                     column.isDic = this.checkedArr[idx]
                     column.isMasterKey = this.checkedArr1[idx]
-                    column.dicTableName = this.dicName
                 })
                 this.$axios.post('mvc/saveColumnInfos', {
                     tableId: id,

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.filemanage.FileReportService">
+
+    <sql id="cols">
+        id,
+        ip,
+        userName,
+        password,
+        port,
+        path,
+        format
+    </sql>
+
+
+    <insert id="addFileReport" parameterType="com.fms.domain.filemanage.FileReport" >
+        INSERT INTO t_fileReport(ip,userName,password,port,path,format)
+        VALUES (
+        #{ip},
+        #{userName},
+        #{password},
+        #{port},
+        #{path},
+        #{format}
+        )
+    </insert>
+
+    <update id="updateFReport" parameterType="com.fms.domain.filemanage.FileReport">
+        UPDATE t_fileReport
+        SET
+        <if test="ip != null">
+            ip = #{ip},
+        </if>
+        <if test="userName != null">
+            userName = #{userName},
+        </if>
+        <if test="password != null">
+            password = #{password},
+        </if>
+        <if test="port != null">
+            port = #{port},
+        </if>
+        <if test="path != null">
+            path = #{path},
+        </if>
+        <if test="format != null">
+            format = #{format},
+        </if>
+        id = #{id}
+        where id = #{id}
+    </update>
+
+    <select id="getFileReport" parameterType="long" resultType="com.fms.domain.filemanage.FileReport">
+        SELECT <include refid="cols" />
+        FROM t_fileReport
+        where id=#{id}
+    </select>
+
+
+    <select id="getFileReportById" parameterType="long" resultType="com.fms.domain.filemanage.FileReport">
+        SELECT <include refid="cols" />
+        FROM t_fileReport
+        where id=#{id}
+    </select>
+
+
+    <delete id="deleteFileReport" parameterType="long">
+        DELETE FROM t_fileReport
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getFileReportList" parameterType="map" resultType="com.fms.domain.filemanage.FileReport">
+        SELECT <include refid="cols" />
+        FROM t_fileReport
+    </select>
+
+</mapper>

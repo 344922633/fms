@@ -6,7 +6,11 @@ import com.anniweiya.fastdfs.FastDFSTemplate;
 import com.anniweiya.fastdfs.FastDfsInfo;
 import com.anniweiya.fastdfs.exception.FastDFSException;
 import com.caeit.parser.excel.ExcelParser;
+import com.caeit.parser.json.JsonParser;
+import com.caeit.parser.sql.SqlParser;
 import com.caeit.parser.xml.XmlParser;
+import com.fms.domain.columnSet.ColumnInfo;
+import com.fms.domain.columnSet.TableInfo;
 import com.fms.domain.filemanage.FileParser;
 import com.fms.domain.filemanage.FileParserJar;
 import com.fms.domain.filemanage.FileType;
@@ -32,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -143,7 +148,7 @@ public class UploadController {
 //                                        File download = new File("d:\\zw_kzsx_sb.xml");
 //                                        File download = new File("d:\\zw_kzsx_sb.xls");
 
-                                        handleFile(kafkaTemplate, download);
+                                        handleFile(download);
 
                                         try {
                                             FileInputStream fis = null;
@@ -587,7 +592,7 @@ public class UploadController {
      * @param dirId
      * @param fileMd5
      */
-    public void saveFile(FastDfsInfo info,String fileName,String suffix,Long dirId,String fileMd5){
+    public void saveFile(FastDfsInfo info, String fileName, String suffix, Long dirId, String fileMd5) {
 
         com.fms.domain.filemanage.File file = new com.fms.domain.filemanage.File();
         file.setId(System.currentTimeMillis());
@@ -601,15 +606,15 @@ public class UploadController {
         file.setIsExport(0);
 
         String fileSuffix = "";
-        if(fileName.lastIndexOf(".")>0){
-            fileSuffix = fileName.substring(fileName.lastIndexOf(".")+1);
+        if (fileName.lastIndexOf(".") > 0) {
+            fileSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
         }
 
         Map<String, Object> params = Maps.newHashMap();
-        params.put("fileSuffix", "<"+fileSuffix+">");
-        List<FileType> fileTypeList =  fileTypeService.getListBySuffix(params);
+        params.put("fileSuffix", "<" + fileSuffix + ">");
+        List<FileType> fileTypeList = fileTypeService.getListBySuffix(params);
 
-        if(fileTypeList.size()>0){
+        if (fileTypeList.size() > 0) {
             file.setClassId(fileTypeList.get(0).getId());
             file.setClassName(fileTypeList.get(0).getName());
             file.setFatherClassName(fileTypeList.get(0).getType());
@@ -617,42 +622,42 @@ public class UploadController {
         }
 
 
-        if(fileTypeList==null||fileTypeList.size()==0){
+        if (fileTypeList == null || fileTypeList.size() == 0) {
             file.setClassType("其他");
-        }else{
-            Map<String,Object> fileParserIds = new HashMap<String,Object>();
+        } else {
+            Map<String, Object> fileParserIds = new HashMap<String, Object>();
             int tCount = 0;
-            for(FileType ftype:fileTypeList){
+            for (FileType ftype : fileTypeList) {
                 String fileParseId = ftype.getFileParserIds();
-                if(!Strings.isNullOrEmpty(fileParseId)){
-                    String [] tFileParserIds = fileParseId.split(",");
-                    for(String tFP:tFileParserIds){
-                        if(!fileParserIds.containsKey(tFP)){
-                            fileParserIds.put(tFP,tFP);
+                if (!Strings.isNullOrEmpty(fileParseId)) {
+                    String[] tFileParserIds = fileParseId.split(",");
+                    for (String tFP : tFileParserIds) {
+                        if (!fileParserIds.containsKey(tFP)) {
+                            fileParserIds.put(tFP, tFP);
                             tCount++;
                         }
                     }
                 }
             }
-            if(tCount>1){
+            if (tCount > 1) {
                 file.setClassType("待分类");
-            }else if(tCount==1){
+            } else if (tCount == 1) {
                 file.setClassType("预分类");
-            }else{
+            } else {
                 file.setClassType("其他");
             }
 
             String recommendParserId = "";
 //            List<FileParser> fPs = new ArrayList<FileParser>();
-            Set<String> filePK =  fileParserIds.keySet();
-            if(filePK.size()==1) {
+            Set<String> filePK = fileParserIds.keySet();
+            if (filePK.size() == 1) {
                 Iterator<String> it = filePK.iterator();
-                while(it.hasNext()){
-                    recommendParserId=it.next();
-                    if(!Strings.isNullOrEmpty(recommendParserId)){
+                while (it.hasNext()) {
+                    recommendParserId = it.next();
+                    if (!Strings.isNullOrEmpty(recommendParserId)) {
                         file.setRecommendParserId(Long.valueOf(recommendParserId));
                         FileParser fileParser = fileParserService.get(file.getRecommendParserId());
-                        if(fileParser!=null){
+                        if (fileParser != null) {
                             file.setRecommendParserName(fileParser.getName());
                             continue;
                         }
@@ -660,7 +665,6 @@ public class UploadController {
                     }
                 }
             }
-
 
 
         }
@@ -864,12 +868,12 @@ public class UploadController {
     /**
      * 进行全字段匹配并发送kafka
      *
-     * @param kafka
      * @param file
      * @throws Exception
      */
-    public void handleFile(KafkaTemplate kafka, File file) throws Exception {
+    public void handleFile(File file) throws Exception {
         try {
+
             String fileName = file.getName();
             String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
             //JSONArray kafkaArray = new JSONArray();
@@ -878,8 +882,9 @@ public class UploadController {
             if (suffix.equals("xml")) {
                 Map<String, String> map = new XmlParser().parseXml(file);
                 String outPut = map.get("jsonBottomLevel");
-
-                System.out.println(outPut);
+                System.out.println("xml:"+outPut);
+                getKafka(outPut);
+/*
                 JSONObject outPutJson = JSONObject.parseObject(outPut);
 //                fileParserService.parseData(json2List())
                 Iterator<String> it = outPutJson.keySet().iterator();
@@ -892,14 +897,14 @@ public class UploadController {
 
 
                     // JSONArray array = JSONArray.parseArray(tableStr);
-                            /*    String schema="";
+                            *//*    String schema="";
                                 if(jsonObject.containsKey("schema")){
                                     schema= jsonObject.getString("schema");
                                 }
                                 String table="";
                                 if(jsonObject.containsKey("table")){
                                     table= jsonObject.getString("table");
-                                }*/
+                                }*//*
 
 
                     for (int i = 0; i < array.size(); i++) {
@@ -910,9 +915,9 @@ public class UploadController {
                         obj1.put("operationType", "INSERT");
                         obj1.put("objectCode", "dxbm");
                         obj.put("operationSource", "XX_PLATFORM");
-                     /*       obj1.put("schema", schema);
+                     *//*       obj1.put("schema", schema);
                         obj1.put("table", "zw_kzsx_sb");
-*/
+*//*
                         JSONArray columns = new JSONArray();
 
                         JSONObject jsonObject = array.getJSONObject(i);
@@ -933,7 +938,7 @@ public class UploadController {
                             }
 
                             JSONObject jsonCol = new JSONObject();
-                            jsonCol.put("name", jsonKey);
+                            jsonCol.put("name", jsonKey.toLowerCase());
                             jsonCol.put("value", jsonObject.get(jsonKey));
                             columns.add(jsonCol);
 
@@ -942,35 +947,37 @@ public class UploadController {
                         data.add(obj1);
                         obj.put("data", data);
                         System.out.println(obj.toJSONString());
-                        kafka.send("operation_3rd1", obj.toJSONString());
+                        kafkaTemplate.send("operation_3rd1", obj.toJSONString());
                     }
 
-                }
-            }
-                      /*     else if (suffix.equals("json")) {
+                }*/
+            } else if (suffix.equals("json")) {
 
+                Map<String, String> map = new JsonParser().parseJson(file);
+                String outPut = map.get("jsonBottomLevel");
+                System.out.println("json:"+outPut);
 
-                                Map<String, String> map = new JsonParser().parseJson(new File("D:\\JsonParser_testFile.json"));
-                                String outPut = map.get("jsonBottomLevel");
-                            }*/
-            else if (suffix.equals("xls") || suffix.equals("xlsx")) {
+                getKafka(outPut);
+
+            } else if (suffix.equals("sql")) {
+
+                Map<String, String> map = new SqlParser().parseSql(file);
+                String outPut = map.get("jsonBottomLevel");
+                System.out.println("sql:"+outPut);
+
+                getKafka(outPut);
+
+            } else if (suffix.equals("xls") || suffix.equals("xlsx")) {
                 Map<String, String> map = new ExcelParser().parseExcel(file, true); //true 表示是否行排列，false表示列排列，目前仅支持行排列即可
                 String outPut = map.get("jsonBottomLevel");
-                System.out.println(outPut);
-                JSONObject outPutJson = JSONObject.parseObject(outPut);
+                System.out.println("xls:"+outPut);
+                getKafka(outPut);
+
+        /*        JSONObject outPutJson = JSONObject.parseObject(outPut);
                 Iterator<String> it = outPutJson.keySet().iterator();
                 if (it.hasNext()) {
                     String key = it.next();// entitys entity
                     JSONArray array = outPutJson.getJSONArray(key);
-                    // JSONArray array = JSONArray.parseArray(tableStr);
-                                            /*    String schema="";
-                                                if(jsonObject.containsKey("schema")){
-                                                    schema= jsonObject.getString("schema");
-                                                }
-                                                String table="";
-                                                if(jsonObject.containsKey("table")){
-                                                    table= jsonObject.getString("table");
-                                                }*/
 
                     String tableName = getTable(array.toJSONString());
                     for (int i = 0; i < array.size(); i++) {
@@ -981,9 +988,9 @@ public class UploadController {
                         obj1.put("operationType", "INSERT");
                         obj1.put("objectCode", "dxbm");
                         obj.put("operationSource", "XX_PLATFORM");
-                                     /*       obj1.put("schema", schema);
+                                     *//*       obj1.put("schema", schema);
                                         obj1.put("table", "zw_kzsx_sb");
-                */
+                *//*
                         JSONArray columns = new JSONArray();
 
                         JSONObject jsonObject = array.getJSONObject(i);
@@ -1004,7 +1011,7 @@ public class UploadController {
                             }
 
                             JSONObject jsonCol = new JSONObject();
-                            jsonCol.put("name", jsonKey);
+                            jsonCol.put("name", jsonKey.toLowerCase());
                             jsonCol.put("value", jsonObject.get(jsonKey));
                             columns.add(jsonCol);
 
@@ -1013,9 +1020,9 @@ public class UploadController {
                         data.add(obj1);
                         obj.put("data", data);
                         System.out.println(obj.toJSONString());
-                        kafka.send("operation_3rd1", obj.toJSONString());
+                        kafkaTemplate.send("operation_3rd1", obj.toJSONString());
                     }
-                }
+                }*/
             }
         } catch (Exception e) {
         }
@@ -1058,12 +1065,12 @@ public class UploadController {
 
     @RequestMapping(value = "/sendToFtp", method = RequestMethod.POST)
     public Object sendToFtp(HttpServletRequest request, HttpServletResponse response) {
-        String ipAddr=request.getParameter("ipAddr");
-        String port=request.getParameter("port");
-        String userName=request.getParameter("userName");
-        String pwd=request.getParameter("pwd");
-        String path=request.getParameter("path");
-        Ftp ftp=new Ftp();
+        String ipAddr = request.getParameter("ipAddr");
+        String port = request.getParameter("port");
+        String userName = request.getParameter("userName");
+        String pwd = request.getParameter("pwd");
+        String path = request.getParameter("path");
+        Ftp ftp = new Ftp();
         ftp.setUserName(userName);
         ftp.setPwd(pwd);
         ftp.setPort(Integer.parseInt(port));
@@ -1076,125 +1083,149 @@ public class UploadController {
         dIds.add(Long.valueOf(1));
         params.put("ids", dIds);//
         //List<File> fileList = fileService.getFileListByDirectoryIds(params);
-       List<com.fms.domain.filemanage.File> fileList = fileService.getAllFIles();// 写个查询所有的方法
+        List<com.fms.domain.filemanage.File> fileList = fileService.getAllFIles();// 写个查询所有的方法
 
         try {
+            String filePath = "";
+            String dir = env.getProperty("file.tmpPath");// /home/huiju
+            int i = 1;
+            for (com.fms.domain.filemanage.File file : fileList) {
+                boolean isUpload = true;// 判断是否上报
 
-            /*
-            String dir = "d://xx/xx/xx//";
-            for(com.fms.domain.filemanage.File file : fileList){
-                FtpUtil.uploadFTP(dir + file.getRealPath());
-            }*/
+                File fileLocal = null;
+                if (file != null) {
+                    try {
+                        String fileName = file.getName();
 
-            if (21 == ftp.getPort()) {
-                try {
-                    FtpUtil.connectFtp(ftp);
-                    FtpUtil.uploadFTP("D:\\git_tuopu\\tmp\\file\\57ba3dc8a7210827042c21f88e9d881e\\新而ccccccc鹅.txt");
-                } catch (Exception e) {
-                    e.printStackTrace();
+                        // 指定存放位置(有需求可以自定义)
+                        filePath = dir + File.separatorChar + fileName;
+                        fileLocal = new File(filePath);
+                        // 校验文件夹目录是否存在，不存在就创建一个目录
+                        if (!fileLocal.getParentFile().exists()) {
+                            fileLocal.getParentFile().mkdirs();
+                        }
+
+                        OutputStream out = new FileOutputStream(fileLocal);
+
+                        byte[] buf = fastDFSTemplate.loadFile(file.getGroups(), file.getRealPath());
+
+                        if(buf != null){
+                            out.write(buf);
+                            System.out.println("第" + i + "个文件下载成功！--" + fileName);
+                        }else{
+                            isUpload = false;
+                            System.out.println("第" + i + "个文件不存在，下载失败！--" + fileName);
+                        }
+                        i++;
+
+                        out.flush();
+                        out.close();
+
+
+                    } catch (FastDFSException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } else {
-                SFTPUtils sf = SFTPUtils.getInstance(ftp);
-                sf.upload(path, "D:\\git_tuopu\\tmp\\file\\57ba3dc8a7210827042c21f88e9d881e\\新而ccccccc鹅.txt");
 
+                //String filePath = "http://"+env.getProperty("fastdfs.nginxAddress")+"/"+file.getGroups()+"/"+file.getRealPath();
+                System.out.println(filePath);
+                if(isUpload){
+                    if (21 == ftp.getPort()) {
+                        try {
+                            FtpUtil.connectFtp(ftp);
+
+                            FtpUtil.uploadFTP(filePath);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        SFTPUtils sf = SFTPUtils.getInstance(ftp);
+                        sf.upload(path, filePath);
+                    }
+                }
+
+                // 删除临时文件
+                if(fileLocal != null){
+                    fileLocal.delete();
+                }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        /*if (21 == ftp.getPort()) {
-            try {
-                FtpUtil.connectFtp(ftp);
-                FtpUtil.upload(file);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            SFTPUtils sf = SFTPUtils.getInstance(ftp);
-            Vector<ChannelSftp.LsEntry> files = null;        //查看文件列表
-            try {
-                files = sf.listFiles(directory);
-                if (files != null && files.size() > 0) {
-                    for (ChannelSftp.LsEntry lsEntry : files) {
-                        String fileName = lsEntry.getFilename();
-                        if (!fileName.equals(".") && !fileName.equals("..")) {
-                            if (!lsEntry.getAttrs().isDir()) {
-                                File download = sf.download(directory + "/" + lsEntry.getFilename(), tempFold + "/" + fileName);
-                                try {
-                                    FileInputStream fis = null;
-                                    ByteArrayOutputStream bos = null;
-                                    byte[] buffer = null;
-                                    fis = new FileInputStream(download.getAbsolutePath());
-                                    bos = new ByteArrayOutputStream();
-
-                                    byte[] b = new byte[1024];
-
-                                    int n;
-
-                                    while ((n = fis.read(b)) != -1) {
-                                        bos.write(b, 0, n);
-                                    }
-
-                                    buffer = bos.toByteArray();
-                                    String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" : fileName.substring(fileName.lastIndexOf(".") + 1);
-                                    FastDfsInfo info = fastDFSTemplate.upload(buffer, suffix);
-                                    if (info != null) {
-                                        Long dirId = ftp.getDirectoryId();
-//                                String relativePath = fileInfo.getWebkitRelativePath();
-
-
-                                        //test
-//                                if (!Strings.isNullOrEmpty(relativePath)) {
-//                                }
-                                        Date currentDate = new Date();
-                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-                                        String relativePath = sdf.format(currentDate);
-                                        dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
-                                        saveFile(info, fileName, suffix, dirId, null);
-
-                                        // 清除文件夹
-                                        File tempFile = new File(tempFold);
-                                        if (tempFile.isDirectory() && tempFile.exists()) {
-                                            tempFile.delete();
-                                        }
-
-                                    }
-                                } catch (FastDFSException e) {
-                                    e.printStackTrace();
-                                } catch (FileNotFoundException e) {
-                                    e.printStackTrace();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (SftpException e) {
-                e.printStackTrace();
-            }
-            sf.disconnect();
-        }*/
 
         return ExtUtil.success("文件上传成功！");
     }
 
 
-/*
-    @Test
-    public void test(){
-        try {
-            File testFile = new File("D:\\zw_kzsx_sb.xls");
+    private void getKafka(String outPut) {
+        JSONObject outPutJson = JSONObject.parseObject(outPut);
 
-            Map<String, String> map = new XmlParser().parseXml(testFile);
-            String outPut = map.get("jsonBottomLevel");
-            System.out.println(outPut);
-        } catch (Exception e) {
-            e.printStackTrace();
+        //
+        String key = "";
+        for (String keys : outPutJson.keySet()) {
+            key = keys;
+            break;
         }
+        JSONArray array = outPutJson.getJSONArray(key);//就是匹配字段的源数据
+
+        String tableName = getTable(array.toJSONString());// =======================================================================
+        //String tableName = "sd_ddd_xxx";
 
 
-    }*/
+        JSONObject rootObj = new JSONObject();
+        rootObj.put("operationSource", "XX_PLATFORM");
+
+        JSONArray infoArr = new JSONArray();
+        for (int i = 0; i < array.size(); i++) {
+            JSONObject infoObj = new JSONObject();
+            infoObj.put("operationType", "INSERT");
+
+            infoObj.put("schema", "renzhi");//库名
+
+            JSONObject columnPublic = new JSONObject();
+
+            JSONArray columnArr = new JSONArray();
+
+            infoObj.put("table", tableName);//表名
+
+            JSONObject colJson = array.getJSONObject(i);
+
+            String dxbm = "";
+            if(colJson.containsKey("DXBM")){
+                dxbm = colJson.getString("DXBM");
+            }else if(colJson.containsKey("dxbm")){
+                dxbm = colJson.getString("dxbm");
+            }
+
+            for (String colKey : colJson.keySet()) {
+                if(! colKey.equals("TableSchema")){
+                    JSONObject columnJson = new JSONObject();
+
+                    columnJson.put("name", colKey.toLowerCase());// 获取
+                    columnJson.put("value", colJson.getString(colKey));
+
+                    columnArr.add(columnJson);
+                }
+            }
+
+            columnArr.add(columnPublic);
+
+            infoObj.put("objectCode", "dxbm");
+            infoObj.put("objectCodeValue", dxbm);//
+            infoObj.put("columns", columnArr);
+
+            infoArr.add(infoObj);
+
+            rootObj.put("data", infoArr);
+        }
+        System.out.println("kafka消息格式：\n" + rootObj);
+
+        kafkaTemplate.send("operation_3rd1", rootObj.toJSONString());
+
+    }
+
+
 }
