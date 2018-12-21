@@ -8,11 +8,24 @@
         <result column="CHARACTER_MAXIMUM_LENGTH" property="max_length" />
         <result column="COLUMN_DESC" property="column_desc" />
     </resultMap>
+
     <select id="listColumns" parameterType="map" resultMap="columnInfo">
         select  COLUMN_NAME,COLUMN_KEY,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,concat(COLUMN_COMMENT,'(',TABLE_NAME,')') AS COLUMN_DESC
         from information_schema.COLUMNS
         where TABLE_SCHEMA = (select database())
         and TABLE_NAME = #{tableName}
+    </select>
+
+    <select id="getColumnnInfo" parameterType="map" resultMap="columnInfo">
+        select  COLUMN_NAME,COLUMN_KEY,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,concat(COLUMN_COMMENT,'(',TABLE_NAME,')') AS COLUMN_DESC
+        from information_schema.COLUMNS
+        where TABLE_SCHEMA = (select database())
+        and TABLE_NAME = #{tableName}
+        and COLUMN_NAME = #{columnName}
+    </select>
+
+    <select id="listColumnsForMasterTable" parameterType="java.lang.Long" resultType="com.fms.domain.columnSet.ColumnInfo">
+        select * from column_info where tableId=#{tableId}
     </select>
 
     <select id="getAllTables" resultType="string">

@@ -34,11 +34,22 @@ public class SFTPUtils {
     	port = ftp.getPort();
     	username = ftp.getUserName();
     	password = ftp.getPwd();
-        if (instance == null || !sftp.isConnected()) {
+        if (instance == null || sftp == null || (sftp != null && !sftp.isConnected())) {
                 instance = new SFTPUtils();
                 sftp = instance.connect(host, port, username, password);   //获取连接
         }
         return instance;
+    }
+
+    /**
+     * 判断SFTP是否连接
+     * @return
+     */
+    public static boolean isSFTPConnect(SFTPUtils sf){
+        if(sf != null && sftp != null && sftp.isConnected()){
+            return true;
+        }
+        return false;
     }
  
     /**

@@ -10,9 +10,9 @@ public class MasterSlaveDo {
 
     private String name;
 
-    private String masterTable;
+    private long masterTableId;
 
-    private String slaveTable;
+    private long slaveTableId;
 
     private String type;
 

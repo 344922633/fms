@@ -8,20 +8,18 @@
         userName,
         password,
         port,
-        path,
-        format
+        path
     </sql>
 
 
     <insert id="addFileReport" parameterType="com.fms.domain.filemanage.FileReport" >
-        INSERT INTO t_fileReport(ip,userName,password,port,path,format)
+        INSERT INTO t_fileReport(ip,userName,password,port,path)
         VALUES (
         #{ip},
         #{userName},
         #{password},
         #{port},
-        #{path},
-        #{format}
+        #{path}
         )
     </insert>
 
@@ -42,9 +40,6 @@
         </if>
         <if test="path != null">
             path = #{path},
-        </if>
-        <if test="format != null">
-            format = #{format},
         </if>
         id = #{id}
         where id = #{id}

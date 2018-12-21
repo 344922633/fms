@@ -1,8 +1,12 @@
 package com.fms.controller.schema;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fms.domain.columnSet.ColumnInfo;
+import com.fms.domain.columnSet.TableInfo;
 import com.fms.domain.filemanage.ColumnValuesDo;
 import com.fms.domain.filemanage.MasterSlaveDo;
+import com.fms.service.columnSet.ColumnInfoService;
+import com.fms.service.columnSet.ColumnSetService;
 import com.fms.service.masterSlave.ColumnValuesService;
 import com.fms.service.masterSlave.MasterSlaveService;
 import com.fms.service.schema.SchemaService;
@@ -10,7 +14,8 @@ import com.fms.utils.ParamUtil;
 import com.handu.apollo.base.Page;
 import com.handu.apollo.utils.ExtUtil;
 import com.handu.apollo.utils.json.JsonUtil;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,19 +32,22 @@ import java.util.Map;
 public class SchemaController {
     @Autowired
     private SchemaService schemaService;
-
+    @Autowired
+    private ColumnSetService columnSetService;
     @Autowired
     private MasterSlaveService masterSlaveService;
 
     @Autowired
     private ColumnValuesService columnValuesService;
+    @Autowired
+    private ColumnInfoService columnInfoService;
 
     @Autowired
     private KafkaTemplate kafkaTemplate;
 
 
     @RequestMapping("listColumns")
-    public List<Map<String,Object>> listColumns(String tableName) {
+    public List<Map<String, Object>> listColumns(String tableName) {
         return schemaService.listColumns(tableName);
     }
 
@@ -47,12 +56,12 @@ public class SchemaController {
         MasterSlaveDo masterSlaveDo = new MasterSlaveDo();
         return masterSlaveService.query(masterSlaveDo);
     }
+
     @RequestMapping("getMenuListFormasterslave")
     public Object getMenuListFormasterslave() {
         List<MasterSlaveDo> masterSlaveDoList = new ArrayList<MasterSlaveDo>();
         List<String> parentList = masterSlaveService.queryType();
-        for (String parentType : parentList)
-        {
+        for (String parentType : parentList) {
             MasterSlaveDo masterSlaveDo = new MasterSlaveDo();
             masterSlaveDo.setName(parentType);
 
@@ -65,49 +74,51 @@ public class SchemaController {
         return masterSlaveDoList;
     }
 
+
     @RequestMapping("listColumnsFormasterslave")
-    public List<Map<String,Object>> listColumnsFormasterslave(String masterslavename) {
+    public List<Map<String, Object>> listColumnsFormasterslave(String masterSlaveId) {
         MasterSlaveDo masterSlaveDoForQuery = new MasterSlaveDo();
-        masterSlaveDoForQuery.setName(masterslavename);
+        masterSlaveDoForQuery.setId(masterSlaveId);
         List<MasterSlaveDo> list = masterSlaveService.query(masterSlaveDoForQuery);
-        if (list != null && list.size() > 0)
-        {
+
+        List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
+        if (list != null && list.size() > 0) {
             MasterSlaveDo masterSlaveDo = list.get(0);
 
-            if (StringUtils.isNotEmpty(masterSlaveDo.getMasterTable()))
-            {
-                List<Map<String,Object>> returnList = schemaService.listColumns(masterSlaveDo.getMasterTable());
-                for (Map<String,Object> single : returnList)
-                {
-                    ColumnValuesDo ColumnValuesDoForQuery = new ColumnValuesDo();
-                    ColumnValuesDoForQuery.setTableName(masterSlaveDo.getMasterTable());
-                    ColumnValuesDoForQuery.setColumnvalue(String.valueOf(single.get("column_name")));
-                    List<ColumnValuesDo> columnValuesDoList = columnValuesService.query(ColumnValuesDoForQuery);
-                    if (columnValuesDoList != null && columnValuesDoList.size() > 0)
-                    {
-                        single.put("inputType","select");
-                        single.put("selectvalue",columnValuesDoList);
-                    }
+            List<ColumnInfo> masterList = schemaService.listColumnsForMasterTable(masterSlaveDo.getMasterTableId());
+
+            for (ColumnInfo column : masterList) {
+                TableInfo tableInfo = columnInfoService.queryTableInfoById(column.getTableId());
+                Map<String, Object> columnMap = schemaService.getColumnnInfo(tableInfo.getTableEnglish(), column.getColumnEnglish());
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("column", column);
+                if (columnMap != null) {
+                    map.putAll(columnMap);
                 }
-                if (StringUtils.isNotEmpty(masterSlaveDo.getSlaveTable()))
-                {
-                    List<Map<String,Object>> returnListForSLave = schemaService.listColumns(masterSlaveDo.getSlaveTable());
-                    for (Map<String,Object> single : returnListForSLave)
-                    {
-                        ColumnValuesDo ColumnValuesDoForQuery = new ColumnValuesDo();
-                        ColumnValuesDoForQuery.setTableName(masterSlaveDo.getSlaveTable());
-                        ColumnValuesDoForQuery.setColumnvalue(String.valueOf(single.get("column_name")));
-                        List<ColumnValuesDo> columnValuesDoList = columnValuesService.query(ColumnValuesDoForQuery);
-                        if (columnValuesDoList != null && columnValuesDoList.size() > 0)
-                        {
-                            single.put("inputType","select");
-                            single.put("selectvalue",columnValuesDoList);
-                        }
-                    }
-                    returnList.addAll(returnListForSLave);
+                if (StringUtils.isNotEmpty(column.getDicTableName())) {
+                    List<Map<String, Object>> dicList = columnSetService.getDicColumnsByDicName(column.getDicTableName());
+                    map.put("dicList", dicList);
+
                 }
-                return returnList;
+                returnList.add(map);
             }
+            List<ColumnInfo> returnListForSLave = schemaService.listColumnsForMasterTable(masterSlaveDo.getSlaveTableId());
+
+            for (ColumnInfo column : returnListForSLave) {
+                TableInfo tableInfo = columnInfoService.queryTableInfoById(column.getTableId());
+                Map<String, Object> columnMap = schemaService.getColumnnInfo(tableInfo.getTableEnglish(), column.getColumnEnglish());
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("column", column);
+                if (StringUtils.isNotEmpty(column.getDicTableName())) {
+                    List<Map<String, Object>> dicList = columnSetService.getDicColumnsByDicName(column.getDicTableName());
+                    map.put("dicList", dicList);
+                    if (columnMap != null) {
+                        map.putAll(columnMap);
+                    }
+                }
+                returnList.add(map);
+            }
+            return returnList;
         }
         return null;
     }
@@ -119,7 +130,7 @@ public class SchemaController {
     }
 
 
-    @RequestMapping("insertDataFormasterslave")
+/*    @RequestMapping("insertDataFormasterslave")
     public Object insertDataFormasterslave(String masterslavename, String data) {
 //        if(true){
 //            kafkaTemplate.send("schema",data);
@@ -149,7 +160,7 @@ public class SchemaController {
 //        }
 
         return ExtUtil.success("操作成功");
-    }
+    }*/
 
     @RequestMapping("insertData")
     public Object insertData(String tableName, String data) {
@@ -164,6 +175,7 @@ public class SchemaController {
 
     /**
      * 分页查询解析器
+     *
      * @param request
      * @return
      */
@@ -175,13 +187,12 @@ public class SchemaController {
     }
 
     @RequestMapping("/masterSlave/detail")
-    public Object detail(String id,HttpServletRequest request) {
+    public Object detail(String id, HttpServletRequest request) {
         MasterSlaveDo masterSlaveDo = new MasterSlaveDo();
         masterSlaveDo.setId(id);
         List<MasterSlaveDo> list = masterSlaveService.query(masterSlaveDo);
         MasterSlaveDo masterSlaveDoForDetail = new MasterSlaveDo();
-        if (list != null && list.size() > 0)
-        {
+        if (list != null && list.size() > 0) {
             masterSlaveDoForDetail = list.get(0);
         }
         return masterSlaveDoForDetail;
@@ -208,7 +219,7 @@ public class SchemaController {
     }
 
     @RequestMapping("/masterSlave/delete")
-    public Object delete(String id,HttpServletRequest request) {
+    public Object delete(String id, HttpServletRequest request) {
         masterSlaveService.delete(id);
         return ExtUtil.success("操作成功");
     }

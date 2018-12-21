@@ -2,30 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fms.service.tuopu.ControlPropertyService">
 
-    <sql id="allColumns">
-        id,
-        controlId,
-	    property,
-	    value
-    </sql>
 
     <insert id="addControlProperty" parameterType="com.fms.domain.tuopu.ControlProperty" >
-        INSERT INTO t_property (controlId,property,value)
+        INSERT INTO t_property (controlId,propertyChinese,propertyEnglish,valueDataType,dicName,dicInfo,isDic)
         VALUES (
         #{controlId},
-        #{property},
-        #{value}
+        #{propertyChinese},
+        #{propertyEnglish},
+        #{valueDataType},
+        #{dicName},
+        #{dicInfo},
+        #{isDic}
+
         )
     </insert>
 
     <select id="getPropertyList" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
-        SELECT <include refid="allColumns" />
-        FROM t_property
+        SELECT * FROM t_property
     </select>
 
     <select id="getPropertyById" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
-        SELECT <include refid="allColumns" />
-        FROM t_property
+        SELECT * FROM t_property
         WHERE id = #{id}
   </select>
 

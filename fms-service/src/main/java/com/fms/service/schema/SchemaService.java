@@ -1,5 +1,6 @@
 package com.fms.service.schema;
 
+import com.fms.domain.columnSet.ColumnInfo;
 import com.fms.utils.SchemaUtil;
 import com.handu.apollo.data.mybatis.Dao;
 import com.handu.apollo.data.utils.Param;
@@ -25,6 +26,17 @@ public class SchemaService {
                 .put("tableName", tableName)
                 .build();
         return dao.getList(CLASSNAME, "listColumns", params);
+    }
+
+    public Map<String,Object> getColumnnInfo(String tableName, String columnName) {
+        Map<String, Object> params = Param.get()
+                .put("tableName", tableName).put("columnName", columnName)
+                .build();
+        return dao.get(CLASSNAME, "getColumnnInfo", params);
+    }
+
+    public List<ColumnInfo> listColumnsForMasterTable(long tableId) {
+        return dao.getList(CLASSNAME, "listColumnsForMasterTable", tableId);
     }
 
     public List<String> getTables() {

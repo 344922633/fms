@@ -133,7 +133,7 @@
                 <FormItem :label-width="100" :label="key">
                 </FormItem>
                 <FormItem label="选择库">
-                    <Select
+                    <Select filterable
                         @on-change="(schemaId) => getTables(schemaId, key)"
                         style="width: 180px"
                         v-model="columnKeyNamesMap[key].schemaId"
@@ -143,7 +143,7 @@
                     </Select>
                 </FormItem>
                 <FormItem label="选择表">
-                    <Select
+                    <Select filterable
                         @on-change="(tableId) => getColumnsByTable(tableId, key)"
                         style="width: 180px"
                         v-model="columnKeyNamesMap[key].tableId"
@@ -153,7 +153,7 @@
                     </Select>
                 </FormItem>
                 <FormItem label="选择字段">
-                    <Select
+                    <Select filterable
                         @on-change="(columnId) => getDicByColumn(columnId, key)"
                         style="width: 180px"
                         v-model="columnKeyNamesMap[key].columnId"
@@ -164,7 +164,7 @@
                 </FormItem>
                 <template v-if="columnSelectMap[key] && columnSelectMap[key].dicTables">
                     <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.columnChinese">
-                        <Select
+                        <Select filterable
                             style="width: 180px"
                             v-model="columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]"
                             :clearable="true"

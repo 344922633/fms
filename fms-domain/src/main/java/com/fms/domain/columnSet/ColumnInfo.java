@@ -10,7 +10,7 @@ public class ColumnInfo {
     private int isDic;
     private int isMasterKey;
     private String dataType;
-    private int tableId;
+    private long tableId;
     private int schemaId;
     private String dicTableName;
     private String columnChinese;

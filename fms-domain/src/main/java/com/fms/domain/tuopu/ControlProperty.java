@@ -7,8 +7,11 @@ import lombok.Data;
 @Data
 public class ControlProperty {
 	private long id;
-	private String property;
-	private String value;
+	private String propertyChinese;
+	private String propertyEnglish;
 	private String controlId;
-
+	private String valueDataType;
+	private String dicName;
+	private String dicInfo;
+	private int isDic;
 }

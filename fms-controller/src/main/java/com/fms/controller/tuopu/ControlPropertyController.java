@@ -44,8 +44,11 @@ public class ControlPropertyController {
                     JSONObject obj = new JSONObject();// 属性信息
 
                     obj.put("id", property.getId());
-                    obj.put("property", property.getProperty());
-                    obj.put("value", property.getValue());
+                    obj.put("isDic", property.getIsDic());
+                    obj.put("dicName", property.getDicName());
+                    obj.put("propertyChinese", property.getPropertyChinese());
+                    obj.put("propertyEnglish", property.getPropertyEnglish());
+                    obj.put("valueDataType",property.getValueDataType());
 
                     propertyArray.add(obj);
                 }
@@ -59,14 +62,5 @@ public class ControlPropertyController {
         return controlArray;
     }
 
-    @RequestMapping("add")
-    public void add(@RequestParam Map<String, Object> params) {
-        String controlId = (String) params.get("controlId");
-        String propertyName = (String) params.get("property");
-        ControlProperty property = new ControlProperty();
-        property.setProperty(propertyName);
-        property.setControlId(controlId);
-        controlPropertyService.add(property);
-    }
 }
 
