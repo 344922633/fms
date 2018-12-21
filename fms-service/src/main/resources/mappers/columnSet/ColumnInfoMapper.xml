@@ -50,7 +50,7 @@
   </select>
 
   <select id="getDicTable" resultType="java.lang.String">
-        select table_name as name from INFORMATION_SCHEMA.tables where table_name like '%nz_dic%';
+        select table_name as name from INFORMATION_SCHEMA.tables where table_schema = 'fms'and table_name like '%nz_dic%';
     </select>
 
 </mapper>
