@@ -11,6 +11,5 @@ public class FileReport {
 	private String password;
 	private String port;
 	private String path;
-	private String format ;
 
 }

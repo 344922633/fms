@@ -112,7 +112,7 @@ public class ControlController {
     }
 
     @RequestMapping("add")
-    public void add(@RequestParam String name, @RequestParam String type, @RequestParam String url, @RequestParam String properties) {
+    public void add(String name, String type, String url, String properties) {
         Control control = new Control();
         String controlId=UUID.randomUUID().toString();
         control.setId(controlId);
@@ -126,7 +126,8 @@ public class ControlController {
             property = array.getJSONObject(i).getString("text");
             ControlProperty controlProperty=new ControlProperty();
             controlProperty.setControlId(controlId);
-            controlProperty.setProperty(property);
+/*            controlProperty.setPropertyEnglish(propertyEnglish);
+            controlProperty.setPropertyChinese();*/
             controlPropertyService.add(controlProperty);
         }
 

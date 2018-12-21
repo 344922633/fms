@@ -65,7 +65,8 @@ public class ColumnSetController {
 
     @RequestMapping("/getDicNameByTableId")
     public JSONArray getDicNameByTableId(String tableId){
-        int tid=Integer.valueOf(tableId);
+        long tid = Long.parseLong(tableId);
+
         List<ColumnInfo> list = columnSetService.getDicNameByTableId(tid);
 
         JSONArray array = new JSONArray();
@@ -84,7 +85,7 @@ public class ColumnSetController {
 
     @RequestMapping("/getColumnsForTable")
     public List<ColumnInfo> getColumnsForTable(String tableId){
-        int tid=Integer.valueOf(tableId);
+        long tid=Long.parseLong(tableId);
         return columnSetService.getColumnsForTable(tid);
     }
 

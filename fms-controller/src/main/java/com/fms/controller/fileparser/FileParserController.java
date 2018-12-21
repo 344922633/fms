@@ -808,7 +808,7 @@ public class FileParserController {
                 infoObj.put("objectCode", "dxbm");
 
                 infoObj.put("objectCodeValue", objectCodeValue);// 时间戳
-                infoObj.put("schema", "renzhi");//库名
+                infoObj.put("schema", "renzhi_1208");//库名
 
                 JSONObject columnPublic =new JSONObject();
 
@@ -821,7 +821,7 @@ public class FileParserController {
                 String schemaId = mapKey.split("_")[0];
                 String tableId = mapKey.split("_")[1];
 
-                TableInfo tableInfo=columnSetService.getTableNameByTableId(Integer.valueOf(tableId));
+                TableInfo tableInfo=columnSetService.getTableNameByTableId(Long.parseLong(tableId));
                 infoObj.put("table", tableInfo.getTableEnglish());//表名
 
                 Set<String> colSet = entry.getValue();

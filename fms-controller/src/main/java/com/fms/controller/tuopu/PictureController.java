@@ -99,7 +99,7 @@ public class PictureController {
 
         // 循环获取控件
         for (int i = 0; i < btnArray.size(); i++) {
-            String str = "dwj_" + System.nanoTime();
+            String str = "";
 
             JSONObject kongjianObj = btnArray.getJSONObject(i);
 
@@ -117,8 +117,7 @@ public class PictureController {
             JSONObject obj1 = new JSONObject();
             obj.put("operationSource", "XX_PLATFORM");
             obj1.put("operationType", "INSERT");
-            obj1.put("objectCode", "dxbm");
-            obj1.put("objectCodeValue", str);
+
 
             JSONArray columns = new JSONArray();
 
@@ -154,7 +153,12 @@ public class PictureController {
                         obj1.put("table", properties.get(jsonKey).toString());
                         continue;
                     }
-
+                    if (jsonKey.equals("dxbm")) {
+                        str= properties.get(jsonKey).toString();
+                        obj1.put("objectCode", "dxbm");
+                        obj1.put("objectCodeValue", str);
+                        continue;
+                    }
                     JSONObject jsonCol = new JSONObject();
                     jsonCol.put("name", jsonKey);
                     jsonCol.put("value", properties.get(jsonKey));

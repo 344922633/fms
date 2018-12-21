@@ -5,20 +5,25 @@ import com.alibaba.fastjson.JSONObject;
 import com.fms.domain.columnSet.ColumnInfo;
 import com.fms.domain.columnSet.TableInfo;
 import com.fms.service.columnSet.ColumnInfoService;
+import com.fms.service.schema.SchemaService;
 import com.handu.apollo.utils.ExtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 @RestController
 public class ColumnInfoController {
     @Autowired
     private ColumnInfoService columnInfoService;
-
+    @Autowired
+    private SchemaService schemaService;
     @RequestMapping("getDicTable")
     public List<String> getDicTable() {
         return columnInfoService.getDicTable();
@@ -26,7 +31,7 @@ public class ColumnInfoController {
 
     @RequestMapping("/deleteTableInfo")
     public Object deleteTableInfo(String id) {
-        int tid = Integer.valueOf(id);
+        long tid = Long.parseLong(id);
         columnInfoService.deleteTableInfo(tid);
         columnInfoService.deleteColumnInfo(tid);
         return ExtUtil.success("操作成功");
@@ -35,7 +40,7 @@ public class ColumnInfoController {
     @RequestMapping("/updateTableInfo")
     public Object updateTableInfo(HttpServletRequest request) {
         String tableId = request.getParameter("tableId");
-        int tid = Integer.valueOf(tableId);
+        long tid = Long.parseLong(tableId);
         String tableEnglish = request.getParameter("tableEnglish");
         String tableChinese = request.getParameter("tableChinese");
 
@@ -49,17 +54,33 @@ public class ColumnInfoController {
 
     @RequestMapping("/addTableInfo")
     public Object addTableInfo(HttpServletRequest request) {
+        long id = System.currentTimeMillis();
         String tableEnglish = request.getParameter("tableEnglish");
         String tableChinese = request.getParameter("tableChinese");
         TableInfo tableInfo = new TableInfo();
+        tableInfo.setId(id);
         tableInfo.setTableEnglish(tableEnglish);
         tableInfo.setTableChinese(tableChinese);
         columnInfoService.addTableInfo(tableInfo);
-        return ExtUtil.success("操作成功");
+
+        // 字段列表
+        List<Map<String,Object>> tableColumns= schemaService.listColumns(tableEnglish);
+
+        for (Map<String,Object> map: tableColumns) {
+            ColumnInfo columnInfo = new ColumnInfo();
+
+            columnInfo.setColumnEnglish((String) map.get("column_name"));
+            columnInfo.setDataType((String) map.get("data_type"));
+            columnInfo.setTableId(id);
+
+            columnInfoService.addColunmInfo(columnInfo);
+        }
+
+            return ExtUtil.success("操作成功");
     }
 
     @RequestMapping("getColumnsInfo")
-    public Object getColumnsInfo(int id) {
+    public Object getColumnsInfo(long id) {
         return columnInfoService.getColumnsInfo(id);
     }
 
@@ -104,7 +125,7 @@ public class ColumnInfoController {
                 columnInfo.setColumnChinese(columnChinese);
                 columnInfo.setColumnEnglish(columnEnglish);
                 columnInfo.setSchemaId(1);
-                columnInfo.setTableId(Integer.valueOf(tableId));
+                columnInfo.setTableId(Long.parseLong(tableId));
                 columnInfo.setDataType(dataType);
                 columnInfo.setIsMasterKey(isMasterKey);
                 columnInfo.setIsDic(isDic);
@@ -122,7 +143,7 @@ public class ColumnInfoController {
 
 
     @RequestMapping("getDicByTableId")
-    public List<String> getDicByTableId(int id) {
+    public List<String> getDicByTableId(long id) {
         return columnInfoService.getDicByTableId(id);
     }
 
@@ -134,7 +155,7 @@ public class ColumnInfoController {
 
     @RequestMapping("isTableIdExist")
     public boolean isTableIdExist(String tableId) {
-        int tid = Integer.valueOf(tableId);
+        long tid =  Long.parseLong(tableId);
         boolean flag = false;
         int count = columnInfoService.queryColumnInfoBytableId(tid);
         if (count > 0) {
@@ -146,16 +167,15 @@ public class ColumnInfoController {
     }
 
     public void saveColumnInfo(List<ColumnInfo> columnInfos, String tableId) {
-        boolean flag = isTableIdExist(tableId);
+//        boolean flag = isTableIdExist(tableId);
         for (ColumnInfo columnInfo : columnInfos) {
-            if (flag) {
+//            if (flag) {
                 //添加操作
                 columnInfoService.updateColumnInfo(columnInfo);
-            } else {
+//            } else {
                 //修改操作
-                columnInfoService.addColunmInfo(columnInfo);
+//                columnInfoService.addColunmInfo(columnInfo);
             }
         }
 
     }
-}

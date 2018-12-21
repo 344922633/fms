@@ -16,11 +16,11 @@ public class ColumnInfoService {
     @Autowired
     private Dao dao;
 
-    public void deleteTableInfo(int tableId) {
+    public void deleteTableInfo(long tableId) {
         dao.delete(CLASSNAME, "deleteTableInfo", tableId);
     }
 
-    public void deleteColumnInfo(int tableId) {
+    public void deleteColumnInfo(long tableId) {
         dao.delete(CLASSNAME, "deleteColumnInfo", tableId);
     }
 
@@ -32,7 +32,7 @@ public class ColumnInfoService {
         dao.insert(CLASSNAME, "updateTableInfo", tableInfo);
     }
 
-    public List<ColumnInfo> getColumnsInfo(int tid) {
+    public List<ColumnInfo> getColumnsInfo(long tid) {
 
         return dao.getList(CLASSNAME, "getColumnsInfo", tid);
     }
@@ -42,15 +42,15 @@ public class ColumnInfoService {
         return dao.getList(CLASSNAME, "getAllTables");
     }
 
-    public List<String> getDicByTableId(int tid) {
+    public List<String> getDicByTableId(long tid) {
         return dao.get(CLASSNAME, "getDicByTableId", tid);
     }
 
-    public TableInfo queryTableInfoById(int tableId) {
+    public TableInfo queryTableInfoById(long tableId) {
         return dao.get(CLASSNAME, "queryTableInfoById", tableId);
     }
 
-    public int queryColumnInfoBytableId(int tableId) {
+    public int queryColumnInfoBytableId(long tableId) {
         return dao.get(CLASSNAME, "queryColumnInfoBytableId", tableId);
     }
 

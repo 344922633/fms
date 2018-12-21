@@ -9,8 +9,8 @@
         <if test="name != null and name != ''">
             AND name = #{name}
         </if>
-        <if test="masterTable != null and masterTable != ''">
-            AND masterTable = #{masterTable}
+        <if test="masterTableId != 0">
+            AND masterTableId = #{masterTableId}
         </if>
         <if test="type != null and type != ''">
             AND type = #{type}
@@ -19,42 +19,42 @@
 
 
     <select id="query" parameterType="com.fms.domain.filemanage.MasterSlaveDo" resultType="com.fms.domain.filemanage.MasterSlaveDo">
-       select * from fms_masterslave where 1=1
+       select * from t_masterslave where 1=1
         <include refid="condition" />
     </select>
 
     <select id="queryCount" parameterType="com.fms.domain.filemanage.MasterSlaveDo" resultType="int">
         SELECT COUNT(1)
-        FROM fms_masterslave
+        FROM t_masterslave
         WHERE 1 = 1
         <include refid="condition" />
     </select>
 
     <insert id="add" parameterType="com.fms.domain.filemanage.MasterSlaveDo">
-        INSERT INTO fms_masterslave (name,type,masterTable,slaveTable)
+        INSERT INTO t_masterslave (name,type,masterTableId,slaveTableId)
         VALUES (
         #{name},
         #{type},
-        #{masterTable},
-        #{slaveTable}
+        #{masterTableId},
+        #{slaveTableId}
         )
     </insert>
     <update id="update" parameterType="com.fms.domain.filemanage.MasterSlaveDo">
-        UPDATE fms_masterslave
+        UPDATE t_masterslave
         SET name = #{name},
         type = #{type},
-        masterTable = #{masterTable},
-        slaveTable = #{slaveTable},
+        masterTableId = #{masterTableId},
+        slaveTableId = #{slaveTableId},
         WHERE id = #{id}
     </update>
 
     <delete id="delete" parameterType="String">
-        DELETE FROM fms_masterslave
+        DELETE FROM t_masterslave
         WHERE id = #{id}
     </delete>
 
     <select id="queryType"  resultType="String">
-        select distinct type from fms_masterslave
+        select distinct type from t_masterslave
     </select>
 </mapper>
 

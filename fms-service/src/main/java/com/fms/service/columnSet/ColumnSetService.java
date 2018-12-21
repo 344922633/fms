@@ -22,10 +22,10 @@ public class ColumnSetService {
     @Autowired
     private Dao dao;
 
-    public List<ColumnInfo> getDicNameByTableId(int tid){
+    public List<ColumnInfo> getDicNameByTableId(long tid){
         return dao.getList(CLASSNAME,"getDicNameByTableId",tid);
     }
-    public List<ColumnInfo> getColumnsForTable(int tid){
+    public List<ColumnInfo> getColumnsForTable(long tid){
         return dao.getList(CLASSNAME,"getColumnsForTable",tid);
     }
     public List<SchemaInfo> getAllSchemas(Map<String, Object> params) {
@@ -43,7 +43,7 @@ public class ColumnSetService {
     public void insertColumnDic(ColumnDic cd) {
         dao.insert(CLASSNAME, "insertColumnDic", cd);
     }
-    public TableInfo getTableNameByTableId(int table_id){
+    public TableInfo getTableNameByTableId(long table_id){
         return dao.get(CLASSNAME,"getTableNameByTableId",table_id);
     }
 

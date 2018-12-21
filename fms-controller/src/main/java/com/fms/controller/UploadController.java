@@ -1089,6 +1089,9 @@ public class UploadController {
             String filePath = "";
             String dir = env.getProperty("file.tmpPath");// /home/huiju
             int i = 1;
+
+            SFTPUtils sf = SFTPUtils.getInstance(ftp);// 获取ftp连接
+
             for (com.fms.domain.filemanage.File file : fileList) {
                 boolean isUpload = true;// 判断是否上报
 
@@ -1141,7 +1144,10 @@ public class UploadController {
                             e.printStackTrace();
                         }
                     } else {
-                        SFTPUtils sf = SFTPUtils.getInstance(ftp);
+                        if(sf == null || ! SFTPUtils.isSFTPConnect(sf) ){// 判断SFTP是否连接中
+                            sf = SFTPUtils.getInstance(ftp);// 断开或者是去连接null时，重新连接
+                        }
+
                         sf.upload(path, filePath);
                     }
                 }
@@ -1151,6 +1157,10 @@ public class UploadController {
                     fileLocal.delete();
                 }
             }
+            if(sf!=null){
+                sf.disconnect();// 断开连接
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1183,7 +1193,7 @@ public class UploadController {
             JSONObject infoObj = new JSONObject();
             infoObj.put("operationType", "INSERT");
 
-            infoObj.put("schema", "renzhi");//库名
+            infoObj.put("schema", "renzhi_1208");//库名
 
             JSONObject columnPublic = new JSONObject();
 

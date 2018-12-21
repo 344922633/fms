@@ -32,13 +32,11 @@ public class FileReportController {
         String password = (String) params.get("password");
         String port = (String) params.get("port");
         String path = (String) params.get("path");
-        String format = (String) params.get("format");
         FileReport fileReport = fileReportService.queryId(Long.parseLong(id));
         fileReport.setIp(ip);
         fileReport.setUserName(userName);
         fileReport.setPassword(password);
         fileReport.setPath(path);
-        fileReport.setFormat(format);
         fileReport.setPort(port);
 
         fileReportService.update(fileReport);
@@ -56,14 +54,12 @@ public class FileReportController {
         String password = (String) params.get("password");
         String port = (String) params.get("port");
         String path = (String) params.get("path");
-        String format = (String) params.get("format");
         FileReport fileReport = new FileReport();
         fileReport.setIp(ip);
         fileReport.setUserName(userName);
         fileReport.setPassword(password);
         fileReport.setPort(port);
         fileReport.setPath(path);
-        fileReport.setFormat(format);
         fileReportService.add(fileReport);
 
     }

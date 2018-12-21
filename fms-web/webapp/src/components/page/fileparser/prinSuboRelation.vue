@@ -280,7 +280,8 @@
                 this.current = c;
             },
              getTables() {
-                this.$axios.post('mvc/getTables').then(res => {
+                this.$axios.post('mvc/getAllTables').then(res => {
+                    console.log(res.data)
                     this.tableNames = res.data;
                 })
             }
