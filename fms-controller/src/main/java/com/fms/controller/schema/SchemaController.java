@@ -109,6 +109,7 @@ public class SchemaController {
                 Map<String, Object> columnMap = schemaService.getColumnnInfo(tableInfo.getTableEnglish(), column.getColumnEnglish());
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("column", column);
+                
                 if (StringUtils.isNotEmpty(column.getDicTableName())) {
                     List<Map<String, Object>> dicList = columnSetService.getDicColumnsByDicName(column.getDicTableName());
                     map.put("dicList", dicList);
