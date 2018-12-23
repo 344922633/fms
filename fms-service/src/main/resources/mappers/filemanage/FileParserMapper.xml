@@ -119,6 +119,12 @@
         WHERE id = #{id}
     </update>
 
+
+    <update id="updateIsParser" parameterType="Map">
+        update fms_file set is_parser = #{isParser} where id = #{id}
+    </update>
+
+
     <delete id="delete" parameterType="long">
         DELETE FROM file_parser
         WHERE id = #{id}

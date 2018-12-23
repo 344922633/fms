@@ -20,12 +20,12 @@
                 </FormItem>
                 <FormItem prop="source" label="Jar名称">
                     <!--<Input v-model="parser.name"/>-->
-                    <Select v-model="parser.source" @on-change="getParserClassNameList" clearable>
+                    <Select v-model="parser.source" filterable @on-change="getParserClassNameList" clearable>
                         <Option v-for="(item,index) in parserNameList" :value="item.path" :key="index" >{{ item.name }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="填写方式">
-                    <Select v-model="parser.inputType">
+                    <Select v-model="parser.inputType" filterable>
                         <Option value="0" >自动获取类名及方法名</Option>
                         <Option value="1" >手动输入类名及方法名</Option>
                     </Select>
@@ -33,7 +33,7 @@
 
                 <FormItem prop="className" label="类名">
                     <Input v-if="parser.inputType=='1'" v-model="parser.className"/>
-                    <Select v-if="parser.inputType=='0'" v-model="parser.className" @on-change="getParserMethodNameList" clearable ref="parserClassNameRef">
+                    <Select v-if="parser.inputType=='0'" v-model="parser.className" filterable @on-change="getParserMethodNameList" clearable ref="parserClassNameRef">
                         <Option v-for="item in parserClassNameList" :value="item" :key="item" >{{ item }}</Option>
                     </Select>
                     <!--<el-select v-model="parser.className"  filterable="" allow-create="" @change="getParserMethodNameList" style="width: 100%">-->
@@ -43,7 +43,7 @@
                 </FormItem>
                 <FormItem prop="methodName" label="方法名">
                     <Input v-if="parser.inputType=='1'" v-model="parser.methodName"/>
-                    <Select v-if="parser.inputType=='0'" v-model="parser.methodName" clearable ref="parserMethodNameRef">
+                    <Select v-if="parser.inputType=='0'" v-model="parser.methodName" filterable clearable ref="parserMethodNameRef">
                         <Option v-for="item in parserMethodNameList" :value="item" :key="item">{{ item }}</Option>
                     </Select>
                     <!--<el-select v-model="parser.methodName"  filterable="" allow-create="" style="width: 100%">-->

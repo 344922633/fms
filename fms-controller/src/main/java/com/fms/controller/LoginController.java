@@ -16,6 +16,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +62,7 @@ public class LoginController {
 
 
     @RequestMapping("login")
-    public Object login(User user) {
+    public Object login(User user, HttpServletRequest request) {
 //        userService.getUser();
         /*Directory dir = new Directory();
         dir.setText("根目录");
@@ -98,14 +100,28 @@ public class LoginController {
 
         User gUser = userService.queryName(user);
 
+        if(gUser == null){
+            return "用户名不存在";
+        }
+
         String psd = user.getPassword();
         String md5Password = MD5.md5for32(psd);
 
         if(md5Password.equals(gUser.getPassword()) && "1".equals(gUser.getState())){
+            //登录标识
+            HttpSession session = request.getSession();
+            session.setAttribute("user",gUser);
+
             return "success";
         }
 
-        return "fail";
+        return "密码错误或权限不足";
+    }
+
+    @RequestMapping("/logout")
+    public Object logout(HttpSession session){
+        session.invalidate();
+        return "退出成功";
     }
 
     @RequestMapping("addUser")
@@ -119,7 +135,7 @@ public class LoginController {
             String md5Password = MD5.md5for32(psd);
             user.setPassword(md5Password);
             user.setCreatd(new Date());
-            user.setState("1");
+//            user.setState("1");
             userService.add(user);
         }
         return "success";

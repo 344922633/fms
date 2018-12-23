@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -117,4 +118,40 @@ public class FileService {
         return list;
     }
 
+    //修改解析状态
+    public void updateFileInIsParserById(File file){
+
+        dao.update(CLASSNAME,"updateFileInIsParserById",file);
+    }
+
+    /**
+     * 根据id添加file表中的MapTemplateName和IsSaveTemplateName信息
+     * @param file
+     */
+    public void updateFileInMapTemplateNameAndIsSaveTemplateName(File file){
+        dao.update(CLASSNAME,"updateFileInMapTemplateNameAndIsSaveTemplateName",file);
+    }
+
+    /**
+     * 根据id查询MapTemplateName
+     * @param
+     * @return
+     */
+    public String findMapTemplateNameById(Long id){
+        return dao.get(CLASSNAME,"findMapTemplateNaomeById",id);
+    }
+
+    /**
+     * 根据id修改IsReport字段状态
+     * @param id
+     * @param isReport
+     */
+    public void updateFileIsReportById(Long id, int isReport) {
+
+        Map<String,Object> params = new HashMap<>();
+        params.put("id",id);
+        params.put("isReport",isReport);
+        dao.update(CLASSNAME,"updateFileIsReportById",params);
+
+    }
 }

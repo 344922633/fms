@@ -141,6 +141,13 @@
             this.getDicTables();
         },
         methods: {
+  checkType(type){
+                    if(type == "varchar" || type == "char"){
+                        return "test";
+                    }else{
+                        return "number";
+                    }
+                },
             async getTables() {
                 return this.$axios.post('mvc/getAllNzList').then(res => {
                     this.tableNames = res.data;

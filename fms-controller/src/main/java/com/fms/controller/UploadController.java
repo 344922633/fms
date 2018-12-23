@@ -1107,13 +1107,13 @@ public class UploadController {
                         if (!fileLocal.getParentFile().exists()) {
                             fileLocal.getParentFile().mkdirs();
                         }
-
                         OutputStream out = new FileOutputStream(fileLocal);
 
                         byte[] buf = fastDFSTemplate.loadFile(file.getGroups(), file.getRealPath());
 
                         if(buf != null){
                             out.write(buf);
+                            fileService.updateFileIsReportById(file.getId(),1);
                             System.out.println("第" + i + "个文件下载成功！--" + fileName);
                         }else{
                             isUpload = false;

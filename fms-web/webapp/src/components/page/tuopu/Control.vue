@@ -55,7 +55,7 @@
                         </div>
                     </el-form-item>
                     <el-form-item label="控件类型" label-width="100px">
-                        <el-select v-model="form.type" placeholder="请选择" style="width:200px;">
+                        <el-select v-model="form.type" filterable placeholder="请选择" style="width:200px;">
                             <el-option key="网络" label="网络" value="网络"></el-option>
                             <el-option key="硬件" label="硬件" value="硬件"></el-option>
                             <el-option key="区块" label="区块" value="区块"></el-option>
@@ -113,7 +113,7 @@
                             </div>
                         </el-form-item>
                         <el-form-item label="控件类型" label-width="100px">
-                            <el-select v-model="form.type" placeholder="请选择" style="width:200px;">
+                            <el-select v-model="form.type" fiterable placeholder="请选择" style="width:200px;">
                                 <el-option key="bbk" label="网络" value="bbk"></el-option>
                                 <el-option key="xtc" label="硬件" value="xtc"></el-option>
                                 <el-option key="imoo" label="区块" value="imoo"></el-option>

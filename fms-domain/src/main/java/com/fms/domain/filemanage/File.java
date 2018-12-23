@@ -34,6 +34,12 @@ public class File extends LongVo implements Cloneable{
     private String fileMd5;
     //解析结果
     private String parseResult;
+    //模板名称
+    private String mapTemplateName;
+    //是否保存
+    private Integer isSaveTemplateName;
+    //是否上报
+    private Integer isReport;
 
     public Object clone() {
         File file = null;

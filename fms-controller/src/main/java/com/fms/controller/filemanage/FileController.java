@@ -16,6 +16,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sun.tools.jconsole.HTMLPane;
@@ -318,4 +319,24 @@ public class FileController {
 
     }
 
+    /**
+     * 更新file表中的模板和是否保存信息
+     * @param file
+     * @return
+     */
+    @RequestMapping("updateFileTemplate")
+    public Object updateFileTemplate(File file){
+        try {
+            fileService.updateFileInMapTemplateNameAndIsSaveTemplateName(file);
+            return ExtUtil.success("更新成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ExtUtil.failure("系统出错了");
+        }
+    }
+
+    @RequestMapping("findMapTemplateName")
+    public Object findMapTemplateName(Long id){
+        return fileService.findMapTemplateNameById(id);
+    }
 }

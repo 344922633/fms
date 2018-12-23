@@ -73,7 +73,6 @@
             fileSuccess(rootFile, file, message, chunk) {
 //                const file = arguments[0].file;
                 // //localhost:8088/fms/mvc/uploader/mergeFile
-                debugger
                 this.$axios.post('mvc/mergeFile', {
                     filename: file.name,
                     identifier: file.uniqueIdentifier,

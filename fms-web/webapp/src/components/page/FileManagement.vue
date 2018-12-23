@@ -78,7 +78,7 @@
                                     @on-cancel="refreshData"
                                     :mask-closable="false">
                                     <!--上传组建-->
-                                    <uploader :options="options" :file-status-text="statusText" class="uploader-example" ref="uploader"
+                                    <uploader v-if="modal8" :options="options" :file-status-text="statusText" class="uploader-example" ref="uploader"
                                               @file-complete="fileComplete" @complete="complete" @file-success="fileSuccess">
                                         <uploader-unsupport></uploader-unsupport>
                                         <uploader-drop>
@@ -160,8 +160,8 @@
                                         <iframe :src="previewFileData" height="600px" width="800px"></iframe>
                                     </div>
                                 </Modal>
-      <!--                          <Button @click="updatebFile">修改</Button>
-                                &lt;!&ndash;修改窗口&ndash;&gt;
+                                <Button @click="updatebFile">修改</Button>
+                                <!--修改窗口-->
                                 <Modal
                                     title="修改"
                                     v-model="modalUpdate"
@@ -209,7 +209,7 @@
                                     @on-ok="deleteFileInfo">
                                    <p>确认要删除数据吗？</p>
                                 </Modal>
-                                <Button @click="removebFile">移动</Button>
+                               <!-- <Button @click="removebFile">移动</Button>-->
 
                                 <div style="display:inline-block;">
                                     <el-input v-model="input" placeholder="请输入内容" style="width:300px;" id="search" @keyup.enter.native = "clickEnter"></el-input>
@@ -361,12 +361,31 @@
                         key: 'recommendParserName'
                     },
                     {
+                        title: '映射模板名称',
+                        key: 'mapTemplateName'
+                    },
+
+                    {
+                        title: '是否保存模板',
+                        key: 'isSaveTemplateName',
+                        render: (h, params) => {
+                        return h('span',{}, params.row.isSaveTemplateName == 1 ? '是' : '否');
+                        }
+                    },
+                    {
                         title: '是否解析',
                         key: 'isParser',
                         render: (h, params) => {
                             return h('span',{}, params.row.isParser == 1 ? '是' : '否');
                         }
                     },
+            {
+                title: '是否上报',
+                    key: 'isReport',
+                render: (h, params) => {
+                return h('span',{}, params.row.isReport == 1 ? '是' : '否');
+            }
+            },
                     {
                         title: '操作',
                         key: 'action',
@@ -601,9 +620,48 @@
             selectRowChange(selection){
                 this.selectFileList = selection;
             },
+            isSameDate (d1, d2) {
+                return new Date(d1).toDateString() === new Date(d2).toDateString()
+            },
             //分类管理
-            handleNodeClick(data) {
+            handleNodeClick(data, treeNode) {
+                this.uploadTipMsg = '';
                 this.current=1;
+                if (treeNode.level === 2) {
+                    let hasSameDayNode = false;
+                    let brotherNodes = treeNode.parent && treeNode.parent.childNodes;
+                    if (!this.isSameDate(data.id, Date.now())) {
+                        for (let i = 0; i < brotherNodes.length; i++) {
+                            if (this.isSameDate(Date.now(), brotherNodes[i].data.id)) {
+                                hasSameDayNode = true;
+                                this.uploadTipMsg = '已经存在当前日期的目录,请选择对应日期的目录';
+                                break;
+                            }
+                        }
+                        if (!hasSameDayNode) {
+                            this.uploadTipMsg = '不存在对应节点，请选择根目录';
+                        }
+                    }
+                } else if (treeNode.level === 1) {
+                    let hasSameDayNode = false;
+                    let childNodes = treeNode.childNodes;
+                    for (let i = 0; i < childNodes.length; i++) {
+                        if (this.isSameDate(Date.now(), childNodes[i].data.id)) {
+                            hasSameDayNode = true;
+                            this.uploadTipMsg = '已经存在当前日期的目录,请选择对应日期的目录';
+                            break;
+                        }
+                    }
+
+                } else {
+                    let curNode = treeNode.parent
+                    while(curNode.level > 2) {
+                        curNode = curNode.parent
+                    }
+                    if (!this.isSameDate(Date.now(), curNode.data.id)) {
+                        this.uploadTipMsg = '已经存在当前日期的目录,请选择对应日期的目录';
+                    }
+                }
                 this.tDirectoryId=data.id;
                 this.tDirectoryText=data.text;
                 this.getData();
@@ -686,6 +744,7 @@
                     location: rootFile.path,
                     webkitRelativePath:file.file.webkitRelativePath,
                     directoryId:this.tDirectoryId,
+                    text:this.tDirectoryText,
                 }).then(function (response) {
 
                 }).catch(function (error) {
@@ -702,6 +761,11 @@
                     this.$Modal.info({
                         title: '提示',
                         content: '请选则一个目录！'
+                    });
+                }else if (this.uploadTipMsg){
+                    this.$Modal.info({
+                        title: '提示',
+                        content: this.uploadTipMsg
                     });
                 }else{
                     this.modal1 = true;

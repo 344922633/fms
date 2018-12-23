@@ -56,6 +56,16 @@ public class FileParserService {
         dao.update(CLASSNAME, "update", fileParser);
     }
 
+
+    public void updateIsParser(Long id, int isParser) {
+
+        Map<String,Object> pa = new HashMap<>();
+        pa.put("id",id);
+        pa.put("isParser",isParser);
+        dao.update(CLASSNAME,"updateIsParser",pa);
+
+    }
+
     public void delete(Long id) {
         dao.delete(CLASSNAME, "delete", id);
     }
@@ -95,14 +105,15 @@ public class FileParserService {
         FileParser fileParser = new FileParser();
         fileParser.setId(parserId);
         fileParser = dao.get(FileParserService.CLASSNAME, "get", fileParser);
-        //将文件修改为已解析状态
+     /*   //将文件修改为已解析状态
         File file = new File();
+        System.out.print(file.getId());
         file.setId(file_id);
         file.setIsParser(1);
         file.setRecommendParserName(fileParser.getName());
         file.setClassName(fileParser.getClassName());
         file.setRecommendParserId(parserId);
-        dao.update(FileService.CLASSNAME, "update", file);
+        dao.update(FileService.CLASSNAME, "update", file);*/
         return true;
     }
 
@@ -316,7 +327,7 @@ public class FileParserService {
     /**
      * 解析数据并入HBase库
      */
-    public boolean parseDataSaveDataHBase(Long file_id, Long parserId ,String jsonStr, String fileInfo, String fileType, String fileMD5, String fileName) {
+    public boolean parseDataSaveDataHBase(Long file_id, Long parserId, String jsonStr, String fileInfo, String fileType, String fileMD5, String fileName) {
         //构建入库数据
 //        Map<String, Object> sqlData = this.buildSqlData(data, table_name, customKey);
 //        //批量插入数据
@@ -341,37 +352,37 @@ public class FileParserService {
         return true;
     }
 
-	/**
-	 * 解析数据并入HBase库(多文件)
-	 */
-	public boolean multiParseDataSaveDataHBase(List<List<Map<String,Object>>> finalParseData,List<Map<String,Long>> parserData,String jsonStr, String fileInfo, String fileType, String fileMD5, String fileName) {
-		int index=0;
-		for(List<Map<String,Object>> item:finalParseData){
+    /**
+     * 解析数据并入HBase库(多文件)
+     */
+    public boolean multiParseDataSaveDataHBase(List<List<Map<String, Object>>> finalParseData, List<Map<String, Long>> parserData, String jsonStr, String fileInfo, String fileType, String fileMD5, String fileName) {
+        int index = 0;
+        for (List<Map<String, Object>> item : finalParseData) {
 //			Map<String,Object> parseData=this.multiParseData(item);
-			//构建入库数据
+            //构建入库数据
 //			Map<String,Object> sqlData=this.buildSqlData(item,parseData.get("table_name").toString(), (Map<String, String>) parseData.get("customKey"));
-			//批量插入数据
+            //批量插入数据
 //			dao.insert(CLASSNAME,"parseDataSaveDatabase",sqlData);
-			Map<String,Long> parserItem=parserData.get(index);
-			FileParser fileParser=new FileParser();
-			fileParser.setId(parserItem.get("parserId"));
-			fileParser=dao.get(FileParserService.CLASSNAME,"get",fileParser);
-			//将文件修改为已解析状态
-			File file=new File();
-			file.setId(parserItem.get("fileId"));
-			file.setIsParser(1);
-			file.setRecommendParserName(fileParser.getName());
-			file.setClassName(fileParser.getClassName());
-			file.setRecommendParserId(parserItem.get("parserId"));
-			dao.update(FileService.CLASSNAME,"update",file);
-			index++;
-		}
+            Map<String, Long> parserItem = parserData.get(index);
+            FileParser fileParser = new FileParser();
+            fileParser.setId(parserItem.get("parserId"));
+            fileParser = dao.get(FileParserService.CLASSNAME, "get", fileParser);
+            //将文件修改为已解析状态
+            File file = new File();
+            file.setId(parserItem.get("fileId"));
+            file.setIsParser(1);
+            file.setRecommendParserName(fileParser.getName());
+            file.setClassName(fileParser.getClassName());
+            file.setRecommendParserId(parserItem.get("parserId"));
+            dao.update(FileService.CLASSNAME, "update", file);
+            index++;
+        }
 
-		HbaseUtil.getHbaseConnection();
+        HbaseUtil.getHbaseConnection();
 
-		HbaseUtil.addMoreRecordFromJSON("ns_fms:tb_file","cf0",jsonStr,fileType,fileInfo,fileName,fileMD5);
+        HbaseUtil.addMoreRecordFromJSON("ns_fms:tb_file", "cf0", jsonStr, fileType, fileInfo, fileName, fileMD5);
 
-		HbaseUtil.close();
-		return true;
-	}
+        HbaseUtil.close();
+        return true;
+    }
 }

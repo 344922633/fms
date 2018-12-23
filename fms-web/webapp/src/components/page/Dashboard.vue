@@ -101,6 +101,32 @@
                 </el-card>
             </el-col>
         </el-row>
+
+            <el-table
+                :data="analyseFiles"
+                border
+                style="width: 49%">
+                <el-table-column
+                    prop="parsedFileAmount"
+                    label="已解析文件数"
+                    width="180">
+                </el-table-column>
+                <el-table-column
+                    prop="UnresolvedFileAmount"
+                    label="未解析文件数"
+                    width="180">
+                </el-table-column>
+                <el-table-column
+                    prop="allFileAmount"
+                    label="文件总数">
+                </el-table-column>
+                <el-table-column
+                    prop="Percent"
+                    label="已解析占总文件百分比">
+                </el-table-column>
+
+            </el-table>
+
     </div>
 </template>
 
@@ -181,7 +207,8 @@
                     bgColor: '#F5F8FD',
                     bottomPadding: 30,
                     topPadding: 30
-                }
+                },
+                analyseFiles:null
             }
         },
         components: {
@@ -196,6 +223,7 @@
             this.handleListener();
             this.getData()
             this.changeDate();
+            this.getAnalyseFiles();
         },
         activated(){
             this.handleListener();
@@ -205,6 +233,12 @@
             bus.$off('collapse', this.handleBus);
         },
         methods: {
+            getAnalyseFiles(){
+                //获取文件解析数据
+                this.$axios.get('mvc/getAnalyseFiles').then(res => {
+                    this.analyseFiles = res.data;
+                });
+            },
             changeDate(){
                 const now = new Date().getTime();
                 this.data.forEach((item, index) => {

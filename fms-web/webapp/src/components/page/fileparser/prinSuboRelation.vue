@@ -18,12 +18,12 @@
                 </FormItem>
 
                 <FormItem prop="masterTable" label="主表">
-                     <Select v-model="masterSlave.masterTable" >
+                     <Select v-model="masterSlave.masterTable"  filterable>
                         <Option v-for="item in tableNames" :value="item" :key="item">{{ item }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="从表">
-                    <Select v-model="masterSlave.slaveTable" >
+                    <Select v-model="masterSlave.slaveTable" filterable>
                         <Option v-for="item in tableNames" :value="item" :key="item">{{ item }}</Option>
                     </Select>
                 </FormItem>
