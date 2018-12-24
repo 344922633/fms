@@ -1,12 +1,11 @@
 package com.fms.controller.schema;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fms.domain.columnSet.ColumnInfo;
-import com.fms.domain.columnSet.TableInfo;
-import com.fms.domain.filemanage.ColumnValuesDo;
+import com.fms.domain.schema.ColumnInfo;
+import com.fms.domain.schema.TableInfo;
 import com.fms.domain.filemanage.MasterSlaveDo;
-import com.fms.service.columnSet.ColumnInfoService;
-import com.fms.service.columnSet.ColumnSetService;
+import com.fms.service.schema.ColumnInfoService;
+import com.fms.service.schema.ColumnSetService;
 import com.fms.service.masterSlave.ColumnValuesService;
 import com.fms.service.masterSlave.MasterSlaveService;
 import com.fms.service.schema.SchemaService;
@@ -14,12 +13,10 @@ import com.fms.utils.ParamUtil;
 import com.handu.apollo.base.Page;
 import com.handu.apollo.utils.ExtUtil;
 import com.handu.apollo.utils.json.JsonUtil;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;

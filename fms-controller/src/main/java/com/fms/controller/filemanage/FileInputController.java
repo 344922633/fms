@@ -1,21 +1,13 @@
 package com.fms.controller.filemanage;
 
-import com.fms.controller.UploadController;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.fms.domain.filemanage.FileInput;
 import com.fms.service.filemanage.FileInputService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
 @RestController

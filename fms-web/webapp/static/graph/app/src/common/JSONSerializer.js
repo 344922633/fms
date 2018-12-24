@@ -343,7 +343,7 @@
             //    "json": {
             //      "name": "A",
             //      "styles": {
-            //        "property": {
+            //        "configure": {
             //          "$ref": 1
             //        }
             //      },

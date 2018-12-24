@@ -56,6 +56,16 @@ public class FileParserService {
         dao.update(CLASSNAME, "update", fileParser);
     }
 
+
+    public void updateIsParser(Long id, int isParser) {
+
+        Map<String,Object> pa = new HashMap<>();
+        pa.put("id",id);
+        pa.put("isParser",isParser);
+        dao.update(CLASSNAME,"updateIsParser",pa);
+
+    }
+
     public void delete(Long id) {
         dao.delete(CLASSNAME, "delete", id);
     }
@@ -95,14 +105,15 @@ public class FileParserService {
         FileParser fileParser = new FileParser();
         fileParser.setId(parserId);
         fileParser = dao.get(FileParserService.CLASSNAME, "get", fileParser);
-        //将文件修改为已解析状态
+     /*   //将文件修改为已解析状态
         File file = new File();
+        System.out.print(file.getId());
         file.setId(file_id);
         file.setIsParser(1);
         file.setRecommendParserName(fileParser.getName());
         file.setClassName(fileParser.getClassName());
         file.setRecommendParserId(parserId);
-        dao.update(FileService.CLASSNAME, "update", file);
+        dao.update(FileService.CLASSNAME, "update", file);*/
         return true;
     }
 

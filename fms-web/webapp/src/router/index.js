@@ -16,22 +16,22 @@ export default new Router({
             children:[
                 {
                     path: '/dashboard',
-                    component: resolve => require(['../components/page/Dashboard.vue'], resolve),
+                    component: resolve => require(['../components/page/user/Dashboard.vue'], resolve),
                     meta: { title: '系统首页' }
                 },
                 {
                     path: '/file_type',
-                    component: resolve => require(['../components/page/fileType.vue'], resolve),
+                    component: resolve => require(['../components/page/filemanage/FileType.vue'], resolve),
                     meta: { title: '文件分类管理' }
                 },
                 {
                     path: '/icon',
-                    component: resolve => require(['../components/page/BlockManage.vue'], resolve),
+                    component: resolve => require(['../components/page/fileparser/BlockManage.vue'], resolve),
                     meta: { title: '自定义图标' }
                 },
                 {
                     path: '/block_manage',
-                        component: resolve => require(['../components/page/BlockManage.vue'], resolve),
+                        component: resolve => require(['../components/page/fileparser/BlockManage.vue'], resolve),
                     meta: { title: '黑白名单管理' }
                 },
                 {
@@ -68,7 +68,7 @@ export default new Router({
                 },
                 {
                     path: '/fileManagement',
-                    component: resolve => require(['../components/page/FileManagement.vue'], resolve),
+                    component: resolve => require(['../components/page/filemanage/FileManagement.vue'], resolve),
                     meta: { title: '文件管理' }
                 },
                 {
@@ -134,17 +134,17 @@ export default new Router({
                 },
                 {
                     path: '/fileInput',
-                    component: resolve => require(['../components/page/FileInput.vue'], resolve),
+                    component: resolve => require(['../components/page/filemanage/FileInput.vue'], resolve),
                     meta: { title: '离线文件导入' }
                 },
                 {
                     path: '/applicationConf',
-                    component: resolve => require(['../components/page/confProperty/applicationConf.vue'], resolve),
+                    component: resolve => require(['../components/page/configure/applicationConf.vue'], resolve),
                     meta: { title: 'application配置' }
                 },
                 {
                     path: '/kafkaHbaseConf',
-                    component: resolve => require(['../components/page/confProperty/kafkaHbaseConf.vue'], resolve),
+                    component: resolve => require(['../components/page/configure/kafkaHbaseConf.vue'], resolve),
                     meta: { title: 'kafka,hbase配置' }
                 },
           /*      {
@@ -154,12 +154,12 @@ export default new Router({
                 },*/
                 {
                     path: '/sendFileToServer',
-                    component: resolve => require(['../components/page/SendFileToServer.vue'], resolve),
+                    component: resolve => require(['../components/page/filemanage/SendFileToServer.vue'], resolve),
                     meta: { title: '上传服务器' }
                 },
                 {
                     path: '/tableSet',
-                    component: resolve => require(['../components/page/TableSet.vue'], resolve),
+                    component: resolve => require(['../components/page/schema/TableSet.vue'], resolve),
                     meta: { title: '表格映射' }
                 },
                 {
@@ -186,8 +186,8 @@ export default new Router({
             ]
         },
         {
-            path: '/login',
-            component: resolve => require(['../components/page/Login.vue'], resolve)
+            path: '/user',
+            component: resolve => require(['../components/page/user/Login.vue'], resolve)
         },
         {
             path: '*',

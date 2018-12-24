@@ -37,10 +37,10 @@
         <Form :label-width="100">
             <Divider>字段信息({{masterslave_name}})</Divider>
             <FormItem v-for="(item, index) in tableColumns" :key="item.column_name" :label="item.column_desc">
-                <Input v-if="item.inputType != 'select' && !(item.max_length > 100) " v-model="item.value" :placeholder="item.data_type" :readonly="item.readonly" :value="item.value"/>
+                <Input :type="checkType(item.data_type)" v-if="item.inputType != 'select' && !(item.max_length > 100) " v-model="item.value" :placeholder="item.data_type" :readonly="item.readonly" :value="item.value"/>
 
                 <Input type="textarea" v-if="item.inputType != 'select' && item.max_length > 100" v-model="item.value" :placeholder="item.data_type"/>
-                <Select v-if="item.inputType == 'select'" v-model="item.value" >
+                <Select v-if="item.inputType == 'select'" v-model="item.value" filterable>
                     <Option :value="singlevalue.selectValue" v-for="singlevalue in item.selectvalue" >{{singlevalue.selectLable}}</option>
                 </Select>
             </FormItem>
@@ -73,6 +73,13 @@
             this.getMenuListFormasterslave();
         },
         methods: {
+            checkType(type){
+                if(type == "varchar" || type == "char"){
+                    return "test";
+                }else{
+                    return "number";
+                }
+            },
             getTables() {
                // this.$axios.post('mvc/getTables').then(res => {
                 //    this.tableNames = res.data;

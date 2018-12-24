@@ -8,11 +8,11 @@ import com.anniweiya.fastdfs.exception.FastDFSException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fms.domain.columnSet.ColumnInfo;
-import com.fms.domain.columnSet.TableInfo;
+import com.fms.domain.schema.ColumnInfo;
+import com.fms.domain.schema.TableInfo;
 import com.fms.domain.filemanage.*;
 import com.fms.service.ParserDefault.ParserDefaultService;
-import com.fms.service.columnSet.ColumnSetService;
+import com.fms.service.schema.ColumnSetService;
 import com.fms.service.filemanage.*;
 import com.fms.utils.*;
 import com.google.common.base.Strings;
@@ -20,12 +20,10 @@ import com.google.common.collect.Maps;
 import com.handu.apollo.base.Page;
 import com.handu.apollo.utils.CollectionUtil;
 import com.handu.apollo.utils.ExtUtil;
-import com.handu.apollo.utils.StringUtil;
 import com.handu.apollo.utils.exception.ApolloRuntimeException;
 import com.handu.apollo.utils.json.JsonUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -522,7 +520,10 @@ public class FileParserController {
             return ExtUtil.failure(e.getMessage());
         }
         Map<String, Object> result = fileParserService.parseData(json);
-
+        //将文件修改为已解析状态
+        Long id=Long.parseLong(fileParser.getParams());
+        fileParser.getParams();
+        fileParserService.updateIsParser(id,1);
         /*for (Map<String, Object> child : json) {
             for (Map.Entry<String, Object> entry : child.entrySet()) {
                 set.add(entry.getKey());

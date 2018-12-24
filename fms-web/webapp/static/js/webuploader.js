@@ -119,7 +119,7 @@
     } else {
 
         // Browser globals case. Just assign the
-        // result to a property on the global.
+        // result to a configure on the global.
         origin = root.WebUploader;
         root.WebUploader = makeExport();
         root.WebUploader.noConflict = function() {
@@ -234,12 +234,12 @@
         return {
     
             /**
-             * @property {String} version 当前版本号。
+             * @configure {String} version 当前版本号。
              */
             version: '0.1.5',
     
             /**
-             * @property {jQuery|Zepto} $ 引用依赖的jQuery或者Zepto对象。
+             * @configure {jQuery|Zepto} $ 引用依赖的jQuery或者Zepto对象。
              */
             $: $,
     
@@ -259,7 +259,7 @@
              * * `safari`  safari浏览器版本号，如果浏览器为非safari，此属性为`undefined`。
              * * `opera`  opera浏览器版本号，如果浏览器为非opera，此属性为`undefined`。
              *
-             * @property {Object} [browser]
+             * @configure {Object} [browser]
              */
             browser: (function( ua ) {
                 var ret = {},
@@ -288,7 +288,7 @@
              *
              * * `android`  如果在android浏览器环境下，此值为对应的android版本号，否则为`undefined`。
              * * `ios` 如果在ios浏览器环境下，此值为对应的ios版本号，否则为`undefined`。
-             * @property {Object} [os]
+             * @configure {Object} [os]
              */
             os: (function( ua ) {
                 var ret = {},
@@ -1277,7 +1277,7 @@
         $.extend( Uploader.prototype, {
     
             /**
-             * @property {String | Array} [disableWidgets=undefined]
+             * @configure {String | Array} [disableWidgets=undefined]
              * @namespace options
              * @for Uploader
              * @description 默认所有 Uploader.register 了的 widget 都会被加载，如果禁用某一部分，请通过此 option 指定黑名单。
@@ -1452,13 +1452,13 @@
         Uploader.options.dnd = '';
     
         /**
-         * @property {Selector} [dnd=undefined]  指定Drag And Drop拖拽的容器，如果不指定，则不启动。
+         * @configure {Selector} [dnd=undefined]  指定Drag And Drop拖拽的容器，如果不指定，则不启动。
          * @namespace options
          * @for Uploader
          */
         
         /**
-         * @property {Selector} [disableGlobalDnd=false]  是否禁掉整个页面的拖拽功能，如果不禁用，图片拖进来的时候会默认被浏览器打开。
+         * @configure {Selector} [disableGlobalDnd=false]  是否禁掉整个页面的拖拽功能，如果不禁用，图片拖进来的时候会默认被浏览器打开。
          * @namespace options
          * @for Uploader
          */
@@ -1557,7 +1557,7 @@
         var $ = Base.$;
     
         /**
-         * @property {Selector} [paste=undefined]  指定监听paste事件的容器，如果不指定，不启用此功能。此功能为通过粘贴来添加截屏的图片。建议设置为`document.body`.
+         * @configure {Selector} [paste=undefined]  指定监听paste事件的容器，如果不指定，不启用此功能。此功能为通过粘贴来添加截屏的图片。建议设置为`document.body`.
          * @namespace options
          * @for Uploader
          */
@@ -1823,7 +1823,7 @@
         $.extend( Uploader.options, {
     
             /**
-             * @property {Selector | Object} [pick=undefined]
+             * @configure {Selector | Object} [pick=undefined]
              * @namespace options
              * @for Uploader
              * @description 指定选择文件的按钮容器，不指定则不创建按钮。
@@ -1836,7 +1836,7 @@
             pick: null,
     
             /**
-             * @property {Arroy} [accept=null]
+             * @configure {Arroy} [accept=null]
              * @namespace options
              * @for Uploader
              * @description 指定接受哪些类型的文件。 由于目前还有ext转mimeType表，所以这里需要分开指定。
@@ -2088,7 +2088,7 @@
         $.extend( Uploader.options, {
     
             /**
-             * @property {Object} [thumb]
+             * @configure {Object} [thumb]
              * @namespace options
              * @for Uploader
              * @description 配置生成缩略图的选项。
@@ -2131,7 +2131,7 @@
             },
     
             /**
-             * @property {Object} [compress]
+             * @configure {Object} [compress]
              * @namespace options
              * @for Uploader
              * @description 配置压缩的图片的选项。如果此选项为`false`, 则图片在上传前不进行压缩。
@@ -2386,14 +2386,14 @@
     
             /**
              * 文件名，包括扩展名（后缀）
-             * @property name
+             * @configure name
              * @type {string}
              */
             this.name = source.name || 'Untitled';
     
             /**
              * 文件体积（字节）
-             * @property size
+             * @configure size
              * @type {uint}
              * @default 0
              */
@@ -2401,7 +2401,7 @@
     
             /**
              * 文件MIMETYPE类型，与文件类型的对应关系请参考[http://t.cn/z8ZnFny](http://t.cn/z8ZnFny)
-             * @property type
+             * @configure type
              * @type {string}
              * @default 'application/octet-stream'
              */
@@ -2409,7 +2409,7 @@
     
             /**
              * 文件最后修改日期
-             * @property lastModifiedDate
+             * @configure lastModifiedDate
              * @type {int}
              * @default 当前时间戳
              */
@@ -2417,14 +2417,14 @@
     
             /**
              * 文件ID，每个对象具有唯一ID，与文件名无关
-             * @property id
+             * @configure id
              * @type {string}
              */
             this.id = gid();
     
             /**
              * 文件扩展名，通过文件名获取，例如test.png的扩展名为png
-             * @property ext
+             * @configure ext
              * @type {string}
              */
             this.ext = rExt.exec( this.name ) ? RegExp.$1 : '';
@@ -2432,7 +2432,7 @@
     
             /**
              * 状态文字说明。在不同的status语境下有不同的用途。
-             * @property statusText
+             * @configure statusText
              * @type {string}
              */
             this.statusText = '';
@@ -2524,7 +2524,7 @@
          * * `interrupt` 上传中断，可续传。
          * * `invalid` 文件不合格，不能重试上传。会自动从队列中移除。
          * * `cancelled` 文件被移除。
-         * @property {Object} Status
+         * @configure {Object} Status
          * @namespace File
          * @class File
          * @static
@@ -2571,7 +2571,7 @@
              * * `numOfUploadFailed` 上传错误的文件数。
              * * `numOfInvalid` 无效的文件数。
              * * `numofDeleted` 被移除的文件数。
-             * @property {Object} stats
+             * @configure {Object} stats
              */
             this.stats = {
                 numOfQueue: 0,
@@ -2930,7 +2930,7 @@
              */
             
             /**
-             * @property {Boolean} [auto=false]
+             * @configure {Boolean} [auto=false]
              * @namespace options
              * @for Uploader
              * @description 设置为 true 后，不需要手动调用上传，有文件选择即开始上传。
@@ -3106,7 +3106,7 @@
         };
     
         /**
-         * @property {Object} [runtimeOrder=html5,flash]
+         * @configure {Object} [runtimeOrder=html5,flash]
          * @namespace options
          * @for Uploader
          * @description 指定运行时启动顺序。默认会想尝试 html5 是否支持，如果支持则使用 html5, 否则则使用 flash.
@@ -3299,7 +3299,7 @@
     
     
             /**
-             * @property {Boolean} [prepareNextFile=false]
+             * @configure {Boolean} [prepareNextFile=false]
              * @namespace options
              * @for Uploader
              * @description 是否允许在文件传输时提前把下一个文件准备好。
@@ -3309,7 +3309,7 @@
             prepareNextFile: false,
     
             /**
-             * @property {Boolean} [chunked=false]
+             * @configure {Boolean} [chunked=false]
              * @namespace options
              * @for Uploader
              * @description 是否要分片处理大文件上传。
@@ -3317,7 +3317,7 @@
             chunked: false,
     
             /**
-             * @property {Boolean} [chunkSize=5242880]
+             * @configure {Boolean} [chunkSize=5242880]
              * @namespace options
              * @for Uploader
              * @description 如果要分片，分多大一片？ 默认大小为5M.
@@ -3325,7 +3325,7 @@
             chunkSize: 5 * 1024 * 1024,
     
             /**
-             * @property {Boolean} [chunkRetry=2]
+             * @configure {Boolean} [chunkRetry=2]
              * @namespace options
              * @for Uploader
              * @description 如果某个分片由于网络问题出错，允许自动重传多少次？
@@ -3333,7 +3333,7 @@
             chunkRetry: 2,
     
             /**
-             * @property {Boolean} [threads=3]
+             * @configure {Boolean} [threads=3]
              * @namespace options
              * @for Uploader
              * @description 上传并发数。允许同时最大上传进程数。
@@ -3342,7 +3342,7 @@
     
     
             /**
-             * @property {Object} [formData={}]
+             * @configure {Object} [formData={}]
              * @namespace options
              * @for Uploader
              * @description 文件上传请求的参数表，每次发送都会发送此对象中的参数。
@@ -3350,21 +3350,21 @@
             formData: {}
     
             /**
-             * @property {Object} [fileVal='file']
+             * @configure {Object} [fileVal='file']
              * @namespace options
              * @for Uploader
              * @description 设置文件上传域的name。
              */
     
             /**
-             * @property {Object} [method='POST']
+             * @configure {Object} [method='POST']
              * @namespace options
              * @for Uploader
              * @description 文件上传方式，`POST`或者`GET`。
              */
     
             /**
-             * @property {Object} [sendAsBinary=false]
+             * @configure {Object} [sendAsBinary=false]
              * @namespace options
              * @for Uploader
              * @description 是否已二进制的流的方式发送文件，这样整个上传内容`php://input`都为文件内容，
@@ -4184,7 +4184,7 @@
         });
     
         /**
-         * @property {int} [fileNumLimit=undefined]
+         * @configure {int} [fileNumLimit=undefined]
          * @namespace options
          * @for Uploader
          * @description 验证文件总数量, 超出则不允许加入队列。
@@ -4228,7 +4228,7 @@
     
     
         /**
-         * @property {int} [fileSizeLimit=undefined]
+         * @configure {int} [fileSizeLimit=undefined]
          * @namespace options
          * @for Uploader
          * @description 验证文件总大小是否超出限制, 超出则不允许加入队列。
@@ -4272,7 +4272,7 @@
         });
     
         /**
-         * @property {int} [fileSingleSizeLimit=undefined]
+         * @configure {int} [fileSingleSizeLimit=undefined]
          * @namespace options
          * @for Uploader
          * @description 验证单个文件大小是否超出限制, 超出则不允许加入队列。
@@ -4299,7 +4299,7 @@
         });
     
         /**
-         * @property {Boolean} [duplicate=undefined]
+         * @configure {Boolean} [duplicate=undefined]
          * @namespace options
          * @for Uploader
          * @description 去重， 根据文件名字、文件大小和最后修改时间来生成hash Key.

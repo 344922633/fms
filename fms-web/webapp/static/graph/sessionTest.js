@@ -28,7 +28,7 @@ app.get('/',function(req,res){
     }
 });
 
-app.post('/login',function(req,res){
+app.post('/user',function(req,res){
     sess=req.session;
 //In this we are assigning email to sess.email variable.
 //email comes from HTML page.
@@ -46,7 +46,7 @@ app.get('/admin',function(req,res){
     else
     {
         res.write('\
-        <h1>Please login first.</h1>\
+        <h1>Please user first.</h1>\
     ');
         res.end('<a href="+">Login</a>');
     }

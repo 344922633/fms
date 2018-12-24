@@ -10,10 +10,10 @@ var graph;
 //         x: 0,
 //         y: 20,
 //         binding: [{
-//             property: 'name',
+//             configure: 'name',
 //             propertyType: Q.Consts.PROPERTY_TYPE_CLIENT,
 //             bindingProperty: "data"
-//         }, {property: 'color', propertyType: Q.Consts.PROPERTY_TYPE_CLIENT, bindingProperty: "color"}]
+//         }, {configure: 'color', propertyType: Q.Consts.PROPERTY_TYPE_CLIENT, bindingProperty: "color"}]
 //     }]
 // }
 function composeShape(nodes) {

@@ -17,7 +17,7 @@
                         </el-col>
                         <el-col :span="3">
 
-                            <Select v-model="numOfSelect">
+                            <Select v-model="numOfSelect" filterable>
                                 <Option v-for="(item,key) in numOfSelectOptions" :value="item" :key="item">{{ item }}
                                 </Option>
                             </Select>

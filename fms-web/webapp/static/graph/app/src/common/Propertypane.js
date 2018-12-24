@@ -243,7 +243,7 @@
     function registerProperties(propertyMap, options) {
         var clazz = options.class;
         if(!clazz){
-            throw new Error('class property can not be null');
+            throw new Error('class configure can not be null');
         }
         var properties = options.properties;
 

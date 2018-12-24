@@ -24,7 +24,7 @@
         and COLUMN_NAME = #{columnName}
     </select>
 
-    <select id="listColumnsForMasterTable" parameterType="java.lang.Long" resultType="com.fms.domain.columnSet.ColumnInfo">
+    <select id="listColumnsForMasterTable" parameterType="java.lang.Long" resultType="com.fms.domain.schema.ColumnInfo">
         select * from column_info where tableId=#{tableId}
     </select>
 

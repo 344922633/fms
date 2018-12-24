@@ -1,6 +1,6 @@
 package com.fms.service.schema;
 
-import com.fms.domain.columnSet.ColumnInfo;
+import com.fms.domain.schema.ColumnInfo;
 import com.fms.utils.SchemaUtil;
 import com.handu.apollo.data.mybatis.Dao;
 import com.handu.apollo.data.utils.Param;

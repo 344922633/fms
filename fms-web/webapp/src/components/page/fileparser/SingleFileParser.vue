@@ -163,10 +163,15 @@
                     </Select>
                 </FormItem>
                 <template v-if="columnSelectMap[key] && columnSelectMap[key].dicTables">
-                    <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.columnChinese">
-                        <Select filterable
+                    <FormItem label=" ">
+                        <div style="margin-top:30px">==></div>
+                    </FormItem>
+                    <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.dicTableName">
+                        <Select
                             style="width: 180px"
-                            v-model="columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]"
+                            @on-change="(val)=>{changeColumnDicMap(dicTable.dicTableName,val)}"
+                            v-model="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
+                            filterable
                             :clearable="true"
                         >
                             <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM" :key="dic.DM"> {{ dic.MC }}</Option>
@@ -688,14 +693,29 @@
                     this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
                 })
             },
-
+            changeColumnDicMap(mapName, val) {
+                for (let i in this.columnKeyNamesMap) {
+                    let cur = this.columnKeyNamesMap[i]
+                    cur.dicMap[mapName] = val
+                    this.$set(cur, dicMap, cur.dicMap)
+                }
+            },
             getColumnsByTable(tableId, key) {
                 this.$axios.post('mvc/getColumnsForTable', {
                     tableId
                 }).then(res => {
-                    const data = res.data || []
-                    const dicData = data.filter(v => v.isDic === 0)
-                    this.$set(this.columnSelectMap[key], 'columns',dicData)
+                    //let dicData = data.filter(v => v.isDic === 0)
+                    let result = []
+                    for (let i in this.columnKeyNamesMap) {
+                        let cur = this.columnKeyNamesMap[i]
+                        if (cur.columnId) {
+                            result.push(cur.columnId)
+                        }
+                    }
+                    res.data = res.data.filter((x) => {
+                        return result.indexOf(x.id) < 0
+                    })
+                    this.$set(this.columnSelectMap[key], 'columns', res.data)
                     this.$set(this.columnKeyNamesMap[key], 'columnId', '')
                     this.$set(this.columnSelectMap[key], 'dicTables', null)
                     this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
@@ -714,7 +734,14 @@
                 }).then(res => {
                     const dicTables = res.data || []
                     this.$set(this.columnSelectMap[key], 'dicTables', dicTables)
-                    this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
+                    let dicMap = null
+                    for (let i in this.columnKeyNamesMap) {
+                        let cur = this.columnKeyNamesMap[i]
+                        if (cur.dicMap && Object.keys(cur.dicMap).length) {
+                            dicMap = cur.dicMap
+                        }
+                    }
+                    this.$set(this.columnKeyNamesMap[key], 'dicMap', dicMap || {})
 
                     dicTables.forEach(dicTable => {
                         const { columnEnglish } = dicTable

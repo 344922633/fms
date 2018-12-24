@@ -1300,9 +1300,9 @@
       if (typeof option === 'string') {
         if ($.isFunction(inst[option])) {
           returnValue = inst[option].apply(inst, apiArgs);
-        } else { // its a property ?
+        } else { // its a configure ?
           if (apiArgs.length) {
-            // set property
+            // set configure
             inst[option] = apiArgs[0];
           }
           returnValue = inst[option];

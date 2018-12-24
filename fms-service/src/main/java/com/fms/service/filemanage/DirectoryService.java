@@ -125,7 +125,7 @@ public class DirectoryService {
         }
     }
 
-    private Long createNewRelative(Long parentId, String[] paths) {
+    public Long createNewRelative(Long parentId, String[] paths) {
         for (String path : paths) {
             Directory dir = new Directory();
             dir.setParentId(parentId);

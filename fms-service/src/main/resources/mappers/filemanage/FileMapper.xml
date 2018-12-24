@@ -19,7 +19,10 @@
         recommend_parser_id AS recommendParserId,
         recommend_parser_name AS recommendParserName,
         file_md5 AS fileMd5,
-        is_export AS isExport
+        is_export AS isExport,
+        map_template_name AS mapTemplateName,
+        is_save_template_name AS isSaveTemplateName,
+        is_report AS isReport
     </sql>
     <sql id="aall">
         a.id,
@@ -39,7 +42,10 @@
         a.recommend_parser_id AS recommendParserId,
         a.recommend_parser_name AS recommendParserName,
         a.file_md5 AS fileMd5,
-        a.is_export AS isExport
+        a.is_export AS isExport,
+        a.map_template_name AS mapTemplateName,
+        a.is_save_template_name AS isSaveTemplateName,
+        a.is_report AS isReport
     </sql>
     <sql id="allNoAs">
         id,
@@ -59,7 +65,10 @@
         recommend_parser_id,
         recommend_parser_name,
         file_md5,
-        is_export
+        is_export,
+        map_template_name,
+        is_save_template_name,
+        is_report
     </sql>
     <sql id="condition">
         <if test="name != null and name != ''">
@@ -109,34 +118,37 @@
     </sql>
 
     <select id="get" parameterType="long" resultType="com.fms.domain.filemanage.File">
-        SELECT <include refid="all" />
+        SELECT
+        <include refid="all"/>
         FROM fms_file
         WHERE id = #{id}
     </select>
     <select id="query" parameterType="map" resultType="com.fms.domain.filemanage.File">
-        SELECT <include refid="all" />
+        SELECT
+        <include refid="all"/>
         FROM fms_file
-        WHERE  1 = 1
+        WHERE 1 = 1
 
-        <include refid="condition" />
+        <include refid="condition"/>
         order by name
     </select>
     <select id="pageFileByIsParserAndRemoveRepeat" parameterType="map" resultType="com.fms.domain.filemanage.File">
         select
-        <include refid="aall" />
-        from ( SELECT f1.* FROM (select * from fms_file where 1=1 <include refid="condition" />) f1
-        LEFT JOIN (select * from fms_file where 1=1 <include refid="condition" />) f2 ON f1.file_md5 = f2.file_md5
-        AND f1.id &lt; f2.id  WHERE f2.id IS NULL ) a
+        <include refid="aall"/>
+        from ( SELECT f1.* FROM (select * from fms_file where 1=1<include refid="condition"/>) f1
+        LEFT JOIN (select * from fms_file where 1=1<include refid="condition"/>) f2 ON f1.file_md5 = f2.file_md5
+        AND f1.id &lt; f2.id WHERE f2.id IS NULL ) a
         order by a.name
     </select>
     <select id="queryCountByIsParserAndRemoveRepeat" parameterType="map" resultType="int">
         SELECT COUNT(1)
-        from ( SELECT f1.* FROM (select * from fms_file where 1=1 <include refid="condition" />) f1
-        LEFT JOIN (select * from fms_file where 1=1 <include refid="condition" />) f2 ON f1.file_md5 = f2.file_md5
-        AND f1.id &lt; f2.id  WHERE f2.id IS NULL ) a
+        from ( SELECT f1.* FROM (select * from fms_file where 1=1<include refid="condition"/>) f1
+        LEFT JOIN (select * from fms_file where 1=1<include refid="condition"/>) f2 ON f1.file_md5 = f2.file_md5
+        AND f1.id &lt; f2.id WHERE f2.id IS NULL ) a
     </select>
     <select id="getFileListByDirectoryIds" parameterType="map" resultType="com.fms.domain.filemanage.File">
-        SELECT <include refid="all" />
+        SELECT
+        <include refid="all"/>
         FROM fms_file
         WHERE directory_id IN
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
@@ -145,7 +157,8 @@
     </select>
 
     <select id="getAllFIles" parameterType="map" resultType="com.fms.domain.filemanage.File">
-        SELECT <include refid="all" />
+        SELECT
+        <include refid="all"/>
         FROM fms_file
     </select>
 
@@ -153,31 +166,34 @@
         SELECT COUNT(1)
         FROM fms_file
         where 1 = 1
-        <include refid="condition" />
+        <include refid="condition"/>
     </select>
 
     <insert id="add" parameterType="com.fms.domain.filemanage.File">
         INSERT INTO fms_file
-        (<include refid="allNoAs" />)
+        (<include refid="allNoAs"/>)
         VALUES (
-          #{id},
-          #{name},
-          #{realPath},
-          #{description},
-          #{type},
-          #{tag},
-          #{directoryId},
-          #{isUpload},
-          #{groups},
-          #{classId},
-          #{classType},
-          #{fatherClassName},
-          #{className},
-          #{isParser},
-          #{recommendParserId},
-          #{recommendParserName},
-          #{fileMd5},
-          #{isExport}
+        #{id},
+        #{name},
+        #{realPath},
+        #{description},
+        #{type},
+        #{tag},
+        #{directoryId},
+        #{isUpload},
+        #{groups},
+        #{classId},
+        #{classType},
+        #{fatherClassName},
+        #{className},
+        #{isParser},
+        #{recommendParserId},
+        #{recommendParserName},
+        #{fileMd5},
+        #{isExport},
+        #{mapTemplateName},
+        #{isSaveTemplateName},
+        #{isReport}
         )
     </insert>
 
@@ -188,25 +204,25 @@
             name = #{name},
         </if>
         <if test="realPath!=null">
-          real_path = #{realPath},
+            real_path = #{realPath},
         </if>
         <if test="description!=null">
-          description = #{description},
+            description = #{description},
         </if>
         <if test="type!=null">
-          type = #{type},
+            type = #{type},
         </if>
         <if test="tag!=null">
-          tag = #{tag},
+            tag = #{tag},
         </if>
         <if test="directoryId!=null">
-          directory_id = #{directoryId},
+            directory_id = #{directoryId},
         </if>
         <if test="isUpload!=null">
-          is_upload = #{isUpload},
+            is_upload = #{isUpload},
         </if>
         <if test="groups!=null">
-          groups = #{groups},
+            groups = #{groups},
         </if>
         <if test="classId != null">
             class_id = #{classId},
@@ -242,7 +258,7 @@
         DELETE FROM fms_file
         WHERE id = #{id}
     </delete>
-    
+
     <select id="getFileStatistic" resultType="map">
         select count(class_type) as value, class_type as name
         from fms_file
@@ -254,4 +270,18 @@
         from fms_file
         group by type
     </select>
+
+    <update id="updateFileInMapTemplateNameAndIsSaveTemplateName" parameterType="com.fms.domain.filemanage.File">
+        update fms_file set map_template_name = #{mapTemplateName},
+        is_save_template_name = #{isSaveTemplateName} where id = #{id}
+    </update>
+
+    <select id="findMapTemplateNameById" parameterType="java.lang.Long" resultType="String">
+      select map_template_name from fms_file where id = #{id}
+    </select>
+
+    <update id="updateFileIsReportById" parameterType="Map">
+        update fms_file set is_report = #{isReport} where id = #{id}
+    </update>
+
 </mapper>
