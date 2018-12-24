@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.property.PropertyService">
+
+<select id="getAllConfProperty" resultType="com.fms.domain.property.Property" parameterType="Integer">
+            select *
+            from conf_property
+            where id=#{id}
+        </select>
+
+<update id="updateConfProperty" parameterType="com.fms.domain.property.Property">
+            update conf_property
+            SET
+               bootStrapServers=#{bootStrapServers},groupIdConfig=#{groupIdConfig},hbaseZookeeperQuorum=#{hbaseZookeeperQuorum},defaultTopic=#{defaultTopic}
+            WHERE id=#{id}
+        </update>
+
+</mapper>

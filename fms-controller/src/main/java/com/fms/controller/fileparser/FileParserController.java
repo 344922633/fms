@@ -470,12 +470,18 @@ public class FileParserController {
      * @param fileParser
      * @return
      */
+
     @RequestMapping("singleParse")
     public Object singleParse(@ModelAttribute FileParser fileParser) {
+        //将文件修改为已解析状态
+        Long id=Long.parseLong(fileParser.getParams());
+        fileParser.getParams();
+        fileParserService.updateIsParser(id,1);
+
+
+
         //解析文件内容
         Map<String, String> data = this.readFileContent(fileParser);
-        System.out.print(data);
-
         if (data == null) {
             return ExtUtil.failure("文件解析失败");
         }
