@@ -527,9 +527,9 @@ public class FileParserController {
         }
         Map<String, Object> result = fileParserService.parseData(json);
         //将文件修改为已解析状态
-        Long id=Long.parseLong(fileParser.getParams());
+        Long fid=Long.parseLong(fileParser.getParams());
         fileParser.getParams();
-        fileParserService.updateIsParser(id,1);
+        fileParserService.updateIsParser(fid,1);
         /*for (Map<String, Object> child : json) {
             for (Map.Entry<String, Object> entry : child.entrySet()) {
                 set.add(entry.getKey());
