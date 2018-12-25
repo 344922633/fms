@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.schema.TemplateService">
+
+    <sql id="cols">
+     id,
+     columnKey,
+     columnId,
+     tableId,
+     schemaId,
+     parserId
+    </sql>
+
+
+    <insert id="add" parameterType="com.fms.domain.schema.Template" >
+        INSERT INTO t_template(ip,userName,password,port,path,format)
+        VALUES (
+        #{ip},
+        #{userName},
+        #{password},
+        #{port},
+        #{path},
+        #{format}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.fms.domain.schema.Template">
+        UPDATE t_template
+        SET
+        <if test="ip != null">
+            ip = #{ip},
+        </if>
+        <if test="userName != null">
+            userName = #{userName},
+        </if>
+        <if test="password != null">
+            password = #{password},
+        </if>
+        <if test="port != null">
+            port = #{port},
+        </if>
+        <if test="path != null">
+            path = #{path},
+        </if>
+        <if test="format != null">
+            format = #{format},
+        </if>
+        id = #{id}
+        where id = #{id}
+    </update>
+
+    <select id="getTemplate" parameterType="long" resultType="com.fms.domain.schema.Template">
+        SELECT <include refid="cols" />
+        FROM column_map_relation
+        where id=#{id}
+    </select>
+
+
+    <select id="getTemplateById" parameterType="long" resultType="com.fms.domain.schema.Template">
+        SELECT <include refid="cols" />
+        FROM column_map_relation
+        where id=#{id}
+    </select>
+
+
+    <delete id="deleteTemplate" parameterType="long">
+        DELETE FROM column_map_relation
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getList" parameterType="map" resultType="com.fms.domain.schema.Template">
+        SELECT <include refid="cols" />
+        FROM column_map_relation
+    </select>
+
+    <select id="getTableNameById" parameterType="java.lang.Long" resultType="java.lang.String">
+        select tableChinese
+        from table_info
+        where id=#{tid}
+    </select>
+
+    <select id="getSchemaNameById" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select name
+        from schema_info
+        where id=#{sid}
+    </select>
+
+    <select id="getColumnNameById" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select columnChinese
+        from column_info
+        where id=#{cid}
+    </select>
+
+    <select id="getParserNameById" parameterType="java.lang.Long" resultType="java.lang.String">
+        select name
+        from file_parser
+        where id=#{pid}
+    </select>
+
+</mapper>

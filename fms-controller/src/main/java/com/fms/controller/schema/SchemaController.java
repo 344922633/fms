@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fms.domain.schema.ColumnInfo;
 import com.fms.domain.schema.TableInfo;
 import com.fms.domain.filemanage.MasterSlaveDo;
+import com.fms.domain.schema.Template;
 import com.fms.service.schema.ColumnInfoService;
 import com.fms.service.schema.ColumnSetService;
 import com.fms.service.masterSlave.ColumnValuesService;
@@ -82,7 +83,7 @@ public class SchemaController {
         if (list != null && list.size() > 0) {
             MasterSlaveDo masterSlaveDo = list.get(0);
 
-            List<ColumnInfo> masterList = schemaService.listColumnsForMasterTable(masterSlaveDo.getMasterTable());
+            List<ColumnInfo> masterList = schemaService.listColumnsForMasterTable(masterSlaveDo.getMasterTableId());
 
             for (ColumnInfo column : masterList) {
                 TableInfo tableInfo = columnInfoService.queryTableInfoById(column.getTableId());
@@ -99,7 +100,7 @@ public class SchemaController {
                 }
                 returnList.add(map);
             }
-            List<ColumnInfo> returnListForSLave = schemaService.listColumnsForMasterTable(masterSlaveDo.getSlaveTable());
+            List<ColumnInfo> returnListForSLave = schemaService.listColumnsForMasterTable(masterSlaveDo.getSlaveTableId());
 
             for (ColumnInfo column : returnListForSLave) {
                 TableInfo tableInfo = columnInfoService.queryTableInfoById(column.getTableId());
@@ -181,7 +182,19 @@ public class SchemaController {
     public Object page(HttpServletRequest request) {
         MasterSlaveDo masterSlaveDo = new MasterSlaveDo();
         Page page = ParamUtil.getPager(request);
-        return masterSlaveService.page(masterSlaveDo, page);
+        Page<MasterSlaveDo> pageList = masterSlaveService.page(masterSlaveDo, page);
+        List<MasterSlaveDo> list = pageList.getList();
+        for(MasterSlaveDo msd : list){
+            long masterTableId = msd.getMasterTableId();
+            long slaveTableId = msd.getSlaveTableId();
+
+            String masterTableName = schemaService.getTableNameById(masterTableId);
+            msd.setMasterTableName(masterTableName);
+
+            String slaveTableName = schemaService.getTableNameById(slaveTableId);
+            msd.setSlaveTableName(slaveTableName);
+        }
+        return pageList;
     }
 
     @RequestMapping("/masterSlave/detail")

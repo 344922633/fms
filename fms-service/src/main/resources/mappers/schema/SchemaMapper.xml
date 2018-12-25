@@ -34,6 +34,12 @@
         where TABLE_SCHEMA=(select database())
     </select>
 
+    <select id="getTableNameById" parameterType="java.lang.Long" resultType="java.lang.String">
+        select tableChinese
+        from table_info
+        where id=#{tid}
+    </select>
+
     <insert id="insertData">
         INSERT INTO ${tableName}
         <foreach collection="data" item="d" open="(" close=")" separator=",">
@@ -44,6 +50,15 @@
             #{d.value}
         </foreach>
     </insert>
+
+    <select id="query" parameterType="com.fms.domain.schema.Template" resultType="com.fms.domain.schema.Template">
+        select * from column_map_relation
+    </select>
+
+    <select id="queryCount" parameterType="com.fms.domain.schema.Template" resultType="int">
+        SELECT COUNT(1)
+        FROM column_map_relation
+    </select>
 
 </mapper>
 

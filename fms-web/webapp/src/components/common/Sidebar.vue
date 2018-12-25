@@ -109,6 +109,11 @@
                                 title: '属性配置',
                                 icon: 'el-icon-setting'
                             },
+                            {
+                                index: 'template',
+                                title: '映射模板',
+                                icon: 'el-icon-setting'
+                            }
                         ]
                     },
                     {

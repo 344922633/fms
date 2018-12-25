@@ -9,8 +9,8 @@
         <if test="name != null and name != ''">
             AND name = #{name}
         </if>
-        <if test="masterTable != 0L">
-            AND masterTableId = #{masterTable}
+        <if test="masterTableId != 0">
+            AND masterTableId = #{masterTableId}
         </if>
         <if test="type != null and type != ''">
             AND type = #{type}
@@ -35,16 +35,16 @@
         VALUES (
         #{name},
         #{type},
-        #{masterTable},
-        #{slaveTable}
+        #{masterTableId},
+        #{slaveTableId}
         )
     </insert>
     <update id="update" parameterType="com.fms.domain.filemanage.MasterSlaveDo">
         UPDATE t_masterslave
         SET name = #{name},
         type = #{type},
-        masterTableId = #{masterTable},
-        slaveTableId = #{slaveTable},
+        masterTableId = #{masterTableId},
+        slaveTableId = #{slaveTableId},
         WHERE id = #{id}
     </update>
 

@@ -137,6 +137,11 @@ export default new Router({
                     component: resolve => require(['../components/page/filemanage/FileInput.vue'], resolve),
                     meta: { title: '离线文件导入' }
                 },
+                {
+                    path: '/template',
+                    component: resolve => require(['../components/page/schema/Template.vue'], resolve),
+                    meta: { title: '映射模板' }
+                },
            /*     {
                     path: '/applicationConf',
                     component: resolve => require(['../components/page/configure/applicationConf.vue'], resolve),

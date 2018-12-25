@@ -1,7 +1,10 @@
 package com.fms.service.schema;
 
+import com.fms.domain.filemanage.MasterSlaveDo;
 import com.fms.domain.schema.ColumnInfo;
+import com.fms.domain.schema.Template;
 import com.fms.utils.SchemaUtil;
+import com.handu.apollo.base.Page;
 import com.handu.apollo.data.mybatis.Dao;
 import com.handu.apollo.data.utils.Param;
 import com.handu.apollo.utils.CharPool;
@@ -64,6 +67,10 @@ public class SchemaService {
 //        dao.insert(CLASSNAME, "insertData", params);
         //发送kafka消息
         kafkaTemplate.send("operation_3rd1",SchemaUtil.schemaStrFormat(tableName,tableColumnTemp));
+    }
+
+    public String getTableNameById(long tid){
+        return dao.get(CLASSNAME, "getTableNameById", tid);
     }
 
 
