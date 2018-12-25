@@ -236,4 +236,33 @@ public class SchemaController {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+    //主从关系新增
+    @RequestMapping("getAllMasterTable")
+    public Object getAllMasterTable() {
+
+        return schemaService.getAllMasterTable();
+
+    }
+
+
+    @RequestMapping("getAllGuestTable")
+    public Object getAllGuestTable() {
+        return schemaService.getAllGuestTable();
+    }
+
+*/
+
 }

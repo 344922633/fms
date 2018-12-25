@@ -360,7 +360,7 @@
                         title: '推荐解析器',
                         key: 'recommendParserName'
                     },
-              /*      {
+                  /*  {
                         title: '映射模板名称',
                         key: 'mapTemplateName'
                     },
