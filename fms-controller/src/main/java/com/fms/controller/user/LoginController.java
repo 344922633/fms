@@ -11,16 +11,19 @@ import com.handu.apollo.utils.ExtUtil;
 import com.handu.apollo.utils.MD5;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.stream.Location;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
-
-@RestController
+@Controller
 public class LoginController {
 
     @Autowired
@@ -109,18 +112,21 @@ public class LoginController {
             HttpSession session = request.getSession();
             session.setAttribute("user",gUser);
 
-            return "success";
+
+            return "redirect:http://127.0.0.1:8089";
+
         }
 
         return "密码错误或权限不足";
     }
 
+    @ResponseBody
     @RequestMapping("/logout")
     public Object logout(HttpSession session){
         session.invalidate();
         return "退出成功";
     }
-
+    @ResponseBody
     @RequestMapping("addUser")
     public Object addUser(User user){
 
@@ -137,6 +143,7 @@ public class LoginController {
         }
         return "success";
     }
+    @ResponseBody
     @RequestMapping("getConfig")
     public Object getConfig() {
         Map<String, Object> params = Maps.newHashMap();
@@ -144,6 +151,7 @@ public class LoginController {
         params.put("previewPath", env.getProperty("previewPath"));
         return params;
     }
+    @ResponseBody
     @RequestMapping("updateUser")
     public Object updateUser(User user){
 

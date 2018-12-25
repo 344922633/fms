@@ -66,6 +66,24 @@ public class FileParserService {
 
     }
 
+/*
+    public List<File> getFileListByName(String name) {
+
+        return dao.getList(CLASSNAME, "getFileListByName", name);
+    }
+*/
+
+
+    public void updateIsParserMultiFile(String name, int isParser) {
+
+        Map<String, Object> p = new HashMap<>();
+        p.put("name", name);
+        p.put("isParser", isParser);
+        dao.update(CLASSNAME, "updateIsParserMultiFile", p);
+
+    }
+
+
     public void delete(Long id) {
         dao.delete(CLASSNAME, "delete", id);
     }

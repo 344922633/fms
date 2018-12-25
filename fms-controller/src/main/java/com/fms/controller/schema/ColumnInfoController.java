@@ -51,18 +51,21 @@ public class ColumnInfoController {
 
 
     @RequestMapping("/addTableInfo")
-    public Object addTableInfo(HttpServletRequest request) {
+    public Object addTableInfo(TableInfo tableInfo) {
+
+        //根据tableEnglish查询表是否存在
+        Integer count = columnInfoService.countTableInfoByEnglish(tableInfo.getTableEnglish());
+
+        if(count > 0){
+            return ExtUtil.failure("操作失败,当前表已存在");
+        }
+
         long id = System.currentTimeMillis();
-        String tableEnglish = request.getParameter("tableEnglish");
-        String tableChinese = request.getParameter("tableChinese");
-        TableInfo tableInfo = new TableInfo();
         tableInfo.setId(id);
-        tableInfo.setTableEnglish(tableEnglish);
-        tableInfo.setTableChinese(tableChinese);
         columnInfoService.addTableInfo(tableInfo);
 
         // 字段列表
-        List<Map<String,Object>> tableColumns= schemaService.listColumns(tableEnglish);
+        List<Map<String,Object>> tableColumns= schemaService.listColumns(tableInfo.getTableEnglish());
 
         for (Map<String,Object> map: tableColumns) {
             ColumnInfo columnInfo = new ColumnInfo();
@@ -74,7 +77,7 @@ public class ColumnInfoController {
             columnInfoService.addColunmInfo(columnInfo);
         }
 
-            return ExtUtil.success("操作成功");
+        return ExtUtil.success("操作成功");
     }
 
     @RequestMapping("getColumnsInfo")

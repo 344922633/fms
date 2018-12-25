@@ -1,7 +1,7 @@
 <template>
     <div class="sidebar">
         <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#1c242f"
-            text-color="#bfcbd9" active-text-color="#20a0ff" unique-opened router>
+                 text-color="#bfcbd9" active-text-color="#20a0ff" unique-opened router>
             <template v-for="item in items">
                 <template v-if="item.subs">
                     <el-submenu :index="item.index" :key="item.index">
@@ -38,31 +38,127 @@
             return {
                 collapse: false,
                 items: [
-                   {
+                    {
                         icon: 'el-icon-lx-home',
                         index: 'dashboard',
-                        title: '系统首页'
+                        title: '流量监控'
                     },
                     {
-                         icon: 'el-icon-lx-copy',
-                        index: 'file_type',
-                        title: '文件分类管理'
+                        icon: 'el-icon-lx-copy',
+                        index: '1',
+                        title: '人工录入',
+                        subs:[
+                            {
+                                index: 'manualDataDeal',
+                                title: '业务表单',
+                                icon: 'el-icon-edit'
+                            },
+                            {
+                                index: 'tuopu',
+                                title: '网络拓扑',
+                                icon: 'el-icon-lx-pic'
+                            }
+                        ]
                     },
-                   //{
-                      //  icon: 'el-icon-lx-home',
-                     //   index: 'block_manage',
-                      //  title: '黑白名单管理'
-                   // },
                     {
-                        icon: 'el-icon-lx-file',
-                        index: 'fileManagement',
-                        title: '文件管理'
+                        icon: 'el-icon-lx-copy',
+                        index: '2',
+                        title: '在线/离线文件导入',
+                        subs:[
+                            {
+                                icon: 'el-icon-lx-copy',
+                                index: 'file_type',
+                                title: '在线文件信息'
+                            },
+                            {
+                                index: 'fileInput',
+                                title: '离线文件导入',
+                                icon: 'el-icon-upload'
+                            }
+                        ]
                     },
+                    {
+                        icon: 'el-icon-lx-copy',
+                        index: '3',
+                        title: '素材汇集',
+                        subs:[
+                            {
+                                icon: 'el-icon-lx-file',
+                                index: 'fileManagement',
+                                title: '单文件解析'
+                            },
+                            {
+                                index: 'multiFileParser',
+                                title: '多文件解析',
+                                icon: 'el-icon-lx-read'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-copy',
+                        index: '4',
+                        title: '配置',
+                        subs:[
+                            {
+                                index: 'tableSet',
+                                title: '表格映射',
+                                icon: 'el-icon-setting'
+                            },
+                            {
+                                index: 'kafkaHbaseConf',
+                                title: '属性配置',
+                                icon: 'el-icon-setting'
+                            },
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-copy',
+                        index: '5',
+                        title: '业务管理',
+                        subs:[
+
+                            {
+                                index: 'parser',
+                                title: '解析器管理',
+                                icon: 'el-icon-printer'
+                            },
+
+                            {
+                                index: 'prinSuboRelation',
+                                title: '主从关系管理',
+                                icon: 'el-icon-lx-settings'
+                            },
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-copy',
+                        index: '6',
+                        title: '统计上报',
+                        subs:[
+                            {
+                                icon: 'el-icon-lx-home',
+                                index: 'dashboard',
+                                title: '统计监控'
+                            },
+                            {
+                                index: 'sendFileToServer',
+                                title: '素材上报',
+                                icon: 'el-icon-setting'
+                            },
+
+                        ]
+                    },
+
+                    //{
+                    //  icon: 'el-icon-lx-home',
+                    //   index: 'block_manage',
+                    //  title: '黑白名单管理'
+                    // },
                     /*{
                         icon: 'el-icon-lx-cascades',
                         index: 'table',
                         title: '基础表格'
-                    
+
                     {
                         icon: 'el-icon-lx-copy',
                         index: 'tabs',
@@ -122,59 +218,12 @@
                         title: '测试布局',
                         icon: 'el-icon-lx-news'
                     },*/
-                    {
-                        index: 'parser',
-                        title: '解析器管理',
-                        icon: 'el-icon-printer'
-                    },
 
-                    {
-                        index: 'multiFileParser',
-                        title: '多文件解析',
-                        icon: 'el-icon-lx-read'
-                    },
-                    {
-                        index: 'manualDataDeal',
-                        title: '手动录入',
-                        icon: 'el-icon-edit'
-                    },
-                    {
-                        index: 'prinSuboRelation',
-                        title: '主从关系管理',
-                        icon: 'el-icon-lx-settings'
-                    },
-                    {
-                        index: 'tuopu',
-                        title: '拓扑图管理',
-                        icon: 'el-icon-lx-pic'
-                    },
-
-                    {
-                        index: 'fileInput',
-                        title: '离线文件导入',
-                        icon: 'el-icon-upload'
-                    },
-                    {
-                        index: 'tableSet',
-                        title: '表格映射',
-                        icon: 'el-icon-setting'
-                    },
-                /*    {
-                        index: 'columeSet',
-                        title: '字段映射',
-                        icon: 'el-icon-setting'
-                    },*/
-
-                    {
-                        index: 'sendFileToServer',
-                        title: '上传服务器',
-                        icon: 'el-icon-setting'
-                    },
-                    {
-                        index: 'applicationConf',
-                        title: '属性配置',
-                        icon: 'el-icon-setting'
-                    },
+                    /*    {
+                            index: 'columeSet',
+                            title: '字段映射',
+                            icon: 'el-icon-setting'
+                        },*/
 
                     /*,
                     {
@@ -204,11 +253,10 @@
             // 通过 Event Bus 进行组件间通信，来折叠侧边栏
             bus.$on('collapse', msg => {
                 this.collapse = msg;
-            })
+        })
         }
     }
 </script>
-
 <style scoped>
     .sidebar{
         display: block;
@@ -227,27 +275,4 @@
     .sidebar > ul {
         height:100%;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </style>

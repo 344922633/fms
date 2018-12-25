@@ -19,12 +19,12 @@
 
                 <FormItem prop="masterTable" label="主表">
                      <Select v-model="masterSlave.masterTable"  filterable>
-                        <Option v-for="item in tableNames" :value="item" :key="item">{{ item }}</Option>
+                        <Option v-for="item in tableNames" :value="item" :key="item">{{ item.tableChinese }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="从表">
                     <Select v-model="masterSlave.slaveTable" filterable>
-                        <Option v-for="item in tableNames" :value="item" :key="item">{{ item }}</Option>
+                        <Option v-for="item in tableNames2" :value="item" :key="item">{{ item.tableChinese }}</Option>
                     </Select>
                 </FormItem>
 
@@ -51,6 +51,7 @@
         data () {
             return {
                 tableNames:[],
+                tableNames2:[],
                  masterSlave: {
                     name: '',
                     type: '',
@@ -164,6 +165,7 @@
         created() {
             this.getData();
             this.getTables();
+            this.getTables2();
         },
         methods: {
             //修改操作
@@ -233,6 +235,7 @@
                 };
                 this.formVisible = true;
                 this.getTables();
+                this.getTables2();
 
             },
             //编辑弹框显示状态监听
@@ -279,11 +282,19 @@
             handleCurrentChange(c) {
                 this.current = c;
             },
+            //主表
              getTables() {
                 this.$axios.post('mvc/getAllTables').then(res => {
                     console.log(res.data)
                     this.tableNames = res.data;
                 })
+            },
+            //从表
+            getTables2() {
+                this.$axios.post('mvc/getAllTables').then(res => {
+                    console.log(res.data)
+                this.tableNames2= res.data;
+            })
             }
         }
     }

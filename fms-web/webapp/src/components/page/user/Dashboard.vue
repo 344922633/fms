@@ -102,30 +102,30 @@
             </el-col>
         </el-row>
 
-            <el-table
-                :data="analyseFiles"
-                border
-                style="width: 49%">
-                <el-table-column
-                    prop="parsedFileAmount"
-                    label="已解析文件数"
-                    width="180">
-                </el-table-column>
-                <el-table-column
-                    prop="UnresolvedFileAmount"
-                    label="未解析文件数"
-                    width="180">
-                </el-table-column>
-                <el-table-column
-                    prop="allFileAmount"
-                    label="文件总数">
-                </el-table-column>
-                <el-table-column
-                    prop="Percent"
-                    label="已解析占总文件百分比">
-                </el-table-column>
+        <el-table
+            :data="analyseFiles"
+            border
+            style="width: 49%">
+            <el-table-column
+                prop="parsedFileAmount"
+                label="已解析文件数"
+                width="180">
+            </el-table-column>
+            <el-table-column
+                prop="UnresolvedFileAmount"
+                label="未解析文件数"
+                width="180">
+            </el-table-column>
+            <el-table-column
+                prop="allFileAmount"
+                label="文件总数">
+            </el-table-column>
+            <el-table-column
+                prop="Percent"
+                label="已解析 / 总文件">
+            </el-table-column>
 
-            </el-table>
+        </el-table>
 
     </div>
 </template>
@@ -139,9 +139,9 @@
             return {
                 name: localStorage.getItem('ms_username'),
                 todoList: [{
-                        title: '今天要修复100个bug',
-                        status: false,
-                    },
+                    title: '今天要修复100个bug',
+                    status: false,
+                },
                     {
                         title: '今天要修复100个bug',
                         status: false,
@@ -164,9 +164,9 @@
                 ],
                 data1: [],
                 data: [{
-                        name: '2018/09/04',
-                        value: 1083
-                    },
+                    name: '2018/09/04',
+                    value: 1083
+                },
                     {
                         name: '2018/09/05',
                         value: 941
@@ -237,14 +237,14 @@
                 //获取文件解析数据
                 this.$axios.get('mvc/getAnalyseFiles').then(res => {
                     this.analyseFiles = res.data;
-                });
+            });
             },
             changeDate(){
                 const now = new Date().getTime();
                 this.data.forEach((item, index) => {
                     const date = new Date(now - (6 - index) * 86400000);
-                    item.name = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`
-                })
+                item.name = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`
+            })
             },
             handleListener(){
                 bus.$on('collapse', this.handleBus);
@@ -254,7 +254,7 @@
             handleBus(msg){
                 setTimeout(() => {
                     this.renderChart()
-                }, 300);
+            }, 300);
             },
             renderChart(){
                 this.$refs.bar.renderChart();
@@ -263,10 +263,10 @@
             getData() {
                 this.$axios.post('mvc/getFileStatistic').then(res => {
                     this.data = res.data;
-                })
+            })
                 this.$axios.post('mvc/getFileSuffixStatistic').then(res => {
                     this.data1 = res.data;
-                })
+            })
             }
         }
     }
