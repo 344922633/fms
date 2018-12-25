@@ -27,23 +27,42 @@
         </el-table>
 
         <el-dialog title="新增" :visible.sync="addVisible" width="40%">
-      <!--      <el-form ref="form" :model="form"  :label-position="labelPosition" label-width="100px" :rules="rules" @click="onSubmitAdd">
+            <el-form ref="form" :model="form"  :label-position="labelPosition" label-width="100px" :rules="rules" @click="onSubmitAdd">
+                <el-form-item label="解析器：" prop="parser">
+                    <Select v-model="form.parser" filterable>
+                        <!--@on-change="getParser"-->
+                        <Option v-for="item in parserData" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                    </Select>
+                </el-form-item>
                 <el-form-item label="键名：" prop="key">
                     <el-input v-model="form.key"></el-input>
                 </el-form-item>
-                <el-form-item label="字段名：" prop="column">
-                    <el-input v-model="form.column"></el-input>
+                <el-form-item label="库名：" prop="schema">
+                    <Select @on-change="(schemaId) => getTables(schemaId)" v-model="form.schema" filterable>
+                        <Option v-for="(schema,schemaIdx) in selectMap.schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>
+                    </Select>
                 </el-form-item>
                 <el-form-item label="表名：" prop="table">
-                    <el-input v-model="form.table"></el-input>
+                    <Select @on-change="(tableId) => getColumnsByTable(tableId)" v-model="form.table" filterable>
+                        <Option v-for="(table,tableIdx) in selectMap.tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
+                    </Select>
                 </el-form-item>
-                <el-form-item label="库名：" prop="schema">
-                    <el-input v-model="form.schema"></el-input>
+                <el-form-item label="字段名：" prop="column">
+                    <Select @on-change="(columnId) => getDicByColumn(columnId)" v-model="form.column" filterable>
+                        <Option v-for="(column,columnIdx) in selectMap.columns" :value="column.id" :key="column.id"> {{ column.columnChinese }}</Option>
+                    </Select>
                 </el-form-item>
-                <el-form-item label="解析器：" prop="parser">
-                    <el-input v-model="form.parser"></el-input>
-                </el-form-item>
-            </el-form>-->
+                <template v-if="selectMap && selectMap.dicTables">
+                    <el-form-item v-for="dicTable in selectMap.dicTables" :label="dicTable.dicTableName">
+                        <Select v-model="form['dicTable'][dicTable.dicTableName]" filterable>
+                            <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.MC" :key="dic.MC"> {{ dic.MC }}</Option>
+                        </Select>
+                    </el-form-item>
+                </template>
+                <!--<el-form-item label="解析器：" prop="parser">-->
+                    <!--<el-input v-model="form.parser"></el-input>-->
+                <!--</el-form-item>-->
+            </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addVisible = false">取 消</el-button>
                 <el-button type="primary" @click="submitAdd">确 定</el-button>
@@ -110,11 +129,22 @@
                 tableData: [],
                 addVisible: false,
                 form: {
+                    parser: '',
                     key: '',
-                    column: '',
-                    table: '',
                     schema: '',
-                    parser: ''
+                    table: '',
+                    column: '',
+                    dicTable:{}
+                },
+                selectMap:{
+                    schemas: [],
+                    tables: [],
+                    columns: [],
+                    dicTables:null
+                },
+                parserData: {
+                    type: Array,
+                    default: []
                 },
                 idx: -1,
            /*     rules: {
@@ -130,6 +160,9 @@
 
         created() {
             this.getData();
+        },
+        mounted() {
+            this.getParsers()
         },
         methods: {
             async getData() {
@@ -157,12 +190,11 @@
                 }
 
                 await this.$axios.post('mvc/fileInput/add', {
+                    parser:this.form.parser,
                     key:this.form.key,
-                    column:this.form.column,
-                    table:this.form.table,
                     schema:this.form.schema,
-                    parser:this.form.parser
-
+                    table:this.form.table,
+                    column:this.form.column
                 });
                 await this.getData();
                 this.addVisible = false;
@@ -187,15 +219,22 @@
 
 
             handleAdd() {
-             /*   this.form = {
-                    key: "",
-                    column: "",
-                    table: "",
-                    schema: "",
-                    parser: ""
-                };*/
+                this.getSchemas();
+                this.form= {
+                    parser: '',
+                        key: '',
+                        schema: '',
+                        table: '',
+                        column: '',
+                        dicTable:{}
+                },
+                this.selectMap={
+                    schemas: [],
+                    tables: [],
+                    columns: [],
+                    dicTables:null
+                },
                 this.addVisible = true;
-
             },
 
             handleDelete(index, row) {
@@ -213,7 +252,71 @@
 
             handleCurrentChange(val) {
                 this.currentPage = val;
-            }
+            },
+            //解析器下拉列表
+            getParsers() {
+                this.$axios.post('mvc/fileParser/getOrderList', {}).then(res => {
+                    this.parserData = res.data ? res.data : [];
+                });
+            },
+            //获取库
+            getSchemas() {
+                this.$axios.post('mvc/getAllSchemas').then(res => {
+                    this.selectMap.schemas = res.data
+                })
+            },
+            //根据库ID获取表
+            getTables(schemaId) {
+                this.$axios.post('mvc/getTablesBySchemaId', {
+                    schemaId: schemaId
+                }).then(res => {
+                    this.selectMap.tables = res.data;
+                    this.form.table = '';
+
+                    this.selectMap.columns = null;
+                    this.form.column = '';
+
+                    this.selectMap.dicTables = null;
+                    this.form.dicTable = {};
+                })
+            },
+            //根据表ID获取字段
+            getColumnsByTable(tableId) {
+                this.$axios.post('mvc/getColumnsForTable', {tableId}).then(res => {
+                    this.selectMap.columns = res.data;
+                    this.form.column = '';
+                    this.selectMap.dicTables = null;
+                    this.form.dicTable = {};
+                })
+            },
+
+            getDicByColumn(columnId) {
+                const column = this.selectMap['columns'].find(c => c.id === columnId)
+                console.log(column)
+                const {isDic, tableId} = column || {}
+                this.getDicByTableId(tableId)
+            },
+            getDicByTableId(tableId) {
+                this.$axios.post('mvc/getDicNameByTableId', {tableId}).then(res => {
+                    const dicTables = res.data || []
+                    this.selectMap.dicTables = dicTables;
+                    this.form.dicTable ={};
+
+                dicTables.forEach(dicTable => {
+                    const { dicTableName } = dicTable
+                    this.$set(this.selectMap['dicTable'], dicTableName, '')
+                })
+                this.getDicColumnsByDicName(dicTable);
+                })
+            },
+            getDicColumnsByDicName(dicTable) {
+                this.$axios.post('mvc/getDicColumnsByDicName', {
+                    dicName:dicTable
+                }).then(res => {
+                    this.$set(this.selectMap, 'dicColumns', res.data)
+                    console.log(res.data)
+                });
+            },
         }
     }
 </script>
