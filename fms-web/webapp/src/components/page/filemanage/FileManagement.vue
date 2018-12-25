@@ -360,7 +360,7 @@
                         title: '推荐解析器',
                         key: 'recommendParserName'
                     },
-                    {
+              /*      {
                         title: '映射模板名称',
                         key: 'mapTemplateName'
                     },
@@ -370,7 +370,7 @@
                         render: (h, params) => {
                         return h('span',{}, params.row.isSaveTemplateName == 1 ? '是' : '否');
                         }
-                    },
+                    },*/
                     {
                         title: '是否解析',
                         key: 'isParser',

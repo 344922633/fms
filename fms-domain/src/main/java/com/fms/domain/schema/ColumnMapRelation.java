@@ -7,7 +7,7 @@ import lombok.Data;
 public class ColumnMapRelation {
     private String id;
     private String columnKey;
-    private int tableId;
+    private long tableId;
     private int columnId;
     private int schemaId;
     private long parserId;

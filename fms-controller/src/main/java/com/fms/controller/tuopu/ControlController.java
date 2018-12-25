@@ -8,6 +8,7 @@ import com.fms.domain.tuopu.ControlProperty;
 import com.fms.service.tuopu.ControlPropertyService;
 import com.fms.service.tuopu.ControlService;
 import com.fms.utils.MD5Util;
+import com.handu.apollo.utils.ExtUtil;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -112,7 +113,7 @@ public class ControlController {
     }
 
     @RequestMapping("add")
-    public void add(String name, String type, String url, String properties) {
+    public Object add(String name, String type, String url, String properties) {
         Control control = new Control();
         String controlId=UUID.randomUUID().toString();
         control.setId(controlId);
@@ -130,6 +131,7 @@ public class ControlController {
             controlProperty.setPropertyChinese();*/
             controlPropertyService.add(controlProperty);
         }
+        return ExtUtil.success("操作成功");
 
     }
 }

@@ -10,11 +10,15 @@ public class MasterSlaveDo {
 
     private String name;
 
-    private long masterTableId;
+    private long masterTable;
 
-    private long slaveTableId;
+    private long slaveTable;
 
     private String type;
+
+    private String lable;
+
+    private String value;
 
     private List<MasterSlaveDo> children;
 }

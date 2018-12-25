@@ -46,6 +46,19 @@ public class ColumnInfoController {
         tableInfo.setTableChinese(tableChinese);
         tableInfo.setTableEnglish(tableEnglish);
         columnInfoService.updateTableInfo(tableInfo);
+        columnInfoService.deleteColumnInfo(tid);
+        // 字段列表
+        List<Map<String,Object>> tableColumns= schemaService.listColumns(tableEnglish);
+
+        for (Map<String,Object> map: tableColumns) {
+            ColumnInfo columnInfo = new ColumnInfo();
+
+            columnInfo.setColumnEnglish((String) map.get("column_name"));
+            columnInfo.setDataType((String) map.get("data_type"));
+            columnInfo.setTableId(tid);
+            columnInfoService.addColunmInfo(columnInfo);
+        }
+
         return ExtUtil.success("操作成功");
     }
 

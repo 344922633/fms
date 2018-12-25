@@ -82,7 +82,7 @@ public class SchemaController {
         if (list != null && list.size() > 0) {
             MasterSlaveDo masterSlaveDo = list.get(0);
 
-            List<ColumnInfo> masterList = schemaService.listColumnsForMasterTable(masterSlaveDo.getMasterTableId());
+            List<ColumnInfo> masterList = schemaService.listColumnsForMasterTable(masterSlaveDo.getMasterTable());
 
             for (ColumnInfo column : masterList) {
                 TableInfo tableInfo = columnInfoService.queryTableInfoById(column.getTableId());
@@ -99,7 +99,7 @@ public class SchemaController {
                 }
                 returnList.add(map);
             }
-            List<ColumnInfo> returnListForSLave = schemaService.listColumnsForMasterTable(masterSlaveDo.getSlaveTableId());
+            List<ColumnInfo> returnListForSLave = schemaService.listColumnsForMasterTable(masterSlaveDo.getSlaveTable());
 
             for (ColumnInfo column : returnListForSLave) {
                 TableInfo tableInfo = columnInfoService.queryTableInfoById(column.getTableId());

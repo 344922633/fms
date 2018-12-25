@@ -9,7 +9,7 @@
               show-total />
 
         <Modal v-model="formVisible" :title="formTitle" :model="parser" @on-visible-change="handleVisibleChange" @on-ok="handleFormOk" footer-hide>
-            <Form :label-width="80" ref="parserForm" :model="masterSlave" :rules="ruleValidate">
+            <Form :label-width="80" ref="parserForm">
                 <FormItem prop="name" label="关系名称">
                     <Input v-model="masterSlave.name"/>
                 </FormItem>
@@ -18,13 +18,13 @@
                 </FormItem>
 
                 <FormItem prop="masterTable" label="主表">
-                     <Select v-model="masterSlave.masterTable"  filterable>
-                        <Option v-for="item in tableNames" :value="item" :key="item">{{ item }}</Option>
+                     <Select v-model="masterSlave.masterTable" filterable>
+                        <Option v-for="item in tableNames" :value="item.id" :key="item.id">{{ item.tableChinese }}</Option>
                     </Select>
                 </FormItem>
-                <FormItem label="从表">
+                <FormItem prop="slaveTable" label="从表">
                     <Select v-model="masterSlave.slaveTable" filterable>
-                        <Option v-for="item in tableNames" :value="item" :key="item">{{ item }}</Option>
+                        <Option v-for="item in tableNames" :value="item.id" :key="item.id">{{ item.tableChinese }}</Option>
                     </Select>
                 </FormItem>
 
@@ -243,15 +243,15 @@
             },
             //处理编辑弹框确认操作
             handleFormOk() {
-
+                console.log(this.masterSlave)
                 let isValid = true;
-                this.$refs['parserForm'].validate((valid) => {
-                    if (!valid) {
-                        isValid = false;
-                    }
+                Object.keys(this.masterSlave).forEach(key => {
+                   if (! this.masterSlave[key]) {
+                       isValid = false
+                   }
                 })
                 if (!isValid) {
-                    return ;
+                    return this.$message.error('请将表单填写完整');
                 }
                 if (this.masterSlave.id) {
                     this.postOperate('mvc/masterSlave/update');

@@ -31,12 +31,12 @@ public class ColumnSetController {
 
             if(StringUtils.isNotEmpty(json.getJSONObject(key).getString("columnId"))){
                 ColumnMapRelation mr = new ColumnMapRelation();
-                String columnMapId = UUID.randomUUID().toString();
+                String columnMapId = String.valueOf(System.currentTimeMillis());
                 mr.setId(columnMapId);
                 mr.setColumnKey(key);
                 mr.setColumnId(json.getJSONObject(key).getInteger("columnId"));
                 mr.setSchemaId(json.getJSONObject(key).getInteger("schemaId"));
-                mr.setTableId(json.getJSONObject(key).getInteger("tableId"));
+                mr.setTableId(Long.valueOf(json.getJSONObject(key).getString("tableId")));
                 mr.setParserId(Long.parseLong(parserId));
                 columnSetService.insertColumnMapRelation(mr);
 

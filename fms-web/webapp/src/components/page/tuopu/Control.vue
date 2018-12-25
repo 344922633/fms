@@ -46,19 +46,32 @@
                     <el-form-item label="控件名称" label-width="100px">
                         <el-input v-model="form.name" style="width:200px;"></el-input>
                     </el-form-item>
-                    <el-form-item label-width="100px" :label="`控件属性${index || ''}`" v-for="(item, index) in inputs"
+                    <el-form-item label-width="100px" label="控件属性" v-for="(item, index) in inputs"
                                   :key="index">
                         <div class="proper-wrap">
-                            <el-input v-model="item.text" style="width:200px;"></el-input>
+                            <el-input :readonly="item.canDelete === false" v-model="item.text" style="width:200px;"></el-input>
                             <i v-if="index === 0" class="el-icon-plus" @click="addInput"></i>
-                            <i v-else class="el-icon-minus" @click="removeInput(index)"></i>
+                            <i v-if="index !==0 && item.canDelete !== false" class="el-icon-minus" @click="removeInput(index)"></i>
                         </div>
                     </el-form-item>
-                    <el-form-item label="控件类型" label-width="100px">
-                        <el-select v-model="form.type" filterable placeholder="请选择" style="width:200px;">
-                            <el-option key="网络" label="网络" value="网络"></el-option>
-                            <el-option key="硬件" label="硬件" value="硬件"></el-option>
-                            <el-option key="区块" label="区块" value="区块"></el-option>
+                    <el-form-item label="控件类型(一级)" label-width="100px">
+                        <el-select v-model="form.parentType" filterable placeholder="请选择" style="width:200px;">
+                            <el-option
+                                v-for="(menu, menuIdx) in menuList"
+                                :key="menu.name"
+                                :label="menu.name"
+                                :value="menu.name">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="控件类型(二级)" label-width="100px">
+                        <el-select @change="onChangeType" v-model="form.type" filterable placeholder="请选择" style="width:200px;">
+                            <el-option
+                                v-for="(menu, menuIdx) in menuIdChildrenMap[form.parentType]"
+                                :key="menu.name"
+                                :label="menu.name"
+                                :value="menu.name">
+                            </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="控件上传" label-width="100px">
@@ -114,9 +127,12 @@
                         </el-form-item>
                         <el-form-item label="控件类型" label-width="100px">
                             <el-select v-model="form.type" fiterable placeholder="请选择" style="width:200px;">
-                                <el-option key="bbk" label="网络" value="bbk"></el-option>
-                                <el-option key="xtc" label="硬件" value="xtc"></el-option>
-                                <el-option key="imoo" label="区块" value="imoo"></el-option>
+                                <el-option
+                                    v-for="(menu, menuIdx) in menuList"
+                                    :key="menu.id"
+                                    :label="menu.name"
+                                    value="menu.id">
+                                </el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="控件上传" label-width="100px">
@@ -183,6 +199,7 @@
                 tableData: [],
                 form: {
                     name: '',
+                    parentType: '',
                     type: '',
                     image: ''
                 },
@@ -199,12 +216,47 @@
                 inputs: [
                     {text: ''}
                 ],
+                menuList: [],
+                menuIdChildrenMap: {},
             }
         },
         created() {
             this.getData();
+            this.getMenuList()
         },
         methods: {
+            onChangeType(type) {
+                const children = this.menuIdChildrenMap[this.form.parentType]
+                const selectedType = children.find(child => child.name === type)
+                const { id } = selectedType || {}
+                this.$axios.post('mvc/listColumnsFormasterslave', { masterSlaveId: id }).then((res) => {
+                    this.inputs = []
+                    let { data } = res
+                    data = data || []
+                    data.forEach(item => {
+                        const {column} = item
+                        const { columnChinese, columnEnglish } = column
+                        this.inputs.push({
+                            text: columnChinese + ' ' + columnEnglish,
+                            canDelete: false
+                        })
+                    })
+                }).catch(function (error) {
+                    console.log(error);
+                })
+            },
+            getMenuList() {
+                this.$axios.post('mvc/getMenuListFormasterslave').then((res) => {
+                    const { data } = res
+                    this.menuList = data
+                    data.forEach((item) => {
+                        this.$set(this.menuIdChildrenMap, item.name, item.children)
+                    })
+                    console.log(this.menuIdChildrenMap)
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
             handleCurrentChange(val) {
                 this.currentPage = val;
             },
@@ -212,26 +264,23 @@
             handleAdd() {
                 this.form = {
                     name: "",
+                    parentType: '',
                     type: "",
                     imageUrl: ""
                 };
                 this.addVisible = true;
-
             },
-
             handleEdit(index, row) {
                 this.idx = index;
                 const item = this.tableData[index];
                 this.form = {
                     name: item.name,
+                    parentType: item.parentType,
                     type: item.type,
                     imageUrl: item.imageUrl
-
                 };
                 this.editVisible = true;
             },
-
-
             async getData() {
                 let {data} = await this.$axios.post('mvc/control/getList');
                 this.tableData = data;
