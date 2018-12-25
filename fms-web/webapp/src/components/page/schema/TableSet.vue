@@ -23,11 +23,11 @@
 
         <el-dialog title="新增" :visible.sync="addVisible" width="40%">
             <Form :label-width="100">
-            <FormItem label="选择表">
-                <Select filterable v-model="table_name" style="width:300px;">
-                    <Option v-for="item in tableNames" :value="item" :key="item">{{ item }}</Option>
-                </Select>
-            </FormItem>
+                <FormItem label="选择表">
+                    <Select filterable v-model="table_name" style="width:300px;">
+                        <Option v-for="item in tableNames" :value="item" :key="item">{{ item }}</Option>
+                    </Select>
+                </FormItem>
                 <FormItem label="表格映射">
                     <Input v-model="tableChinese" style="width:300px;" />
                 </FormItem>
@@ -56,7 +56,7 @@
                     <label >是否为主键</label>
                     <input type="checkbox" v-model="checkedArr[index]" value="是否为字典表字段" id='dicColumn' style="margin-left: 28px;">
                     <label >是否为字典表字段</label>
-              <!--        <Input type="textarea" v-if="item.inputType != 'select' && item.max_length > 100" v-model="item.value" :placeholder="item.data_type" style="width:300px;"/>-->
+                    <!--        <Input type="textarea" v-if="item.inputType != 'select' && item.max_length > 100" v-model="item.value" :placeholder="item.data_type" style="width:300px;"/>-->
                 </FormItem>
             </Form>
 
@@ -141,125 +141,129 @@
             this.getDicTables();
         },
         methods: {
-  checkType(type){
-                    if(type == "varchar" || type == "char"){
-                        return "test";
-                    }else{
-                        return "number";
-                    }
-                },
+            checkType(type){
+                if(type == "varchar" || type == "char"){
+                    return "test";
+                }else{
+                    return "number";
+                }
+            },
             async getTables() {
-                return this.$axios.post('mvc/getAllNzList').then(res => {
-                    this.tableNames = res.data;
-                })
-            },
+        return this.$axios.post('mvc/getAllNzList').then(res => {
+            this.tableNames = res.data;
+    })
+    },
 
-            getDicTables() {
-                this.$axios.post('mvc/getDicTable').then(res => {
-                    this.dicTableName = res.data;
-                    console.log(res.data);
-                })
-            },
+    getDicTables() {
+        this.$axios.post('mvc/getDicTable').then(res => {
+            this.dicTableName = res.data;
+        console.log(res.data);
+    })
+    },
 
-            async getData() {
-                let {data} = await this.$axios.post('mvc/getAllTables');
-                this.tableData = data;
-            },
-
-
-            async handleEdit(index, row) {
-                const {tableChinese, tableEnglish, id} = row
-                this.idx = index;
-                const item = this.tableData[index];
-                await this.getTables();
-                this.editVisible = true;
-                this.tableChineseEdit = tableChinese
-                this.tableNameEdit = tableEnglish
-                this.tableIdEdit = id
-            },
-
-            async submitAdd() {
-                this.getTables();
-                await this.$axios.post('mvc/addTableInfo', {
-                    tableEnglish: this.table_name,
-                    tableChinese:this.tableChinese
-                });
-                await this.getData();
-                this.addVisible = false;
-            },
-
-            async submitEdit() {
-                console.log(this.id)
-                await this.$axios.post('mvc/updateTableInfo', {
-                    tableId: this.tableIdEdit,
-                    tableEnglish: this.tableNameEdit,
-                    tableChinese:this.tableChineseEdit
-                });
-                await this.getData();
-                this.editVisible = false;
-            },
+    async getData() {
+        let {data} = await this.$axios.post('mvc/getAllTables');
+        this.tableData = data;
+    },
 
 
-            async handleAdd() {
-                this.table_name="";
-                this.tableChinese="";
-                this.getTables();
-                this.addVisible = true;
-            },
+    async handleEdit(index, row) {
+        const {tableChinese, tableEnglish, id} = row
+        this.idx = index;
+        const item = this.tableData[index];
+        await this.getTables();
+        this.editVisible = true;
+        this.tableChineseEdit = tableChinese
+        this.tableNameEdit = tableEnglish
+        this.tableIdEdit = id
+    },
 
-            async handleDelete(index, row) {
-                this.idx = index;
-                this.delVisible = true;
-            },
-
-            // 确定删除
-            async deleteRow() {
-                await this.$axios.post('mvc/deleteTableInfo', {id: this.tableData[this.idx].id});
-                await this.getData();
-                this.$message.success('删除成功');
-                this.delVisible = false;
-            },
-
-            handleCurrentChange(val) {
-                this.currentPage = val;
-            },
-
-            getColumns(index, row) {
-                this.tableMapItem = row
-                this.$axios.post('mvc/getColumnsInfo', {
-                    id: this.tableData[index].id,
-                    tableName: row.tableEnglish
-                }).then(res => {
-                    // console.log(res.data);
-                    this.tableColumns = res.data;
-                    res.data.forEach((val, idx) => {
-                        this.$set(this.checkedArr, idx, !!val.isDic)
-                        this.$set(this.checkedArr1, idx, !!val.isMasterKey)
-                    })
-                })
-                this.columnSetVisible=true;
-            },
-            saveMapEdit() {
-                const {tableChinese, tableEnglish, id} = this.tableMapItem
-                this.tableColumns.forEach((column, idx) => {
-                    column.isDic = this.checkedArr[idx]
-                    column.isMasterKey = this.checkedArr1[idx]
-                })
-                this.$axios.post('mvc/saveColumnInfos', {
-                    tableId: id,
-                    tableEnglish:tableEnglish,
-                    tableChinese:tableChinese,
-                    data: JSON.stringify(this.tableColumns),
-                }).then(res => {
-                    this.$notify({
-                        title: '提示',
-                        message: res.data.data,
-                        type: res.data.success ? 'success' : 'error'
-                    });
-                })
-                this.columnSetVisible=false;
+    async submitAdd() {
+        this.getTables();
+        await this.$axios.post('mvc/addTableInfo', {
+            tableEnglish: this.table_name,
+            tableChinese:this.tableChinese
+        }).then(function(res){
+            if(!res.data.success){
+                alert(res.data.data);
             }
+        });
+        await this.getData();
+        this.addVisible = false;
+    },
 
-        }
+    async submitEdit() {
+        console.log(this.id)
+        await this.$axios.post('mvc/updateTableInfo', {
+            tableId: this.tableIdEdit,
+            tableEnglish: this.tableNameEdit,
+            tableChinese:this.tableChineseEdit
+        });
+        await this.getData();
+        this.editVisible = false;
+    },
+
+
+    async handleAdd() {
+        this.table_name="";
+        this.tableChinese="";
+        this.getTables();
+        this.addVisible = true;
+    },
+
+    async handleDelete(index, row) {
+        this.idx = index;
+        this.delVisible = true;
+    },
+
+    // 确定删除
+    async deleteRow() {
+        await this.$axios.post('mvc/deleteTableInfo', {id: this.tableData[this.idx].id});
+        await this.getData();
+        this.$message.success('删除成功');
+        this.delVisible = false;
+    },
+
+    handleCurrentChange(val) {
+        this.currentPage = val;
+    },
+
+    getColumns(index, row) {
+        this.tableMapItem = row
+        this.$axios.post('mvc/getColumnsInfo', {
+            id: this.tableData[index].id,
+            tableName: row.tableEnglish
+        }).then(res => {
+            // console.log(res.data);
+            this.tableColumns = res.data;
+        res.data.forEach((val, idx) => {
+            this.$set(this.checkedArr, idx, !!val.isDic)
+        this.$set(this.checkedArr1, idx, !!val.isMasterKey)
+    })
+    })
+        this.columnSetVisible=true;
+    },
+    saveMapEdit() {
+        const {tableChinese, tableEnglish, id} = this.tableMapItem
+        this.tableColumns.forEach((column, idx) => {
+            column.isDic = this.checkedArr[idx]
+        column.isMasterKey = this.checkedArr1[idx]
+    })
+        this.$axios.post('mvc/saveColumnInfos', {
+            tableId: id,
+            tableEnglish:tableEnglish,
+            tableChinese:tableChinese,
+            data: JSON.stringify(this.tableColumns),
+        }).then(res => {
+            this.$notify({
+            title: '提示',
+            message: res.data.data,
+            type: res.data.success ? 'success' : 'error'
+        });
+    })
+        this.columnSetVisible=false;
+    }
+
+    }
     }
 </script>

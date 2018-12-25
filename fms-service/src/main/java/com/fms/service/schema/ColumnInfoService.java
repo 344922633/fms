@@ -66,6 +66,11 @@ public class ColumnInfoService {
         return dao.getList(CLASSNAME, "getDicTable", null);
     }
 
+    public Integer countTableInfoByEnglish(String tableEnglish){
+        return dao.get(CLASSNAME,"countTableInfoByEnglish",tableEnglish);
+    }
+
+
 }
 
 

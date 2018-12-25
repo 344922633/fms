@@ -9,7 +9,7 @@
               show-total />
 
         <Modal v-model="formVisible" :title="formTitle" :model="parser" @on-visible-change="handleVisibleChange" @on-ok="handleFormOk" footer-hide>
-            <Form :label-width="80" ref="parserForm">
+            <Form :label-width="80" ref="parserForm" :model="masterSlave" :rules="ruleValidate">
                 <FormItem prop="name" label="关系名称">
                     <Input v-model="masterSlave.name"/>
                 </FormItem>
@@ -18,13 +18,13 @@
                 </FormItem>
 
                 <FormItem prop="masterTable" label="主表">
-                     <Select v-model="masterSlave.masterTable" filterable>
-                        <Option v-for="item in tableNames" :value="item.id" :key="item.id">{{ item.tableChinese }}</Option>
+                     <Select v-model="masterSlave.masterTable"  filterable>
+                        <Option v-for="item in tableNames" :value="item" :key="item">{{ item.tableChinese }}</Option>
                     </Select>
                 </FormItem>
-                <FormItem prop="slaveTable" label="从表">
+                <FormItem label="从表">
                     <Select v-model="masterSlave.slaveTable" filterable>
-                        <Option v-for="item in tableNames" :value="item.id" :key="item.id">{{ item.tableChinese }}</Option>
+                        <Option v-for="item in tableNames2" :value="item" :key="item">{{ item.tableChinese }}</Option>
                     </Select>
                 </FormItem>
 
@@ -51,6 +51,7 @@
         data () {
             return {
                 tableNames:[],
+                tableNames2:[],
                  masterSlave: {
                     name: '',
                     type: '',
@@ -164,6 +165,7 @@
         created() {
             this.getData();
             this.getTables();
+            this.getTables2();
         },
         methods: {
             //修改操作
@@ -233,6 +235,7 @@
                 };
                 this.formVisible = true;
                 this.getTables();
+                this.getTables2();
 
             },
             //编辑弹框显示状态监听
@@ -243,15 +246,15 @@
             },
             //处理编辑弹框确认操作
             handleFormOk() {
-                console.log(this.masterSlave)
+
                 let isValid = true;
-                Object.keys(this.masterSlave).forEach(key => {
-                   if (! this.masterSlave[key]) {
-                       isValid = false
-                   }
+                this.$refs['parserForm'].validate((valid) => {
+                    if (!valid) {
+                        isValid = false;
+                    }
                 })
                 if (!isValid) {
-                    return this.$message.error('请将表单填写完整');
+                    return ;
                 }
                 if (this.masterSlave.id) {
                     this.postOperate('mvc/masterSlave/update');
@@ -279,11 +282,19 @@
             handleCurrentChange(c) {
                 this.current = c;
             },
+            //主表
              getTables() {
                 this.$axios.post('mvc/getAllTables').then(res => {
                     console.log(res.data)
                     this.tableNames = res.data;
                 })
+            },
+            //从表
+            getTables2() {
+                this.$axios.post('mvc/getAllTables').then(res => {
+                    console.log(res.data)
+                this.tableNames2= res.data;
+            })
             }
         }
     }

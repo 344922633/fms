@@ -202,8 +202,11 @@
         <Divider> 解析数据</Divider>
 -->
         <div ref="table" v-show="false"></div>
-        <Button type="primary" @click="parseDataSaveDatabase">入库</Button>
-        <Button type="primary" @click="handleSaveMapInfo">保存映射关系</Button>
+        <center><Button type="primary" @click="parseDataSaveDatabase">入库</Button></center>
+        <br/>
+        <center><el-input v-model="input" placeholder="请输入模板关系名称" style="width: 300px"></el-input></center>
+        <br/>
+        <center><Button type="primary" @click="handleSaveMapInfo;saveTemplate">保存映射关系</Button></center>
 
         <!--<Modal-->
             <!--title="修改数据"-->
@@ -611,7 +614,9 @@
                     let data = JSON.parse(this.jsonStr);
 
                     //this.jsonTables = {"table1":[{"host":1,"ceshi":2},{"host":1,"ceshi":2}],"table2":[{"host":1,"ceshi":2,"param":"param"},{"host":1,"ceshi":2,"param":"param"}]};
-                    this.jsonTables = JSON.parse(this.jsonStr);
+
+
+                    this.jsonTables = JSON.parse(this.jsonStr.toLowerCase());
 
 
                     //if (data.constructor != Array) {

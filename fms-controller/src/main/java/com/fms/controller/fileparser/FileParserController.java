@@ -22,6 +22,7 @@ import com.handu.apollo.utils.CollectionUtil;
 import com.handu.apollo.utils.ExtUtil;
 import com.handu.apollo.utils.exception.ApolloRuntimeException;
 import com.handu.apollo.utils.json.JsonUtil;
+import org.apache.commons.collections.bag.SynchronizedSortedBag;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -473,12 +474,6 @@ public class FileParserController {
 
     @RequestMapping("singleParse")
     public Object singleParse(@ModelAttribute FileParser fileParser) {
-        //将文件修改为已解析状态
-        Long id=Long.parseLong(fileParser.getParams());
-        fileParser.getParams();
-        fileParserService.updateIsParser(id,1);
-
-
 
         //解析文件内容
         Map<String, String> data = this.readFileContent(fileParser);
@@ -486,6 +481,7 @@ public class FileParserController {
             return ExtUtil.failure("文件解析失败");
         }
         List<Map<String, Object>> json = new ArrayList<>();
+
         //json中所有的key
         Set<String> set = new HashSet<>();
 
@@ -521,6 +517,7 @@ public class FileParserController {
                 }
 
             }
+
             //json=JSONUtils.jsonToObject(data.get("jsonBottomLevel"),List.class,Map.class);
         } catch (Exception e) {
             return ExtUtil.failure(e.getMessage());
@@ -535,6 +532,11 @@ public class FileParserController {
                 set.add(entry.getKey());
             }
         }*/
+        //将文件修改为已解析状态
+        Long id=Long.parseLong(fileParser.getParams());
+        fileParser.getParams();
+        fileParserService.updateIsParser(id,1);
+
         result.put("allKeyForDisplay", set);
         result.put("jsonStr", data.get("jsonBottomLevel"));
         return ExtUtil.success(result);
@@ -668,6 +670,11 @@ public class FileParserController {
                         throw new ApolloRuntimeException("文件解析失败");
                     } else {
                         file.setParseResult(data.get("jsonBottomLevel"));
+                        //将文件修改为已解析状态
+                        String name = file.getName();
+                        fileParserService.updateIsParserMultiFile(name,1);
+
+
                     }
                 }
 
@@ -715,8 +722,8 @@ public class FileParserController {
 //            }
 //        } catch (IOException e) {
 //            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            return ExtUtil.failure(e.getMessage());
         }
         return preFiles;
     }
@@ -724,6 +731,7 @@ public class FileParserController {
     /**
      * 多文件解析入库
      */
+
     @RequestMapping("multiParseSaveData")
     public Object multiParseSaveData(String dataJSON, String parserDataJSON) {
         //解析器和文件信息
