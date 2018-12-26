@@ -93,9 +93,10 @@ public class TemplateController {
     }
 */
 
-    @RequestMapping("/delete")
+    @RequestMapping("/deleteTemplate")
     public void delete(String id) {
-        templateService.delete(Long.parseLong(id));
+        templateService.deleteTemplate(Long.parseLong(id));
+        templateService.deleteTemplateDic(Long.parseLong(id));
     }
 
 //模板映射新增
@@ -116,6 +117,7 @@ public class TemplateController {
         template.setColumnId(columnId);
         template.setParserId(parserId);
         templateService.addTemplate(template);
+        templateService.addTemplateDic(template);
 
     }
 
@@ -124,6 +126,7 @@ public class TemplateController {
     public Object updateTemplate(Template template) {
         try {
             templateService.updateTemplate(template);
+            templateService.updateTemplateDic(template);
         } catch (Exception e) {
             return ExtUtil.failure(e.getCause().getMessage());
         }
