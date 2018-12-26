@@ -1,7 +1,9 @@
 package com.fms.controller.schema;
 
+import com.fms.domain.filemanage.MasterSlaveDo;
 import com.fms.domain.schema.Template;
 import com.fms.service.schema.TemplateService;
+import com.handu.apollo.utils.ExtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -91,8 +93,42 @@ public class TemplateController {
     }
 */
 
-    @RequestMapping("delete")
+    @RequestMapping("/delete")
     public void delete(String id) {
         templateService.delete(Long.parseLong(id));
     }
+
+//模板映射新增
+    @RequestMapping("/addTemplate")
+    public void addTemplate(@RequestParam Map<String, Object> params) {
+        long id =  Long.parseLong((String)params.get("id"));
+        String columnKey = (String) params.get("columnKey");
+        int schemaId = Integer.parseInt((String)params.get("schemaId"));
+        long tableId =  Long.parseLong((String)params.get("tableId"));
+        int columnId = Integer.parseInt((String)params.get("columnId"));
+        long parserId =  Long.parseLong((String)params.get("parserId"));
+
+        Template template = new Template();
+        template.setId(id);
+        template.setColumnKey(columnKey);
+        template.setSchemaId(schemaId);
+        template.setTableId(tableId);
+        template.setColumnId(columnId);
+        template.setParserId(parserId);
+        templateService.addTemplate(template);
+
+    }
+
+//模板映射编辑
+    @RequestMapping("/updateTemplate")
+    public Object updateTemplate(Template template) {
+        try {
+            templateService.updateTemplate(template);
+        } catch (Exception e) {
+            return ExtUtil.failure(e.getCause().getMessage());
+        }
+        return ExtUtil.success("操作成功");
+    }
+
+
 }

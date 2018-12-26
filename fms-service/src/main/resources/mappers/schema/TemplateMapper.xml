@@ -91,10 +91,33 @@
         where id=#{cid}
     </select>
 
-    <select id="getParserNameById" parameterType="java.lang.Long" resultType="java.lang.String">
+       <select id="getParserNameById" parameterType="java.lang.Long" resultType="java.lang.String">
         select name
         from file_parser
         where id=#{pid}
     </select>
+<!--映射模板新增-->
+    <insert id="addTemplate" parameterType="com.fms.domain.schema.Template" >
+        INSERT INTO column_map_relation(id,columnKey,schemaId,tableId,columnId,parserId)
+        VALUES (
+        #{id},
+        #{columnKey},
+        #{schemaId},
+        #{tableId},
+        #{columnId},
+        #{parserId}
+        )
+    </insert>
+    <update id="updateTemplate" parameterType="com.fms.domain.schema.Template">
+        UPDATE column_map_relation
+        SET columnKey = #{columnKey},
+        schemaId = #{schemaId},
+        tableId = #{tableId},
+        columnId = #{columnId},
+        parserId = #{parserId},
+        where id = #{id}
+    </update>
+
+
 
 </mapper>

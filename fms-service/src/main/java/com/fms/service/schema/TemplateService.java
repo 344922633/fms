@@ -1,5 +1,6 @@
 package com.fms.service.schema;
 
+import com.fms.domain.filemanage.MasterSlaveDo;
 import com.fms.domain.schema.Template;
 import com.handu.apollo.base.Page;
 import com.handu.apollo.data.mybatis.Dao;
@@ -37,9 +38,7 @@ public class TemplateService {
 		return dao.page(CLASSNAME, "query", "queryCount", template, page);
 	}
 
-	public void add(Template template) {
-		dao.insert(CLASSNAME,"addTemplate", template);
-	}
+
 	public Template get(Long id) {
 		return dao.get(CLASSNAME, "getTemplate", id);
 	}
@@ -63,4 +62,15 @@ public class TemplateService {
 	public void update(Template template) {
 		dao.update(CLASSNAME, "update", template);
 	}
+
+
+
+    public void addTemplate(Template template) {
+        dao.insert(CLASSNAME,"addTemplate", template);
+    }
+    public void updateTemplate(Template template) {
+        dao.update(CLASSNAME, "updateTemplate", template);
+    }
+
+
 }
