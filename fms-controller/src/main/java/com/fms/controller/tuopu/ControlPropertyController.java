@@ -23,9 +23,9 @@ public class ControlPropertyController {
     @Autowired
     ControlPropertyService controlPropertyService;
 
-    @RequestMapping("getList")
-    public Object getList(Map<String, Object> params) {
-        List<ControlProperty> list = controlPropertyService.getList(params);
+    @RequestMapping("getControlPropertyList")
+    public Object getControlPropertyList(Map<String, Object> params) {
+        List<ControlProperty> list = controlPropertyService.getControlPropertyList(params);
 
         Set<String> idSet = new HashSet<String>();// 控件id集合
         for (int i = 0; i < list.size(); i++) {
@@ -42,14 +42,13 @@ public class ControlPropertyController {
                 ControlProperty property = list.get(i);
                 if (controlId.equals(property.getControlId())) {
                     JSONObject obj = new JSONObject();// 属性信息
-
                     obj.put("id", property.getId());
                     obj.put("isDic", property.getIsDic());
                     obj.put("dicName", property.getDicName());
                     obj.put("propertyChinese", property.getPropertyChinese());
-                    obj.put("propertyEnglish", property.getPropertyEnglish());
-                    obj.put("valueDataType",property.getValueDataType());
-
+                    obj.put("property", property.getProperty());
+                    obj.put("propertyFlag", property.getPropertyFlag());
+                    obj.put("dataType",property.getDataType());
                     propertyArray.add(obj);
                 }
             }

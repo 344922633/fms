@@ -4,12 +4,12 @@
 
 
     <insert id="addControlProperty" parameterType="com.fms.domain.tuopu.ControlProperty" >
-        INSERT INTO t_property (controlId,propertyChinese,propertyEnglish,valueDataType,dicName,dicInfo,isDic)
+        INSERT INTO t_control_property (controlId,propertyChinese,propertyEnglish,dataType,dicName,dicInfo,isDic)
         VALUES (
         #{controlId},
         #{propertyChinese},
         #{propertyEnglish},
-        #{valueDataType},
+        #{dataType},
         #{dicName},
         #{dicInfo},
         #{isDic}
@@ -17,13 +17,32 @@
         )
     </insert>
 
-    <select id="getPropertyList" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
+   <!-- <insert id="addCustomProperty" parameterType="com.fms.domain.tuopu.CustomProperty" >
+        INSERT INTO t_custom_property (controlId,property,value)
+        VALUES (
+        #{controlId},
+        #{property},
+        #{value}
+
+        )
+    </insert>-->
+
+<!--    <select id="getPropertyList" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
         SELECT * FROM t_property
     </select>
 
     <select id="getPropertyById" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
         SELECT * FROM t_property
         WHERE id = #{id}
+  </select>-->
+
+    <select id="getControlPropertyList" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
+        SELECT * FROM t_control_property
+        WHERE id = #{id}
   </select>
 
+   <!-- <select id="getCustomPropertyList" parameterType="map" resultType="com.fms.domain.tuopu.CustomProperty">
+        SELECT * FROM t_custom_property
+        WHERE id = #{id}
+  </select>-->
 </mapper>

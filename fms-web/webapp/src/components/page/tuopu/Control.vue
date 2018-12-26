@@ -237,7 +237,7 @@
                         const {column} = item
                         const { columnChinese, columnEnglish } = column
                         this.inputs.push({
-                            text: columnChinese + ' ' + columnEnglish,
+                            text: columnChinese + '_' + columnEnglish,
                             canDelete: false
                         })
                     })

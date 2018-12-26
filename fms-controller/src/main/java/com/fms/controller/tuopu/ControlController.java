@@ -113,9 +113,9 @@ public class ControlController {
     }
 
     @RequestMapping("add")
-    public Object add(String name, String type, String url, String properties) {
+    public Object add(String name, String type, String url, String properties, String columnInfo) {
         Control control = new Control();
-        String controlId=UUID.randomUUID().toString();
+        String controlId=String.valueOf(System.currentTimeMillis());
         control.setId(controlId);
         control.setImage(url);
         control.setType(type);
@@ -127,9 +127,30 @@ public class ControlController {
             property = array.getJSONObject(i).getString("text");
             ControlProperty controlProperty=new ControlProperty();
             controlProperty.setControlId(controlId);
-/*            controlProperty.setPropertyEnglish(propertyEnglish);
-            controlProperty.setPropertyChinese();*/
-            controlPropertyService.add(controlProperty);
+            controlProperty.setProperty(property);
+            controlProperty.setPropertyFlag(1);
+            controlPropertyService.addControlProperty(controlProperty);
+
+        }
+        JSONArray propertyArray = JSONArray.parseArray(columnInfo);
+        for (int i = 0; i < propertyArray.size(); i++) {
+           JSONObject jsonProperty = propertyArray.getJSONObject(i);
+            JSONObject columnObj = jsonProperty.getJSONObject("column");
+            JSONObject data_type = jsonProperty.getJSONObject("data_type");
+            String dicList = jsonProperty.getString("dicList");
+            String isDic= columnObj.getString("isDic");
+            String columnEnglish= columnObj.getString("columnEnglish");
+            String columnChinese= columnObj.getString("columnChinese");
+            String dicName= columnObj.getString("dicTableName");
+            ControlProperty controlProperty=new ControlProperty();
+            controlProperty.setProperty(columnEnglish);
+            controlProperty.setPropertyChinese(columnChinese);
+            controlProperty.setIsDic(Integer.valueOf(isDic));
+            controlProperty.setDataType(data_type.toJSONString());
+            controlProperty.setDicName(dicName);
+            controlProperty.setDicList(dicList);
+            controlProperty.setPropertyFlag(0);
+            controlPropertyService.addControlProperty(controlProperty);
         }
         return ExtUtil.success("操作成功");
 

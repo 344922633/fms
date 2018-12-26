@@ -17,14 +17,12 @@ public class ControlPropertyService {
     @Autowired
     private Dao dao;
 
-    public void add(ControlProperty property){
+    public void addControlProperty(ControlProperty property){
         dao.insert(CLASSNAME,"addControlProperty",property);
     }
-
-    public List<ControlProperty> getList(Map<String, Object> params) {
-        return dao.getList(CLASSNAME, "getPropertyList", params);
+    public List<ControlProperty> getControlPropertyList(Map<String, Object> params) {
+        return dao.getList(CLASSNAME, "getControlPropertyList", params);
     }
-
     public List<ControlProperty> getProperty(Map<String, Object> params) {
         return dao.getList(CLASSNAME, "getPropertyById", params);
     }

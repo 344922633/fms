@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.caeit.parser.visioParser.VisioParser;
 import com.fms.domain.tuopu.Picture;
 import com.fms.service.tuopu.ControlService;
-import com.fms.service.tuopu.PicPropertyService;
 import com.fms.service.tuopu.PictureService;
 import com.fms.utils.ParamUtil;
 import com.handu.apollo.base.Page;
@@ -33,9 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class PictureController {
     @Autowired
     private PictureService pictureService;
-
-    @Autowired
-    private PicPropertyService picPropertyService;
 
     @Autowired
     private KafkaTemplate kafkaTemplate;

@@ -63,7 +63,7 @@
     </select>
 
 
-    <delete id="deleteTemplate" parameterType="long">
+    <delete id="delete" parameterType="long">
         DELETE FROM column_map_relation
         WHERE id = #{id}
     </delete>
