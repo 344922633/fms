@@ -21,7 +21,7 @@ public class ControlPropertyService {
         dao.insert(CLASSNAME,"addControlProperty",property);
     }
     public List<ControlProperty> getControlPropertyList(Map<String, Object> params) {
-        return dao.getList(CLASSNAME, "getControlPropertyList", params);
+        return dao.getList(CLASSNAME, "getList", params);
     }
     public List<ControlProperty> getProperty(Map<String, Object> params) {
         return dao.getList(CLASSNAME, "getPropertyById", params);

@@ -2,6 +2,7 @@ package com.fms.service.tuopu;
 
 import com.fms.domain.filemanage.*;
 import com.fms.domain.tuopu.Control;
+import com.fms.domain.tuopu.ControlProperty;
 import com.fms.domain.tuopu.Picture;
 import com.handu.apollo.data.mybatis.Dao;
 import com.handu.apollo.utils.CharPool;
@@ -61,4 +62,7 @@ public class ControlService {
 		dao.update(CLASSNAME, "update", picture);
 	}
 
+	public List<ControlProperty> queryPropertyById(String controlId) {
+		return dao.getList(CLASSNAME, "queryPropertyById", controlId);
+	}
 }

@@ -82,7 +82,7 @@
                 });
             },
             getPropertyData() {
-                return this.$axios.post('mvc/controlProperty/getList').then((res) => {  //接口返回数据
+                return this.$axios.post('mvc/getControlPropertyList').then((res) => {  //接口返回数据
                     const { data } = res
                     let ret = {}
                     data.forEach(item => {

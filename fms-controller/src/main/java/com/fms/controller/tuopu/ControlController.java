@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.io.File;
 import java.util.UUID;
@@ -39,7 +40,12 @@ public class ControlController {
 
     @RequestMapping("getList")
     public Object getList(Map<String, Object> params) {
-        return controlService.getList(params);
+        List<Control> list = controlService.getList(params);
+        for(Control cl : list){
+            List<ControlProperty> cpList = controlService.queryPropertyById(cl.getId());
+            cl.setCpList(cpList);
+        }
+        return list;
     }
 
     @RequestMapping("delete")
@@ -113,7 +119,7 @@ public class ControlController {
     }
 
     @RequestMapping("add")
-    public Object add(String name, String type, String url, String properties, String columnInfo) {
+    public Object add(String name, String type, String url, String properties) {
         Control control = new Control();
         String controlId=String.valueOf(System.currentTimeMillis());
         control.setId(controlId);
@@ -123,34 +129,36 @@ public class ControlController {
         controlService.add(control);
         JSONArray array = JSONArray.parseArray(properties);
         String property;
+        String columnInfo;
         for (int i = 0; i < array.size(); i++) {
-            property = array.getJSONObject(i).getString("text");
-            ControlProperty controlProperty=new ControlProperty();
-            controlProperty.setControlId(controlId);
-            controlProperty.setProperty(property);
-            controlProperty.setPropertyFlag(1);
-            controlPropertyService.addControlProperty(controlProperty);
+            JSONObject propertyJson = array.getJSONObject(i);
+            if(propertyJson.containsKey("column")){
+                    JSONObject columnObj = propertyJson.getJSONObject("column");
 
-        }
-        JSONArray propertyArray = JSONArray.parseArray(columnInfo);
-        for (int i = 0; i < propertyArray.size(); i++) {
-           JSONObject jsonProperty = propertyArray.getJSONObject(i);
-            JSONObject columnObj = jsonProperty.getJSONObject("column");
-            JSONObject data_type = jsonProperty.getJSONObject("data_type");
-            String dicList = jsonProperty.getString("dicList");
-            String isDic= columnObj.getString("isDic");
-            String columnEnglish= columnObj.getString("columnEnglish");
-            String columnChinese= columnObj.getString("columnChinese");
-            String dicName= columnObj.getString("dicTableName");
-            ControlProperty controlProperty=new ControlProperty();
-            controlProperty.setProperty(columnEnglish);
-            controlProperty.setPropertyChinese(columnChinese);
-            controlProperty.setIsDic(Integer.valueOf(isDic));
-            controlProperty.setDataType(data_type.toJSONString());
-            controlProperty.setDicName(dicName);
-            controlProperty.setDicList(dicList);
-            controlProperty.setPropertyFlag(0);
-            controlPropertyService.addControlProperty(controlProperty);
+                    String data_type = propertyJson.getString("data_type");
+                    String dicList = propertyJson.getString("dicList");
+                    String isDic= columnObj.getString("isDic");
+                    String columnEnglish= columnObj.getString("columnEnglish");
+                    String columnChinese= columnObj.getString("columnChinese");
+                    String dicName= columnObj.getString("dicTableName");
+                    ControlProperty controlProperty=new ControlProperty();
+                    controlProperty.setProperty(columnEnglish);
+                    controlProperty.setPropertyChinese(columnChinese);
+                    controlProperty.setIsDic(Integer.valueOf(isDic));
+                    controlProperty.setDataType(data_type);
+                    controlProperty.setDicName(dicName);
+                    controlProperty.setDicList(dicList);
+                    controlProperty.setPropertyFlag(0);
+                    controlProperty.setControlId(controlId);
+                    controlPropertyService.addControlProperty(controlProperty);
+            }else{
+                property = array.getJSONObject(i).getString("text");
+                ControlProperty controlProperty=new ControlProperty();
+                controlProperty.setControlId(controlId);
+                controlProperty.setProperty(property);
+                controlProperty.setPropertyFlag(1);
+                controlPropertyService.addControlProperty(controlProperty);
+            }
         }
         return ExtUtil.success("操作成功");
 

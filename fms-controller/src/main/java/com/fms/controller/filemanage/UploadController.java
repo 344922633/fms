@@ -115,6 +115,9 @@ public class UploadController {
                     try {
                         Long directoryId = ftp.getDirectoryId();
 
+                        if(sf == null || ! SFTPUtils.isSFTPConnect(sf) ){// 判断SFTP是否连接中
+                            sf = SFTPUtils.getInstance(ftp);// 断开或者是去连接null时，重新连接
+                        }
                         files = sf.listFiles(directory);
                         if (files != null && files.size() > 0) {
                             for (ChannelSftp.LsEntry lsEntry : files) {
@@ -137,6 +140,9 @@ public class UploadController {
                                 }
                                 if (!fileName.equals(".") && !fileName.equals("..")) {
                                     if (!lsEntry.getAttrs().isDir()) {
+                                        if(sf == null || ! SFTPUtils.isSFTPConnect(sf) ){// 判断SFTP是否连接中
+                                            sf = SFTPUtils.getInstance(ftp);// 断开或者是去连接null时，重新连接
+                                        }
                                         File download = sf.download(directory + "/" + lsEntry.getFilename(), tempFold + "/" + fileName);
 //                                        File download = new File("d:\\zw_kzsx_sb.xml");
 //                                        File download = new File("d:\\zw_kzsx_sb.xls");
@@ -196,7 +202,9 @@ public class UploadController {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    sf.disconnect();
+                    if(sf != null){
+                        sf.disconnect();
+                    }
                 }
 
             }

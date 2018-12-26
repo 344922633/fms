@@ -4,15 +4,16 @@
 
 
     <insert id="addControlProperty" parameterType="com.fms.domain.tuopu.ControlProperty" >
-        INSERT INTO t_control_property (controlId,propertyChinese,propertyEnglish,dataType,dicName,dicInfo,isDic)
+        INSERT INTO t_control_property (controlId,propertyChinese,property,dataType,dicName,dicList,isDic,propertyFlag)
         VALUES (
         #{controlId},
         #{propertyChinese},
-        #{propertyEnglish},
+        #{property},
         #{dataType},
         #{dicName},
-        #{dicInfo},
-        #{isDic}
+        #{dicList},
+        #{isDic},
+        #{propertyFlag}
 
         )
     </insert>
@@ -36,13 +37,8 @@
         WHERE id = #{id}
   </select>-->
 
-    <select id="getControlPropertyList" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
+    <select id="getList" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
         SELECT * FROM t_control_property
-        WHERE id = #{id}
   </select>
 
-   <!-- <select id="getCustomPropertyList" parameterType="map" resultType="com.fms.domain.tuopu.CustomProperty">
-        SELECT * FROM t_custom_property
-        WHERE id = #{id}
-  </select>-->
 </mapper>

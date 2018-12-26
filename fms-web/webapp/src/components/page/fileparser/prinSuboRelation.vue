@@ -115,11 +115,11 @@
                     },
                     {
                         title: '主表',
-                        key: 'masterTable'
+                        key: 'masterTableName'
                     },
                     {
                         title: '从表',
-                        key: 'slaveTable'
+                        key: 'slaveTableName'
                     },
                     {
                         title: '操作',
@@ -174,6 +174,7 @@
                     this.$axios.post('mvc/masterSlave/detail', {
                         id:row.id
                     }).then(res => {
+                        this.masterSlave.id = res.data.id;
                         this.masterSlave.name = res.data.name;
                         this.masterSlave.type = res.data.type;
                         this.masterSlave.masterTable = res.data.masterTable;
@@ -231,6 +232,7 @@
                     masterTable:'',
                     slaveTable:''
                 };
+                this.inputs = []
                 this.formVisible = true;
                 this.getTables();
 

@@ -8,7 +8,6 @@ import com.fms.domain.tuopu.ControlProperty;
 import com.fms.service.tuopu.ControlPropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
@@ -18,7 +17,6 @@ import java.util.Set;
 
 
 @RestController
-@RequestMapping("/controlProperty")
 public class ControlPropertyController {
     @Autowired
     ControlPropertyService controlPropertyService;
@@ -49,6 +47,7 @@ public class ControlPropertyController {
                     obj.put("property", property.getProperty());
                     obj.put("propertyFlag", property.getPropertyFlag());
                     obj.put("dataType",property.getDataType());
+                    obj.put("dicList",property.getDicList());
                     propertyArray.add(obj);
                 }
             }
