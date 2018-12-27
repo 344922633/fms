@@ -206,7 +206,8 @@
         <br/>
         <center><el-input v-model="input" placeholder="请输入模板关系名称" style="width: 300px"></el-input></center>
         <br/>
-        <center><Button type="primary" @click="handleSaveMapInfo;saveTemplate">保存映射关系</Button></center>
+        <center><Button type="primary" @click="handleSaveMapInfo;saveTemplate">保存映射关系到原模板</Button></center>
+        <center><Button type="primary" @click="handleSaveMapInfo;saveTemplate">保存映射关系到新模板</Button></center>
 
         <!--<Modal-->
             <!--title="修改数据"-->
@@ -223,7 +224,7 @@
     </div>
 </template>
 <script>
-    import ICol from "../../../../node_modules/iview/src/components/grid/col.vue";
+    import ICol from "../../../../../../../../project/fms12251730/fms/fms-web/webapp/node_modules/iview/src/components/grid/col.vue";
     import Vue from 'vue';
     import Bus from '@/components/common/bus'
 
@@ -313,6 +314,17 @@
                 default: {}
             }
         },
+
+
+
+
+
+
+
+
+
+
+
         created() {
             var me = this;
             //重新打开页面 清空数据
@@ -356,6 +368,13 @@
         async mounted() {
         },
         methods: {
+
+
+
+
+
+
+
             submitTopology() {
                 const name = this.topologyName
                 if (!name) {

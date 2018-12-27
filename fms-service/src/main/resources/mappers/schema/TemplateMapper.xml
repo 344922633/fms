@@ -63,11 +63,6 @@
     </select>
 
 
-    <delete id="delete" parameterType="long">
-        DELETE FROM column_map_relation
-        WHERE id = #{id}
-    </delete>
-
     <select id="getList" parameterType="map" resultType="com.fms.domain.schema.Template">
         SELECT <include refid="cols" />
         FROM column_map_relation
@@ -91,10 +86,52 @@
         where id=#{cid}
     </select>
 
-    <select id="getParserNameById" parameterType="java.lang.Long" resultType="java.lang.String">
+       <select id="getParserNameById" parameterType="java.lang.Long" resultType="java.lang.String">
         select name
         from file_parser
         where id=#{pid}
     </select>
-
+<!--映射模板新增-->
+    <insert id="addTemplate" parameterType="com.fms.domain.schema.Template" >
+        INSERT INTO column_map_relation(id,columnKey,schemaId,tableId,columnId,parserId)
+        VALUES (
+        #{id},
+        #{columnKey},
+        #{schemaId},
+        #{tableId},
+        #{columnId},
+        #{parserId}
+        )
+    </insert>
+    <insert id="addTemplateDic" parameterType="com.fms.domain.schema.Template" >
+        INSERT INTO column_dic(column_map_id,dicName,dicValue)
+        VALUES (
+        #{columnMapId},
+        #{dicName},
+        #{schemaId}
+        )
+    </insert>
+    <update id="updateTemplate" parameterType="com.fms.domain.schema.Template">
+        UPDATE column_map_relation
+        SET columnKey = #{columnKey},
+        schemaId = #{schemaId},
+        tableId = #{tableId},
+        columnId = #{columnId},
+        parserId = #{parserId},
+        where id = #{id}
+    </update>
+    <update id="updateTemplateDic" parameterType="com.fms.domain.schema.Template">
+        UPDATE column_dic
+        SET dicName = #{dicName},
+        dicValue = #{dicValue},
+        where column_map_id = #{columnMapId}
+    </update>
+    <delete id="deleteTemplate" parameterType="map">
+        DELETE FROM column_map_relation
+        WHERE id = #{id}
+    </delete>
+    <delete id="deleteTemplateDic" parameterType="long">
+        DELETE FROM column_dic
+        WHERE id = #{id}
+    </delete>
 </mapper>

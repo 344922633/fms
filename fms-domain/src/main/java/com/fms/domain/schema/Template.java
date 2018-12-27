@@ -14,5 +14,6 @@ public class Template {
     private String tableName;
     private String columnName;
     private String SchemaName;
+    private String TemplateName;
 
 }

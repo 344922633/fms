@@ -51,6 +51,7 @@
         data () {
             return {
                 tableNames:[],
+                tableNames2:[],
                  masterSlave: {
                     name: '',
                     type: '',
@@ -164,6 +165,7 @@
         created() {
             this.getData();
             this.getTables();
+            this.getTables2();
         },
         methods: {
             //修改操作
@@ -235,6 +237,7 @@
                 this.inputs = []
                 this.formVisible = true;
                 this.getTables();
+                this.getTables2();
 
             },
             //编辑弹框显示状态监听
@@ -245,15 +248,15 @@
             },
             //处理编辑弹框确认操作
             handleFormOk() {
-                console.log(this.masterSlave)
+
                 let isValid = true;
-                Object.keys(this.masterSlave).forEach(key => {
-                   if (! this.masterSlave[key]) {
-                       isValid = false
-                   }
+                this.$refs['parserForm'].validate((valid) => {
+                    if (!valid) {
+                        isValid = false;
+                    }
                 })
                 if (!isValid) {
-                    return this.$message.error('请将表单填写完整');
+                    return ;
                 }
                 if (this.masterSlave.id) {
                     this.postOperate('mvc/masterSlave/update');
@@ -286,7 +289,14 @@
                     console.log(res.data)
                     this.tableNames = res.data;
                 })
-            }
+            },
+        /*    //从表
+            getTables2() {
+                this.$axios.post('mvc/getAllTables').then(res => {
+                    console.log(res.data)
+                this.tableNames2= res.data;
+            })
+            }*/
         }
     }
 </script>

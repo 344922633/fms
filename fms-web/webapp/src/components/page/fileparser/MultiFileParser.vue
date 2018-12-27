@@ -114,7 +114,7 @@
                     </Card>
                     <Card title="未分类">
                         <Table highlight-row ref="currentRowTable3" :data="otherData" :columns="otherColumns"
-                               min-height="300" height="400" tref="3" @on-row-click="handleLeftRowClick"
+                               min-height="300" height="400" tref="3"
                                @on-selection-change="handleOtherSelectionChange"></Table>
                     </Card>
                 </div>
@@ -133,9 +133,8 @@
                                min-height="300" @on-selection-change="handleAfterPreSelectionChange"></Table>
                     </Card>
                     <Card title="待分类">
-                        <Table highlight-row ref="currentRowTable5" :data="afterWaitClassData"
-                               :columns="afterWaitClassColumns" @on-row-click="handleRightRowClick" tref="5"
-                               height="400" min-height="300"
+                        <Table highlight-row ref="currentRowTable5" :data="afterWaitClassData" :columns="afterWaitClassColumns"
+                               @on-row-click="handleRightRowClick" tref="5" height="400" min-height="300"
                                @on-selection-change="handleAfterWaitSelectionChange"></Table>
                     </Card>
                     <Card title="未分类">
@@ -803,27 +802,54 @@
                         //                        width: 80,
                         key: "recommendParserName",
                         render: (h, params) => {
+                            const {row, index} = params || {};
+                            const {recommendParserId} = row || {};
+                            const hasMulte =
+                                this.idPropertiesMap[recommendParserId] &&
+                                this.idPropertiesMap[recommendParserId].length;
                             return h("div", [
-                                h(
-                                    "a",
-                                    {
-                                        on: {
-                                            click: () => {
-                                                this.$axios
-                                                    .post("mvc/fileParser/getList", {})
-                                                    .then(res => {
-                                                        this.parsers = res.data;
-                                                    });
-                                                event.stopPropagation();
-                                                this.currentIndex = params.index;
-                                                this.currentParser = params.row.recommendParserId;
-                                                this.currentType = "其他";
-                                                this.parserVisible = true;
-                                            }
+                                h("a",{
+                                    on: {
+                                        click: () => {
+                                        //alert(waitClassData[params.index].type);
+                                        this.$axios.post("mvc/fileParser/getList", {}).then(res => {
+                                            this.parsers = res.data;
+                                        });
+                                        event.stopPropagation();
+                                        this.currentIndex = params.index;
+                                        this.currentParser = params.row.recommendParserId;
+                                        this.currentType = "其他";
+                                        this.fixCon = true;
+                                        let fileServerPath = this.config.fileServerPath;
+                                        let previewPath = this.config.previewPath;
+                                        let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                                        let uri = previewPath + encodeURIComponent(fileUrl);
+                                        this.$refs.result.innerHTML =
+                                            '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
                                         }
-                                    },
-                                    "选择解析器"
-                                )
+                                    }
+                                },"预览 |"),
+                                h("a",{
+                                    on: {
+                                        click: () => {
+                                            this.$axios
+                                                .post("mvc/fileParser/getList", {})
+                                                .then(res => {
+                                                    this.parsers = res.data;
+                                                });
+                                            event.stopPropagation();
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = "其他";
+                                            this.parserVisible = true;
+                                        }
+                                    }
+                                }," 选择解析器 "),
+                                hasMulte? h("a",{
+                                    on: {
+                                        click: () => {}
+                                    }
+                                },"| 多参数设置"): null
                             ]);
                         }
                     }

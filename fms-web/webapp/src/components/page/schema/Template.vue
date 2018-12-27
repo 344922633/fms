@@ -26,24 +26,42 @@
             </el-table-column>
         </el-table>
 
-        <el-dialog title="新增" :visible.sync="addVisible" width="40%">
-      <!--      <el-form ref="form" :model="form"  :label-position="labelPosition" label-width="100px" :rules="rules" @click="onSubmitAdd">
-                <el-form-item label="键名：" prop="key">
-                    <el-input v-model="form.key"></el-input>
+        <el-dialog title="新增" :visible.sync="addVisible" width="740px">
+            <el-form ref="form"  :label-position="labelPosition" label-width="100px">
+                <!--<el-form-item label="解析器：" prop="parser">-->
+                    <!--<Select v-model="form.parser" filterable>-->
+                        <!--&lt;!&ndash;@on-change="getParser"&ndash;&gt;-->
+                        <!--<Option v-for="item in parserData" :value="item.id" :key="item.id">{{ item.name }}</Option>-->
+                    <!--</Select>-->
+                <!--</el-form-item>-->
+                <el-form-item label="模板名称：" prop="templateName">
+                    <el-input v-model="formList[0].templateName" style="width: 180px"></el-input>
                 </el-form-item>
-                <el-form-item label="字段名：" prop="column">
-                    <el-input v-model="form.column"></el-input>
-                </el-form-item>
-                <el-form-item label="表名：" prop="table">
-                    <el-input v-model="form.table"></el-input>
-                </el-form-item>
-                <el-form-item label="库名：" prop="schema">
-                    <el-input v-model="form.schema"></el-input>
-                </el-form-item>
-                <el-form-item label="解析器：" prop="parser">
-                    <el-input v-model="form.parser"></el-input>
-                </el-form-item>
-            </el-form>-->
+                <Form inline v-for="(item,index) in formList">
+                    <FormItem label="key：">
+                        <el-input v-model="formList[index].columnKey" style="width: 130px"></el-input>
+                    </FormItem>
+                    <FormItem label="库名：" >
+                        <Select @on-change="(schemaId) => getTables(schemaId,index)" v-model="formList[index].schemaId" filterable style="width: 130px">
+                            <Option v-for="(schema,schemaIdx) in schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="表名：">
+                        <Select @on-change="(tableId) => getColumnsByTable(tableId,index)" v-model="formList[index].tableId" filterable style="width: 130px">
+                            <Option v-for="(table,tableIdx) in selectMap[index].tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="字段名：">
+                        <Select @on-change="(columnId) => getDicByColumn(columnId,index)" v-model="formList[index].columnId" filterable style="width: 130px">
+                            <Option v-for="(column,columnIdx) in selectMap[index].columns" :value="column.id" :key="column.id"> {{ column.columnChinese }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="操作：">
+                        <i @click="rowPlus()" v-if="index==0" class="el-icon-circle-plus-outline" style="font-size: 30px;cursor: pointer"></i>
+                        <i @click="rowRemove(index)" v-if="index!=0" class="el-icon-remove-outline" style="font-size: 30px;cursor: pointer"></i>
+                    </FormItem>
+                </Form>
+            </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addVisible = false">取 消</el-button>
                 <el-button type="primary" @click="submitAdd">确 定</el-button>
@@ -109,12 +127,21 @@
                 currentPage: 1,
                 tableData: [],
                 addVisible: false,
-                form: {
-                    key: '',
-                    column: '',
-                    table: '',
-                    schema: '',
-                    parser: ''
+                formList:[{
+                    templateName:'',
+                    columnKey: '',
+                    schemaId: '',
+                    tableId: '',
+                    columnId: ''
+                }],
+                schemas: [],
+                selectMap:[{
+                    tables: [],
+                    columns: []
+                }],
+                parserData: {
+                    type: Array,
+                    default: []
                 },
                 idx: -1,
            /*     rules: {
@@ -130,6 +157,9 @@
 
         created() {
             this.getData();
+        },
+        mounted() {
+            this.getParsers()
         },
         methods: {
             async getData() {
@@ -151,18 +181,21 @@
             },
 
             async submitAdd() {
-                if (!this.form.key || !this.form.column || !this.form.table || !this.form.schema|| !this.form.parser) {
-                    this.$message.warning('请填写完整表单')
-                    return
+                // if (!this.form.key || !this.form.column || !this.form.table || !this.form.schema|| !this.form.parser) {
+                //     this.$message.warning('请填写完整表单')
+                //     return
+                // }
+                for(var i in this.formList){
+                    this.formList[i].templateName=this.formList[0].templateName
                 }
-
+                console.log(this.formList)
                 await this.$axios.post('mvc/fileInput/add', {
-                    key:this.form.key,
-                    column:this.form.column,
-                    table:this.form.table,
-                    schema:this.form.schema,
-                    parser:this.form.parser
-
+                    parser:JSON.stringify(this.formList)
+                    // parser:this.form.parser,
+                    // key:this.form.key,
+                    // schema:this.form.schema,
+                    // table:this.form.table,
+                    // column:this.form.column
                 });
                 await this.getData();
                 this.addVisible = false;
@@ -170,34 +203,55 @@
 
 
             async submitEdit() {
-                if (!this.form.key || !this.form.column || !this.form.table || !this.form.schema|| !this.form.parser) {
-                    this.$message.warning('请填写完整表单')
-                    return
-                }
-                await this.$axios.post('mvc/template/update', {
-                    key:this.form.key,
-                    column:this.form.column,
-                    table:this.form.table,
-                    schema:this.form.schema,
-                    parser:this.form.parser
-                });
-                await this.getData();
-                this.editVisible = false;
+                // if (!this.form.key || !this.form.column || !this.form.table || !this.form.schema|| !this.form.parser) {
+                //     this.$message.warning('请填写完整表单')
+                //     return
+                // }
+                // await this.$axios.post('mvc/template/update', {
+                //     key:this.form.key,
+                //     column:this.form.column,
+                //     table:this.form.table,
+                //     schema:this.form.schema,
+                //     parser:this.form.parser
+                // });
+                // await this.getData();
+                // this.editVisible = false;
             },
 
 
             handleAdd() {
-             /*   this.form = {
-                    key: "",
-                    column: "",
-                    table: "",
-                    schema: "",
-                    parser: ""
-                };*/
+                this.getSchemas();
+                this.formList=[{
+                    templateName:'',
+                    columnKey: '',
+                    schemaId: '',
+                    tableId: '',
+                    columnId: ''
+                }],
+                this.selectMap=[{
+                    tables: [],
+                    columns: []
+                }],
                 this.addVisible = true;
-
             },
-
+            rowPlus(index){
+                console.log(this.formList);
+                this.selectMap[this.formList.length]={
+                    tables: [],
+                    columns: []
+                };
+                this.formList.push({
+                    templateName:'',
+                    columnKey: '',
+                    schemaId: '',
+                    tableId: '',
+                    columnId: ''
+                });
+            },
+            rowRemove(index){
+                this.formList.splice(index,1)
+                this.selectMap.splice(index,1)
+            },
             handleDelete(index, row) {
                 this.idx = index;
                 this.delVisible = true;
@@ -213,7 +267,45 @@
 
             handleCurrentChange(val) {
                 this.currentPage = val;
-            }
+            },
+            //解析器下拉列表
+            getParsers() {
+                this.$axios.post('mvc/fileParser/getOrderList', {}).then(res => {
+                    this.parserData = res.data ? res.data : [];
+                });
+            },
+            //获取库
+            getSchemas() {
+                this.$axios.post('mvc/getAllSchemas').then(res => {
+                    this.schemas = res.data
+                })
+            },
+            //根据库ID获取表
+            getTables(schemaId,idx) {
+                this.$axios.post('mvc/getTablesBySchemaId', {
+                    schemaId: schemaId
+                }).then(res => {
+                    this.$set(this.selectMap[idx], 'tables', res.data);
+                    this.$set(this.selectMap[idx], 'columns', '')
+                    this.$set(this.formList[idx], 'tableId', '')
+                    this.$set(this.formList[idx], 'columnId', '')
+                    console.log(this.selectMap)
+                })
+            },
+            //根据表ID获取字段
+            getColumnsByTable(tableId,idx) {
+                this.$axios.post('mvc/getColumnsForTable', {tableId}).then(res => {
+                    this.$set(this.selectMap[idx], 'columns', res.data)
+                    this.$set(this.formList[idx], 'columnId', '')
+                    console.log(this.selectMap)
+                })
+            },
+            getDicByColumn(columnId, key) {
+                // const column = this.columnSelectMap[key]['columns'].find(c => c.id === columnId)
+                // console.log(column)
+                // const {isDic, tableId} = column || {}
+                //     this.getDicByTableId(tableId, key)
+            },
         }
     }
 </script>
