@@ -224,7 +224,8 @@
     </div>
 </template>
 <script>
-    import ICol from "../../../../../../../../project/fms12251730/fms/fms-web/webapp/node_modules/iview/src/components/grid/col.vue";
+    //import ICol from "../../../../../../../../project/fms12251730/fms/fms-web/webapp/node_modules/iview/src/components/grid/col.vue";
+    import ICol from "../../../../node_modules/iview/src/components/grid/col.vue";
     import Vue from 'vue';
     import Bus from '@/components/common/bus'
 

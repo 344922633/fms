@@ -142,7 +142,7 @@ export default new Router({
                     component: resolve => require(['../components/page/schema/Template.vue'], resolve),
                     meta: { title: '映射模板' }
                 },
-           /*     {
+                {
                     path: '/applicationConf',
                     component: resolve => require(['../components/page/configure/applicationConf.vue'], resolve),
                     meta: { title: 'application配置' }
@@ -151,7 +151,7 @@ export default new Router({
                     path: '/kafkaHbaseConf',
                     component: resolve => require(['../components/page/configure/kafkaHbaseConf.vue'], resolve),
                     meta: { title: 'kafka,hbase配置' }
-                },*/
+                },
           /*      {
                     path: '/columeSet',
                     component: resolve => require(['../components/page/ColumeSet.vue'], resolve),

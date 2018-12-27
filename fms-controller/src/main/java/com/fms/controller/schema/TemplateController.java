@@ -1,9 +1,15 @@
 package com.fms.controller.schema;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.fms.domain.filemanage.MasterSlaveDo;
+import com.fms.domain.schema.ColumnDic;
 import com.fms.domain.schema.Template;
 import com.fms.service.schema.TemplateService;
 import com.handu.apollo.utils.ExtUtil;
+import com.handu.apollo.utils.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +36,6 @@ public class TemplateController {
             long tableId = tp.getTableId();
             int schemaId = tp.getSchemaId();
             int columnId = tp.getColumnId();
-            long parserId = tp.getParserId();
 
             String tableName = templateService.getTableNameById(tableId);
             tp.setTableName(tableName);
@@ -38,91 +43,49 @@ public class TemplateController {
             tp.setSchemaName(schemaName);
             String columnName = templateService.getColumnNameById(columnId);
             tp.setColumnName(columnName);
-            String parserName = templateService.getParserNameById(parserId);
-            tp.setParserName(parserName);
 
         }
         return list;
     }
 
 
-/*
-
-    @RequestMapping("update")
-    public void update(@RequestParam Map<String, Object> params) {
-        String id = (String) params.get("id");
-        String ip = (String) params.get("ip");
-        String userName = (String) params.get("userName");
-        String password = (String) params.get("password");
-        String port = (String) params.get("port");
-        String path = (String) params.get("path");
-        String format = (String) params.get("format");
-        Template template = templateService.queryId(Long.parseLong(id));
-        template.setIp(ip);
-        template.setUserName(userName);
-        template.setPassword(password);
-        template.setPath(path);
-        template.setFormat(format);
-        template.setPort(port);
-
-        templateService.update(template);
-    }
-
-    @RequestMapping("get")
-    public Object get(String id) {
-        return templateService.get((Long.parseLong(id)));
-    }
-
-    @RequestMapping("add")
-    public void add(@RequestParam Map<String, Object> params) {
-        String ip = (String) params.get("ip");
-        String userName = (String) params.get("userName");
-        String password = (String) params.get("password");
-        String port = (String) params.get("port");
-        String path = (String) params.get("path");
-        String format = (String) params.get("format");
-        Template template = new Template();
-        template.setIp(ip);
-        template.setUserName(userName);
-        template.setPassword(password);
-        template.setPort(port);
-        template.setPath(path);
-        template.setFormat(format);
-        templateService.add(template);
-
-    }
-*/
-
-    @RequestMapping("/deleteTemplate")
+    @RequestMapping("/delete")
     public void delete(String id) {
-        templateService.deleteTemplate(Long.parseLong(id));
-        templateService.deleteTemplateDic(Long.parseLong(id));
+            templateService.deleteTemplate(Long.parseLong(id));
+            templateService.deleteTemplateDic(Long.parseLong(id));
+
     }
 
 //模板映射新增
-    @RequestMapping("/addTemplate")
+    @RequestMapping("/add")
     public void addTemplate(@RequestParam Map<String, Object> params) {
-        long id =  Long.parseLong((String)params.get("id"));
-        String columnKey = (String) params.get("columnKey");
-        int schemaId = Integer.parseInt((String)params.get("schemaId"));
-        long tableId =  Long.parseLong((String)params.get("tableId"));
-        int columnId = Integer.parseInt((String)params.get("columnId"));
-        long parserId =  Long.parseLong((String)params.get("parserId"));
-
-        Template template = new Template();
-        template.setId(id);
-        template.setColumnKey(columnKey);
-        template.setSchemaId(schemaId);
-        template.setTableId(tableId);
-        template.setColumnId(columnId);
-        template.setParserId(parserId);
-        templateService.addTemplate(template);
-        templateService.addTemplateDic(template);
+        JSONArray array = JSONArray.parseArray((String) params.get("formList"));
+        long id=System.currentTimeMillis();
+        for(int i=0;i<array.size();i++){
+            JSONObject obj = JSONObject.parseObject(array.get(i).toString());
+            int schemaId = obj.getInteger("schemaId");
+            long tableId = obj.getLong("tableId");
+            int columnId = obj.getInteger("columnId");
+            String columnKey =  obj.getString("columnKey");
+            String templateName =  obj.getString("templateName");
+            Template template = new Template();
+            template.setId(id);
+            template.setColumnKey(columnKey);
+            template.setSchemaId(schemaId);
+            template.setTableId(tableId);
+            template.setColumnId(columnId);
+            template.setTemplateName(templateName);
+            templateService.addTemplate(template);
+       /*     ColumnDic columnDic = new ColumnDic();
+            columnDic.setColumnMapId(id);
+            columnDic.setDicName();
+            templateService.addTemplateDic(columnDic);*/
+        }
 
     }
 
 //模板映射编辑
-    @RequestMapping("/updateTemplate")
+    @RequestMapping("/update")
     public Object updateTemplate(Template template) {
         try {
             templateService.updateTemplate(template);

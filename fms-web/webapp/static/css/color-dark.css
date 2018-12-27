@@ -1,5 +1,6 @@
 .header{
     background-image: url("/fms/static/img/top.jpg");
+    background-size: 100%;
 }
 .login-wrap{
     background: #324157;

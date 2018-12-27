@@ -7,47 +7,8 @@
      columnKey,
      columnId,
      tableId,
-     schemaId,
-     parserId
+     schemaId
     </sql>
-
-
-    <insert id="add" parameterType="com.fms.domain.schema.Template" >
-        INSERT INTO t_template(ip,userName,password,port,path,format)
-        VALUES (
-        #{ip},
-        #{userName},
-        #{password},
-        #{port},
-        #{path},
-        #{format}
-        )
-    </insert>
-
-    <update id="update" parameterType="com.fms.domain.schema.Template">
-        UPDATE t_template
-        SET
-        <if test="ip != null">
-            ip = #{ip},
-        </if>
-        <if test="userName != null">
-            userName = #{userName},
-        </if>
-        <if test="password != null">
-            password = #{password},
-        </if>
-        <if test="port != null">
-            port = #{port},
-        </if>
-        <if test="path != null">
-            path = #{path},
-        </if>
-        <if test="format != null">
-            format = #{format},
-        </if>
-        id = #{id}
-        where id = #{id}
-    </update>
 
     <select id="getTemplate" parameterType="long" resultType="com.fms.domain.schema.Template">
         SELECT <include refid="cols" />
@@ -93,22 +54,22 @@
     </select>
 <!--映射模板新增-->
     <insert id="addTemplate" parameterType="com.fms.domain.schema.Template" >
-        INSERT INTO column_map_relation(id,columnKey,schemaId,tableId,columnId,parserId)
+        INSERT INTO column_map_relation(id,columnKey,schemaId,tableId,columnId,templateName)
         VALUES (
         #{id},
         #{columnKey},
         #{schemaId},
         #{tableId},
         #{columnId},
-        #{parserId}
+       #{templateName}
         )
     </insert>
-    <insert id="addTemplateDic" parameterType="com.fms.domain.schema.Template" >
-        INSERT INTO column_dic(column_map_id,dicName,dicValue)
+    <insert id="addTemplateDic" parameterType="com.fms.domain.schema.ColumnDic" >
+        INSERT INTO column_dic(columnMapId,dicName,dicValue)
         VALUES (
         #{columnMapId},
         #{dicName},
-        #{schemaId}
+        #{dicValue}
         )
     </insert>
     <update id="updateTemplate" parameterType="com.fms.domain.schema.Template">
@@ -117,7 +78,6 @@
         schemaId = #{schemaId},
         tableId = #{tableId},
         columnId = #{columnId},
-        parserId = #{parserId},
         where id = #{id}
     </update>
     <update id="updateTemplateDic" parameterType="com.fms.domain.schema.Template">
@@ -132,6 +92,6 @@
     </delete>
     <delete id="deleteTemplateDic" parameterType="long">
         DELETE FROM column_dic
-        WHERE id = #{id}
+        WHERE column_map_id = #{id}
     </delete>
 </mapper>

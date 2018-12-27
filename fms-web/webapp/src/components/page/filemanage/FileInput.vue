@@ -128,11 +128,11 @@
                 tableData: [],
                 addVisible: false,
                 form: {
-                    ip: '47.93.40.219',
-                    userName: 'root',
-                    password: 'admin!123',
-                    port: '22',
-                    path: '/home/xuhubin',
+                    ip: '',
+                    userName: '',
+                    password: '',
+                    port: '',
+                    path: '',
                     format: ''
                 },
                 idx: -1,
@@ -151,14 +151,16 @@
             this.getData();
         },
         methods: {
-            async uploadFile() {
+            async  uploadFile(index, row) {
+                    this.idx = index;
+                    const item = this.tableData[index];
                 await
                     this.$axios.post('mvc/uploadFromFtpFile',{
-                        ipAddr:this.form.ip,
-                        port:this.form.port,
-                        userName:this.form.userName,
-                        pwd: this.form.password,
-                        path: this.form.path,
+                        ip: item.ip,
+                        userName: item.userName,
+                        password: item.password,
+                        port: item.port,
+                        path: item.path
                     }).then(res => {
                     /*    if(res.data.success){
                             this.$notify({
@@ -185,7 +187,7 @@
                         port:this.form.port,
                         userName:this.form.userName,
                         pwd: this.form.password,
-                        path: this.form.path,
+                        path: this.form.path
                     }).then(res => {
                      /*   if(res.data.success){
                             this.$notify({
@@ -253,13 +255,8 @@
                 this.addVisible = false;
             },
 
-            async handleStart() {
-                if (this.form.format == "格式化") {
-                    await this.uploadFile();
-                }
-                else{
-                    await this.uploadFileToLocal();
-                }
+            handleStart(index, row) {
+                this.uploadFile(index, row);
             },
 
 

@@ -114,11 +114,11 @@
                 tableData: [],
                 addVisible: false,
                 form: {
-                    ip: '47.93.40.219',
-                    userName: 'root',
-                    password: 'admin!123',
-                    port: '22',
-                    path: '/home/xuhubin',
+                    ip: '',
+                    userName: '',
+                    password: '',
+                    port: '',
+                    path: ''
                 },
                 idx: -1,
                 rules: {
@@ -126,7 +126,7 @@
                     userName: [{required: true, message: '请输入用户名', trigger: 'blur'}],
                     password: [{required: true, message: '请输入密码', trigger: 'blur'}],
                     port: [{required: true, message: '请输入端口号', trigger: 'blur'}],
-                    path: [{required: true, message: '请输入路径', trigger: 'blur'}],
+                    path: [{required: true, message: '请输入路径', trigger: 'blur'}]
                 }
             }
         },
@@ -135,14 +135,16 @@
             this.getData();
         },
         methods: {
-            async uploadFile() {
+            async uploadFile(index, row) {
+                this.idx = index;
+                const item = this.tableData[index];
                 await
                     this.$axios.post('mvc/sendToFtp',{
-                        ipAddr:this.form.ip,
-                        port:this.form.port,
-                        userName:this.form.userName,
-                        pwd: this.form.password,
-                        path: this.form.path,
+                        ip:item.ip,
+                        port:item.port,
+                        userName:item.userName,
+                        pwd: item.password,
+                        path: item.path
                     }).then(res => {
                     }).catch(e => {
 
@@ -165,7 +167,7 @@
                     userName: item.userName,
                     password: item.password,
                     port: item.port,
-                    path: item.path,
+                    path: item.path
 
                 };
                 this.editVisible = true;

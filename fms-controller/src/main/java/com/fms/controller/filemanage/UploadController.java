@@ -69,7 +69,13 @@ public class UploadController {
     private KafkaTemplate kafkaTemplate;
 
     @RequestMapping(value = "/uploadFromFtpFile", method = RequestMethod.POST)
-    public void uploadFromFtpFile(@RequestParam String ipAddr, @RequestParam int port, @RequestParam String userName, @RequestParam String pwd, @RequestParam String path, HttpServletResponse response) {
+    public void uploadFromFtpFile(HttpServletRequest request, HttpServletResponse response) {
+        String ip = request.getParameter("ip");
+        String port = request.getParameter("port");
+        String userName = request.getParameter("userName");
+        String pwd = request.getParameter("password");
+        String path = request.getParameter("path");
+
         Runnable runnable = new Runnable() {
 
             public void run() {
@@ -82,8 +88,8 @@ public class UploadController {
                     e.printStackTrace();
                 }*/
                 Ftp ftp = new Ftp();
-                ftp.setIpAddr(ipAddr);
-                ftp.setPort(port);
+                ftp.setIpAddr(ip);
+                ftp.setPort(Integer.valueOf(port));
                 ftp.setUserName(userName);
                 ftp.setPwd(pwd);
                 ftp.setPath(path);
@@ -125,7 +131,7 @@ public class UploadController {
                                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");*/
 
                                 //String relativePath = sdf.format(currentDate);
-                                String relativePath = ipAddr;
+                                String relativePath = ip;
                                 Long dirId = directoryService.createRelativePath(directoryId, relativePath.split("/"));
 
                                 String fileName = lsEntry.getFilename();
@@ -1083,7 +1089,7 @@ public class UploadController {
 
     @RequestMapping(value = "/sendToFtp", method = RequestMethod.POST)
     public Object sendToFtp(HttpServletRequest request, HttpServletResponse response) {
-        String ipAddr = request.getParameter("ipAddr");
+        String ipAddr = request.getParameter("ip");
         String port = request.getParameter("port");
         String userName = request.getParameter("userName");
         String pwd = request.getParameter("pwd");
@@ -1198,7 +1204,7 @@ public class UploadController {
             break;
         }
         JSONArray array = outPutJson.getJSONArray(key);//就是匹配字段的源数据
-
+        System.out.println(array.toJSONString());
         String tableName = getTable(array.toJSONString());// =======================================================================
         //String tableName = "sd_ddd_xxx";
 
