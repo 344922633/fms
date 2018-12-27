@@ -74,7 +74,7 @@ public class SchemaController {
 
 
     @RequestMapping("listColumnsFormasterslave")
-    public List<Map<String, Object>> listColumnsFormasterslave(String masterSlaveId) {
+    public List<Map<String, Object>> listColumnsFormasterslave(Integer masterSlaveId) {
         MasterSlaveDo masterSlaveDoForQuery = new MasterSlaveDo();
         masterSlaveDoForQuery.setId(masterSlaveId);
         List<MasterSlaveDo> list = masterSlaveService.query(masterSlaveDoForQuery);
@@ -198,7 +198,7 @@ public class SchemaController {
     }
 
     @RequestMapping("/masterSlave/detail")
-    public Object detail(String id, HttpServletRequest request) {
+    public Object detail(Integer id, HttpServletRequest request) {
         MasterSlaveDo masterSlaveDo = new MasterSlaveDo();
         masterSlaveDo.setId(id);
         List<MasterSlaveDo> list = masterSlaveService.query(masterSlaveDo);
@@ -219,11 +219,17 @@ public class SchemaController {
         return ExtUtil.success("操作成功");
     }
 
+    @RequestMapping("/masterSlave/findOne")
+    public Object findOne(Integer id){
+        return masterSlaveService.findMasterSlaveById(id);
+    }
+
     @RequestMapping("/masterSlave/update")
     public Object updatemasterSlave(MasterSlaveDo masterSlaveDo) {
         try {
             masterSlaveService.update(masterSlaveDo);
         } catch (Exception e) {
+            e.printStackTrace();
             return ExtUtil.failure(e.getCause().getMessage());
         }
         return ExtUtil.success("操作成功");

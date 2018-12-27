@@ -1061,9 +1061,7 @@ public class UploadController {
 
         List<Map<String, Object>> json = new ArrayList<>();
         try {
-
             JSONArray arrayList = JSONArray.parseArray(str);
-
             //获取返回数据中jsonBottomLevel每个tab对应的数据
 //            for (int i = 0; i < arrayList.size(); i++) {
 //                JSONObject jsonObject = arrayList.getJSONObject(i);

@@ -39,4 +39,8 @@ public class MasterSlaveService {
     public List<String> queryType() {
         return dao.getList(CLASSNAME, "queryType", null);
     }
+
+    public Map findMasterSlaveById(Integer id) {
+        return dao.get(CLASSNAME,"findMasterSlaveById",id);
+    }
 }

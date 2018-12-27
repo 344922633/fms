@@ -11,5 +11,6 @@ public class ColumnMapRelation {
     private int columnId;
     private int schemaId;
     private long parserId;
+    private String templateName;
 
 }
