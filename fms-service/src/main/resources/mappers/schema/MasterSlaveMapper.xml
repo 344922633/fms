@@ -40,12 +40,9 @@
         )
     </insert>
     <update id="update" parameterType="com.fms.domain.filemanage.MasterSlaveDo">
-        UPDATE t_masterslave
-        SET name = #{name},
-        type = #{type},
-        masterTableId = #{masterTableId},
-        slaveTableId = #{slaveTableId},
-        WHERE id = #{id}
+        update t_masterslave set slaveTableId = #{slaveTableId},
+        `name` = #{name},masterTableId = #{masterTableId},`type` = #{type}
+        where id = #{id}
     </update>
 
     <delete id="delete" parameterType="String">
@@ -54,7 +51,11 @@
     </delete>
 
     <select id="queryType"  resultType="String">
-        select distinct type from t_masterslave
+        select distinct `type` from t_masterslave
+    </select>
+
+    <select id="findMasterSlaveById" resultType="Map" parameterType="Integer">
+        select id,masterTableId,slaveTableId,`type`, `name` from t_masterslave where id = #{id}
     </select>
 </mapper>
 

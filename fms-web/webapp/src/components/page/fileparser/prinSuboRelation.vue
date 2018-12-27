@@ -18,12 +18,12 @@
                 </FormItem>
 
                 <FormItem prop="masterTable" label="主表">
-                     <Select v-model="masterSlave.masterTable" filterable>
+                     <Select v-model="masterSlave.masterTableId" filterable>
                         <Option v-for="item in tableNames" :value="item.id" :key="item.id">{{ item.tableChinese }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem prop="slaveTable" label="从表">
-                    <Select v-model="masterSlave.slaveTable" filterable>
+                    <Select v-model="masterSlave.slaveTableId" filterable>
                         <Option v-for="item in tableNames" :value="item.id" :key="item.id">{{ item.tableChinese }}</Option>
                     </Select>
                 </FormItem>
@@ -116,11 +116,11 @@
                     },
                     {
                         title: '主表',
-                        key: 'masterTable'
+                        key: 'masterTableName'
                     },
                     {
                         title: '从表',
-                        key: 'slaveTable'
+                        key: 'slaveTableName'
                     },
                     {
                         title: '操作',
@@ -173,13 +173,10 @@
                 row.file = null;
                 this.formTitle = '修改';
                 if(row.id){
-                    this.$axios.post('mvc/masterSlave/detail', {
+                    this.$axios.post('mvc/masterSlave/findOne', {
                         id:row.id
                     }).then(res => {
-                        this.masterSlave.name = res.data.name;
-                        this.masterSlave.type = res.data.type;
-                        this.masterSlave.masterTable = res.data.masterTable;
-                        this.masterSlave.slaveTable = res.data.slaveTable;
+                        this.masterSlave = res.data;
                         this.formVisible = true;
                     }).catch(e => {
 

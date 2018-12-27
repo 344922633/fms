@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class MasterSlaveDo {
-    private String id;
+    private Integer id;
 
     private String name;
 

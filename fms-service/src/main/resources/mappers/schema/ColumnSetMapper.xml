@@ -39,9 +39,9 @@
     </select>
 
   <insert id="insertColumnMapRelation" parameterType="com.fms.domain.schema.ColumnMapRelation" >
-    INSERT INTO column_map_relation (id,columnKey,schemaId,tableId,columnId,parserId)
+    INSERT INTO column_map_relation (columnKey,schemaId,tableId,columnId,parserId)
     VALUES (
-    #{id},
+
     #{columnKey},
     #{schemaId},
     #{tableId},

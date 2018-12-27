@@ -132,6 +132,6 @@
     </delete>
     <delete id="deleteTemplateDic" parameterType="long">
         DELETE FROM column_dic
-        WHERE id = #{id}
+        WHERE column_map_id = #{id}
     </delete>
 </mapper>

@@ -68,24 +68,38 @@
             </span>
         </el-dialog>
 
-        <el-dialog title="编辑" :visible.sync="editVisible" width="40%"  >
-       <!--     <el-form ref="form" :model="form" :label-position="labelPosition" label-width="100px" :rules="rules">
-                <el-form-item label="键名：" prop="key">
-                    <el-input v-model="form.key"></el-input>
-                </el-form-item>
-                <el-form-item label="字段名：" prop="column">
-                    <el-input v-model="form.column"></el-input>
-                </el-form-item>
-                <el-form-item label="表名：" prop="table">
-                    <el-input v-model="form.table"></el-input>
-                </el-form-item>
-                <el-form-item label="库名：" prop="schema">
-                    <el-input v-model="form.schema"></el-input>
-                </el-form-item>
-                <el-form-item label="解析器：" prop="parser">
-                    <el-input v-model="form.parser"></el-input>
-                </el-form-item>
-            </el-form>-->
+
+
+        <el-dialog title="编辑" :visible.sync="editVisible" width="740px"  >
+            <el-form ref="form"  :label-position="labelPosition" label-width="100px">
+            <el-form-item label="模板名称：" prop="templateName">
+                <el-input v-model="formList2[0].templateName" style="width: 180px"></el-input>
+            </el-form-item>
+            <Form inline v-for="(item,index) in formList2">
+                <FormItem label="key：">
+                    <el-input v-model="formList2[index].columnKey" style="width: 130px"></el-input>
+                </FormItem>
+                <FormItem label="库名：" >
+                    <Select @on-change="(schemaId) => getTables(schemaId,index)" v-model="formList2[index].schemaId" filterable style="width: 130px">
+                        <Option v-for="(schema,schemaIdx) in schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="表名：">
+                    <Select @on-change="(tableId) => getColumnsByTable(tableId,index)" v-model="formList2[index].tableId" filterable style="width: 130px">
+                        <Option v-for="(table,tableIdx) in selectMap[index].tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="字段名：">
+                    <Select @on-change="(columnId) => getDicByColumn(columnId,index)" v-model="formList2[index].columnId" filterable style="width: 130px">
+                        <Option v-for="(column,columnIdx) in selectMap[index].columns" :value="column.id" :key="column.id"> {{ column.columnChinese }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="操作：">
+                    <i @click="rowPlus()" v-if="index==0" class="el-icon-circle-plus-outline" style="font-size: 30px;cursor: pointer"></i>
+                    <i @click="rowRemove(index)" v-if="index!=0" class="el-icon-remove-outline" style="font-size: 30px;cursor: pointer"></i>
+                </FormItem>
+            </Form>
+            </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
                 <el-button type="primary" @click="submitEdit">确 定</el-button>
@@ -128,6 +142,13 @@
                 tableData: [],
                 addVisible: false,
                 formList:[{
+                    templateName:'',
+                    columnKey: '',
+                    schemaId: '',
+                    tableId: '',
+                    columnId: ''
+                }],
+                formList2:[{
                     templateName:'',
                     columnKey: '',
                     schemaId: '',
@@ -189,8 +210,8 @@
                     this.formList[i].templateName=this.formList[0].templateName
                 }
                 console.log(this.formList)
-                await this.$axios.post('mvc/fileInput/add', {
-                    parser:JSON.stringify(this.formList)
+                await this.$axios.post('mvc/template/saveTemplate', {
+                    formList:JSON.stringify(this.formList)
                     // parser:this.form.parser,
                     // key:this.form.key,
                     // schema:this.form.schema,
@@ -203,20 +224,17 @@
 
 
             async submitEdit() {
-                // if (!this.form.key || !this.form.column || !this.form.table || !this.form.schema|| !this.form.parser) {
-                //     this.$message.warning('请填写完整表单')
-                //     return
-                // }
-                // await this.$axios.post('mvc/template/update', {
-                //     key:this.form.key,
-                //     column:this.form.column,
-                //     table:this.form.table,
-                //     schema:this.form.schema,
-                //     parser:this.form.parser
-                // });
-                // await this.getData();
-                // this.editVisible = false;
-            },
+
+            for(var i in this.formList2){
+                this.formList2[i].templateName=this.formList2[0].templateName
+            }
+            console.log(this.formList2)
+            await this.$axios.post('mvc/template/editTemplate', {
+                    formList2:JSON.stringify(this.formList2)
+        });
+        await this.getData();
+        this.addVisible = false;
+    },
 
 
             handleAdd() {
@@ -259,7 +277,7 @@
 
             // 确定删除
             async deleteRow() {
-                await this.$axios.post('mvc/template/delete', {id: this.tableData[this.idx].id});
+                await this.$axios.post('mvc/template/deleteTemplate', {id: this.tableData[this.idx].id});
                 await this.getData();
                 this.$message.success('删除成功');
                 this.delVisible = false;

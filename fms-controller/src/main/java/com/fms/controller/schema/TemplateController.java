@@ -1,9 +1,14 @@
 package com.fms.controller.schema;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fms.domain.filemanage.MasterSlaveDo;
+import com.fms.domain.schema.ColumnDic;
+import com.fms.domain.schema.ColumnMapRelation;
 import com.fms.domain.schema.Template;
+import com.fms.service.schema.ColumnSetService;
 import com.fms.service.schema.TemplateService;
 import com.handu.apollo.utils.ExtUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -120,6 +125,35 @@ public class TemplateController {
         templateService.addTemplateDic(template);
 
     }
+
+
+    @Autowired
+    private ColumnSetService columnSetService;
+    @RequestMapping("/saveColumnMapInfos")
+    public Object saveColumnMapInfos(String formList,String parserId) {
+        JSONObject json = JSONObject.parseObject(formList);
+        // 保存第一张表
+        for(String key : json.keySet()) {
+
+            if(StringUtils.isNotEmpty(json.getJSONObject(key).getString("columnId"))){
+                ColumnMapRelation mr = new ColumnMapRelation();
+                String columnMapId = String.valueOf(System.currentTimeMillis());
+                /* mr.setId(columnMapId);*/
+                mr.setColumnKey(key);
+                mr.setColumnId(json.getJSONObject(key).getInteger("columnId"));
+                mr.setSchemaId(json.getJSONObject(key).getInteger("schemaId"));
+                mr.setTableId(Long.valueOf(json.getJSONObject(key).getString("tableId")));
+                mr.setParserId(Long.parseLong(parserId));
+                columnSetService.insertColumnMapRelation(mr);
+
+            }
+
+        }
+        return ExtUtil.success("保存成功！");
+    }
+
+
+
 
 //模板映射编辑
     @RequestMapping("/updateTemplate")
