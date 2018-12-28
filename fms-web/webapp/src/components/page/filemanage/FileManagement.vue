@@ -904,7 +904,7 @@
      					var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
      					var ip = ipRex.exec(this.config.fileServerPath);
      					//var a = "http://47.93.40.219:8888/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");
-     					var a = "http://"+ ip +":8888/index?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/home/huiju/data/fdfs/storage/data")
+     					var a = "http://"+ ip +":8888/index?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data")
      						+'&id='+this.selectFileList[0].id;
      					var ifr = document.createElement('iframe');
      					ifr.src = a;

@@ -31,10 +31,29 @@
     const initProperties = (arr) => {
         const ret = []
         arr.forEach(item => {
-            ret.push({
-                displayName: item.property,
-                client:item.property
-            })
+            console.log(item)
+            const {
+                propertyFlag,
+                property,
+                propertyChinese,
+                isDic,
+                dicList
+            } = item
+            const propertyOption = {
+                displayName: propertyChinese,
+                client:property
+            }
+            if (isDic === 1 && dicList) {
+                let dicArr
+                try {
+                    dicArr = JSON.parse(dicList)
+                }catch (e) {
+                    dicArr = []
+                }
+                const options = dicArr.map(dic => dic.MC)
+                propertyOption.options = options
+            }
+            ret.push(propertyOption)
         })
         console.log(ret)
         return ret
@@ -88,6 +107,7 @@
                     data.forEach(item => {
                         ret[item.controlId] = initProperties(item.properties)
                     })
+                    console.log('ret!!', ret)
                     this.idPropertiesMap = ret
                 }).catch(function (error) {
                     console.log(error);
