@@ -1243,7 +1243,6 @@ public class UploadController {
                 }
             }
 
-            columnArr.add(columnPublic);
 
             infoObj.put("objectCode", "dxbm");
             infoObj.put("objectCodeValue", dxbm);//
