@@ -31,7 +31,7 @@ public class ColumnSetController {
 
             if(StringUtils.isNotEmpty(json.getJSONObject(key).getString("columnId"))){
                 ColumnMapRelation mr = new ColumnMapRelation();
-                long columnMapId = System.currentTimeMillis();
+                Long columnMapId = System.currentTimeMillis();
                 mr.setId(columnMapId);
                 mr.setColumnKey(key);
                 mr.setColumnId(json.getJSONObject(key).getInteger("columnId"));

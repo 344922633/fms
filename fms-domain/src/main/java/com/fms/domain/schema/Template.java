@@ -9,6 +9,8 @@ public class Template {
     private int columnId;
     private long tableId;
     private int schemaId;
+    private long parserId;
+    private String parserName;
     private String tableName;
     private String columnName;
     private String SchemaName;

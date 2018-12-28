@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.fms.domain.filemanage.MasterSlaveDo;
 import com.fms.domain.schema.ColumnDic;
+import com.fms.domain.schema.ColumnMapRelation;
 import com.fms.domain.schema.Template;
+import com.fms.service.schema.ColumnSetService;
 import com.fms.service.schema.TemplateService;
 import com.handu.apollo.utils.ExtUtil;
 import com.handu.apollo.utils.StringUtil;
@@ -48,12 +50,11 @@ public class TemplateController {
         return list;
     }
 
-
-    @RequestMapping("/delete")
-    public void delete(String id) {
-            templateService.deleteTemplate(Long.parseLong(id));
-            templateService.deleteTemplateDic(Long.parseLong(id));
-
+    @RequestMapping("/deleteTemplate")
+    public void delete(Long id) {
+        Long tid =id;
+        templateService.deleteTemplate(id);
+        templateService.deleteTemplateDic(tid);
     }
 
 //模板映射新增
