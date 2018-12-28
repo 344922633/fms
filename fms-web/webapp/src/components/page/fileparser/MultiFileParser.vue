@@ -269,6 +269,31 @@
                 <uploader-list></uploader-list>
             </uploader>
         </Modal>
+        <Modal v-model="setVisible" title="多参数设置" @on-ok="handleSetOk">
+            <Form ref="formCustom">
+                <FormItem v-for="item in idPropertiesMap[currentParser]"  :label="item.parameterDesc">
+                    <Input v-if="item.parameterName != 'File' && item.parameterName != 'boolean'" v-model="item.parameterValue" :placeholder="item.parameterDesc"/>
+                    <Select v-if="item.parameterName == 'boolean'" v-model="item.parameterValue" >
+                        <Option value="1"  >是</Option>
+                        <Option value="0"  >否</Option>
+                    </Select>
+                    <div v-if="item.parameterName == 'File'">
+                        <Upload
+                            ref="uploadFile"
+                            multiple
+                            :before-upload="handleUploadFile"
+                            action="mvc/fileParserJar/uploadFileParam"
+                            :on-success="uploadSuccessFile"
+                            :on-remove="handleRemoveFile"
+                            :on-error="uploadErrorFile">
+                            <Button icon="ios-cloud-upload-outline">上传</Button>
+                            <span>{{resultFils ? resultFils : item.parameterValue}}</span>
+                        </Upload>
+                        <Button style="margin-top: 5px" type="text" @click="FileUpload" :loading="loadingStatus">{{ loadingStatus ? '上传中' : '上传' }}</Button>
+                    </div>
+                </FormItem>
+            </Form>
+        </Modal>
     </section>
 </template>
 
@@ -338,6 +363,8 @@
                 parsers: [],
                 //解析器弹框标示
                 parserVisible: false,
+                // 多参数设置弹窗
+                setVisible: false,
                 //已解析数量
                 parsed: 0,
                 //总解析数量
@@ -771,6 +798,7 @@
                                     {
                                         on: {
                                             click: () => {
+                                              this.setVisible = true;
                                             }
                                         }
                                     },
@@ -1291,6 +1319,8 @@
                             limit: _self.limit
                         })
                         .then(res => {
+                            console.log(res.data.list, '待分类')
+
                             this.waitClassData = res.data.list;
                         });
                     this.$axios
@@ -1666,6 +1696,7 @@
 
             //解析前待分类选中
             handleWaitSelectionChange(selection) {
+                    console.log(selection, 'selection')
                 this.waitSelection = selection;
             },
             //解析器其他分类选中
@@ -1732,8 +1763,13 @@
                     })
                     .then(res => {
                         this.$set(this.idPropertiesMap, id, res.data);
-                        console.log(this.idPropertiesMap);
+                        console.log(this.idPropertiesMap,'多参数');
                     });
+            },
+
+            handleSetOk() {
+                this.waitClassData[this.currentIndex] = Object.assign({},this.waitClassData[this.currentIndex],this.idPropertiesMap[this.currentParser]);
+                console.log(this.waitClassData[this.currentIndex], '多參數保存')
             },
 
             //****多文件解析添加映射******
