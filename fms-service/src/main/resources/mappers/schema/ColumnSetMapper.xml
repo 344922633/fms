@@ -51,7 +51,7 @@
   </insert>
 
   <insert id="insertColumnDic" parameterType="com.fms.domain.schema.ColumnDic" >
-    INSERT INTO column_dic (dicName,dicValue,column_map_id)
+    INSERT INTO column_dic (dicName,dicValue,columnMmapId)
     VALUES (
     #{dicName},
     #{dicValue},

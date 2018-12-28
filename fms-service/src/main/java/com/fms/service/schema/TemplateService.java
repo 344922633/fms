@@ -81,16 +81,10 @@ public class TemplateService {
     public void updateTemplateDic(Template template) {
         dao.update(CLASSNAME, "updateTemplateDic", template);
     }
+    public void deleteTemplateDic(Long id) { dao.delete(CLASSNAME, "deleteTemplateDic", id); }
 
     public void deleteTemplate(Long id) {
-        Map<String, Object> params = Maps.newHashMap();
-        params.put("id", id);
         dao.delete(CLASSNAME, "deleteTemplate", id);
     }
 
-    public void deleteTemplateDic(Long id) {
-        Map<String, Object> params = Maps.newHashMap();
-        params.put("id", id);
-        dao.delete(CLASSNAME, "deleteTemplateDic", id);
-    }
 }

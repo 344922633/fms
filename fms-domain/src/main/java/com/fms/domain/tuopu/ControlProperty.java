@@ -13,9 +13,12 @@ public class ControlProperty {
 	private long id;
 	private String propertyChinese;
 	private String property;
+	private String propertyEnglish;
 	private String controlId;
 	private String dataType;
+	private String valueDataType;
 	private String dicName;
+	private String dicInfo;
 	private int isDic;
 	private String dicList;
 	private String value;

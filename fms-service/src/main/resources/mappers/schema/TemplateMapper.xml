@@ -84,14 +84,15 @@
         UPDATE column_dic
         SET dicName = #{dicName},
         dicValue = #{dicValue},
-        where column_map_id = #{columnMapId}
+        where columnMapId = #{columnMapId}
     </update>
+
     <delete id="deleteTemplate" parameterType="map">
         DELETE FROM column_map_relation
         WHERE id = #{id}
     </delete>
     <delete id="deleteTemplateDic" parameterType="long">
         DELETE FROM column_dic
-        WHERE column_map_id = #{id}
+        WHERE columnMapId = #{id}
     </delete>
 </mapper>

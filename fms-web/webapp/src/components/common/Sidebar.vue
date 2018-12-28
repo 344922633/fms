@@ -63,18 +63,19 @@
                     {
                         icon: 'el-icon-lx-copy',
                         index: '2',
-                        title: '在线/离线文件导入',
+                        title: '在线/离线导入',
                         subs:[
-                            {
-                                icon: 'el-icon-lx-copy',
-                                index: 'file_type',
-                                title: '在线文件信息'
-                            },
+
                             {
                                 index: 'fileInput',
                                 title: '离线文件导入',
                                 icon: 'el-icon-upload'
-                            }
+                            },
+                            {
+                                index: 'sendFileToServer',
+                                title: '素材上报',
+                                icon: 'el-icon-setting'
+                            },
                         ]
                     },
                     {
@@ -113,7 +114,12 @@
                                 index: 'template',
                                 title: '映射模板',
                                 icon: 'el-icon-setting'
-                            }
+                            },
+                              {
+                                icon: 'el-icon-lx-copy',
+                                index: 'file_type',
+                                title: '在线文件分类信息'
+                            },
                         ]
                     },
                     {
@@ -135,24 +141,7 @@
                             },
                         ]
                     },
-                    {
-                        icon: 'el-icon-lx-copy',
-                        index: '6',
-                        title: '统计上报',
-                        subs:[
-                            {
-                                icon: 'el-icon-lx-home',
-                                index: 'dashboard',
-                                title: '统计监控'
-                            },
-                            {
-                                index: 'sendFileToServer',
-                                title: '素材上报',
-                                icon: 'el-icon-setting'
-                            },
 
-                        ]
-                    },
 
                     //{
                     //  icon: 'el-icon-lx-home',
