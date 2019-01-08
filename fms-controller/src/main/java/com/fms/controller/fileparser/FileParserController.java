@@ -539,8 +539,13 @@ public class FileParserController {
 
         result.put("allKeyForDisplay", set);
         result.put("jsonStr", data.get("jsonBottomLevel"));
+        System.out.println(set);
+        System.out.println(data.get("jsonBottomLevel"));
+//         Map<String, Object> res = fileParserService.parseDataForTableName(set);
+//        System.out.println(res.get("table_name").toString());
         return ExtUtil.success(result);
     }
+
 
     /**
      * 批量解析 （待完善）
@@ -555,6 +560,7 @@ public class FileParserController {
         ObjectMapper mapper = JsonUtil.getMapper();
         List<com.fms.domain.filemanage.File> preFiles = null;
         try {
+
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             preFiles = mapper.readValue(preSel, new TypeReference<List<com.fms.domain.filemanage.File>>() {
             });
@@ -573,7 +579,23 @@ public class FileParserController {
                                 for (String tFP : tFileParserIds) {
                                     if (StringUtils.isNotEmpty(tFP)) {
                                         try {
+                                            List<FileParserExt> pext =new ArrayList<>();
+                                            JSONObject obj=JSONObject.parseObject(preSel);
+                                            JSONArray array=obj.getJSONArray("paramList");
+                                            for(int i=0;i<array.size();i++){
+                                                FileParserExt fpext=new FileParserExt();
+                                                JSONObject obj1=array.getJSONObject(i);
+                                                String parameterDesc = obj1.getString("parameterDesc");
+                                                String parameterName = obj1.getString("parameterName");
+                                                String parameterValue =  obj1.getString("parameterValue");
+                                                fpext.setParameterDesc(parameterDesc);
+                                                fpext.setParameterName(parameterName);
+                                                fpext.setParameterValue(parameterValue);
+                                                pext.add(fpext);
+                                            }
+
                                             FileParser localParser = fileParserService.get(Long.valueOf(tFP));
+                                            localParser.setParserExt(pext.toString());
                                             localParser.setParams(file.getId().toString());
                                             Map<String, String> data = this.readFileContent(localParser);
                                             if (data == null) {
@@ -620,9 +642,24 @@ public class FileParserController {
                             for (String tFP : tFileParserIds) {
                                 if (StringUtils.isNotEmpty(tFP)) {
                                     try {
+                                        List<FileParserExt> pext =new ArrayList<>();
+                                        JSONObject obj=JSONObject.parseObject(preSel);
+                                        JSONArray array=obj.getJSONArray("paramList");
+                                        for(int i=0;i<array.size();i++){
+                                            FileParserExt fpext=new FileParserExt();
+                                            JSONObject obj1=array.getJSONObject(i);
+                                            String parameterDesc = obj1.getString("parameterDesc");
+                                            String parameterName = obj1.getString("parameterName");
+                                            String parameterValue =  obj1.getString("parameterValue");
+                                            fpext.setParameterDesc(parameterDesc);
+                                            fpext.setParameterName(parameterName);
+                                            fpext.setParameterValue(parameterValue);
+                                            pext.add(fpext);
+                                        }
 
                                         FileParser localParser = fileParserService.get(Long.valueOf(tFP));
                                         localParser.setParams(file.getId().toString());
+                                        localParser.setParserExt(pext.toString());
                                         Map<String, String> data = this.readFileContent(localParser);
                                         if (data == null) {
                                             continue;
@@ -772,114 +809,137 @@ public class FileParserController {
      * @param data
      * @return
      */
-    private void singleFileStrFormatNew(JSONObject data, JSONObject json) {
+    private void singleFileStrFormatNew(JSONObject json, JSONObject data) {
+        System.out.println(json);
+        JSONObject jsonNew=new JSONObject();
+        for(String key:json.keySet()) {
+           JSONArray array=json.getJSONArray(key);
+           JSONArray arrayNew=new JSONArray();
+
+            for(int i=0;i<array.size();i++) {
+              JSONObject obj = array.getJSONObject(i);
+                JSONObject objNew=new JSONObject();
+               for(String key1:obj.keySet()) {
+                   objNew.put(key1.toLowerCase(),obj.get(key1));
+               }
+                arrayNew.add(objNew);
+           }
+            jsonNew.put(key,arrayNew);
+        }
+
+System.out.println(jsonNew);
+
         // 获取日志key
         String logKeyStr = "";
-        for(String logKey : json.keySet()){
+        for(String logKey : jsonNew.keySet()){
             logKeyStr = logKey;
-            break;
-        }
-        // 日志数组，遍历获取kafka消息
-        JSONArray logArray = json.getJSONArray(logKeyStr);
+            // 日志数组，遍历获取kafka消息
+            JSONArray logArray = jsonNew.getJSONArray(logKeyStr);
 
-        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
-        Map<String, String> valueMap = new HashMap<String, String>();
-        Map<String, JSONObject> dicMap = new HashMap<String, JSONObject>();
+            Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+            Map<String, String> valueMap = new HashMap<String, String>();
+            Map<String, JSONObject> dicMap = new HashMap<String, JSONObject>();
 
-        for(String key : data.keySet()){
-            JSONObject colJson = data.getJSONObject(key);
+            for(String key : data.keySet()){
+                JSONObject colJson = data.getJSONObject(key);
 
-            // columnId 为空，不发kafka
-            String columnId = colJson.getString("columnId");
-            if(StringUtils.isNotEmpty(columnId)){
-                String table_schema = colJson.getString("schemaId") + "_" + colJson.getString("tableId");
+                // columnId 为空，不发kafka
+                String columnId = colJson.getString("columnId");
+                if(StringUtils.isNotEmpty(columnId)){
+                    String table_schema = colJson.getString("schemaId") + "_" + colJson.getString("tableId");
 
-                Set<String> column = null;
-                if(map.containsKey(table_schema)){
-                    column = map.get(table_schema);
-                }else{
-                    column = new HashSet<String>();
-                }
-                column.add(columnId);
-                map.put(table_schema, column);
-
-                String valueKey = table_schema + "_" + colJson.getString("columnId");
-                valueMap.put(valueKey, key.toLowerCase());
-                dicMap.put(table_schema, colJson.getJSONObject("dicMap"));
-            }
-        }
-
-        for(int i = 0; i < logArray.size(); i++){
-            JSONObject appacheLog = logArray.getJSONObject(i);
-            String objectCodeValue = "dwj_"+ System.nanoTime();
-
-            JSONObject rootObj = new JSONObject();
-            rootObj.put("operationSource", "XX_PLATFORM");
-
-            JSONArray infoArr = new JSONArray();
-            for (Map.Entry<String, Set<String>> entry : map.entrySet()) {
-                JSONObject infoObj = new JSONObject();
-                infoObj.put("operationType", "INSERT");
-                infoObj.put("objectCode", "dxbm");
-
-                infoObj.put("objectCodeValue", objectCodeValue);// 时间戳
-                infoObj.put("schema", "renzhi_1208");//库名
-
-                JSONObject columnPublic =new JSONObject();
-
-                JSONArray columnArr = new JSONArray();
-
-                String mapKey = entry.getKey();// schemaId_tableId
-
-                JSONObject dicJSON = dicMap.get(mapKey);// dicMap "dicMap": { "fghj": "1", "fghk": "2"  }
-
-                String schemaId = mapKey.split("_")[0];
-                String tableId = mapKey.split("_")[1];
-
-                TableInfo tableInfo=columnSetService.getTableNameByTableId(Long.parseLong(tableId));
-                infoObj.put("table", tableInfo.getTableEnglish());//表名
-
-                Set<String> colSet = entry.getValue();
-                for(String colId : colSet){
-                    JSONObject columnJson = new JSONObject();
-                    // 75 29 10
-
-                    ColumnInfo columnInfo = columnSetService.getColumnInfo(Integer.valueOf(colId));
-                    columnJson.put("name", columnInfo.getColumnEnglish().toLowerCase());// 获取column名称  ：非枚举字段
-
-                    String valueKey = mapKey + "_" + colId;// schemaId_tableId_columnId
-                    String logKey = valueMap.get(valueKey);// bytes
-                    columnJson.put("value", appacheLog.get(logKey));
-
-                    columnArr.add(columnJson);
-                }
-
-                if(dicJSON != null){
-                    for(String dicKey : dicJSON.keySet()){
-                        JSONObject columnJson = new JSONObject();
-                        columnJson.put("name", dicKey.toLowerCase());// 获取枚举字段
-                        columnJson.put("value", dicJSON.getString(dicKey));
-
-                        columnArr.add(columnJson);
+                    Set<String> column = null;
+                    if(map.containsKey(table_schema)){
+                        column = map.get(table_schema);
+                    }else{
+                        column = new HashSet<String>();
                     }
+                    column.add(columnId);
+                    map.put(table_schema, column);
+
+                    String valueKey = table_schema + "_" + colJson.getString("columnId");
+                    valueMap.put(valueKey, key.toLowerCase());
+                    dicMap.put(table_schema, colJson.getJSONObject("dicMap"));
                 }
-
-                columnPublic.put("name", "dxbm");
-                columnPublic.put("value", objectCodeValue);
-                columnArr.add(columnPublic);
-
-                infoObj.put("columns", columnArr);
-
-                infoArr.add(infoObj);
-
-                rootObj.put("data", infoArr);
             }
 
-            System.out.println("kafka消息格式：\n" + rootObj);
-            // kafkaTemplate.send("operation_3rd1",msg.getJSONObject(i).toJSONString());
-            kafkaTemplate.send("operation_3rd1",
-                    rootObj.toJSONString());
+            for(int i = 0; i < logArray.size(); i++){
+                JSONObject appacheLog = logArray.getJSONObject(i);
+                String objectCodeValue = "dwj_"+ System.nanoTime();
+
+                JSONObject rootObj = new JSONObject();
+                rootObj.put("operationSource", "XX_PLATFORM");
+
+                JSONArray infoArr = new JSONArray();
+                for (Map.Entry<String, Set<String>> entry : map.entrySet()) {
+                    JSONObject infoObj = new JSONObject();
+                    infoObj.put("operationType", "INSERT");
+                    infoObj.put("objectCode", "dxbm");
+
+                    infoObj.put("objectCodeValue", objectCodeValue);
+
+                    infoObj.put("schema", env.getProperty("schema"));//库名
+
+                    JSONObject columnPublic =new JSONObject();
+
+                    JSONArray columnArr = new JSONArray();
+
+                    String mapKey = entry.getKey();// schemaId_tableId
+
+                    JSONObject dicJSON = dicMap.get(mapKey);// dicMap "dicMap": { "fghj": "1", "fghk": "2"  }
+
+                    String schemaId = mapKey.split("_")[0];
+                    String tableId = mapKey.split("_")[1];
+
+                    TableInfo tableInfo=columnSetService.getTableNameByTableId(Long.parseLong(tableId));
+                    infoObj.put("table", tableInfo.getTableEnglish());//表名
+
+                    Set<String> colSet = entry.getValue();
+                    for(String colId : colSet){
+                        JSONObject columnJson = new JSONObject();
+                        // 75 29 10
+
+                        ColumnInfo columnInfo = columnSetService.getColumnInfo(Integer.valueOf(colId));
+                        columnJson.put("name", columnInfo.getColumnEnglish().toLowerCase());// 获取column名称  ：非枚举字段
+
+                        String valueKey = mapKey + "_" + colId;// schemaId_tableId_columnId
+                        String logKey1 = valueMap.get(valueKey);// bytes
+                        columnJson.put("value", appacheLog.get(logKey1.toLowerCase()));
+                        if(appacheLog.get(logKey1.toLowerCase())!=null){
+                            columnArr.add(columnJson);
+                        }
+                    }
+
+                    if(dicJSON != null){
+                        for(String dicKey : dicJSON.keySet()){
+                            JSONObject columnJson = new JSONObject();
+                            columnJson.put("name", dicKey.toLowerCase());// 获取枚举字段
+                            columnJson.put("value", dicJSON.getString(dicKey));
+
+                            if(StringUtils.isNotEmpty(dicJSON.getString(dicKey))){
+                                columnArr.add(columnJson);
+                            }
+                        }
+                    }
+
+                    columnPublic.put("name", "dxbm");
+                    columnPublic.put("value", objectCodeValue);
+                    columnArr.add(columnPublic);
+
+                    infoObj.put("columns", columnArr);
+
+                    infoArr.add(infoObj);
+
+                    rootObj.put("data", infoArr);
+                }
+
+                System.out.println("kafka消息格式：\n" + rootObj);
+                // kafkaTemplate.send("operation_3rd1",msg.getJSONObject(i).toJSONString());
+             /*   kafkaTemplate.send(env.getProperty("DEFAULT_TOPIC"),
+                        rootObj.toJSONString());*/
+            }
         }
+
 
     }
 
@@ -887,14 +947,14 @@ public class FileParserController {
     public Object parseDataSaveHBase(String jsonStr, String columnKeyNamesMap, String customKeys, Long file_id, Long parserId) {
 
 //        List<Map<String, Object>> data = JSONUtils.jsonToObject(jsonStr, List.class, Map.class);
-        JSONObject data=JSONObject.parseObject(jsonStr);
+        JSONObject json=JSONObject.parseObject(jsonStr);
         JSONObject customKey = JSONObject.parseObject(customKeys);
 
         // 循环获取tableName 发送kafka
-        JSONObject json = JSONObject.parseObject(columnKeyNamesMap);
+        JSONObject data = JSONObject.parseObject(columnKeyNamesMap);
 
         // 新的kafka数据格式
-        singleFileStrFormatNew(json, data);
+        singleFileStrFormatNew(json,data);
        // System.out.print(msgNew);
 /*
         for(String key : json.keySet()){

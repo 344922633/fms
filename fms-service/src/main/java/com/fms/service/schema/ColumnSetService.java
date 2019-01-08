@@ -31,7 +31,7 @@ public class ColumnSetService {
     public List<TableInfo> getTablesBySchemaId(int sid){
         return dao.getList(CLASSNAME,"getTablesBySchemaId",sid);
     }
-    public List<Map<String,Object>> getDicColumnsByDicName(String dicName) {
+   public List<Map<String,Object>> getDicColumnsByDicName(String dicName) {
         return dao.getList(CLASSNAME, "getDicColumnsByDicName", dicName);
     }
     public void insertColumnMapRelation(ColumnMapRelation cmr) {

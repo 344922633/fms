@@ -62,6 +62,10 @@ public class ControlService {
 		dao.update(CLASSNAME, "update", picture);
 	}
 
+	public void updateControl(Control control){
+		dao.update(CLASSNAME,"update",control);
+	}
+
 	public List<ControlProperty> queryPropertyById(String controlId) {
 		return dao.getList(CLASSNAME, "queryPropertyById", controlId);
 	}

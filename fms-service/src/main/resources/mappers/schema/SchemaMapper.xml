@@ -51,7 +51,13 @@
         </foreach>
     </insert>
 
-    <select id="query" parameterType="com.fms.domain.schema.Template" resultType="com.fms.domain.schema.Template">
+
+
+
+
+
+<!--    ==========================-->
+    <select id="query" parameterType="com.fms.domain.schema.ColumnMapRelation" resultType="com.fms.domain.schema.ColumnMapRelation">
         select * from column_map_relation
     </select>
 

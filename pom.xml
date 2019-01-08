@@ -67,6 +67,16 @@
                 </configuration>
             </plugin>
         </plugins>
+        <!--管理配置文件打包-->
+        <resources>
+            <resource>
+                <!--需要打包的目录-->
+                <directory>${basedir}/src/main/resources</directory>
+                <!--打包后的目录，默认是根目录-->
+                <!--<targetPath>src/main/resources</targetPath>-->
+                <filtering>false</filtering>
+            </resource>
+        </resources>
     </build>
 
 </project>

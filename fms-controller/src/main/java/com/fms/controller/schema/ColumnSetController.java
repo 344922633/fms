@@ -24,20 +24,20 @@ public class ColumnSetController {
     @Autowired
     private ColumnSetService columnSetService;
     @RequestMapping("/saveColumnMapInfos")
-    public Object saveColumnMapInfos(String columnKeyNamesMap,String parserId) {
+    public Object saveColumnMapInfos(String columnKeyNamesMap,String templateName) {
         JSONObject json = JSONObject.parseObject(columnKeyNamesMap);
         // 保存第一张表
         for(String key : json.keySet()) {
 
             if(StringUtils.isNotEmpty(json.getJSONObject(key).getString("columnId"))){
                 ColumnMapRelation mr = new ColumnMapRelation();
-                Long columnMapId = System.currentTimeMillis();
+                long columnMapId = System.currentTimeMillis();
                 mr.setId(columnMapId);
                 mr.setColumnKey(key);
                 mr.setColumnId(json.getJSONObject(key).getInteger("columnId"));
                 mr.setSchemaId(json.getJSONObject(key).getInteger("schemaId"));
                 mr.setTableId(Long.valueOf(json.getJSONObject(key).getString("tableId")));
-                mr.setParserId(Long.parseLong(parserId));
+                mr.setTemplateName(templateName);
                 columnSetService.insertColumnMapRelation(mr);
 
                 // 保存dicName表

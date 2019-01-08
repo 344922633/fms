@@ -22,6 +22,7 @@ public class PropertyService {
         return dao.get(CLASSNAME, "getAllConfProperty", 1);
     }
 
+
     public void updateConfProperty(Property property) {
         dao.update(CLASSNAME, "updateConfProperty", property);
     }

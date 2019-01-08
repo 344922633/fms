@@ -12,6 +12,12 @@ public class ColumnDic {
     public ColumnDic() {
     }
 
+    public ColumnDic(Long columnMapId, String dicName, String dicValue) {
+        this.columnMapId = columnMapId;
+        this.dicName = dicName;
+        this.dicValue = dicValue;
+    }
+
     public ColumnDic(String dicName, String dicValue) {
         this.dicName = dicName;
         this.dicValue = dicValue;

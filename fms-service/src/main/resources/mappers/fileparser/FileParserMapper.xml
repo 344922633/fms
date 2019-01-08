@@ -172,4 +172,10 @@
         FROM information_schema.TABLES AS a INNER JOIN information_schema.COLUMNS AS b
         ON a.TABLE_NAME=b.TABLE_NAME AND a.TABLE_SCHEMA=(select database())
     </select>
+
+    <select id="getColumnInfoList" resultMap="tableInfo">
+        SELECT T.templateName as TABLE_NAME, T.columnKey as COLUMN_NAME, "" as COLUMN_KEY
+        FROM column_map_relation T
+    </select>
+
 </mapper>

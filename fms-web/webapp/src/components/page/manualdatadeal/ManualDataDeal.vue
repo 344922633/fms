@@ -34,15 +34,16 @@
                         </Card>
                     </Sider>
                   <Layout>
-        <Form :label-width="100">
-            <Divider>字段信息({{masterslave_name}})</Divider>
-            <FormItem v-for="(item, index) in tableColumns" :key="item.column_name" :label="item.column_desc">
-                <Input :type="checkType(item.data_type)" v-if="item.inputType != 'select' && !(item.max_length > 100) " v-model="item.value" :placeholder="item.data_type" :readonly="item.readonly" :value="item.value"/>
 
-                <Input type="textarea" v-if="item.inputType != 'select' && item.max_length > 100" v-model="item.value" :placeholder="item.data_type"/>
-                <Select v-if="item.inputType == 'select'" v-model="item.value" filterable>
-                    <Option :value="singlevalue.selectValue" v-for="singlevalue in item.selectvalue" >{{singlevalue.selectLable}}</option>
-                </Select>
+          <Divider>字段信息()</Divider>
+        <Form v-if="tableColumns" :label-width="100">
+            <FormItem v-for="(item, index) in tableColumns" :data="item.column.dicTableName" :key="item.column.id" :label="item.column.columnChinese">
+
+                <Input  v-if="item.column.isDic === 0" v-model="item.column.dataValue" :placeholder="item.column.dataType" />
+                  <Select v-if="item.column.isDic === 1" v-model="item.column.dicList" filterable>
+                     <Option :value="singlevalue.MC" v-for="singlevalue in item.dicList" >{{singlevalue.MC}}</option>
+                 </Select>
+
             </FormItem>
             <Button @click="handleSave">保存</Button>
         </Form>
@@ -60,7 +61,7 @@
                 tableName: '',
                 tableNames: [],
                 masterslaveList: [],
-                tableColumns:[],
+                tableColumns:null,
                 treedata: [],
                 defaultProps: {
                   children: 'children',
@@ -75,7 +76,7 @@
         methods: {
             checkType(type){
                 if(type == "varchar" || type == "char"){
-                    return "test";
+                    return "text";
                 }else{
                     return "number";
                 }
@@ -96,12 +97,13 @@
 
             },
             getColumns(data) {
-            var masterslaveview_name = data.name;
+                var masterslaveview_id = data.id;
             var timestamp = (new Date()).valueOf();
                 this.$axios.post('mvc/listColumnsFormasterslave', {
-                    masterslavename: masterslaveview_name
+                    masterSlaveId: masterslaveview_id
                 }).then(res => {
                     this.tableColumns = res.data;
+                    console.log(res.data, '返回数据');
                     //alert(JSON.stringify(this.tableColumns));
                     this.tableColumns.forEach((item, index) => {
                     if(item.column_key=="PRI" ){

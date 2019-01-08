@@ -14,5 +14,6 @@ public class ColumnInfo {
     private int schemaId;
     private String dicTableName;
     private String columnChinese;
+    private String dicList;
 
 }

@@ -123,15 +123,8 @@
               </table>
          </div>
 
-
-
-           <!-- <Table :columns="tableShowColumns" :data="tableShowData" style="width:100%;overflow-x:scroll;"
-                   @on-row-dblclick="tableRowDoubleClick"></Table> -->
             <Divider> 解析字段</Divider>
             <div v-if="columnData && Object.keys(columnData).length" style="height: 300px; overflow-y: auto;">
-                <center>
-                    <el-input v-model="input"  style="width: 300px"></el-input>
-                </center>
             <Form inline v-for="(data,key) in columnData" :key="key">
                 <FormItem :label-width="100" :label="key">
                 </FormItem>
@@ -155,7 +148,7 @@
                         <Option v-for="(table,tableIdx) in columnSelectMap[key].tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
                     </Select>
                 </FormItem>
-              <!--  <FormItem label="选择字段">
+                <FormItem label="选择字段">
                     <Select filterable
                         @on-change="(columnId) => getDicByColumn(columnId, key)"
                         style="width: 180px"
@@ -164,28 +157,12 @@
                     >
                         <Option v-for="(column,columnIdx) in columnSelectMap[key].columns" :value="column.id" :key="column.id"> {{ column.columnChinese }}</Option>
                     </Select>
-                </FormItem>-->
-                <FormItem label="选择字段">
-                <el-select v-model="columnKeyNamesMap[key].columnId"  style="width: 180px" placeholder="请选择">
-                    <el-option
-                        v-for="(column,columnIdx) in columnSelectMap[key].columns"
-                        :value="column.id"
-                        :key="column.id"
-                        :label="column.columnChinese"
-                        :disabled="column.disabled">
-                    </el-option>
-                </el-select>
                 </FormItem>
                 <template v-if="columnSelectMap[key] && columnSelectMap[key].dicTables">
-                    <FormItem label=" ">
-                        <div style="margin-top:30px">==></div>
-                    </FormItem>
-                    <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.dicTableName">
-                        <Select
+                    <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.columnChinese">
+                        <Select filterable
                             style="width: 180px"
-                            @on-change="(val)=>{changeColumnDicMap(dicTable.dicTableName,val)}"
-                            v-model="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
-                            filterable
+                            v-model="columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]"
                             :clearable="true"
                         >
                             <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM" :key="dic.DM"> {{ dic.MC }}</Option>
@@ -216,34 +193,33 @@
         <Divider> 解析数据</Divider>
 -->
         <div ref="table" v-show="false"></div>
-        <center><Button type="primary" @click="parseDataSaveDatabase">入库</Button></center>
-        
-        <br/>
-        <center><Button type="primary" @click="handleSaveMapInfo;saveTemplate">保存映射关系到原模板</Button></center>
-	<br/>
-        <center><Button type="primary" @click="handleSaveMapInfo;saveTemplate">保存映射关系到新模板</Button></center>
+        <Button type="primary" @click="parseDataSaveDatabase">入库</Button>
+        <Button type="primary" @click="saveTemplateToOrigin">保存映射关系到原模板</Button></center>
+        <Button type="primary" @click="saveTemplateToNew">保存映射关系到新模板</Button>
 
-        <!--<Modal-->
-            <!--title="修改数据"-->
-            <!--v-model="updateTableRowDataIsShow"-->
-            <!--@on-ok="updateTableRowData"-->
-            <!--:mask-closable="false">-->
-            <!--<Form label-position="right" :label-width="120">-->
-                <!--<FormItem :label="item.key" v-for="(item,index) in tableShowColumns" :key="index">-->
-                    <!--<Input v-model="currentRowData[item.key]" style="width: 300px"-->
-                           <!--:maxlength="tableInputMaxLength(item.key)"/>-->
-                <!--</FormItem>-->
-            <!--</Form>-->
-        <!--</Modal>-->
+    <Modal
+            title="请输入模板名称"
+            v-model="templateNameVisible"
+            @on-ok="handleSaveMapInfo"
+            :mask-closable="false">
+        <el-form ref="form" :model="form" :label-position="labelPosition" label-width="100px" :rules="rules">
+            <el-form-item label="模板名称：" >
+                    <el-input v-model="templateName"></el-input>
+            </el-form-item>
+        </el-form>
+    </Modal>
     </div>
 </template>
 <script>
- /*   //import ICol from "../../../../../../../../project/fms12251730/fms/fms-web/webapp/node_modules/iview/src/components/grid/col.vue";*/
     import ICol from "../../../../node_modules/iview/src/components/grid/col.vue";
     import Vue from 'vue';
     import Bus from '@/components/common/bus'
 
     const originData = {
+        form: {
+            templateName: ''
+        },
+        templateNameVisible:false,
         modalPreviewFile: false,//预览弹出窗口
         previewFileData: '',
         uploadListFile: [],
@@ -329,17 +305,6 @@
                 default: {}
             }
         },
-
-
-
-
-
-
-
-
-
-
-
         created() {
             var me = this;
             //重新打开页面 清空数据
@@ -383,12 +348,10 @@
         async mounted() {
         },
         methods: {
+            saveTemplateToNew(){
+                this.templateNameVisible = true;
 
-
-
-
-
-
+            },
 
             submitTopology() {
                 const name = this.topologyName
@@ -732,36 +695,14 @@
                     this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
                 })
             },
-            changeColumnDicMap(mapName, val) {
-                for (let i in this.columnKeyNamesMap) {
-                    let cur = this.columnKeyNamesMap[i]
-                    cur.dicMap[mapName] = val
-                    this.$set(cur, dicMap, cur.dicMap)
-                }
-            },
+
             getColumnsByTable(tableId, key) {
                 this.$axios.post('mvc/getColumnsForTable', {
                     tableId
                 }).then(res => {
-                    //let dicData = data.filter(v => v.isDic === 0)
-                    let result = []
-                    for (let i in this.columnKeyNamesMap) {
-                        let cur = this.columnKeyNamesMap[i]
-                        if (cur.columnId) {
-                            result.push(cur.columnId)
-                        }
-                    }
-                    console.log(result)
-                    console.log(res.data)
-                    for(let j in res.data){
-                        let cur = res.data[j]
-                        if(result.indexOf(cur.id) < 0){
-                            cur.disabled=false
-                        }else{
-                            cur.disabled=true
-                        }
-                    }
-                    this.$set(this.columnSelectMap[key], 'columns', res.data)
+                    const data = res.data || []
+                    const dicData = data.filter(v => v.isDic === 0)
+                    this.$set(this.columnSelectMap[key], 'columns',dicData)
                     this.$set(this.columnKeyNamesMap[key], 'columnId', '')
                     this.$set(this.columnSelectMap[key], 'dicTables', null)
                     this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
@@ -769,17 +710,6 @@
                 this.getDicByTableId(tableId, key)
             },
             getDicByColumn(columnId, key) {
-                let result = []
-                for (let i in this.columnKeyNamesMap) {
-                    let cur = this.columnKeyNamesMap[i]
-                    if (cur.columnId) {
-                        result.push(cur.columnId)
-                    }
-                }
-                if(result.indexOf(columnId) >= 0){
-                    alert('请勿选择同库同表同字段。')
-                    this.$set(this.columnKeyNamesMap[key], 'columnId', '')
-                }
                 // const column = this.columnSelectMap[key]['columns'].find(c => c.id === columnId)
                 // console.log(column)
                 // const {isDic, tableId} = column || {}
@@ -791,14 +721,7 @@
                 }).then(res => {
                     const dicTables = res.data || []
                     this.$set(this.columnSelectMap[key], 'dicTables', dicTables)
-                    let dicMap = null
-                    for (let i in this.columnKeyNamesMap) {
-                        let cur = this.columnKeyNamesMap[i]
-                        if (cur.dicMap && Object.keys(cur.dicMap).length) {
-                            dicMap = cur.dicMap
-                        }
-                    }
-                    this.$set(this.columnKeyNamesMap[key], 'dicMap', dicMap || {})
+                    this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
 
                     dicTables.forEach(dicTable => {
                         const { columnEnglish } = dicTable
@@ -820,7 +743,8 @@
 
             handleSaveMapInfo() {
             console.log(this.columnKeyNamesMap)
-                this.$axios.post('mvc/saveColumnMapInfos', {
+                this.$axios.post('mvc/addColumnMapRelations', {
+                    templateName:this.templateName,
                     columnKeyNamesMap:JSON.stringify(this.columnKeyNamesMap),
                     parserId:this.file.recommendParserId
                 }).then(res => {

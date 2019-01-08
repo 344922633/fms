@@ -16,7 +16,7 @@ public class KafkaMessageListener {
 
     public final CountDownLatch latch1 = new CountDownLatch(1);
 
-    @KafkaListener(id = "0", topics = {"image","insert","log","operation_3rd1"})
+    @KafkaListener(id = "0", topics = {"image","insert","log","operation105_1"})
     public void listen1(ConsumerRecord<?, ?> record) {
         switch (record.topic()){
             case "image":
@@ -28,7 +28,7 @@ public class KafkaMessageListener {
             case "log":
                 LOGGER.info("监听到日志==》"+record.toString());
                 break;
-            case "operation_3rd1":
+            case "operation105_1":
                 LOGGER.info("监听到手工录入==》"+record.toString());
                 break;
         }

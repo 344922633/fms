@@ -43,7 +43,7 @@ public class ControlController {
         List<Control> list = controlService.getList(params);
         for(Control cl : list){
             List<ControlProperty> cpList = controlService.queryPropertyById(cl.getId());
-            cl.setCpList(cpList);
+            cl.setProperties(cpList);
         }
         return list;
     }
@@ -162,5 +162,53 @@ public class ControlController {
         }
         return ExtUtil.success("操作成功");
 
+    }
+
+    @RequestMapping("/addControl")
+    public Object addControl(Control control){
+        try {
+            //生成id
+            String id = System.currentTimeMillis() + "";
+            //添加Control数据
+            control.setId(id);
+            controlService.add(control);
+            //添加control_property数据
+            controlPropertyService.addControlPropertys(control.getProperties(),id);
+            return ExtUtil.success("操作成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ExtUtil.failure("系统出错了");
+        }
+
+    }
+
+    @RequestMapping("/delControl")
+    public Object delControl(String id){
+        try {
+            //清空control_property数据
+            controlPropertyService.delControlPropertyByControlId(id);
+            //清空control数据
+            controlService.delete(id);
+            return ExtUtil.success("操作成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ExtUtil.failure("系统出错了");
+        }
+    }
+
+    @RequestMapping("/updateControl")
+    public Object updateControl(Control control){
+        try {
+            //更新control数据
+            controlService.updateControl(control);
+            //清空control_property数据
+            controlPropertyService.delControlPropertyByControlId(control.getId());
+            //重新插入controlProperty数据
+            controlPropertyService.addControlPropertys(control.getProperties(),control.getId());
+            return ExtUtil.success("操作成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ExtUtil.failure("系统出错了");
+        }
     }
 }

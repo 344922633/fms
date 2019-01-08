@@ -9,6 +9,7 @@ import com.handu.apollo.data.mybatis.Dao;
 import com.handu.apollo.data.utils.Param;
 import com.handu.apollo.utils.CharPool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,8 @@ public class SchemaService {
     @Autowired
     KafkaTemplate kafkaTemplate;
 
+    @Autowired
+    private Environment env;
     public List<Map<String,Object>> listColumns(String tableName) {
         Map<String, Object> params = Param.get()
                 .put("tableName", tableName)
@@ -66,7 +69,7 @@ public class SchemaService {
                 .build();
 //        dao.insert(CLASSNAME, "insertData", params);
         //发送kafka消息
-        kafkaTemplate.send("operation_3rd1",SchemaUtil.schemaStrFormat(tableName,tableColumnTemp));
+        kafkaTemplate.send(env.getProperty("DEFAULT_TOPIC"),SchemaUtil.schemaStrFormat(tableName,tableColumnTemp));
     }
 
     public String getTableNameById(long tid){

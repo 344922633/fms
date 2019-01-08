@@ -25,7 +25,7 @@ public class SchemaUtil {
         String tempCode1=tempCode.toLowerCase();
         infoObj.put("objectCode", tempCode1);
         infoObj.put("objectCodeValue", list.get(0).get("value").toString());
-        infoObj.put("schema", "renzhi_1208");//库名
+        infoObj.put("schema",Constants.schema);//库名
         infoObj.put("table", tableName);//表名
         JSONArray columnArr = new JSONArray();
         JSONObject columnObj =null;
@@ -69,7 +69,7 @@ public class SchemaUtil {
                 infoObj.put("operationType", "INSERT");
                 infoObj.put("objectCode", "dxbm");
                 infoObj.put("objectCodeValue", str);
-                infoObj.put("schema", "renzhi_1208");//库名
+                infoObj.put("schema", Constants.schema);//库名
                 infoObj.put("table", tableName);//表名
                 JSONArray columnArr = new JSONArray();
                 JSONObject columnObj =null;

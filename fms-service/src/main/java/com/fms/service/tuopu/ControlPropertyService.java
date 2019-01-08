@@ -17,13 +17,34 @@ public class ControlPropertyService {
     @Autowired
     private Dao dao;
 
+
+
     public void addControlProperty(ControlProperty property){
         dao.insert(CLASSNAME,"addControlProperty",property);
     }
+
+    public void addControlPropertys(List<ControlProperty> controlProperties,String id){
+
+        //循环赋值外键id
+        for (ControlProperty controlProperty : controlProperties) {
+            controlProperty.setControlId(id);
+            //插入数据
+            dao.insert(CLASSNAME,"addControlProperty",controlProperty);
+        }
+
+    }
+
     public List<ControlProperty> getControlPropertyList(Map<String, Object> params) {
         return dao.getList(CLASSNAME, "getList", params);
     }
     public List<ControlProperty> getProperty(Map<String, Object> params) {
         return dao.getList(CLASSNAME, "getPropertyById", params);
+    }
+
+    /**
+     * 删除数据，根据外键
+     */
+    public void delControlPropertyByControlId(String controlId) {
+        dao.delete(CLASSNAME,"delControlPropertyByControlId",controlId);
     }
 }

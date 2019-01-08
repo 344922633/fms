@@ -1,6 +1,7 @@
 package com.fms.service.schema;
 
 import com.fms.domain.filemanage.MasterSlaveDo;
+import com.fms.domain.schema.ColumnDic;
 import com.fms.domain.schema.Template;
 import com.google.common.collect.Maps;
 import com.handu.apollo.base.Page;
@@ -35,6 +36,11 @@ public class TemplateService {
     public String getColumnNameById(int cid) {
         return dao.get(CLASSNAME, "getColumnNameById", cid);
     }
+
+    public String getTemplateNameById(long id) {
+        return dao.get(CLASSNAME, "getTemplateNameById", id);
+    }
+
 
     public Page<Template> page(Template template, Page page) {
         return dao.page(CLASSNAME, "query", "queryCount", template, page);
@@ -85,6 +91,15 @@ public class TemplateService {
 
     public void deleteTemplate(Long id) {
         dao.delete(CLASSNAME, "deleteTemplate", id);
+    }
+
+    public List<ColumnDic> findColumnDicById(Long id){
+        return dao.getList(CLASSNAME,"findColumnDicById",id);
+    }
+
+
+    public List<Template> findAllByTemplate(String templateName) {
+        return dao.getList(CLASSNAME,"findAllByTemplate",templateName);
     }
 
 }

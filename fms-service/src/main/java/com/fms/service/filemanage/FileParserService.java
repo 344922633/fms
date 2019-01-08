@@ -3,12 +3,15 @@ package com.fms.service.filemanage;
 import com.fms.domain.filemanage.File;
 import com.fms.domain.filemanage.FileParser;
 import com.fms.domain.filemanage.TableInfo;
+import com.fms.domain.schema.ColumnInfo;
+import com.fms.domain.schema.Template;
 import com.fms.utils.HbaseUtil;
 import com.handu.apollo.base.Page;
 import com.handu.apollo.data.mybatis.Dao;
 import com.handu.apollo.data.utils.Param;
 import com.handu.apollo.utils.CharPool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,8 @@ public class FileParserService {
     public static final String CLASSNAME = FileParserService.class.getName() + CharPool.PERIOD;
     @Autowired
     private Dao dao;
+    @Autowired
+    private Environment env;
 
     /**
      * 查询文件解析器list
@@ -266,6 +271,69 @@ public class FileParserService {
         return result;
     }
 
+
+    public Map<String, Object> parseDataForTableName(Set<String> set) {
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("allKey", set);
+        //查询所有模板的字段信息
+        List<TableInfo> data1 = dao.get(CLASSNAME,"getColumnInfoList",null);
+
+        //将表的字段信息以表名为key放到map中，方便处理
+        Map<String, List<Map<String, String>>> tables = new LinkedHashMap<>();
+        for (TableInfo tableInfo : data1) {
+            tables.put(tableInfo.getTable_name(), tableInfo.getColumnInfo());
+        }
+        //key的最大匹配次数
+        int maxNum = 0;
+        //最大匹配的表名
+        String maxTable = null;
+        //匹配最多的表的已匹配字段
+        Set<String> maxExistFields = null;
+        //遍历所有表字段，找到匹配最多的表
+        for (Map.Entry<String, List<Map<String, String>>> entry : tables.entrySet()) {
+            int num = 0;
+            Set<String> existFields = new LinkedHashSet<>();
+            for (Map<String, String> table : entry.getValue()) {
+                String column_name = table.get("column_name").toLowerCase();
+                for (String key : set) {
+                    if (key.equals(column_name)) {
+                        num++;
+                        existFields.add(column_name);
+                        break;
+                    }
+                }
+            }
+            if (num >= maxNum) {
+                maxNum = num;
+                maxTable = entry.getKey();
+                maxExistFields = existFields;
+            }
+        }
+        List<Map<String, String>> table = tables.get(maxTable);
+        //构建每个字段的备选数据，已经匹配到的字段无法修改，为匹配到的字段可以选择其他未被使用的字段
+        for (String key : set) {
+            Set<String> arrayList = new LinkedHashSet<>();
+            //已经匹配到得字段，数据无法修改，只能取匹配到的列
+            if (maxExistFields.contains(key)) {
+                arrayList.add(key);
+                result.put(key, arrayList);
+            } else {
+                //为匹配的字段，可以从未使用的列中选择
+                for (Map<String, String> column : table) {
+                    String column_name = column.get("column_name").toLowerCase();
+                    for (String field : maxExistFields) {
+                        if ( !maxExistFields.contains(column_name) && !field.equals(column_name)) {
+                            arrayList.add(column.get("column_name").toLowerCase());
+                        }
+                    }
+                }
+                result.put(key, arrayList);
+            }
+        }
+        result.put("table_name", maxTable);
+        return result;
+    }
+
     /**
      * 解析结果入库
      */
@@ -362,7 +430,7 @@ public class FileParserService {
         file.setRecommendParserId(parserId);
         dao.update(FileService.CLASSNAME, "update", file);
 
-        HbaseUtil.getHbaseConnection();
+        HbaseUtil.getHbaseConnection(env);
 
         HbaseUtil.addMoreRecordFromJSON("ns_fms:tb_file", "cf0", jsonStr, fileType, fileInfo, fileName, fileMD5);
 
@@ -396,7 +464,7 @@ public class FileParserService {
             index++;
         }
 
-        HbaseUtil.getHbaseConnection();
+        HbaseUtil.getHbaseConnection(env);
 
         HbaseUtil.addMoreRecordFromJSON("ns_fms:tb_file", "cf0", jsonStr, fileType, fileInfo, fileName, fileMD5);
 

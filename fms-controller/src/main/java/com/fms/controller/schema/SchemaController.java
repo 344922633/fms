@@ -83,28 +83,25 @@ public class SchemaController {
         if (list != null && list.size() > 0) {
             MasterSlaveDo masterSlaveDo = list.get(0);
 
-            List<ColumnInfo> masterList = schemaService.listColumnsForMasterTable(masterSlaveDo.getMasterTableId());
+            List<ColumnInfo> masterList = columnInfoService.getColumnsInfo(masterSlaveDo.getMasterTableId());
 
             for (ColumnInfo column : masterList) {
-                TableInfo tableInfo = columnInfoService.queryTableInfoById(column.getTableId());
-                Map<String, Object> columnMap = schemaService.getColumnnInfo(tableInfo.getTableEnglish(), column.getColumnEnglish());
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("column", column);
-                if (columnMap != null) {
-                    map.putAll(columnMap);
-                }
                 if (StringUtils.isNotEmpty(column.getDicTableName())) {
                     List<Map<String, Object>> dicList = columnSetService.getDicColumnsByDicName(column.getDicTableName());
                     map.put("dicList", dicList);
-
                 }
                 returnList.add(map);
             }
-            List<ColumnInfo> returnListForSLave = schemaService.listColumnsForMasterTable(masterSlaveDo.getSlaveTableId());
 
-            for (ColumnInfo column : returnListForSLave) {
+            List<ColumnInfo> returnListForSLave = columnInfoService.getColumnsInfo(masterSlaveDo.getSlaveTableId());
+
+/*            for (ColumnInfo column : returnListForSLave) {
                 TableInfo tableInfo = columnInfoService.queryTableInfoById(column.getTableId());
-                Map<String, Object> columnMap = schemaService.getColumnnInfo(tableInfo.getTableEnglish(), column.getColumnEnglish());
+                List<ColumnInfo> columnInfoList = columnInfoService.getColumnsInfo(column.getTableId());
+
+//                Map<String, Object> columnMap = schemaService.getColumnnInfo(tableInfo.getTableEnglish(), column.getColumnEnglish());
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("column", column);
                 
@@ -114,6 +111,16 @@ public class SchemaController {
                     if (columnMap != null) {
                         map.putAll(columnMap);
                     }
+                }
+                returnList.add(map);
+            }*/
+
+            for (ColumnInfo column : returnListForSLave) {
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("column", column);
+                if (StringUtils.isNotEmpty(column.getDicTableName())) {
+                    List<Map<String, Object>> dicList = columnSetService.getDicColumnsByDicName(column.getDicTableName());
+                    map.put("dicList", dicList);
                 }
                 returnList.add(map);
             }

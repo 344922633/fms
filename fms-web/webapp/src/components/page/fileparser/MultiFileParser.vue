@@ -1768,7 +1768,10 @@
             },
 
             handleSetOk() {
-                this.waitClassData[this.currentIndex] = Object.assign({},this.waitClassData[this.currentIndex],this.idPropertiesMap[this.currentParser]);
+                let propertiesMap = {};
+                propertiesMap.paramList = this.idPropertiesMap[this.currentParser];
+                this.waitClassData[this.currentIndex] = Object.assign({},this.waitClassData[this.currentIndex],propertiesMap);
+
                 console.log(this.waitClassData[this.currentIndex], '多參數保存')
             },
 

@@ -7,7 +7,8 @@
      columnKey,
      columnId,
      tableId,
-     schemaId
+     schemaId,
+     templateName
     </sql>
 
     <select id="getTemplate" parameterType="long" resultType="com.fms.domain.schema.Template">
@@ -46,6 +47,13 @@
         from column_info
         where id=#{cid}
     </select>
+
+    <select id="getTemplateNameById" parameterType="java.lang.Long" resultType="java.lang.String">
+        select templateName
+        from column_map_relation
+        where id=#{id}
+    </select>
+
 
        <select id="getParserNameById" parameterType="java.lang.Long" resultType="java.lang.String">
         select name
@@ -95,4 +103,15 @@
         DELETE FROM column_dic
         WHERE columnMapId = #{id}
     </delete>
+
+    <select id="findColumnDicById" parameterType="java.lang.Long" resultType="com.fms.domain.schema.ColumnDic">
+        select dicName,dicValue from column_dic where columnMapId = #{id}
+    </select>
+
+    <select id="findAllByTemplate" parameterType="String" resultType="com.fms.domain.schema.Template">
+        select * from column_map_relation where templateName = #{templateName}
+    </select>
+
+
+
 </mapper>

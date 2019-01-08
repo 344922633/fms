@@ -6,12 +6,15 @@ import com.alibaba.fastjson.JSONObject;
 
 import com.caeit.parser.visioParser.VisioParser;
 import com.fms.domain.tuopu.Picture;
+import com.fms.service.filemanage.FileParserService;
 import com.fms.service.tuopu.ControlService;
 import com.fms.service.tuopu.PictureService;
+import com.fms.utils.JSONUtils;
 import com.fms.utils.ParamUtil;
 import com.handu.apollo.base.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,8 +38,11 @@ public class PictureController {
     private KafkaTemplate kafkaTemplate;
 
     @Autowired
+    private Environment env;
+    @Autowired
     private ControlService controlService;
-
+    @Autowired
+    private FileParserService fileParserService;
     @RequestMapping(value = "testPic", method = RequestMethod.GET)
     public void testPic() {
         System.out.println("test");
@@ -88,8 +92,6 @@ public class PictureController {
 
         // 将读取的数据转换为JSONObject
         JSONObject jsonObject = JSONObject.parseObject(jsonData);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-        String date = df.format(new Date());
 
         JSONArray btnArray = jsonObject.getJSONArray("datas");
 
@@ -117,7 +119,6 @@ public class PictureController {
 
             JSONArray columns = new JSONArray();
 
-            JSONObject jo = btnArray.getJSONObject(i);
             JSONObject properties = null;
      /*           if (jo.containsKey("properties")) {
                     properties = JSON.parseObject(json.getString("properties"));
@@ -141,26 +142,20 @@ public class PictureController {
                     if (jsonKey.equals("id")) {
                         continue;
                     }
-                    if (jsonKey.equals("schema")) {
-                        obj1.put("schema", properties.get(jsonKey).toString());
-                        continue;
-                    }
-                    if (jsonKey.equals("table")) {
-                        obj1.put("table", properties.get(jsonKey).toString());
-                        continue;
-                    }
-                    if (jsonKey.equals("dxbm")) {
-                        str= properties.get(jsonKey).toString();
+                    if (jsonKey.toLowerCase().equals("dxbm")) {
+                        str = properties.get(jsonKey).toString();
                         obj1.put("objectCode", "dxbm");
                         obj1.put("objectCodeValue", str);
                         continue;
                     }
                     JSONObject jsonCol = new JSONObject();
-                    jsonCol.put("name", jsonKey);
+                    jsonCol.put("name", jsonKey.toLowerCase());
                     jsonCol.put("value", properties.get(jsonKey));
                     columns.add(jsonCol);
-
                 }
+                String tableName = getTable(columns.toJSONString());
+                obj1.put("schema", env.getProperty("schema"));
+                obj1.put("table",tableName);
                 columnObj1.put("name", "dxbm");
                 columnObj1.put("value", str);
                 columns.add(columnObj1);
@@ -170,11 +165,39 @@ public class PictureController {
                 obj.put("data", data);
 
                 System.out.println(obj.toJSONString());
-                kafkaTemplate.send("operation_3rd1", obj.toJSONString());
+                kafkaTemplate.send(env.getProperty("DEFAULT_TOPIC"), obj.toJSONString());
             }
-
         }
-    }
+        }
+
+        public String getTable(String str) {
+
+            List<Map<String, Object>> json = new ArrayList<>();
+            try {
+                JSONArray arrayList = JSONArray.parseArray(str);
+                //获取返回数据中jsonBottomLevel每个tab对应的数据
+//            for (int i = 0; i < arrayList.size(); i++) {
+//                JSONObject jsonObject = arrayList.getJSONObject(i);
+//
+//                Iterator<String> it = jsonObject.keySet().iterator();
+//                if (it.hasNext()) {
+//                    // 获得key
+//                    String key = it.next();
+//                    String value = jsonObject.getString(key);
+                json.addAll(JSONUtils.jsonToObject(arrayList.toJSONString(), List.class, Map.class));
+
+//                }
+
+//            }
+                //json=JSONUtils.jsonToObject(data.get("jsonBottomLevel"),List.class,Map.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Map<String, Object> result = fileParserService.parseData(json);
+            System.out.println(result.get("table_name").toString());
+            return result.get("table_name").toString();
+        }
+
 
     @ResponseBody
     @RequestMapping("insertData")

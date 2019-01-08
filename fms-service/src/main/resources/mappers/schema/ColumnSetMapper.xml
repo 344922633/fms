@@ -34,24 +34,27 @@
         select * from table_info where schemaId = #{sid}
   </select>
 
+
   <select id="getDicColumnsByDicName" parameterType="java.lang.String" resultType="java.util.Map" >
         select * from  ${_parameter}
     </select>
 
+
   <insert id="insertColumnMapRelation" parameterType="com.fms.domain.schema.ColumnMapRelation" >
-    INSERT INTO column_map_relation (columnKey,schemaId,tableId,columnId,parserId)
+    INSERT INTO column_map_relation (columnKey,schemaId,tableId,columnId,templateName)
     VALUES (
 
     #{columnKey},
     #{schemaId},
     #{tableId},
     #{columnId},
-    #{parserId}
+    #{templateName}
+
     )
   </insert>
 
   <insert id="insertColumnDic" parameterType="com.fms.domain.schema.ColumnDic" >
-    INSERT INTO column_dic (dicName,dicValue,columnMmapId)
+    INSERT INTO column_dic (dicName,dicValue,columnMapId)
     VALUES (
     #{dicName},
     #{dicValue},

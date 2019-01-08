@@ -20,6 +20,8 @@
         )
     </insert>
 
+
+
     <select id="getList" parameterType="map" resultType="com.fms.domain.tuopu.Control">
         SELECT <include refid="all" />
         FROM t_control
@@ -45,6 +47,7 @@
     <select id="queryPropertyById" parameterType="String" resultType="com.fms.domain.tuopu.ControlProperty">
         SELECT *
         FROM t_control_property
+        where controlId = #{controlId}
     </select>
 
 

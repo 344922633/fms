@@ -12,6 +12,8 @@ import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,11 +28,17 @@ public class HbaseUtil {
     protected static Admin admin = null;
 
     private final static Logger logger = LoggerFactory.getLogger(HbaseUtil.class);
+    @Value("${GROUP_ID_CONFIG}")
+    private static String GROUP_ID_CONFIG;
 
+    //测试代码
+    public static void main(String[] args) {
+        System.out.println("操作完成:"+GROUP_ID_CONFIG);
+    }
     /**
      * @desc 取得连接
      */
-    public static void getHbaseConnection() {
+    public static void getHbaseConnection(Environment env) {
         try {
             File workaround = new File(".");
             System.getProperties().put("hadoop.home.dir", workaround.getAbsolutePath());
@@ -41,7 +49,7 @@ public class HbaseUtil {
                 //
             }
             conf = HBaseConfiguration.create();
-            conf.set("hbase.zookeeper.quorum",Constants.HBASE_ZOOKEEPER_QUORUM);//zookeeper地址
+            conf.set("hbase.zookeeper.quorum",env.getProperty("HBASE_ZOOKEEPER_QUORUM"));//zookeeper地址
             connection = ConnectionFactory.createConnection(conf);
             admin = connection.getAdmin();
         } catch (IOException e) {
@@ -480,7 +488,7 @@ public class HbaseUtil {
         return uuid.replaceAll("-", "");
     }
 
-    public static void main(String[] args) throws IOException {
+  /*  public static void main(String[] args) throws IOException {
         getHbaseConnection();
         String data = "{\"course\":[{\"idcourse\":\"1\",\"name\":\"语文1\",\"teacher\":\"张语文\",\"time\":\"50\",\"score\":\"5\",\"college\":\"1\",\"TableSchema\":\"TableName:course;idcourse:int(11);name:varchar(45);teacher:varchar(45);time:varchar(45);score:int(11);college:int(11);PrimaryKey:idcourse;\"},{\"idcourse\":\"2\",\"name\":\"数学1\",\"teacher\":\"张数学\",\"time\":\"40\",\"score\":\"4\",\"college\":\"1\",\"TableSchema\":\"TableName:course;idcourse:int(11);name:varchar(45);teacher:varchar(45);time:varchar(45);score:int(11);college:int(11);PrimaryKey:idcourse;\"},{\"idcourse\":\"3\",\"name\":\"英语1\",\"teacher\":\"张英语\",\"time\":\"30\",\"score\":\"3\",\"college\":\"1\",\"TableSchema\":\"TableName:course;idcourse:int(11);name:varchar(45);teacher:varchar(45);time:varchar(45);score:int(11);college:int(11);PrimaryKey:idcourse;\"}],\"courseTest\":[{\"idcourseTest\":\"1\",\"name\":\"语文1\",\"teacher\":\"张语文\",\"time\":\"50\",\"score\":\"5\",\"college\":\"1\",\"TableSchema\":\"TableName:courseTest;idcourseTest:int(11);name:varchar(45);teacher:varchar(45);time:varchar(45);score:int(11);college:int(11);PrimaryKey:idcourseTest;\"},{\"idcourseTest\":\"2\",\"name\":\"数学1\",\"teacher\":\"张数学\",\"time\":\"40\",\"score\":\"4\",\"college\":\"1\",\"TableSchema\":\"TableName:courseTest;idcourseTest:int(11);name:varchar(45);teacher:varchar(45);time:varchar(45);score:int(11);college:int(11);PrimaryKey:idcourseTest;\"},{\"idcourseTest\":\"3\",\"name\":\"英语1\",\"teacher\":\"张英语\",\"time\":\"30\",\"score\":\"3\",\"college\":\"1\",\"TableSchema\":\"TableName:courseTest;idcourseTest:int(11);name:varchar(45);teacher:varchar(45);time:varchar(45);score:int(11);college:int(11);PrimaryKey:idcourseTest;\"}]}";
         String md5 = "DDDDFFFFZZZZEEEE";
@@ -500,7 +508,7 @@ public class HbaseUtil {
         scanValues("ns_fms:tb_file", "cf0", "file_name", "ApacheLogParser_testFile.log");
         close();
 
-    }
+    }*/
 
 
     public static void queryDemo() {

@@ -41,7 +41,7 @@
             </span>
             </el-dialog>
 
-            <el-dialog title="新增" :visible.sync="addVisible" width="40%">
+            <el-dialog title="新增" :visible.sync="addVisible" width="40%"  :before-close="closeDialog">
                 <el-form ref="form" :model="form" label-width="100px">
                     <el-form-item label="控件名称" label-width="100px">
                         <el-input v-model="form.name" style="width:200px;"></el-input>
@@ -77,6 +77,7 @@
                     <el-form-item label="控件上传" label-width="100px">
                         <el-upload
                             ref="elUpload"
+                            :class="uploadSuccessState ? 'uploadSuccess': ''"
                             action="mvc/control/imgUpload"
                             list-type="picture-card"
                             accept="image/*"
@@ -91,10 +92,6 @@
                             :on-error="imgUploadError">
                             <i class="el-icon-plus"></i>
                         </el-upload>
-                        <!--    <el-dialog :visible.sync="dialogVisible">
-                                <img width="100%" :src="dialogImageUrl" alt="">
-                            </el-dialog>
-    -->
                         <!--    <el-upload
                                 class="avatar-uploader"
                                 action="mvc/sd"
@@ -120,24 +117,35 @@
                         <el-form-item label-width="100px" :label="`控件属性${index || ''}`" v-for="(item, index) in inputs"
                                       :key="index">
                             <div class="proper-wrap">
-                                <el-input v-model="item.text" style="width:200px;"></el-input>
+                                <el-input v-model="item.propertyChinese" style="width:200px;"></el-input>
                                 <i v-if="index === 0" class="el-icon-plus" @click="addInput"></i>
                                 <i v-else class="el-icon-minus" @click="removeInput(index)"></i>
                             </div>
                         </el-form-item>
-                        <el-form-item label="控件类型" label-width="100px">
-                            <el-select v-model="form.type" fiterable placeholder="请选择" style="width:200px;">
+                        <el-form-item label="控件类型(一级)" label-width="100px">
+                            <el-select v-model="form.parentType" filterable placeholder="请选择" style="width:200px;">
                                 <el-option
                                     v-for="(menu, menuIdx) in menuList"
-                                    :key="menu.id"
+                                    :key="menu.name"
                                     :label="menu.name"
-                                    value="menu.id">
+                                    :value="menu.name">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="控件类型(二级)" label-width="100px">
+                            <el-select @change="onChangeType" v-model="form.type" filterable placeholder="请选择" style="width:200px;">
+                                <el-option
+                                    v-for="(menu, menuIdx) in menuIdChildrenMap[form.parentType]"
+                                    :key="menu.name"
+                                    :label="menu.name"
+                                    :value="menu.name">
                                 </el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="控件上传" label-width="100px">
                             <el-upload
                                 ref="elUpload"
+                                :class="uploadSuccessState ? 'uploadSuccess': ''"
                                 action="mvc/control/imgUpload"
                                 list-type="picture-card"
                                 accept="image/*"
@@ -152,10 +160,7 @@
                                 :on-error="imgUploadError">
                                 <i class="el-icon-plus"></i>
                             </el-upload>
-                            <!--    <el-dialog :visible.sync="dialogVisible">
-                                    <img width="100%" :src="dialogImageUrl" alt="">
-                                </el-dialog>
-        -->
+
                             <!--    <el-upload
                                     class="avatar-uploader"
                                     action="mvc/sd"
@@ -167,8 +172,8 @@
                                 </el-upload>-->
                         </el-form-item>
                         <el-form-item>
-                            <el-button @click="cancelCrop">取 消</el-button>
-                            <el-button type="primary" @click="onSubmit">提交</el-button>
+                            <el-button @click="editVisible=false;reset">取 消</el-button>
+                            <el-button type="primary" @click="onSubmit('edit')">提交</el-button>
                         </el-form-item>
                     </el-form>
 
@@ -187,6 +192,9 @@
                     @current-change="handleCurrentChange">
                 </el-pagination>
             </div>
+            <el-dialog class="uploadImgMask" :visible.sync="dialogVisible">
+                <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
         </div>
     </div>
 </template>
@@ -205,6 +213,9 @@
                 },
                 editVisible:false,
                 pageSize:20,
+                //图片是否上传成功
+                uploadSuccessState:false,
+                editDialogVisible:false,
                 currentPage:1,
                 delVisible: false,
                 addVisible: false,
@@ -212,7 +223,7 @@
                 dialogVisible: false,
                 productImgs: [],
                 isMultiple: true,
-                imgLimit: 6,
+                imgLimit: 1,
                 inputs: [
                     {text: ''}
                 ],
@@ -224,19 +235,22 @@
             this.getData();
             this.getMenuList()
         },
+        watch: {
+
+        },
         methods: {
             onChangeType(type) {
                 const children = this.menuIdChildrenMap[this.form.parentType]
                 const selectedType = children.find(child => child.name === type)
                 const { id } = selectedType || {}
                 this.$axios.post('mvc/listColumnsFormasterslave', { masterSlaveId: id }).then((res) => {
-                    this.inputs = []
+
                     let { data } = res
                     data = data || []
                     data.forEach(item => {
                         const {column} = item
                         const { columnChinese, columnEnglish } = column
-                        this.inputs.push({
+                           this.inputs.push({
                             text: columnChinese,
                             canDelete: false,
                             ...item
@@ -245,6 +259,18 @@
                 }).catch(function (error) {
                     console.log(error);
                 })
+            },
+            //关闭清空数据
+            closeDialog(done){
+                        done();
+                        this.productImgs = [];
+                        this.inputs = [
+                            {text: ''}
+                        ];
+                        this.form = {
+                            name: '',
+                            type: '',
+                        };
             },
             getMenuList() {
                 this.$axios.post('mvc/getMenuListFormasterslave').then((res) => {
@@ -262,6 +288,8 @@
                 this.currentPage = val;
             },
 
+            //新增
+
             handleAdd() {
                 this.form = {
                     name: "",
@@ -269,22 +297,32 @@
                     type: "",
                     imageUrl: ""
                 };
+
                 this.addVisible = true;
+                this.uploadSuccessState = false;
             },
             handleEdit(index, row) {
                 this.idx = index;
                 const item = this.tableData[index];
+                console.log(row)
                 this.form = {
+                    id:item.id,
                     name: item.name,
                     parentType: item.parentType,
                     type: item.type,
-                    imageUrl: item.imageUrl
+                    imageUrl: item.image
                 };
+                if(item.image) {
+                    this.uploadSuccessState = true;
+                }
+                this.productImgs = [{url: item.image}];
                 this.editVisible = true;
             },
             async getData() {
                 let {data} = await this.$axios.post('mvc/control/getList');
+                console.log(data, '初始化数据');
                 this.tableData = data;
+                // this.inputs = data[0].cpList;
             },
 
             handleDelete(index, row) {
@@ -294,13 +332,14 @@
 
             // 确定删除
             async deleteRow(){
-                await this.$axios.post('mvc/control/delete', {id: this.tableData[this.idx].id});
+                await this.$axios.post('mvc/control/delControl', {id: this.tableData[this.idx].id});
                 await this.getData();
                 this.$message.success('删除成功');
                 this.delVisible = false;
             },
 
             handleRemove(file, fileList) {//移除图片
+            this.uploadSuccessState = false;
                 console.log(file, fileList);
             },
             handlePictureCardPreview(file) {//预览图片时调用
@@ -308,7 +347,11 @@
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
             },
-
+            handleEditPictureCardPreview(file) {//预览图片时调用
+                console.log(file);
+                this.dialogImageUrl = file.url;
+                this.editDialogVisible = true;
+            },
             beforeAvatarUpload(file) {//文件上传之前调用做一些拦截限制
                 console.log(file);
                 const isJPG = true;
@@ -331,9 +374,10 @@
                     return
                 }
                 this.form.imageUrl = url;
+                this.uploadSuccessState = true;
             },
             handleExceed(files, fileList) {//图片上传超过数量限制
-                this.$message.error('上传图片不能超过6张!');
+                this.$message.error('上传图片只能一张!');
                 console.log(file, fileList);
             },
             imgUploadError(err, file, fileList) {//图片上传失败调用
@@ -348,11 +392,17 @@
             removeInput(index) {
                 this.inputs.splice(index, 1)
             },
-            onSubmit() {
-                const {name, type, imageUrl} = this.form
+
+            //提交
+
+            onSubmit(s_type) {
+                const {name, type, imageUrl} = this.form;
+                let tableData = this.tableData;
+
                 const inputsValid = this.inputs.some(v => {
                     return v.text !== ''
                 })
+
                 if (!name || !type || !inputsValid || !imageUrl) {
                     this.$message.warning('请填写完整表单, 并上传图片')
                     return
@@ -368,19 +418,56 @@
                     spinner: 'el-icon-loading',
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
-                this.$axios.post("mvc/control/add", {
+                var url,params ;
+                var params = {
                     name: this.form.name,
                     type: this.form.type,
+                    type1: this.form.parentType,
                     properties: JSON.stringify(this.inputs),
                     url: this.form.imageUrl
-                }).then(function (result) {
+                }
+                //添加
+                if(s_type == 'add'){
+                    url = "mvc/control/addControl";
+                    for(let i = 0,len = tableData.length; i < len; i++) {
+                        if(tableData[i].name == this.form.name){
+                            this.$message.warning('控件名重复');
+                            return ;
+                        }
+                    }
+                }else{
+                    //修改
+                    url = "mvc/control/updateControl";
+                    params.id = this.form.id;
+                }
+
+
+                this.$axios.post(url, params).then( (result) => {
+                    console.log(result, '成功')
+                    this.editVisible = false;
+                    this.addVisible = false;
                     this.$message.success('提交成功')
-                    // this.getData();
+
+                    this.getData();
                     this.reset()
                     loading.close()
                 }).catch(e => {
+                    console.log(e, '失败')
+                    this.editVisible = false;
                     loading.close()
                 })
+            },
+            cancelCrop(){
+                this.form = {
+                    name: '',
+                    type: '',
+                };
+                this.inputs = [
+                    {text: ''}
+                ];
+                this.productImgs = [];
+                this.uploadSuccessState = false;
+
             },
             reset() {
                 this.form = {
@@ -397,6 +484,12 @@
 </script>
 
 <style>
+    .uploadSuccess .el-upload.el-upload--picture-card{
+        display:none;
+    }
+    .uploadImgMask .el-dialog__wrapper{
+        z-index:999999 !important;
+    }
     .avatar-uploader .el-upload {
         border: 1px dashed #d9d9d9;
         border-radius: 6px;

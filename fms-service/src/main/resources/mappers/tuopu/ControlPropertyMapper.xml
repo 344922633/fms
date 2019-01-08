@@ -4,11 +4,12 @@
 
 
     <insert id="addControlProperty" parameterType="com.fms.domain.tuopu.ControlProperty" >
-        INSERT INTO t_control_property (controlId,propertyChinese,property,dataType,dicName,dicList,isDic,propertyFlag)
+        INSERT INTO t_control_property (controlId,propertyChinese,property,customProperty,dataType,dicName,dicList,isDic,propertyFlag)
         VALUES (
         #{controlId},
         #{propertyChinese},
         #{property},
+        #{customProperty},
         #{dataType},
         #{dicName},
         #{dicList},
@@ -40,5 +41,10 @@
     <select id="getList" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
         SELECT * FROM t_control_property
   </select>
+
+
+    <delete id="delControlPropertyByControlId" parameterType="String">
+        delete from t_control_property where controlId = #{controlId}
+    </delete>
 
 </mapper>

@@ -45,6 +45,7 @@ public class ControlPropertyController {
                     obj.put("dicName", property.getDicName());
                     obj.put("propertyChinese", property.getPropertyChinese());
                     obj.put("property", property.getProperty());
+//                    obj.put("customProperty", property.getCustomProperty());
                     obj.put("propertyFlag", property.getPropertyFlag());
                     obj.put("dataType",property.getDataType());
                     obj.put("dicList",property.getDicList());

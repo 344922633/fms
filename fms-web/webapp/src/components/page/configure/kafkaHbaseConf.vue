@@ -19,6 +19,9 @@
                 <el-form-item label="HBASE_ZOOKEEPER_QUORUM：" prop="HBASE_ZOOKEEPER_QUORUM">
                     <el-input v-model="form.HBASE_ZOOKEEPER_QUORUM"></el-input>
                 </el-form-item>
+                <el-form-item label="schema：" prop="propertySchema">
+                    <el-input v-model="form.propertySchema"></el-input>
+                </el-form-item>
            <el-form-item>
               <el-button type="primary" @click="onSubmit">提交</el-button>
            </el-form-item>
@@ -35,17 +38,18 @@
                 labelPosition:"left",
                 pageSize: 10,
                 currentPage: 1,
-                rules: {
+  /*              rules: {
                     BOOTSTRAP_SERVERS: [{required: true, message: '请输入', trigger: 'blur'}],
                     GROUP_ID_CONFIG: [{required: true, message: '请输入', trigger: 'blur'}],
                     DEFAULT_TOPIC: [{required: true, message: '请输入', trigger: 'blur'}],
                     HBASE_ZOOKEEPER_QUORUM: [{required: true, message: '请输入', trigger: 'blur'}]
-                },
+                },*/
              form:{
                  BOOTSTRAP_SERVERS:"",
                  GROUP_ID_CONFIG:"",
                  DEFAULT_TOPIC:"",
-                 HBASE_ZOOKEEPER_QUORUM:""
+                 HBASE_ZOOKEEPER_QUORUM:"",
+                 propertySchema:""
              }
             }
         },
@@ -55,24 +59,27 @@
         },
         methods: {
             getData() {
-                this.$axios.post('mvc/confProperty/kafkaHbaseConf').then(res => {
-                    this.form.BOOTSTRAP_SERVERS = res.data.BOOTSTRAP_SERVERS;
-                    this.form.GROUP_ID_CONFIG = res.data.GROUP_ID_CONFIG;
-                    this.form.DEFAULT_TOPIC = res.data.DEFAULT_TOPIC;
-                    this.form.HBASE_ZOOKEEPER_QUORUM = res.data.HBASE_ZOOKEEPER_QUORUM
+                this.$axios.post('mvc/getConfProperty').then(res => {
+                    this.form.BOOTSTRAP_SERVERS = res.data.bootStrapServers;
+                    this.form.GROUP_ID_CONFIG = res.data.groupIdConfig;
+                    this.form.DEFAULT_TOPIC = res.data.defaultTopic;
+                    this.form.HBASE_ZOOKEEPER_QUORUM = res.data.hbaseZookeeperQuorum;
+                    this.form.propertySchema=res.data.propertySchema
+
                 });
             },
             async onSubmit() {
-                if (!this.form.BOOTSTRAP_SERVERS || !this.form.GROUP_ID_CONFIG || !this.form.DEFAULT_TOPIC || !this.form.HBASE_ZOOKEEPER_QUORUM) {
+                if (!this.form.BOOTSTRAP_SERVERS || !this.form.GROUP_ID_CONFIG || !this.form.DEFAULT_TOPIC || !this.form.HBASE_ZOOKEEPER_QUORUM||!this.form.propertySchema) {
                     this.$message.warning('请填写完整表单')
                     return
                 }
-
-                await this.$axios.post('mvc/confProperty/updateKafkaHbaseConf', {
+                console.log(this.form.id)
+                await this.$axios.post('mvc/updateConfProperty', {
                     BOOTSTRAP_SERVERS: this.form.BOOTSTRAP_SERVERS,
                     GROUP_ID_CONFIG: this.form.GROUP_ID_CONFIG,
                     DEFAULT_TOPIC: this.form.DEFAULT_TOPIC,
-                    HBASE_ZOOKEEPER_QUORUM: this.form.HBASE_ZOOKEEPER_QUORUM
+                    HBASE_ZOOKEEPER_QUORUM: this.form.HBASE_ZOOKEEPER_QUORUM,
+                    propertySchema:this.form.propertySchema
                 });
                 await this.getData();
             }

@@ -13,6 +13,7 @@ public class ControlProperty {
 	private long id;
 	private String propertyChinese;
 	private String property;
+	private String customProperty;
 	private String propertyEnglish;
 	private String controlId;
 	private String dataType;

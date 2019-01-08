@@ -4,8 +4,10 @@
         <div class="collapse-btn" @click="collapseChage">
             <i class="el-icon-menu"></i>
         </div>
-        <div class="logo">文件管理系统</div>
+        <div class="logo">网络态势综合分析系统</div>
+        <div class="flogo">--文件管理系统</div>
         <div class="header-right">
+            <div class="blac_div"><a href=""> 返回首页 <-汇聚系统</a></div>
             <div class="header-user-con">
                 <!-- 全屏显示 -->
                 <div class="btn-fullscreen" @click="handleFullScreen">
@@ -125,8 +127,16 @@
     }
     .header .logo{
         float: left;
-        width:250px;
+        width: 230px;
         line-height: 70px;
+        font-weight: bold;
+    }
+
+    .header .flogo{
+        float: left;
+        width:310px;
+        line-height: 74px;
+        font-size: 20px;
     }
     .header-right{
         float: right;
@@ -181,5 +191,13 @@
     }
     .el-dropdown-menu__item{
         text-align: center;
+    }
+    .blac_div{
+        float: left;
+        padding-right: 20px;
+        padding-top: 20px;
+    }
+    .blac_div a{
+        color:#ffffff;
     }
 </style>

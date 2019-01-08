@@ -61,7 +61,7 @@
                             <div style="margin-top:30px">==></div>
                         </FormItem>
                         <FormItem v-for="dicTable in selectMap[index].dicTables" :label="dicTable.dicTableName">
-                            <Select @on-change="(val)=>{changeColumnDicMap(dicTable.dicTableName,val)}"
+                            <Select @on-change="(val)=>{changeColumnDicMap(dicTable,val)}"
                                 v-model="formList[index]['dicMap'][dicTable.dicTableName]" filterable style="width: 180px">
                                 <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM" :key="dic.DM"> {{ dic.MC }}</Option>
                             </Select>
@@ -79,9 +79,6 @@
             </span>
         </el-dialog>
 
-
-<!--
-
         <el-dialog title="编辑" :visible.sync="editVisible" width="740px"  >
             <el-form ref="form"  :label-position="labelPosition" label-width="100px">
             <el-form-item label="模板名称：" prop="templateName">
@@ -89,27 +86,36 @@
             </el-form-item>
             <Form inline v-for="(item,index) in formList2">
                 <FormItem label="key：">
-                    <el-input v-model="formList2[index].columnKey" style="width: 130px"></el-input>
+                    <el-input v-model="item.columnKey" style="width: 130px"></el-input>
                 </FormItem>
                 <FormItem label="库名：" >
-                    <Select @on-change="(schemaId) => getTables(schemaId,index)" v-model="formList2[index].schemaId" filterable style="width: 130px">
+                    <Select @on-change="(schemaId) => getTables(schemaId,index)" v-model="item.schemaId" filterable style="width: 130px">
                         <Option v-for="(schema,schemaIdx) in schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="表名：">
                     <Select @on-change="(tableId) => getColumnsByTable(tableId,index)" v-model="formList2[index].tableId" filterable style="width: 130px">
-                        <Option v-for="(table,tableIdx) in selectMap[index].tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
+                        <Option v-for="(table,tableIdx) in selectMap[index].tables" :value="table.tableId" :key="table.tableId"> {{ table.tableChinese }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="字段名：">
                     <Select @on-change="(columnId) => getDicByColumn(columnId,index)" v-model="formList2[index].columnId" filterable style="width: 130px">
-                        <Option v-for="(column,columnIdx) in selectMap[index].columns" :value="column.id" :key="column.id"> {{ column.columnChinese }}</Option>
+                        <Option v-for="(column,columnIdx) in selectMap[index].columns" :data="column.id" :value="column.id" :key="column.id"> {{ column.columnChinese }}</Option>
                     </Select>
                 </FormItem>
-                <FormItem label="操作：">
-                    <i @click="rowPlus()" v-if="index==0" class="el-icon-circle-plus-outline" style="font-size: 30px;cursor: pointer"></i>
-                    <i @click="rowRemove(index)" v-if="index!=0" class="el-icon-remove-outline" style="font-size: 30px;cursor: pointer"></i>
-                </FormItem>
+                <template v-if="selectMap[index] && selectMap[index].dicTables">
+                    <FormItem label=" ">
+                        <div style="margin-top:30px">==></div>
+                    </FormItem>
+                    <FormItem v-for="dicTable in selectMap[index].dicTables" :label="dicTable.dicTableName">
+                        <Select @on-change="(val)=>{changeColumnDicMap(dicTable,val)}"
+                                v-model="formList2[index]['dicMap'][dicTable.dicTableName]"  filterable style="width: 180px">
+
+                           <!-- labelPosition -->
+                            <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM+''"  :key="dic.DM"> {{ dic.MC }}</Option>
+                        </Select>
+                    </FormItem>
+                </template>
             </Form>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -117,7 +123,7 @@
                 <el-button type="primary" @click="submitEdit">确 定</el-button>
             </span>
         </el-dialog>
--->
+
 
         <!-- 删除提示框 -->
         <el-dialog title="提示" :visible.sync="delVisible" width="300px" center>
@@ -162,13 +168,14 @@
                     columnId: '',
                     dicMap:{}
                 }],
-               /* formList2:[{
+               formList2:[{
                     templateName:'',
                     columnKey: '',
                     schemaId: '',
                     tableId: '',
-                    columnId: ''
-                }],*/
+                    columnId: '',
+                    dicMap:{}
+                }],
                 schemas: [],
                 selectMap:[{
                     tables: [],
@@ -202,9 +209,33 @@
                 this.tableData = data;
             },
 
-            handleEdit(index, row) {
+            async handleEdit(index, row) {
                 this.idx = index;
-                const item = this.tableData[index];
+                this.getSchemas();
+                let templateData = await this.$axios.get('mvc/template/findAllByTemplate', {
+                    params: {
+                        templateName:row.templateName
+                    }
+                });
+                let list = templateData.data;
+                console.log(list);
+                this.formList2 = list;
+                for(let i = 0, arr = list.length; i < arr; i++) {
+                    console.log(list[i])
+                    this.$set(this.selectMap, i, {
+                        tables: [],
+                        columns: []
+                    });
+                    this.getTables(list[i].schemaId, i);
+                    this.getColumnsByTable(list[i].tableId, i)
+                }
+
+
+                //this.getDicByTableId(row.tableId, 0);
+        console.log(this.selectMap,'编辑');
+
+               console.log(this.formList2,'扯淡')
+                //const item = this.tableData[index];
             /*    this.form = {
                     key:item.key,
                     column:item.column,
@@ -216,35 +247,36 @@
             },
 
             async submitAdd() {
-                // if (!this.form.key || !this.form.column || !this.form.table || !this.form.schema|| !this.form.parser) {
-                //     this.$message.warning('请填写完整表单')
-                //     return
-                // }
+
                 for(var i in this.formList){
                     this.formList[i].templateName=this.formList[0].templateName
                 }
-                console.log(this.formList)
-                await this.$axios.post('mvc/template/add', {
-                    formList:JSON.stringify(this.formList)
-                    // parser:this.form.parser,
-                    // key:this.form.key,
-                    // schema:this.form.schema,
-                    // table:this.form.table,
-                    // column:this.form.column
-                });
-                await this.getData();
+                console.log(this.formList, '新增提交数据')
                 this.addVisible = false;
+                await this.$axios.post('mvc/addColumnMapRelations', {
+                    formList:JSON.stringify(this.formList)
+                }).then( (result) => {
+            console.log(result, '成功')
+        this.$message.success('提交成功')
+
+    });
+                await this.getData();
+
             },
 
-
             async submitEdit() {
-
             for(var i in this.formList2){
                 this.formList2[i].templateName=this.formList2[0].templateName
-            }
-            console.log(this.formList2)
-            await this.$axios.post('mvc/template/update', {
-                    formList2:JSON.stringify(this.formList2)
+           }
+            console.log(this.formList2,'编辑')
+            this.editVisible = false;
+            await this.$axios.post('mvc/addColumnMapRelations', {
+            formList:JSON.stringify(this.formList2)
+        }).then( (result) => {
+            console.log(result, '成功')
+            this.$message.success('提交成功')
+
+
         });
         await this.getData();
         this.addVisible = false;
@@ -290,10 +322,14 @@
 
             // 确定删除
             async deleteRow() {
-                await this.$axios.post('mvc/template/deleteTemplate', {id: this.tableData[this.idx].id});
+
+                let index = this.pageSize * (this.currentPage - 1) + this.idx;
+                console.log(this.pageSize, this.currentPage, this.idx)
+                this.delVisible = false;
+                await this.$axios.post('mvc/template/deleteTemplate', {id: this.tableData[index].id});
                 await this.getData();
                 this.$message.success('删除成功');
-                this.delVisible = false;
+
             },
 
             handleCurrentChange(val) {
@@ -324,32 +360,36 @@
                     schemaId: schemaId
                 }).then(res => {
                     this.$set(this.selectMap[idx], 'tables', res.data)
-                    this.$set(this.formList[idx], 'tableId', '')
-                    this.$set(this.selectMap[idx], 'columns', null)
-                    this.$set(this.formList[idx], 'columnId', '')
-                    this.$set(this.selectMap[idx], 'dicTables', null)
-                    this.$set(this.formList[idx], 'dicMap', {})
+                    console.log(this.selectMap)
+                    //this.$set(this.formList[idx], 'tableId', '')
+                   // this.$set(this.formList[idx], 'columnId', '')
+                    //this.$set(this.selectMap[idx], 'columns', null)
+                    //this.$set(this.selectMap[idx], 'dicTables', null)
+                    //this.$set(this.formList[idx], 'dicMap', {})
                     this.refresh()
                 })
             },
             changeColumnDicMap(mapName, val) {
                 for (let i in this.formList) {
-                    let cur = this.formList[i]
+                    let cur = this.formList[i];
+                    console.log(mapName, val, '选择参数值')
                     cur.dicMap[mapName] = val
-                    this.$set(cur, dicMap, cur.dicMap)
+                    this.$set(cur, 'dicMap', cur.dicMap)
                 }
                 //this.$set(cur, dicMap, cur.dicMap)
             },
             //根据表ID获取字段
             getColumnsByTable(tableId,idx) {
+                console.log(tableId, 'tableId')
                 this.$axios.post('mvc/getColumnsForTable', {tableId}).then(res => {
                     this.$set(this.selectMap[idx], 'columns', res.data)
-                    this.$set(this.formList[idx], 'columnId', '')
-                    this.$set(this.selectMap[idx], 'dicTables', null)
-                    this.$set(this.formList[idx], 'dicMap', {})
+                    //this.$set(this.formList[idx], 'columnId', '')
+                    //this.$set(this.selectMap[idx], 'dicTables', null)
+                    //this.$set(this.formList[idx], 'dicMap', {})
                     this.refresh()
+
+                    this.getDicByTableId(tableId, idx)
                 })
-                this.getDicByTableId(tableId, idx)
             },
             getDicByColumn(columnId, key) {
                 // const column = this.columnSelectMap[key]['columns'].find(c => c.id === columnId)
@@ -362,7 +402,7 @@
                     tableId
                 }).then(res => {
                     const dicTables = res.data || []
-                    this.$set(this.selectMap[key], 'dicTables', dicTables)
+                    this.$set(this.selectMap[key], 'dicTables', dicTables);
                     let dicMap = null
                     for (let i in this.formList) {
                         let cur = this.formList[i]
@@ -376,17 +416,17 @@
                         const { columnEnglish } = dicTable
                         this.$set(this.formList[key]['dicMap'], columnEnglish, '')
                     })
-                    this.getDicColumnsByDicName(dicTable,key);
+                   // this.getDicColumnsByDicName(dicTable,key);
                 })
             },
-            getDicColumnsByDicName(dicTable, key) {
+            /*getDicColumnsByDicName(dicTable, key) {
                 this.$axios.post('mvc/getDicColumnsByDicName', {
                     dicName:dicTable
                 }).then(res => {
-                    this.$set(this.selectMap[key], 'dicColumns', res.data)
+                    thigetDicNameByTableIds.$set(this.selectMap[key], 'dicColumns', res.data)
                     console.log(res.data)
                 });
-            },
+            },*/
         }
     }
 </script>

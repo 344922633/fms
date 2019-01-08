@@ -2,6 +2,8 @@ package com.fms.domain.schema;
 
 import lombok.Data;
 
+import java.util.Map;
+
 @Data
 public class Template {
     public long id;
@@ -14,6 +16,7 @@ public class Template {
     private String tableName;
     private String columnName;
     private String SchemaName;
-    private String TemplateName;
+    private String templateName;
 
+    private Map<String,Object> dicMap;
 }

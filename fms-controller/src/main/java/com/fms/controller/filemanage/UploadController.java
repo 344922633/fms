@@ -1215,9 +1215,8 @@ public class UploadController {
             JSONObject infoObj = new JSONObject();
             infoObj.put("operationType", "INSERT");
 
-            infoObj.put("schema", "renzhi_1208");//库名
+            infoObj.put("schema", env.getProperty("schema"));//库名
 
-            JSONObject columnPublic = new JSONObject();
 
             JSONArray columnArr = new JSONArray();
 
@@ -1254,7 +1253,7 @@ public class UploadController {
         }
         System.out.println("kafka消息格式：\n" + rootObj);
 
-        kafkaTemplate.send("operation_3rd1", rootObj.toJSONString());
+        kafkaTemplate.send(env.getProperty("DEFAULT_TOPIC"), rootObj.toJSONString());
 
     }
 
