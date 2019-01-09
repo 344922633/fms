@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fms.service.column.ColumnMapRelationService">
+
+    <select id="getTemplateNameByColumnKeys" parameterType="java.util.List" resultType="Map">
+        select templateName,count(templateName) `count` from column_map_relation where
+         columnKey in
+         <foreach collection="list" item="columnKey"  open="(" close=")" separator=",">
+             #{columnKey}
+         </foreach>
+         group by templateName order by count desc
+    </select>
+
+    <select id="getColumnMapRelationByTemplateName" parameterType="String" resultType="com.fms.domain.schema.ColumnMapRelation">
+        select * from column_map_relation where templateName = #{templateName}
+    </select>
+
+    <select id="findAll" resultType="com.fms.domain.schema.ColumnMapRelation">
+        select * from column_map_relation
+    </select>
+
+    <update id="updateColumnMapRelationById" parameterType="com.fms.domain.schema.ColumnMapRelation">
+        update column_map_relation
+          set
+        columnKey = #{columnKey},
+        tableId = #{tableId},
+        columnId = #{columnId},
+        schemaId = #{schemaId},
+        templateName = #{templateName}
+        where id = #{id}
+    </update>
+
+
+    <update id="updateColumnDicByIdAndKye" parameterType="com.fms.domain.schema.ColumnDic">
+        update column_dic
+        set
+        dicValue = #{dicValue}
+        where
+        columnMapId = #{columnMapId}
+        and
+        dicName = #{dicName}
+    </update>
+
+    <insert id="insertColumnMapRelation" parameterType="com.fms.domain.schema.ColumnMapRelation">
+        insert into column_map_relation(id,columnKey,tableId,columnId,schemaId,templateName) values(#{id},#{columnKey},#{tableId},#{columnId},#{schemaId},#{templateName})
+    </insert>
+
+    <insert id="insertColumnDic" parameterType="com.fms.domain.schema.ColumnDic">
+        insert into column_dic values(#{columnMapId},#{dicName},#{dicValue})
+    </insert>
+
+    <select id = "findColumnDics" resultType="com.fms.domain.schema.ColumnDic">
+        select * from column_dic
+    </select>
+
+</mapper>

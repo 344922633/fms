@@ -428,7 +428,7 @@
                 }
                 //添加
                 if(s_type == 'add'){
-                    url = "mvc/control/addControl";
+                    url = "mvc/control/add";
                     for(let i = 0,len = tableData.length; i < len; i++) {
                         if(tableData[i].name == this.form.name){
                             this.$message.warning('控件名重复');
@@ -437,7 +437,7 @@
                     }
                 }else{
                     //修改
-                    url = "mvc/control/updateControl";
+                    url = "mvc/control/addControl";
                     params.id = this.form.id;
                 }
 
