@@ -65,7 +65,6 @@ public class ColumnInfoController {
 
     @RequestMapping("/addTableInfo")
     public Object addTableInfo(TableInfo tableInfo) {
-
         //根据tableEnglish查询表是否存在
         Integer count = columnInfoService.countTableInfoByEnglish(tableInfo.getTableEnglish());
 

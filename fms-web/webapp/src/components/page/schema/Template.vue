@@ -322,7 +322,6 @@
 
             // 确定删除
             async deleteRow() {
-
                 let index = this.pageSize * (this.currentPage - 1) + this.idx;
                 console.log(this.pageSize, this.currentPage, this.idx)
                 this.delVisible = false;

@@ -180,16 +180,18 @@
 
     async submitAdd() {
         this.getTables();
+        this.addVisible = false;
         await this.$axios.post('mvc/addTableInfo', {
             tableEnglish: this.table_name,
             tableChinese:this.tableChinese
+
         }).then(function(res){
             if(!res.data.success){
                 alert(res.data.data);
             }
         });
         await this.getData();
-        this.addVisible = false;
+
     },
 
     async submitEdit() {
@@ -218,10 +220,22 @@
 
     // 确定删除
     async deleteRow() {
-        await this.$axios.post('mvc/deleteTableInfo', {id: this.tableData[this.idx].id});
+        let index = this.pageSize * (this.currentPage - 1) + this.idx;
+        console.log(index)
+       // console.log(this.tableData[this.idx].id,"32143546543245675643")
+        this.delVisible = false;
+        await this.$axios.post('mvc/deleteTableInfo', {id: this.tableData[index].id});
         await this.getData();
         this.$message.success('删除成功');
         this.delVisible = false;
+/*
+        let index = this.pageSize * (this.currentPage - 1) + this.idx;
+        console.log(this.pageSize, this.currentPage, this.idx)
+        this.delVisible = false;
+        await this.$axios.post('mvc/template/deleteTemplate', {id: this.tableData[index].id});
+        await this.getData();
+        this.$message.success('删除成功');*/
+
     },
 
     handleCurrentChange(val) {
