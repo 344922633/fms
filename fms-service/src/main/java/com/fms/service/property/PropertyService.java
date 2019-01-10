@@ -24,6 +24,11 @@ public class PropertyService {
 
 
     public void updateConfProperty(Property property) {
-        dao.update(CLASSNAME, "updateConfProperty", property);
+
+        if(getAllConfProperty() == null){
+            dao.insert(CLASSNAME, "addConfProperty", property);
+        }else{
+            dao.update(CLASSNAME, "updateConfProperty", property);
+        }
     }
 }

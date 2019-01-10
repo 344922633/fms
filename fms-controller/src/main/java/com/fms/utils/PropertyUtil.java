@@ -1,10 +1,27 @@
 package com.fms.utils;
 
+import com.fms.domain.property.Property;
+import com.fms.service.property.PropertyService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
+@Component
 public class PropertyUtil {
+
+    private static PropertyService propertyService;
+
+    @Autowired
+    private PropertyService propertyService2;
+
+    @PostConstruct
+    public void beforeInit() {
+        propertyService = propertyService2;
+    }
 
     static String fileName = "/application.properties"; // /不能少
 
@@ -46,7 +63,34 @@ public class PropertyUtil {
         try {
 //            InputStream in = PropertyUtil.class.getResourceAsStream(fileName);
 //            props.load(in);     ///加载属性列表
-            String value = props.getProperty(key);
+
+            String value = null;
+
+            //  kafka的数据存在数据库中，会动态修改
+            if(propertyService != null && ("BOOTSTRAP_SERVERS".equals(key) || "DEFAULT_TOPIC".equals(key)
+                || "GROUP_ID_CONFIG".equals(key) || "HBASE_ZOOKEEPER_QUORUM".equals(key)
+                || "schema".equals(key))) {
+                Property property =  propertyService.getAllConfProperty();
+
+                if(property != null){
+                    if ("BOOTSTRAP_SERVERS".equals(key)) {
+                        value = property.getBootStrapServers();
+                    } else if ("DEFAULT_TOPIC".equals(key)) {
+                        value = property.getDefaultTopic();
+                    } else if ("GROUP_ID_CONFIG".equals(key)) {
+                        value = property.getGroupIdConfig();
+                    } else if ("HBASE_ZOOKEEPER_QUORUM".equals(key)) {
+                        value = property.getHbaseZookeeperQuorum();
+                    } else if ("schema".equals(key)) {
+                        value = property.getPropertySchema();
+                    }
+                }
+            }
+
+            if (value == null){
+                value = props.getProperty(key);
+            }
+
             System.out.println(key +"键的值是："+ value);
 //            in.close();
             return value;

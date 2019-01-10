@@ -119,7 +119,7 @@ public class ControlController {
     }
 
     @RequestMapping("add")
-    public Object add(String name, String type, String url, String properties) {
+    public Object add(@RequestParam(value="name") String name, String type, String url, String properties) {
         Control control = new Control();
         String controlId=String.valueOf(System.currentTimeMillis());
         control.setId(controlId);

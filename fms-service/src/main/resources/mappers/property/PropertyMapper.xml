@@ -6,12 +6,29 @@
     <update id="updateConfProperty" parameterType="com.fms.domain.property.Property">
         UPDATE conf_property
         SET
-          bootStrapServers=#{bootStrapServers},groupIdConfig=#{groupIdConfig},hbaseZookeeperQuorum = #{hbaseZookeeperQuorum},defaultTopic = #{defaultTopic}
-        where id=1
+          bootStrapServers=#{bootStrapServers},groupIdConfig=#{groupIdConfig},
+          hbaseZookeeperQuorum = #{hbaseZookeeperQuorum},defaultTopic = #{defaultTopic},
+          propertySchema = #{propertySchema}
+        limit 1
     </update>
 
+    <insert id="addConfProperty" parameterType="com.fms.domain.property.Property">
+         INSERT INTO
+            conf_property
+                   (bootStrapServers,
+                      groupIdConfig,
+                      hbaseZookeeperQuorum,
+                      defaultTopic,
+                      propertySchema)
+          VALUES   (#{bootStrapServers},
+                      #{groupIdConfig},
+                      #{hbaseZookeeperQuorum},
+                      #{defaultTopic},
+                      #{propertySchema})
+    </insert>
+
     <select id="getAllConfProperty" resultType="com.fms.domain.property.Property">
-        SELECT * FROM conf_property where id=1
+        SELECT * FROM conf_property limit 1
   </select>
 
 </mapper>

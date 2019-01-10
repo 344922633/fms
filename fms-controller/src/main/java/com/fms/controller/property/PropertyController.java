@@ -32,11 +32,14 @@ public class PropertyController {
 
     @RequestMapping("updateConfProperty")
     public Object updateConfProperty(String id,String BOOTSTRAP_SERVERS,String GROUP_ID_CONFIG, String DEFAULT_TOPIC,String HBASE_ZOOKEEPER_QUORUM,String propertySchema){
-        PropertyUtil.writeProperties("schema", propertySchema);
-        PropertyUtil.writeProperties("BOOTSTRAP_SERVERS", BOOTSTRAP_SERVERS);
-        PropertyUtil.writeProperties("DEFAULT_TOPIC", DEFAULT_TOPIC);
-        PropertyUtil.writeProperties("GROUP_ID_CONFIG", GROUP_ID_CONFIG);
-        PropertyUtil.writeProperties("HBASE_ZOOKEEPER_QUORUM", HBASE_ZOOKEEPER_QUORUM);
+        Property property = new Property();
+        property.setPropertySchema(propertySchema);
+        property.setBootStrapServers(BOOTSTRAP_SERVERS);
+        property.setDefaultTopic(DEFAULT_TOPIC);
+        property.setGroupIdConfig(GROUP_ID_CONFIG);
+        property.setHbaseZookeeperQuorum(HBASE_ZOOKEEPER_QUORUM);
+        propertyService.updateConfProperty(property);
+
         return ExtUtil.success("更新成功！");
     }
 
