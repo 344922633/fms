@@ -41,19 +41,12 @@
             </span>
             </el-dialog>
 
-            <el-dialog title="新增" :visible.sync="addVisible" width="40%"  :before-close="closeDialog">
+            <el-dialog title="新增" :visible.sync="addVisible" width="40%" :before-close="closeDialog"  :close-on-click-modal="false" :close-on-press-escape="false">
                 <el-form ref="form" :model="form" label-width="100px">
                     <el-form-item label="控件名称" label-width="100px">
                         <el-input v-model="form.name" style="width:200px;"></el-input>
                     </el-form-item>
-                    <el-form-item label-width="100px" label="控件属性" v-for="(item, index) in inputs"
-                                  :key="index">
-                        <div class="proper-wrap">
-                            <el-input :readonly="item.canDelete === false" v-model="item.text" style="width:200px;"></el-input>
-                            <i v-if="index === 0" class="el-icon-plus" @click="addInput"></i>
-                            <i v-if="index !==0 && item.canDelete !== false" class="el-icon-minus" @click="removeInput(index)"></i>
-                        </div>
-                    </el-form-item>
+
                     <el-form-item label="控件类型(一级)" label-width="100px">
                         <el-select v-model="form.parentType" filterable placeholder="请选择" style="width:200px;">
                             <el-option
@@ -73,6 +66,14 @@
                                 :value="menu.name">
                             </el-option>
                         </el-select>
+                    </el-form-item>
+                    <el-form-item label-width="100px" label="控件属性" v-for="(item, index) in inputs"
+                                  :key="index">
+                        <div class="proper-wrap">
+                            <el-input :readonly="item.canDelete === false" v-model="item.text" style="width:200px;"></el-input>
+                            <i v-if="index === 0" class="el-icon-plus" @click="addInput"></i>
+                            <i v-if="index !==0 && item.canDelete !== false" class="el-icon-minus" @click="removeInput(index)"></i>
+                        </div>
                     </el-form-item>
                     <el-form-item label="控件上传" label-width="100px">
                         <el-upload
@@ -109,18 +110,33 @@
                 </el-form>
                 </el-dialog>
 
-                <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
+                <el-dialog title="编辑" :visible.sync="editVisible" :before-close="closeDialog"   :close-on-click-modal="false" :close-on-press-escape="false" width="40%">
                     <el-form ref="form" :model="form" label-width="100px">
                         <el-form-item label="控件名称" label-width="100px">
                             <el-input v-model="form.name" style="width:200px;"></el-input>
                         </el-form-item>
-                        <el-form-item label-width="100px" :label="`控件属性${index || ''}`" v-for="(item, index) in inputs"
+                        <el-form-item label-width="100px" label="控件属性" v-for="(item, index) in inputs"
                                       :key="index">
                             <div class="proper-wrap">
-                                <el-input v-model="item.propertyChinese" style="width:200px;"></el-input>
+                                <el-input :readonly="item.canDelete === false" v-model="item.text" style="width:200px;"></el-input>
                                 <i v-if="index === 0" class="el-icon-plus" @click="addInput"></i>
-                                <i v-else class="el-icon-minus" @click="removeInput(index)"></i>
+                                <i v-if="index !==0 && item.canDelete !== false" class="el-icon-minus" @click="removeInput(index)"></i>
                             </div>
+                        </el-form-item>
+                        <!--<el-form-item label-width="100px" :label="`控件属性${index || ''}`" v-for="(item, index) in inputs"-->
+                                      <!--:key="index">-->
+                            <!--<div class="proper-wrap">-->
+                                <!--<el-input v-model="item.propertyChinese" style="width:200px;"></el-input>-->
+                                <!--<i v-if="index === 0" class="el-icon-plus" @click="addInput"></i>-->
+                                <!--<i v-else class="el-icon-minus" @click="removeInput(index)"></i>-->
+                            <!--</div>-->
+                            <!--&lt;!&ndash;<el-form-item label="控件属性" label-width="100px"  v-for="(its, index) in inputs.properties" :key="index">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<el-input   v-model="its.property" style="width:200px;"></el-input>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
+                        <!--</el-form-item>-->
+                        <el-form-item label="控件属性"  label-width="100px"  v-for="(item, index) in form.properties"
+                                      :key="index">
+                                <el-input   v-model="item.property" style="width:200px;"></el-input>
                         </el-form-item>
                         <el-form-item label="控件类型(一级)" label-width="100px">
                             <el-select v-model="form.parentType" filterable placeholder="请选择" style="width:200px;">
@@ -142,6 +158,7 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
+
                         <el-form-item label="控件上传" label-width="100px">
                             <el-upload
                                 ref="elUpload"
@@ -161,15 +178,6 @@
                                 <i class="el-icon-plus"></i>
                             </el-upload>
 
-                            <!--    <el-upload
-                                    class="avatar-uploader"
-                                    action="mvc/sd"
-                                    :show-file-list="false"
-                                    :on-success="handleAvatarSuccess"
-                                    :before-upload="beforeAvatarUpload">
-                                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                                </el-upload>-->
                         </el-form-item>
                         <el-form-item>
                             <el-button @click="editVisible=false;reset">取 消</el-button>
@@ -206,6 +214,7 @@
             return {
                 tableData: [],
                 form: {
+                    properties:[],
                     name: '',
                     parentType: '',
                     type: '',
@@ -240,20 +249,27 @@
         },
         methods: {
             onChangeType(type) {
-                const children = this.menuIdChildrenMap[this.form.parentType]
-                const selectedType = children.find(child => child.name === type)
+                const children = this.menuIdChildrenMap[this.form.parentType]  // 下拉框元素
+                console.log(children,'children')
+                const selectedType = children.find(child => child.name === type)    //被选中的类型
+                console.log(selectedType,'selectedType')
                 const { id } = selectedType || {}
+                this.inputs = [
+                    {text: ''}
+                ];
+                this.form.properties="";
                 this.$axios.post('mvc/listColumnsFormasterslave', { masterSlaveId: id }).then((res) => {
-
+                    console.log(res,'测试')
                     let { data } = res
                     data = data || []
                     data.forEach(item => {
                         const {column} = item
-                        const { columnChinese, columnEnglish } = column
+                       // console.log(column,'column')
+                        //const { columnChinese, columnEnglish } = column
                            this.inputs.push({
-                            text: columnChinese,
+                            text: column.columnChinese,
                             canDelete: false,
-                            ...item
+                             ...item
                         })
                     })
                 }).catch(function (error) {
@@ -271,7 +287,9 @@
                             name: '',
                             type: '',
                         };
+
             },
+
             getMenuList() {
                 this.$axios.post('mvc/getMenuListFormasterslave').then((res) => {
                     const { data } = res
@@ -297,21 +315,25 @@
                     type: "",
                     imageUrl: ""
                 };
-
+                this.productImgs = [];
+                this.inputs = [
+                    {text: ''}
+                ];
                 this.addVisible = true;
                 this.uploadSuccessState = false;
             },
             handleEdit(index, row) {
-                this.idx = index;
-                const item = this.tableData[index];
-                console.log(row)
+                this.idx = index;   //下标
+                const item = this.tableData[index];   //所在行数据
+                console.log(item,'item');
                 this.form = {
                     id:item.id,
                     name: item.name,
-                    parentType: item.parentType,
+                    properties: item.properties,
                     type: item.type,
                     imageUrl: item.image
                 };
+                console.log(this.form,'this.form');
                 if(item.image) {
                     this.uploadSuccessState = true;
                 }
@@ -385,7 +407,7 @@
                 this.$message.error('上传图片失败!');
             },
             addInput() {
-                this.inputs.push({
+                this.inputs.unshift({
                     text: ''
                 })
             },
@@ -394,7 +416,6 @@
             },
 
             //提交
-
             onSubmit(s_type) {
                 const {name, type, imageUrl} = this.form;
                 let tableData = this.tableData;
@@ -427,7 +448,13 @@
                     url: this.form.imageUrl
                 }
                 //添加
-                if(s_type == 'add'){
+               // console.log(s_type,'ssss');
+                if(s_type == 'edit'){
+                    //修改
+                    url = "mvc/control/updateControl";
+                    params.id = this.form.id;
+
+                }else{
                     url = "mvc/control/add";
                     for(let i = 0,len = tableData.length; i < len; i++) {
                         if(tableData[i].name == this.form.name){
@@ -435,10 +462,6 @@
                             return ;
                         }
                     }
-                }else{
-                    //修改
-                    url = "mvc/control/addControl";
-                    params.id = this.form.id;
                 }
 
 
@@ -449,14 +472,25 @@
                     this.$message.success('提交成功')
 
                     this.getData();
-                    this.reset()
-                    loading.close()
+
+                   // this.reset()
+                    loading.close();
+                    this.inputs = [
+                        {text: ''}
+                    ];
+                    this.form = {
+                        name: '',
+                        type: '',
+                    };
                 }).catch(e => {
                     console.log(e, '失败')
                     this.editVisible = false;
                     loading.close()
                 })
+
             },
+
+
             cancelCrop(){
                 this.form = {
                     name: '',
@@ -469,7 +503,10 @@
                 this.uploadSuccessState = false;
 
             },
-            reset() {
+
+            reset(){
+                console.log('wwww')
+                this.productImgs = [];
                 this.form = {
                     name: '',
                     type: '',

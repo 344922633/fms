@@ -197,15 +197,57 @@ public class ControlController {
     }
 
     @RequestMapping("/updateControl")
-    public Object updateControl(Control control){
-        try {
-            //更新control数据
-            controlService.updateControl(control);
-            //清空control_property数据
-            controlPropertyService.delControlPropertyByControlId(control.getId());
-            //重新插入controlProperty数据
-            controlPropertyService.addControlPropertys(control.getProperties(),control.getId());
+    public Object updateControl(String id, String name, String type, String url, String properties) {
+
+        try{
+            Control control = new Control();
+            control.setId(id);
+            control.setImage(url);
+            control.setType(type);
+            control.setName(name);
+
+            JSONArray array = JSONArray.parseArray(properties);
+            String property;
+            String columnInfo;
+            for (int i = 0; i < array.size(); i++) {
+                JSONObject propertyJson = array.getJSONObject(i);
+                ControlProperty controlProperty=new ControlProperty();
+                controlPropertyService.delControlPropertyByControlId(control.getId());
+                if(propertyJson.containsKey("column")){
+                    JSONObject columnObj = propertyJson.getJSONObject("column");
+                    String data_type = propertyJson.getString("data_type");
+                    String dicList = propertyJson.getString("dicList");
+                    String isDic= columnObj.getString("isDic");
+                    String columnEnglish= columnObj.getString("columnEnglish");
+                    String columnChinese= columnObj.getString("columnChinese");
+                    String dicName= columnObj.getString("dicTableName");
+
+                    controlProperty.setProperty(columnEnglish);
+                    controlProperty.setPropertyChinese(columnChinese);
+                    controlProperty.setIsDic(Integer.valueOf(isDic));
+                    controlProperty.setDataType(data_type);
+                    controlProperty.setDicName(dicName);
+                    controlProperty.setDicList(dicList);
+                    controlProperty.setPropertyFlag(0);
+                    controlProperty.setControlId(id);
+
+                }else{
+                    property = array.getJSONObject(i).getString("text");
+                    controlProperty.setControlId(id);
+                    controlProperty.setProperty(property);
+                    controlProperty.setPropertyFlag(1);
+                }
+                controlPropertyService.addControlProperty(controlProperty);
+            }
             return ExtUtil.success("操作成功");
+
+//            //更新control数据
+//            controlService.updateControl(control);
+//            //清空control_property数据
+//            controlPropertyService.delControlPropertyByControlId(control.getId());
+//            //重新插入controlProperty数据
+//            controlPropertyService.addControlPropertys(control.getProperties(),control.getId());
+//            return ExtUtil.success("操作成功");
         }catch (Exception e){
             e.printStackTrace();
             return ExtUtil.failure("系统出错了");
