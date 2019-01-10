@@ -58,13 +58,6 @@
 
                 property.options.forEach(function (item, i) {
                     var option = document.createElement('option');
-                //    options = [{key:'a', text: 'AAA'}]
-                  //  option.value = item.key;
-                  //  option.innerText = item.text;
-                   // option.value = i;
-                 // option.value = item;
-                 // option.innerText = item;
-                    console.log(item);
                     option.value = item.key;
                     option.innerText = item.value;
                     console.log(option);
@@ -688,7 +681,10 @@
         },
 
         getProperties: function (data) {
+            console.warn(properties);
             var properties = {};
+            console.warn(1);
+            console.warn(properties);
             if (this.showDefaultProperties) {
                 getProperties(data, properties);
             }
