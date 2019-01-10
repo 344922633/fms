@@ -31,7 +31,7 @@
     const initProperties = (arr) => {
         const ret = []
         arr.forEach(item => {
-            console.log(item)
+
             const {
                 propertyFlag,
                 property,
@@ -50,12 +50,20 @@
                 }catch (e) {
                     dicArr = []
                 }
-                const options = dicArr.map(dic => dic.MC)
+                // const options = dicArr.map(dic => dic.MC);
+                const options = dicArr.map(function(item){
+                    return {
+                        value:item.MC,
+                        key:item.DM
+                    }
+                })
+
                 propertyOption.options = options
+
             }
             ret.push(propertyOption)
         })
-        console.log(ret)
+
         return ret
     }
 
@@ -107,8 +115,9 @@
                     data.forEach(item => {
                         ret[item.controlId] = initProperties(item.properties)
                     })
-                    console.log('ret!!', ret)
+
                     this.idPropertiesMap = ret
+
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -183,8 +192,8 @@
                         name: '子网设备',
                         images: this.images
                     }, callback: function (editor) {
-//      	console.log(editor.exportJSON())
-//      	editor.loadDatas()
+ //    	console.log(editor,"2222222222222222222222222222222222222")
+//     	editor.loadDatas()
                         that.graphEditor = editor
                         var toolbox = editor.toolbox;
                         toolbox.hideDefaultGroups();
@@ -194,6 +203,7 @@
                         propertySheet.showDefaultProperties = false;
 
                         propertySheet.getCustomPropertyDefinitions = function(data){
+
                             var id = data.get('id');
                             var properties = that.idPropertiesMap[id] || []
                             return {
@@ -289,9 +299,12 @@
                 editor.toolbox.hideButtonBar();
             },
             sendInfo(){
+
                 const json = this.graphEditor.exportJSON()
+
                 this.$axios.post('mvc/picture/sendDataToKafka', {
                     json:JSON.stringify(json)
+
                 }).then((res) => {  //接口返回数据
                     this.$message.success('发送成功')
                 });

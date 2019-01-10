@@ -48,6 +48,7 @@
         createHtml: function (parent) {
             var input;
             var property = this.property;
+            console.log(property);
             if (Array.isArray(property.options)) {
                 input = Q.createElement({
                     tagName: 'select',
@@ -57,8 +58,16 @@
 
                 property.options.forEach(function (item, i) {
                     var option = document.createElement('option');
-                    option.value = item;
-                    option.innerText = item;
+                //    options = [{key:'a', text: 'AAA'}]
+                  //  option.value = item.key;
+                  //  option.innerText = item.text;
+                   // option.value = i;
+                 // option.value = item;
+                 // option.innerText = item;
+                    console.log(item);
+                    option.value = item.key;
+                    option.innerText = item.value;
+                    console.log(option);
                     input.appendChild(option);
                 })
             } else {

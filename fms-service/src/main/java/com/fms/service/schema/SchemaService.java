@@ -67,7 +67,7 @@ public class SchemaService {
                 .put("tableName", tableName)
                 .put("data", tableColumnTemp)
                 .build();
-//        dao.insert(CLASSNAME, "insertData", params);
+ //       dao.insert(CLASSNAME, "insertData", params);
         //发送kafka消息
         kafkaTemplate.send(env.getProperty("DEFAULT_TOPIC"),SchemaUtil.schemaStrFormat(tableName,tableColumnTemp));
     }
