@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fms.service.tuopu.ControlPropertyService;
 import com.fms.utils.Constants;
+import com.fms.utils.PropertyUtil;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -65,23 +66,36 @@ public class AppConfig {
 
         @RequestMapping("/applicationConf")
         public JSONObject confProperty() {
-            JSONObject obj=new JSONObject();
+            JSONObject obj = new JSONObject();
             try {
-                PropertiesConfiguration config = new PropertiesConfiguration();
-                config.setEncoding("UTF-8");
-                config.load("application.properties");
+//                PropertiesConfiguration config = new PropertiesConfiguration();
+//                config.setEncoding("UTF-8");
+//                config.load("application.properties");
+//
+//                String parserPath=(String) config.getProperty("parser.path");
+//                String fileTmpPath=(String) config.getProperty("file.tmpPath");
+//                String url=(String) config.getProperty("db.url");
+//                String fileUploadPath=(String) config.getProperty("fileUploadPath");
+//                String posyspath=(String) config.getProperty("posyspath");
+//                String popassword=(String) config.getProperty("popassword");
+//                String poolTotal=(String) config.getProperty("fastdfs.poolTotal");
+//                String poolMaxIdle=(String) config.getProperty("fastdfs.poolMaxIdle");
+//                String connectTimeout=(String) config.getProperty("fastdfs.connectTimeout");
+//                String networkTimeout=(String) config.getProperty("fastdfs.networkTimeout");
+//                String trackerHttpPort=(String) config.getProperty("fastdfs.trackerHttpPort");
 
-                String parserPath=(String) config.getProperty("parser.path");
-                String fileTmpPath=(String) config.getProperty("file.tmpPath");
-                String url=(String) config.getProperty("db.url");
-                String fileUploadPath=(String) config.getProperty("fileUploadPath");
-                String posyspath=(String) config.getProperty("posyspath");
-                String popassword=(String) config.getProperty("popassword");
-                String poolTotal=(String) config.getProperty("fastdfs.poolTotal");
-                String poolMaxIdle=(String) config.getProperty("fastdfs.poolMaxIdle");
-                String connectTimeout=(String) config.getProperty("fastdfs.connectTimeout");
-                String networkTimeout=(String) config.getProperty("fastdfs.networkTimeout");
-                String trackerHttpPort=(String) config.getProperty("fastdfs.trackerHttpPort");
+                String parserPath = PropertyUtil.readValue("parser.path");
+                String fileTmpPath = PropertyUtil.readValue("file.tmpPath");
+                String url =PropertyUtil.readValue("db.url");
+                String fileUploadPath = PropertyUtil.readValue("fileUploadPath");
+                String posyspath =  PropertyUtil.readValue("posyspath");
+                String popassword = PropertyUtil.readValue("popassword");
+                String poolTotal =PropertyUtil.readValue("fastdfs.poolTotal");
+                String poolMaxIdle = PropertyUtil.readValue("fastdfs.poolMaxIdle");
+                String connectTimeout = PropertyUtil.readValue("fastdfs.connectTimeout");
+                String networkTimeout = PropertyUtil.readValue("fastdfs.networkTimeout");
+                String trackerHttpPort = PropertyUtil.readValue("fastdfs.trackerHttpPort");
+
                 obj.put("parserPath",parserPath);
                 obj.put("fileTmpPath",fileTmpPath);
                 obj.put("url",url);
@@ -94,11 +108,9 @@ public class AppConfig {
                 obj.put("networkTimeout",networkTimeout);
                 obj.put("trackerHttpPort",trackerHttpPort);
                 System.out.println(obj.toJSONString());
-            } catch(ConfigurationException cex)
-                {
+            } catch(Exception cex) {
                     System.err.println("loading of the configuration file failed");
                 }
-
             return obj;
         }
 
@@ -119,29 +131,43 @@ public class AppConfig {
             String profilepath = "src/main/resources/application.properties";
             try
             {
-                PropertiesConfiguration config = new PropertiesConfiguration();
-                config.setEncoding("UTF-8");
-                config.load("application.properties");
 
-                config.setAutoSave(true);
+                PropertyUtil.writeProperties("parser.path", parserPath);
+                PropertyUtil.writeProperties("file.tmpPath", fileTmpPath);
+                PropertyUtil.writeProperties("db.url", url);
+                PropertyUtil.writeProperties("fileUploadPath", fileUploadPath);
+                PropertyUtil.writeProperties("posyspath", posyspath);
+                PropertyUtil.writeProperties("popassword", popassword);
+                PropertyUtil.writeProperties("fastdfs.poolTotal", poolTotal);
+                PropertyUtil.writeProperties("fastdfs.poolMaxIdle", poolMaxIdle);
+                PropertyUtil.writeProperties("fastdfs.connectTimeout", connectTimeout);
+                PropertyUtil.writeProperties("fastdfs.networkTimeout", networkTimeout);
+                PropertyUtil.writeProperties("fastdfs.trackerHttpPort", trackerHttpPort);
 
-                config.setProperty("parser.path", parserPath);
-                config.setProperty("file.tmpPath", fileTmpPath);
-                config.setProperty("db.url", url);
-                config.setProperty("fileUploadPath", fileUploadPath);
-                config.setProperty("posyspath", posyspath);
-                config.setProperty("popassword", popassword);
-                config.setProperty("fastdfs.poolTotal", poolTotal);
-                config.setProperty("fastdfs.poolMaxIdle", poolMaxIdle);
-                config.setProperty("fastdfs.connectTimeout", connectTimeout);
-                config.setProperty("fastdfs.networkTimeout", networkTimeout);
-                config.setProperty("fastdfs.trackerHttpPort", trackerHttpPort);
-
-                //PropertiesConfiguration config  = new PropertiesConfiguration(profilepath);
-                config.setReloadingStrategy(new FileChangedReloadingStrategy());
-                System.out.println(config.getString("fastdfs.trackerHttpPort"));
+//                下面应该是无效的
+//                PropertiesConfiguration config = new PropertiesConfiguration();
+//                config.setEncoding("UTF-8");
+//                config.load("application.properties");
+//
+//                config.setAutoSave(true);
+//
+//                config.setProperty("parser.path", parserPath);
+//                config.setProperty("file.tmpPath", fileTmpPath);
+//                config.setProperty("db.url", url);
+//                config.setProperty("fileUploadPath", fileUploadPath);
+//                config.setProperty("posyspath", posyspath);
+//                config.setProperty("popassword", popassword);
+//                config.setProperty("fastdfs.poolTotal", poolTotal);
+//                config.setProperty("fastdfs.poolMaxIdle", poolMaxIdle);
+//                config.setProperty("fastdfs.connectTimeout", connectTimeout);
+//                config.setProperty("fastdfs.networkTimeout", networkTimeout);
+//                config.setProperty("fastdfs.trackerHttpPort", trackerHttpPort);
+//
+//                //PropertiesConfiguration config  = new PropertiesConfiguration(profilepath);
+//                config.setReloadingStrategy(new FileChangedReloadingStrategy());
+//                System.out.println(config.getString("fastdfs.trackerHttpPort"));
             }
-            catch(ConfigurationException cex)
+            catch(Exception cex)
             {
                 System.err.println("loading of the configuration file failed");
             }

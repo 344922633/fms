@@ -125,9 +125,6 @@
     </update>
 
 
-
-
-
     <update id="updateIsParserMultiFile" parameterType="Map">
         update fms_file set is_parser = #{isParser} where name = #{name}
     </update>

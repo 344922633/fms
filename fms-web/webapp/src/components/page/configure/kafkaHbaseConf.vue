@@ -81,6 +81,7 @@
                     HBASE_ZOOKEEPER_QUORUM: this.form.HBASE_ZOOKEEPER_QUORUM,
                     propertySchema:this.form.propertySchema
                 });
+                this.$message('修改成功');
                 await this.getData();
             }
         }

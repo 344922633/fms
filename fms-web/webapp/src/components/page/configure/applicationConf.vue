@@ -124,6 +124,7 @@
                     networkTimeout: this.form.networkTimeout,
                     trackerHttpPort: this.form.trackerHttpPort
                 });
+                this.$message('修改成功');
                 await this.getData();
             }
         }
