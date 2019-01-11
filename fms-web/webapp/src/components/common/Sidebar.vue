@@ -41,29 +41,29 @@
                     {
                         icon: 'el-icon-lx-home',
                         index: 'dashboard',
-                        title: '流量监控'
+                        title: '监控统计信息'
                     },
                     {
                         icon: 'el-icon-lx-copy',
-                        index: '1',
+                        index: '2',
                         title: '人工录入',
                         subs:[
                             {
                                 index: 'manualDataDeal',
-                                title: '业务表单',
+                                title: '表单录入',
                                 icon: 'el-icon-edit'
                             },
                             {
                                 index: 'tuopu',
-                                title: '网络拓扑',
+                                title: '拓扑图管理',
                                 icon: 'el-icon-lx-pic'
                             }
                         ]
                     },
                     {
                         icon: 'el-icon-lx-copy',
-                        index: '2',
-                        title: '在线/离线导入',
+                        index: '3',
+                        title: '在线/离线文件导入',
                         subs:[
 
                             {
@@ -73,20 +73,20 @@
                             },
                             {
                                 index: 'sendFileToServer',
-                                title: '素材上报',
+                                title: '上报服务器',
                                 icon: 'el-icon-setting'
                             },
                         ]
                     },
                     {
                         icon: 'el-icon-lx-copy',
-                        index: '3',
+                        index: '4',
                         title: '素材汇集',
                         subs:[
                             {
                                 icon: 'el-icon-lx-file',
                                 index: 'fileManagement',
-                                title: '单文件解析'
+                                title: '文件管理'
                             },
                             {
                                 index: 'multiFileParser',
@@ -97,9 +97,26 @@
                     },
                     {
                         icon: 'el-icon-lx-copy',
-                        index: '4',
-                        title: '配置',
+                        index: '5',
+                        title: '各项配置管理',
                         subs:[
+
+
+                              {
+                                icon: 'el-icon-lx-copy',
+                                index: 'file_type',
+                                title: '文件分类管理'
+                            },
+                            {
+                                index: 'parser',
+                                title: '解析器管理',
+                                icon: 'el-icon-printer'
+                            },
+                            {
+                                index: 'prinSuboRelation',
+                                title: '主从关系',
+                                icon: 'el-icon-lx-settings'
+                            },
                             {
                                 index: 'tableSet',
                                 title: '表格映射',
@@ -115,32 +132,16 @@
                                 title: '映射模板',
                                 icon: 'el-icon-setting'
                             },
-                              {
-                                icon: 'el-icon-lx-copy',
-                                index: 'file_type',
-                                title: '在线文件分类信息'
-                            },
                         ]
                     },
-                    {
+                  /*  {
                         icon: 'el-icon-lx-copy',
                         index: '5',
                         title: '业务管理',
                         subs:[
 
-                            {
-                                index: 'parser',
-                                title: '解析器管理',
-                                icon: 'el-icon-printer'
-                            },
-
-                            {
-                                index: 'prinSuboRelation',
-                                title: '主从关系管理',
-                                icon: 'el-icon-lx-settings'
-                            },
                         ]
-                    },
+                    },*/
 
 
                     //{
