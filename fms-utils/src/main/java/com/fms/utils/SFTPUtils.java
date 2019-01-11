@@ -177,7 +177,7 @@ public class SFTPUtils {
  
     public static void main(String[] args) throws IOException {
     	 Ftp f=new Ftp();
-         f.setIpAddr("47.93.40.219");
+         f.setIpAddr("47.93.196.60");
          f.setUserName("root");
          f.setPwd("admin!123");
          f.setPort(22);
