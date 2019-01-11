@@ -1,9 +1,9 @@
 <template>
     <div>
-        <Row>
-            <router-link to="/applicationConf"><Button class="tableBtn">application配置</Button></router-link>
-            <router-link to="/kafkaHbaseConf"><Button class="tableBtn">kafka,hbase配置</Button></router-link>
-        </Row>
+        <!--<Row>-->
+            <!--<router-link to="/applicationConf"><Button class="tableBtn">application配置</Button></router-link>-->
+            <!--<router-link to="/kafkaHbaseConf"><Button class="tableBtn">kafka,hbase配置</Button></router-link>-->
+        <!--</Row>-->
         <div class="container">
             <div class="form-box">
             <el-form ref="form" :model="form"  :label-position="labelPosition" label-width="150px" :rules="rules" @click="onSubmitAdd">

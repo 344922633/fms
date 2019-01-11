@@ -1,5 +1,5 @@
 <template>
-        <div class="header" style="background:url(/static/img/top.jpg);">
+        <div class="header" style="background:url(/fms/static/img/top.jpg);">
         <!-- 折叠按钮 -->
         <div class="collapse-btn" @click="collapseChage">
             <i class="el-icon-menu"></i>
