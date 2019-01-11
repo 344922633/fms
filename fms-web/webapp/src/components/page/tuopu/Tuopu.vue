@@ -39,10 +39,12 @@
                 isDic,
                 dicList
             } = item
+
             const propertyOption = {
                 displayName: propertyChinese,
                 client:property
             }
+
             if (isDic === 1 && dicList) {
                 let dicArr
                 try {
