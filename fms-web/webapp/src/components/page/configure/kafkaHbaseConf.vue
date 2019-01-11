@@ -7,18 +7,18 @@
         <div class="container">
             <div class="form-box">
             <el-form ref="form" :model="form"  :label-position="labelPosition" label-width="250px" :rules="rules" @click="onSubmitAdd">
-                <el-form-item label="BOOTSTRAP_SERVERS：" prop="BOOTSTRAP_SERVERS" >
-                    <el-input v-model="form.BOOTSTRAP_SERVERS"></el-input>
-                </el-form-item>
-                <el-form-item label="GROUP_ID_CONFIG：" prop="GROUP_ID_CONFIG">
-                    <el-input v-model="form.GROUP_ID_CONFIG"></el-input>
-                </el-form-item>
+                <!--<el-form-item label="BOOTSTRAP_SERVERS：" prop="BOOTSTRAP_SERVERS" >-->
+                    <!--<el-input v-model="form.BOOTSTRAP_SERVERS"></el-input>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item label="GROUP_ID_CONFIG：" prop="GROUP_ID_CONFIG">-->
+                    <!--<el-input v-model="form.GROUP_ID_CONFIG"></el-input>-->
+                <!--</el-form-item>-->
                 <el-form-item label="DEFAULT_TOPIC：" prop="DEFAULT_TOPIC">
                     <el-input v-model="form.DEFAULT_TOPIC"></el-input>
                 </el-form-item>
-                <el-form-item label="HBASE_ZOOKEEPER_QUORUM：" prop="HBASE_ZOOKEEPER_QUORUM">
-                    <el-input v-model="form.HBASE_ZOOKEEPER_QUORUM"></el-input>
-                </el-form-item>
+                <!--<el-form-item label="HBASE_ZOOKEEPER_QUORUM：" prop="HBASE_ZOOKEEPER_QUORUM">-->
+                    <!--<el-input v-model="form.HBASE_ZOOKEEPER_QUORUM"></el-input>-->
+                <!--</el-form-item>-->
                 <el-form-item label="schema：" prop="propertySchema">
                     <el-input v-model="form.propertySchema"></el-input>
                 </el-form-item>
