@@ -313,8 +313,7 @@
                     // editproperties:this.form.editproperties
                 }
                 //添加
-                console.log(params.properties,'ddd');
-                url = "mvc/control/add";
+                url = "mvc/control/operationControl";
                 for(let i = 0,len = tableData.length; i < len; i++) {
                     if(tableData[i].name == this.form.name){
                         this.$message.warning('控件名重复');
@@ -421,8 +420,7 @@
                    // properties:JSON.stringify(this.form.editproperties) + JSON.stringify(this.inputs),
                 }
                 //添加
-                console.log(params.properties,'aaa');
-                url = "mvc/control/updateControl";
+                url = "mvc/control/operationControl";
                 params.id = this.form.id;
 
                 this.$axios.post(url, params).then( (result) => {
