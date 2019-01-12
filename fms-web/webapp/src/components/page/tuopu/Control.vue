@@ -93,15 +93,7 @@
                             :on-error="imgUploadError">
                             <i class="el-icon-plus"></i>
                         </el-upload>
-                        <!--    <el-upload
-                                class="avatar-uploader"
-                                action="mvc/sd"
-                                :show-file-list="false"
-                                :on-success="handleAvatarSuccess"
-                                :before-upload="beforeAvatarUpload">
-                                <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                            </el-upload>-->
+
                     </el-form-item>
                     <el-form-item>
                         <el-button @click="cancelCrop">取 消</el-button>
@@ -123,21 +115,12 @@
                                 <i v-if="index !==0 && item.canDelete !== false" class="el-icon-minus" @click="removeInput(index)"></i>
                             </div>
                         </el-form-item>
-                        <!--<el-form-item label-width="100px" :label="`控件属性${index || ''}`" v-for="(item, index) in inputs"-->
+
+                        <!--<el-form-item label="控件属性"  label-width="100px"  v-for="(item, index) in form.editproperties"-->
                                       <!--:key="index">-->
-                            <!--<div class="proper-wrap">-->
-                                <!--<el-input v-model="item.propertyChinese" style="width:200px;"></el-input>-->
-                                <!--<i v-if="index === 0" class="el-icon-plus" @click="addInput"></i>-->
-                                <!--<i v-else class="el-icon-minus" @click="removeInput(index)"></i>-->
-                            <!--</div>-->
-                            <!--&lt;!&ndash;<el-form-item label="控件属性" label-width="100px"  v-for="(its, index) in inputs.properties" :key="index">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<el-input   v-model="its.property" style="width:200px;"></el-input>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
+                                <!--<el-input   v-model="item.property" style="width:200px;"></el-input>-->
                         <!--</el-form-item>-->
-                        <el-form-item label="控件属性"  label-width="100px"  v-for="(item, index) in form.properties"
-                                      :key="index">
-                                <el-input   v-model="item.property" style="width:200px;"></el-input>
-                        </el-form-item>
+
                         <el-form-item label="控件类型(一级)" label-width="100px">
                             <el-select v-model="form.parentType" filterable placeholder="请选择" style="width:200px;">
                                 <el-option
@@ -180,8 +163,8 @@
 
                         </el-form-item>
                         <el-form-item>
-                            <el-button @click="editVisible=false;reset">取 消</el-button>
-                            <el-button type="primary" @click="onSubmit('edit')">提交</el-button>
+                            <el-button @click="reset">取 消</el-button>
+                            <el-button type="primary" @click="onSubmitEdit">提交</el-button>
                         </el-form-item>
                     </el-form>
 
@@ -214,7 +197,7 @@
             return {
                 tableData: [],
                 form: {
-                    properties:[],
+                   editproperties:[],
                     name: '',
                     parentType: '',
                     type: '',
@@ -248,66 +231,8 @@
 
         },
         methods: {
-            onChangeType(type) {
-                const children = this.menuIdChildrenMap[this.form.parentType]  // 下拉框元素
-                console.log(children,'children')
-                const selectedType = children.find(child => child.name === type)    //被选中的类型
-                console.log(selectedType,'selectedType')
-                const { id } = selectedType || {}
-                this.inputs = [
-                    {text: ''}
-                ];
-                this.form.properties="";
-                this.$axios.post('mvc/listColumnsFormasterslave', { masterSlaveId: id }).then((res) => {
-                    console.log(res,'测试')
-                    let { data } = res
-                    data = data || []
-                    data.forEach(item => {
-                        const {column} = item
-                       // console.log(column,'column')
-                        //const { columnChinese, columnEnglish } = column
-                           this.inputs.push({
-                            text: column.columnChinese,
-                            canDelete: false,
-                             ...item
-                        })
-                    })
-                }).catch(function (error) {
-                    console.log(error);
-                })
-            },
-            //关闭清空数据
-            closeDialog(done){
-                        done();
-                        this.productImgs = [];
-                        this.inputs = [
-                            {text: ''}
-                        ];
-                        this.form = {
-                            name: '',
-                            type: '',
-                        };
 
-            },
-
-            getMenuList() {
-                this.$axios.post('mvc/getMenuListFormasterslave').then((res) => {
-                    const { data } = res
-                    this.menuList = data
-                    data.forEach((item) => {
-                        this.$set(this.menuIdChildrenMap, item.name, item.children)
-                    })
-                    console.log(this.menuIdChildrenMap)
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            },
-            handleCurrentChange(val) {
-                this.currentPage = val;
-            },
-
-            //新增
-
+            //上传控件
             handleAdd() {
                 this.form = {
                     name: "",
@@ -322,6 +247,115 @@
                 this.addVisible = true;
                 this.uploadSuccessState = false;
             },
+            // 选择变化
+            onChangeType(type) {
+                this.inputs = [
+                    {text: ''}
+                ];
+                const children = this.menuIdChildrenMap[this.form.parentType]  // 下拉框元素
+                console.log(children,'children')
+                const selectedType = children.find(child => child.name === type)    //被选中的类型
+                console.log(selectedType,'selectedType')
+                const { id } = selectedType || {}
+
+                this.form.properties="";
+                this.$axios.post('mvc/listColumnsFormasterslave', { masterSlaveId: id }).then((res) => {
+                    console.log(res,'测试')
+                    let { data } = res;
+                    data = data || [];
+                    // console.log(data,'data')
+                    data.forEach(item => {
+
+                        const {column} = item
+                        console.log(column,'column')
+                        //const { columnChinese, columnEnglish } = column
+                           this.inputs.push({
+                            text: column.columnChinese,
+                            canDelete: false,
+                             ...item
+                        })
+                    })
+                }).catch(function (error) {
+                    console.log(error);
+                })
+            },
+
+            //新增提交
+            onSubmit(){
+                const {name, type, imageUrl} = this.form;
+                let tableData = this.tableData;
+                const inputsValid = this.inputs.some(v => {
+                    return v.text !== ''
+                })
+                console.log(inputsValid,'inputsValid')
+                if (!name || !type || !inputsValid || !imageUrl) {
+                    this.$message.warning('请填写完整表单, 并上传图片')
+                    return
+                }
+
+                this.inputs = this.inputs.filter(v => {
+                    return !!v.text                          //过滤掉inputs里属性为空的，返回的还是一个数组
+                })
+              //  console.log(this.inputs,'this.inputs')
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在保存',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                var url,params ;
+                var params = {
+                    name: this.form.name,
+                    type: this.form.type,
+                    type1: this.form.parentType,
+                    properties: JSON.stringify(this.inputs),
+                    url: this.form.imageUrl,
+                    // editproperties:this.form.editproperties
+                }
+                //添加
+                url = "mvc/control/operationControl";
+                for(let i = 0,len = tableData.length; i < len; i++) {
+                    if(tableData[i].name == this.form.name){
+                        this.$message.warning('控件名重复');
+                        return ;
+                    }
+                }
+                this.$axios.post(url, params).then( (result) => {
+                    console.log(result, '成功')
+                    this.editVisible = false;
+                    this.addVisible = false;
+                    this.$message.success('提交成功')
+                    this.getData();
+                    // this.reset()
+                    loading.close();
+                    this.inputs = [
+                        {text: ''}
+                    ];
+                    this.form = {
+                        name: '',
+                        type: '',
+                    };
+                }).catch(e => {
+                    console.log(e, '失败')
+                    this.editVisible = false;
+                    loading.close()
+                })
+            },
+
+            //关闭清空数据
+            closeDialog(done){
+                        done();
+                        this.productImgs = [];
+                        this.inputs = [
+                            {text: ''}
+                        ];
+                        this.form = {
+                            name: '',
+                            type: '',
+                        };
+
+            },
+            //编辑
             handleEdit(index, row) {
                 this.idx = index;   //下标
                 const item = this.tableData[index];   //所在行数据
@@ -329,17 +363,83 @@
                 this.form = {
                     id:item.id,
                     name: item.name,
-                    properties: item.properties,
+                  // editproperties: item.properties,
                     type: item.type,
                     imageUrl: item.image
                 };
-                console.log(this.form,'this.form');
+                item.properties.forEach(e => {
+                    console.log(e,'e')
+                    this.inputs.push({
+                        text: e.property,
+                        //...e
+                    })
+                })
+                // this.inputs.push({
+                //     text: item.properties
+                //
+                // })
+                console.log(this.inputs,'this.inputs')
+                console.log(this.form.editproperties,'this.form.editproperties');
                 if(item.image) {
                     this.uploadSuccessState = true;
                 }
                 this.productImgs = [{url: item.image}];
                 this.editVisible = true;
             },
+
+            //编辑提交
+            onSubmitEdit(){
+                const {name, type, imageUrl} = this.form;
+                let tableData = this.tableData;
+
+                const inputsValid = this.inputs.some(v => {
+                    return v.text !== ''
+                })
+
+                if (!name || !type || !inputsValid || !imageUrl) {
+                    this.$message.warning('请填写完整表单, 并上传图片')
+                    return
+                }
+
+                this.inputs = this.inputs.filter(v => {
+                    return !!v.text
+                })
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在保存',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                var url,params ;
+                var params = {
+                    name: this.form.name,
+                    type: this.form.type,
+                    type1: this.form.parentType,
+                    properties: JSON.stringify(this.inputs),
+                    url: this.form.imageUrl,
+                   // properties:JSON.stringify(this.form.editproperties) + JSON.stringify(this.inputs),
+                }
+                //添加
+                url = "mvc/control/operationControl";
+                params.id = this.form.id;
+
+                this.$axios.post(url, params).then( (result) => {
+                    console.log(result, '成功')
+                    this.editVisible = false;
+                    this.addVisible = false;
+                    this.$message.success('提交成功')
+                    this.getData();
+
+                    // this.reset()
+                    loading.close();
+
+                }).catch(e => {
+                    console.log(e, '失败')
+                    this.editVisible = false;
+                    loading.close()
+                })
+            },
+
             async getData() {
                 let {data} = await this.$axios.post('mvc/control/getList');
                 console.log(data, '初始化数据');
@@ -351,6 +451,23 @@
                 this.idx = index;
                 this.delVisible = true;
             },
+
+            getMenuList() {
+                this.$axios.post('mvc/getMenuListFormasterslave').then((res) => {
+                    const { data } = res
+                    this.menuList = data
+                    data.forEach((item) => {
+                        this.$set(this.menuIdChildrenMap, item.name, item.children)
+                    })
+                    console.log(this.menuIdChildrenMap,'这是什么')
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            handleCurrentChange(val) {
+                this.currentPage = val;
+            },
+
 
             // 确定删除
             async deleteRow(){
@@ -415,82 +532,6 @@
                 this.inputs.splice(index, 1)
             },
 
-            //提交
-            onSubmit(s_type) {
-                const {name, type, imageUrl} = this.form;
-                let tableData = this.tableData;
-
-                const inputsValid = this.inputs.some(v => {
-                    return v.text !== ''
-                })
-
-                if (!name || !type || !inputsValid || !imageUrl) {
-                    this.$message.warning('请填写完整表单, 并上传图片')
-                    return
-                }
-
-                this.inputs = this.inputs.filter(v => {
-                    return !!v.text
-                })
-
-                const loading = this.$loading({
-                    lock: true,
-                    text: '正在保存',
-                    spinner: 'el-icon-loading',
-                    background: 'rgba(0, 0, 0, 0.7)'
-                });
-                var url,params ;
-                var params = {
-                    name: this.form.name,
-                    type: this.form.type,
-                    type1: this.form.parentType,
-                    properties: JSON.stringify(this.inputs),
-                    url: this.form.imageUrl
-                }
-                //添加
-               // console.log(s_type,'ssss');
-                if(s_type == 'edit'){
-                    //修改
-                    url = "mvc/control/updateControl";
-                    params.id = this.form.id;
-
-                }else{
-                    url = "mvc/control/add";
-                    for(let i = 0,len = tableData.length; i < len; i++) {
-                        if(tableData[i].name == this.form.name){
-                            this.$message.warning('控件名重复');
-                            return ;
-                        }
-                    }
-                }
-
-
-                this.$axios.post(url, params).then( (result) => {
-                    console.log(result, '成功')
-                    this.editVisible = false;
-                    this.addVisible = false;
-                    this.$message.success('提交成功')
-
-                    this.getData();
-
-                   // this.reset()
-                    loading.close();
-                    this.inputs = [
-                        {text: ''}
-                    ];
-                    this.form = {
-                        name: '',
-                        type: '',
-                    };
-                }).catch(e => {
-                    console.log(e, '失败')
-                    this.editVisible = false;
-                    loading.close()
-                })
-
-            },
-
-
             cancelCrop(){
                 this.form = {
                     name: '',
@@ -504,13 +545,10 @@
 
             },
 
-            reset(){
+            reset(done){
                 console.log('wwww')
-                this.productImgs = [];
-                this.form = {
-                    name: '',
-                    type: '',
-                }
+                this.editVisible=false
+
                 this.inputs = [
                     {text: ''}
                 ]

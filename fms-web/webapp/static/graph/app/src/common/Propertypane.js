@@ -308,15 +308,18 @@
                 item.propertyType = Q.Consts.PROPERTY_TYPE_CLIENT;
                 item.name = item.client;
             } else if (item.name) {
-                item.propertyType = Q.Consts.PROPERTY_TYPE_ACCESSOR;
+                 item.propertyType = Q.Consts.PROPERTY_TYPE_ACCESSOR;
             } else {
                 return;
             }
             var key = item.key = getPropertyKey(item.name, item.propertyType);
+
             if (!item.groupName) {
                 item.groupName = groupName;
             }
+
             result[key] = item;
+            console.log(result, 'result')
         })
         return result;
     }
@@ -352,6 +355,7 @@
     })
 
     function getProperties(data, properties, propertyMap) {
+
         if (!propertyMap) {
             propertyMap = DEFAULT_PROPERTY_MAP;
         }
@@ -370,6 +374,7 @@
                 }
             }
         }
+        console.log(properties, 'properties')
         return properties;
     }
 
@@ -667,6 +672,7 @@
         createItemGroup: function (name, properties) {
             var group = Q.createElement({class: 'class-group', parent: this.dom});
             Q.createElement({tagName: 'h4', parent: group, html: name});
+            console.log(properties, 'properties[name]')
             for (var name in properties) {
                 this.createItem(group, properties[name]);
             }
@@ -694,6 +700,7 @@
             var propertyDefinitions = this.getCustomPropertyDefinitions(data);
             if (propertyDefinitions) {
                 var map = formatProperties(propertyDefinitions);
+                console.log(propertyDefinitions,'propertyDefinitions')
                 for (var name in map) {
                     properties[name] = map[name];
                 }
@@ -702,6 +709,7 @@
         },
         _getProperties: function (data) {
             var properties = this.getProperties(data);
+            console.log(properties, 'properties-datas')
             return new PropertyGroup(properties);
         },
         _show: function(){
@@ -710,9 +718,11 @@
                 return;
             }
             this.setVisible(true);
+            console.log(datas,'datas')
             this.propertyGroup = this._getProperties(datas[0]);
 
             var group = this.propertyGroup.group;
+            console.log(group, 'group')
             for (var groupName in group) {
                 this.createItemGroup(groupName, group[groupName]);
             }

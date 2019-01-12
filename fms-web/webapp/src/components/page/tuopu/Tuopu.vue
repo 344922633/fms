@@ -39,10 +39,12 @@
                 isDic,
                 dicList
             } = item
+
             const propertyOption = {
                 displayName: propertyChinese,
                 client:property
             }
+
             if (isDic === 1 && dicList) {
                 let dicArr
                 try {
@@ -233,6 +235,7 @@
               const id = this.$route.query.id
                 this.$axios.post('mvc/picture/showPicture',{id}).then((res) => {
                     const {data} = res
+
                     if (data) {
                         const {json, name} = data
                         this.loadJSONData(json)
