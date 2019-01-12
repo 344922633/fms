@@ -282,13 +282,13 @@
 
             //新增提交
             onSubmit(){
-                const {name, type, imageUrl} = this.form;
+                const {name,type1, type, imageUrl} = this.form;
                 let tableData = this.tableData;
                 const inputsValid = this.inputs.some(v => {
                     return v.text !== ''
                 })
                 console.log(inputsValid,'inputsValid')
-                if (!name || !type || !inputsValid || !imageUrl) {
+                if (!type1 ||!name || !type || !inputsValid || !imageUrl) {
                     this.$message.warning('请填写完整表单, 并上传图片')
                     return
                 }
@@ -359,18 +359,19 @@
             handleEdit(index, row) {
                 this.idx = index;   //下标
                 const item = this.tableData[index];   //所在行数据
-                console.log(item,'item');
+                console.log(item,'item111111111111111111111111111');
                 this.form = {
                     id:item.id,
                     name: item.name,
                   // editproperties: item.properties,
+                    parentType: item.type1,
                     type: item.type,
                     imageUrl: item.image
                 };
                 item.properties.forEach(e => {
                     console.log(e,'e')
                     this.inputs.push({
-                        text: e.property,
+                        text: e.propertyChinese,
                         //...e
                     })
                 })
@@ -378,6 +379,7 @@
                 //     text: item.properties
                 //
                 // })
+
                 console.log(this.inputs,'this.inputs')
                 console.log(this.form.editproperties,'this.form.editproperties');
                 if(item.image) {

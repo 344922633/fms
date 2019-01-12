@@ -97,7 +97,7 @@ public class ColumnMapRelationService {
                 String value =  entry.getValue() + "";
 
                 ColumnDic columnDic = new ColumnDic(id,key,value);
-                if(type.equals("1")){
+                if("1".equals(type)){
                     addColumnDic(columnDic);
                 }else{
                     //查看columnDic是否存在记录

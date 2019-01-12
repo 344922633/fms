@@ -10,6 +10,7 @@ public class Control {
 	private String id;
 	private String name;
 	private String type;
+	private String type1;
 	private String image;
 	private List<ControlProperty> properties;
 	//private String[] uploadFileName;

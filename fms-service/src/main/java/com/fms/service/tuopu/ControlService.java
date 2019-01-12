@@ -22,51 +22,35 @@ import java.util.Map;
 @Service
 @Transactional
 public class ControlService {
-	public static final String CLASSNAME = ControlService.class.getName() + CharPool.PERIOD;
-	@Autowired
-	private Dao dao;
+    public static final String CLASSNAME = ControlService.class.getName() + CharPool.PERIOD;
+    @Autowired
+    private Dao dao;
 
-	/*	public void add(Control control) {
-			switch(control.getType()){
-				case "网络":
-					control.setRemark("net");
-					break;
-				case "硬件":
-					control.setRemark("hardware");
-					break;
-				case "区块":
-					control.setRemark("block");
-					break;
-			}
-		dao.insert(CLASSNAME,"add", control);
-	}
-*/
+    public List<Control> getList(Map<String, Object> params) {
+        return dao.getList(CLASSNAME, "getList", params);
+    }
 
-	public List<Control> getList(Map<String, Object> params) {
-		return dao.getList(CLASSNAME, "getList", params);
-	}
+    public void add(Control control) {
+        dao.insert(CLASSNAME, "add", control);
+    }
 
-	public void add(Control control){
-		dao.insert(CLASSNAME,"add",control);
-	}
+    public List<Control> getControl(String name) {
+        return dao.getList(CLASSNAME, "getControl", name);
+    }
 
-	public List<Control> getControl(String name) {
-		return dao.getList(CLASSNAME, "getControl", name);
-	}
+    public void delete(String id) {
+        dao.delete(CLASSNAME, "delete", id);
+    }
 
-	public void delete(String id) {
-		dao.delete(CLASSNAME, "delete", id);
-	}
+    public void update(Picture picture) {
+        dao.update(CLASSNAME, "update", picture);
+    }
 
-	public void update(Picture picture) {
-		dao.update(CLASSNAME, "update", picture);
-	}
+    public void updateControl(Control control) {
+        dao.update(CLASSNAME, "update", control);
+    }
 
-	public void updateControl(Control control){
-		dao.update(CLASSNAME,"update",control);
-	}
-
-	public List<ControlProperty> queryPropertyById(String controlId) {
-		return dao.getList(CLASSNAME, "queryPropertyById", controlId);
-	}
+    public List<ControlProperty> queryPropertyById(String controlId) {
+        return dao.getList(CLASSNAME, "queryPropertyById", controlId);
+    }
 }

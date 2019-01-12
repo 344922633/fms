@@ -90,18 +90,6 @@ public class ControlController {
                     result.put("success", true);
                     result.put("url", "/fms/static/img/" + localFileName);
                     result.put("info", "上传成功！");
-                /*
-
-                FileOutputStream fos = new FileOutputStream(
-                        localFile);
-                FileInputStream fs = (FileInputStream) multiReq.getFile("img").getInputStream();
-                byte[] buffer = new byte[1024];
-                int len = 0;
-                while ((len = fs.read(buffer)) != -1) {
-                    fos.write(buffer, 0, len);
-                }
-                fos.close();
-                fs.close();*/
 
                 } else {
                     result.put("success", false);
@@ -118,7 +106,7 @@ public class ControlController {
     }
 
     @RequestMapping("operationControl")
-    public Object operationControl(@RequestParam(value = "name") String name, String type, String url, String properties, String id) {
+    public Object operationControl(@RequestParam(value = "name") String name, String type,String type1, String url, String properties, String id) {
         try {
         if (name != null && properties != null) {
             //清空control_property数据
@@ -131,6 +119,7 @@ public class ControlController {
         control.setId(controlId);
         control.setImage(url);
         control.setType(type);
+        control.setType1(type1);
         control.setName(name);
         controlService.add(control);
         JSONArray array = JSONArray.parseArray(properties);

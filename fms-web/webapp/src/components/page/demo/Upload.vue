@@ -81,7 +81,7 @@
                 this.dialogVisible = false;
                 this.cropImg = this.defaultSrc;
             },
-            imageuploaded(res) {
+            parentTypeed(res) {
                 console.log(res)
             },
             handleError(){

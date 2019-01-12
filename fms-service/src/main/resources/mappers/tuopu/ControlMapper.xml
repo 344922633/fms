@@ -6,16 +6,18 @@
         id,
         name,
         type,
+        type1,
         image
     </sql>
 
 
     <insert id="add" parameterType="com.fms.domain.tuopu.Control" >
-        INSERT INTO t_control (id,name,type,image)
+        INSERT INTO t_control (id,name,type,type1,image)
         VALUES (
         #{id},
         #{name},
         #{type},
+        #{type1},
         #{image}
         )
     </insert>
