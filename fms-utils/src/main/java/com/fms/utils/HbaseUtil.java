@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+
+@Component
 public class HbaseUtil {
     protected static Configuration conf = null;
     protected static Connection connection = null;
@@ -33,12 +36,12 @@ public class HbaseUtil {
 
     //测试代码
     public static void main(String[] args) {
-        System.out.println("操作完成:"+GROUP_ID_CONFIG);
+        System.out.println("操作完成:"+PropertyUtilHbase.readValue("HBASE_ZOOKEEPER_QUORUM"));
     }
     /**
      * @desc 取得连接
      */
-    public static void getHbaseConnection(Environment env) {
+    public static void getHbaseConnection() {
         try {
             File workaround = new File(".");
             System.getProperties().put("hadoop.home.dir", workaround.getAbsolutePath());
@@ -49,7 +52,8 @@ public class HbaseUtil {
                 //
             }
             conf = HBaseConfiguration.create();
-            conf.set("hbase.zookeeper.quorum",env.getProperty("HBASE_ZOOKEEPER_QUORUM"));//zookeeper地址
+//            conf.set("hbase.zookeeper.quorum",env.getProperty("HBASE_ZOOKEEPER_QUORUM"));//zookeeper地址
+            conf.set("hbase.zookeeper.quorum",PropertyUtilHbase.readValue("HBASE_ZOOKEEPER_QUORUM"));//zookeeper地址
             connection = ConnectionFactory.createConnection(conf);
             admin = connection.getAdmin();
         } catch (IOException e) {

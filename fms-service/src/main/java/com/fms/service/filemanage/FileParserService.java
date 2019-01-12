@@ -430,7 +430,8 @@ public class FileParserService {
         file.setRecommendParserId(parserId);
         dao.update(FileService.CLASSNAME, "update", file);
 
-        HbaseUtil.getHbaseConnection(env);
+        //HbaseUtil.getHbaseConnection(env);
+        HbaseUtil.getHbaseConnection();
 
         HbaseUtil.addMoreRecordFromJSON("ns_fms:tb_file", "cf0", jsonStr, fileType, fileInfo, fileName, fileMD5);
 
@@ -464,7 +465,7 @@ public class FileParserService {
             index++;
         }
 
-        HbaseUtil.getHbaseConnection(env);
+        HbaseUtil.getHbaseConnection();
 
         HbaseUtil.addMoreRecordFromJSON("ns_fms:tb_file", "cf0", jsonStr, fileType, fileInfo, fileName, fileMD5);
 
