@@ -11,6 +11,7 @@ import com.fms.service.tuopu.ControlService;
 import com.fms.service.tuopu.PictureService;
 import com.fms.utils.JSONUtils;
 import com.fms.utils.ParamUtil;
+import com.fms.utils.PropertyUtil;
 import com.handu.apollo.base.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -165,7 +166,7 @@ public class PictureController {
                 obj.put("data", data);
 
                 System.out.println(obj.toJSONString());
-                kafkaTemplate.send(env.getProperty("DEFAULT_TOPIC"), obj.toJSONString());
+                kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), obj.toJSONString());
             }
         }
         }

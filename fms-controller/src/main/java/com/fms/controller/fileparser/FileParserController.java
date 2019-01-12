@@ -934,7 +934,7 @@ System.out.println(jsonNew);
                 }
 
                 System.out.println("kafka消息格式：\n" + rootObj);
-                // kafkaTemplate.send("operation_3rd1",msg.getJSONObject(i).toJSONString());
+                 kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"),rootObj.toJSONString());
              /*   kafkaTemplate.send(env.getProperty("DEFAULT_TOPIC"),
                         rootObj.toJSONString());*/
             }

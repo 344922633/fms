@@ -24,7 +24,7 @@ public class HbaseController {
 
     @RequestMapping(value = "/createTable", method = RequestMethod.GET)
     public Object createTable(@RequestParam String tableName, @RequestParam String family) throws Exception {
-        HbaseUtil.getHbaseConnection(env);
+        HbaseUtil.getHbaseConnection();
         String res=HbaseUtil.createTable(tableName,family);
         HbaseUtil.close();
         return ExtUtil.success(res);

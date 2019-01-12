@@ -1,5 +1,6 @@
 package com.fms.controller.kafkaHbase;
 
+import com.fms.utils.PropertyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,6 @@ public class KafkaController {
      */
     @RequestMapping(value = "/sendMsg", method = RequestMethod.GET)
     public void producer(@RequestParam String topic, @RequestParam String data) throws Exception {
-        kafkaTemplate.send(topic, data);
+        kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), data);
     }
 }

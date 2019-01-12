@@ -14,11 +14,9 @@ import com.fms.domain.filemanage.FileParserJar;
 import com.fms.domain.filemanage.FileType;
 import com.fms.domain.filemanage.upload.Chunk;
 import com.fms.domain.filemanage.upload.FileInfo;
+import com.fms.domain.property.Property;
 import com.fms.service.filemanage.*;
-import com.fms.utils.Ftp;
-import com.fms.utils.FtpUtil;
-import com.fms.utils.JSONUtils;
-import com.fms.utils.SFTPUtils;
+import com.fms.utils.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.handu.apollo.utils.CollectionUtil;
@@ -1253,7 +1251,7 @@ public class UploadController {
         }
         System.out.println("kafka消息格式：\n" + rootObj);
 
-        kafkaTemplate.send(env.getProperty("DEFAULT_TOPIC"), rootObj.toJSONString());
+        kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), rootObj.toJSONString());
 
     }
 
