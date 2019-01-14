@@ -3,7 +3,7 @@ package com.fms;
 import java.io.File;
 
 public class Test {
-    public static void main(String[] args) {
+    public static void main(String[] args) { 
         System.out.println("123.txt".substring("123.txt".lastIndexOf(".")));
         String[] a = new String[]{"a", "b", "c", "d"};
         String[] b = new String[a.length - 1];
