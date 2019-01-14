@@ -699,10 +699,14 @@
             }
             var propertyDefinitions = this.getCustomPropertyDefinitions(data);
             if (propertyDefinitions) {
+                // 此据不要删，删除后，右侧的标题会为undefinde,
                 var map = formatProperties(propertyDefinitions);
+
+                // 为什么不用上面的format？因为 properties中有key是相同的，format之后key相同的会被覆盖
+                var map2 = propertyDefinitions.properties;
                 console.log(propertyDefinitions,'propertyDefinitions')
-                for (var name in map) {
-                    properties[name] = map[name];
+                for (var name in map2) {
+                    properties[name] = map2[name];
                 }
             }
             return properties;
