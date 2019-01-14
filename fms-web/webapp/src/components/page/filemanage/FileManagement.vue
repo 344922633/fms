@@ -266,7 +266,8 @@
 
         <!--解析页面-->
         <Modal v-model="parserVisible" fullscreen footer-hide @on-visible-change="changeParserVisible">
-            <single-parser :configProp="config"  :file="currentFile" :parserData="parserData" :parserExtList="parserExtList" :columnData="tableColumnData" @after-close="parserVisible = false"></single-parser>
+            <single-parser v-bind:configProp="config"  v-bind:file="currentFile" v-bind:parserData="parserData" v-bind:parserExtList="parserExtList"
+                           v-bind:columnData="tableColumnData" @after-close="parserVisible = false"></single-parser>
         </Modal>
         <!--遮罩-->
         <Spin size="large" fix v-if="loading">
@@ -914,9 +915,10 @@
             // updateSelectFileType(value){
             //     this.selectNFile.selectClassId=value;
             // },
-            // updateSelectFileRecommendParserName(value){
-            //     this.selectNFile.selectFileRecommendParserId=value;
-            // },
+            // 此方法被注释，待确认 TODO
+            updateSelectFileRecommendParserName(value){
+                this.selectNFile.selectFileRecommendParserId=value;
+            },
             updatebFile() { //修改
 
                 if(this.selectFileList.length==0){
@@ -1105,7 +1107,10 @@
                         })
                     }
                 })*/
+                console.warn(this.selectFileList)
                 this.parserVisible = true;
+
+
             },
             //解析窗口，解析器下拉列表
             getParsers(classId) {
@@ -1115,14 +1120,6 @@
                 }).then(res => {
                     this.parserData = res.data ? res.data : [];
                 });
-               // this.parserExtList=[
-               //    {parameterName:"File",parameterDesc:"文件上传",parameterValue:"1111"},
-               //    {parameterName:"参数1",parameterDesc:"参数描述1",parameterValue:"1111"},
-               //    {parameterName:"参数2",parameterDesc:"参数描述2",parameterValue:"111"},
-               //   {parameterName:"参数3",parameterDesc:"参数描述3",parameterValue:"111"},
-               //    {parameterName:"参数4",parameterDesc:"参数描述4",parameterValue:"111"},
-
-               // ]
             },
             //关闭解析页面，初始化数据
             changeParserVisible(val) {
@@ -1135,7 +1132,7 @@
 
         mounted() {
             this.$nextTick(() => {
-                window.uploader = this.$refs.uploader.uploader
+                window.uploader = this.$refs.uploader
             })
         }
     }
