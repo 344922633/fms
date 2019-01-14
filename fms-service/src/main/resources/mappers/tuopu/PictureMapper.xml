@@ -21,22 +21,11 @@
         FROM t_picture
     </select>
 
-   <!-- <select id="queryJson" parameterType="Long" resultType="String">
-        SELECT json
-        FROM t_picture
-        WHERE id = #{id}
-    </select>-->
 
     <delete id="delete" parameterType="Long">
         DELETE FROM t_picture
         WHERE id = #{id}
     </delete>
-
- <!--   <select id="queryId" parameterType="Long" resultType="com.fms.domain.filemanage.Picture">
-        SELECT <include refid="all" />
-        FROM t_picture
-        WHERE id=#{id}
-    </select>-->
 
 
     <insert id="add" parameterType="com.fms.domain.tuopu.Picture" >
@@ -48,7 +37,7 @@
         #{time}
         )
     </insert>
-
+    
     <update id="update" parameterType="com.fms.domain.tuopu.Picture">
         UPDATE t_picture
         SET

@@ -533,8 +533,7 @@
                             }
                             columnData[key] = keyData;
                         });
-                        console.log('+++++++++++++++')
-                        console.log(this.columnKeyNamesMap)
+
                         let selectData = {};
                         for (let key in columnData) {
                             if (this.columnData[key].length > 0) {
@@ -581,15 +580,14 @@
                         //预览
                         let fileServerPath = this.config.fileServerPath;
                         let previewPath = this.config.previewPath;
-                        console.log("_______");
-                        console.log(fileServerPath);
+
                         let fileUrl = fileServerPath + '/' + this.selectFileList[0].groups + '/' + this.selectFileList[0].realPath;
                         this.parseStr = previewPath + encodeURIComponent(fileUrl);
                     }).then(res => {
                         this.$refs.parsejson.innerHTML = '<textarea id="ID"  style="width:100%;height:300px;overflow:scroll;resize:none;" >' + this.parseStr + '</textarea>'
                     });
                 } catch (e) {
-                    console.log(e)
+
                 }
                 this.$axios.post('mvc/fileParser/singleParse', {
                     id: this.file.recommendParserId,
@@ -616,15 +614,6 @@
                     this.jsonTables = JSON.parse(this.jsonStr.toLowerCase());
 
 
-                    //if (data.constructor != Array) {
-                    //    return ;
-                    // }
-                    //this.tableShowData =this.jsonStr == '' ? [] : JSON.parse(this.jsonStr);
-                    // this.tableShowData.forEach(item=>{
-                    //    for(let key in item){
-                    //       item[key.toLowerCase()] = item[key];
-                    //     }
-                    // });
                     delete res.data.data.jsonStr;
                     //解析匹配到得表名
                     this.table_name = res.data.data.table_name;
@@ -660,14 +649,12 @@
             async genParamsByAllKey() {
                 // 获取库
                 await this.getSchemas()
-                console.log('+++++++++++++++')
-                console.log(this.schemas)
+
                 this.allKey.forEach(key => {
                     this.$set(this.columnKeyNamesMap, key, {})
 
                     this.$set(this.columnKeyNamesMap[key], 'schemaId', '')
                     this.$set(this.columnKeyNamesMap[key], 'tableId', '')
-
 
                     this.$set(this.columnKeyNamesMap[key], 'columnId', '')
                     this.$set(this.columnSelectMap, key, {})
@@ -710,10 +697,7 @@
                 this.getDicByTableId(tableId, key)
             },
             getDicByColumn(columnId, key) {
-                // const column = this.columnSelectMap[key]['columns'].find(c => c.id === columnId)
-                // console.log(column)
-                // const {isDic, tableId} = column || {}
-                //     this.getDicByTableId(tableId, key)
+
             },
             getDicByTableId(tableId, key) {
                 this.$axios.post('mvc/getDicNameByTableId', {
@@ -737,12 +721,12 @@
                     dicName:dicTable
                 }).then(res => {
                     this.$set(this.columnSelectMap[key], 'dicColumns', res.data)
-                    console.log(res.data)
+
                 });
                   },
 
             handleSaveMapInfo() {
-            console.log(this.columnKeyNamesMap)
+
                 this.$axios.post('mvc/addColumnMapRelations', {
                     templateName:this.templateName,
                     columnKeyNamesMap:JSON.stringify(this.columnKeyNamesMap),
@@ -846,7 +830,7 @@
                     file_id: this.file.id,
                     customKeys: JSON.stringify(this.selectData),
                     columnKeyNamesMap: JSON.stringify(this.columnKeyNamesMap),
-                    // table_name: this.table_name,
+
                     jsonStr: this.jsonStr
                 }).then(res => {
                     this.loading = false;
@@ -865,22 +849,20 @@
                 file.status = 'finished'
                 this.$refs.uploadFile[0].fileList.push(file);
                 return false;
-                console.info("文件地址集合：" + this.uploadListFile);
+
             },
             uploadSuccessFile(response, file, fileList) {
-                console.log(file)
-                console.log(fileList)
+
                 this.resultFils = file.response;
-                console.info(this.resultFils);
+
                 this.loadingStatus = false;
                 this.$Message.success('This is a success tip');
             },
 
             uploadSuccessFile(response, file, fileList) {
-                console.log(file)
-                console.log(fileList)
+
                 this.resultFils = file.response;
-                console.info(this.resultFils);
+
                 this.loadingStatus = false;
                 this.$Message.success('This is a success tip');
             },
@@ -898,7 +880,7 @@
             },
 
             FileUpload() {
-                console.info(this.uploadListFile.length);
+
                 let length = this.uploadListFile.length;
                 if (length != 1) {
                     this.$Message.error('有且只能上传一个文件');
@@ -917,9 +899,5 @@
  }
 </script>
 <style>
- /*   .layout {
-        position: relative;
-        width: 1500px;
-        height: 800px;
-    }*/
+
 </style>

@@ -77,14 +77,6 @@ public class UploadController {
         Runnable runnable = new Runnable() {
 
             public void run() {
-        /*        // 测试全字段匹配
-                try {
-                    File testFile = new File("D:\\zw_kzsx_sb.xls");
-
-                    handleFile(kafkaTemplate, testFile);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }*/
                 Ftp ftp = new Ftp();
                 ftp.setIpAddr(ip);
                 ftp.setPort(Integer.valueOf(port));
@@ -148,9 +140,6 @@ public class UploadController {
                                             sf = SFTPUtils.getInstance(ftp);// 断开或者是去连接null时，重新连接
                                         }
                                         File download = sf.download(directory + "/" + lsEntry.getFilename(), tempFold + "/" + fileName);
-//                                        File download = new File("d:\\zw_kzsx_sb.xml");
-//                                        File download = new File("d:\\zw_kzsx_sb.xls");
-
                                         handleFile(download);
 
                                         try {
@@ -159,27 +148,15 @@ public class UploadController {
                                             byte[] buffer = null;
                                             fis = new FileInputStream(download.getAbsolutePath());
                                             bos = new ByteArrayOutputStream();
-
                                             byte[] b = new byte[1024];
-
                                             int n;
-
                                             while ((n = fis.read(b)) != -1) {
                                                 bos.write(b, 0, n);
                                             }
-
                                             buffer = bos.toByteArray();
                                             String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" : fileName.substring(fileName.lastIndexOf(".") + 1);
                                             FastDfsInfo info = fastDFSTemplate.upload(buffer, suffix);
                                             if (info != null) {
-
-//                                String relativePath = fileInfo.getWebkitRelativePath();
-
-
-                                                //test
-//                                if (!Strings.isNullOrEmpty(relativePath)) {
-//                                }
-
                                                 saveFile(info, fileName, suffix, dirId, null);
 
                                                 // 清除文件夹
@@ -196,7 +173,6 @@ public class UploadController {
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
-//                                        kafkaTemplate.send("operation_3rd3", jsonStr);
                                     }
                                 }
                             }

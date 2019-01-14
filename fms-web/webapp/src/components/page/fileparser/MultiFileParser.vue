@@ -943,7 +943,7 @@
                     {
                         title: "操作",
                         render: (h, params) => {
-                            console.log(params);
+
                             return h("div", [
                                 h(
                                     "a",
@@ -1319,7 +1319,7 @@
                             limit: _self.limit
                         })
                         .then(res => {
-                            console.log(res.data.list, '待分类')
+                         /*   console.log(res.data.list, '待分类')*/
 
                             this.waitClassData = res.data.list;
                         });
@@ -1696,7 +1696,7 @@
 
             //解析前待分类选中
             handleWaitSelectionChange(selection) {
-                    console.log(selection, 'selection')
+                  /*  console.log(selection, 'selection')*/
                 this.waitSelection = selection;
             },
             //解析器其他分类选中
@@ -1763,7 +1763,7 @@
                     })
                     .then(res => {
                         this.$set(this.idPropertiesMap, id, res.data);
-                        console.log(this.idPropertiesMap,'多参数');
+                       /* console.log(this.idPropertiesMap,'多参数');*/
                     });
             },
 
@@ -1772,7 +1772,7 @@
                 propertiesMap.paramList = this.idPropertiesMap[this.currentParser];
                 this.waitClassData[this.currentIndex] = Object.assign({},this.waitClassData[this.currentIndex],propertiesMap);
 
-                console.log(this.waitClassData[this.currentIndex], '多參數保存')
+              /*  console.log(this.waitClassData[this.currentIndex], '多參數保存')*/
             },
 
             //****多文件解析添加映射******
@@ -1803,8 +1803,8 @@
             async genParamsByAllKey() {
                 // 获取库
                 await this.getSchemas()
-                console.log('+++++++++++++++')
-                console.log(this.schemas)
+         /*       console.log('+++++++++++++++')
+                console.log(this.schemas)*/
                 this.allKey.forEach((key, index, arr) => {
                     // alert(key+"==="+index+"==="+arr);
                     // alert(JSON.stringify(this.columnKeyNamesMap));
@@ -1892,7 +1892,7 @@
                     dicName: dicTable
                 }).then(res => {
                     this.$set(this.columnSelectMap[key], 'dicColumns', res.data)
-                    console.log(res.data)
+                   /* console.log(res.data)*/
                 });
             },
 
@@ -1915,8 +1915,8 @@
             //*******多文件添加映射结束*******
             //右列table rowclick事件
             handleRightRowClick(row) {
-                console.info("row------");
-                console.info(row);
+               /* console.info("row------");
+                console.info(row);*/
                 this.highLightRow(row);
                 this.$refs.result.innerHTML =
                     '<textarea id="ID"  style="width:100%;min-height:600px;overflow:scroll;resize:none;" >' +

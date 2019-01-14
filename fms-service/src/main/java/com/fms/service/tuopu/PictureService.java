@@ -43,11 +43,6 @@ public class PictureService {
 	}
 
 
-//	public String queryJson(Long id){return dao.get(CLASSNAME, "queryJson", id);}
-
-
-//	public Picture queryId(Picture picture){return dao.get(CLASSNAME, "queryId", picture);}
-
 	public Picture get(Long id) {
 		return dao.get(CLASSNAME, "get", id);
 	}

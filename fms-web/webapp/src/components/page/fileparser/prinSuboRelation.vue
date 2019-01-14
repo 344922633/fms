@@ -281,17 +281,11 @@
             },
              getTables() {
                 this.$axios.post('mvc/getAllTables').then(res => {
-                    console.log(res.data)
+
                     this.tableNames = res.data;
                 })
             },
-        /*    //从表
-            getTables2() {
-                this.$axios.post('mvc/getAllTables').then(res => {
-                    console.log(res.data)
-                this.tableNames2= res.data;
-            })
-            }*/
+
         }
     }
 </script>

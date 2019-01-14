@@ -99,46 +99,20 @@ public class PictureController {
         // 循环获取控件
         for (int i = 0; i < btnArray.size(); i++) {
             String str = "";
-
             JSONObject kongjianObj = btnArray.getJSONObject(i);
-
-            JSONObject json = kongjianObj.getJSONObject("json");// "json": {
-            // }
-
-             /*   String controlName = "";
-                if (json.containsKey("name")) {
-                    controlName = json.getString("name");
-                }*/
-
+            JSONObject json = kongjianObj.getJSONObject("json");
             JSONObject obj = new JSONObject();
             JSONArray data = new JSONArray();
-
             JSONObject obj1 = new JSONObject();
             obj.put("operationSource", "XX_PLATFORM");
             obj1.put("operationType", "INSERT");
-
-
             JSONArray columns = new JSONArray();
-
             JSONObject properties = null;
-     /*           if (jo.containsKey("properties")) {
-                    properties = JSON.parseObject(json.getString("properties"));
-                    System.out.println(properties);
-                    for (String key : properties.keySet()) {
-                        JSONObject obj3 = new JSONObject();
-                        obj3.put(key, properties.get(key));
-                        columns.add(obj3);
-                    }
-                }*/
             JSONObject columnObj1 = new JSONObject();
-
             if (json.containsKey("properties")) {
                 properties = JSON.parseObject(json.getString("properties"));
-
                 Iterator<String> colIt = properties.keySet().iterator();
-
                 while (colIt.hasNext()) {
-
                     String jsonKey = colIt.next();
                     if (jsonKey.equals("id")) {
                         continue;
@@ -160,11 +134,9 @@ public class PictureController {
                 columnObj1.put("name", "dxbm");
                 columnObj1.put("value", str);
                 columns.add(columnObj1);
-
                 obj1.put("columns", columns);
                 data.add(obj1);
                 obj.put("data", data);
-
                 System.out.println(obj.toJSONString());
                 kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), obj.toJSONString());
             }
@@ -176,21 +148,8 @@ public class PictureController {
             List<Map<String, Object>> json = new ArrayList<>();
             try {
                 JSONArray arrayList = JSONArray.parseArray(str);
-                //获取返回数据中jsonBottomLevel每个tab对应的数据
-//            for (int i = 0; i < arrayList.size(); i++) {
-//                JSONObject jsonObject = arrayList.getJSONObject(i);
-//
-//                Iterator<String> it = jsonObject.keySet().iterator();
-//                if (it.hasNext()) {
-//                    // 获得key
-//                    String key = it.next();
-//                    String value = jsonObject.getString(key);
                 json.addAll(JSONUtils.jsonToObject(arrayList.toJSONString(), List.class, Map.class));
 
-//                }
-
-//            }
-                //json=JSONUtils.jsonToObject(data.get("jsonBottomLevel"),List.class,Map.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -307,13 +266,9 @@ public class PictureController {
             if (kongjianObj.containsKey("connectId")) {
                 connectId = kongjianObj.getString("connectId");
             }
-       /*     //text
-            String text = "";
-            if (kongjianObj.containsKey("text")) {
-                text = kongjianObj.getString("text");
-            }
-*/
-            BigDecimal x = null;// = null 初始化
+
+            // = null 初始化
+            BigDecimal x = null;
             if (kongjianObj.containsKey("pinX")) {
                 x = kongjianObj.getBigDecimal("pinX").multiply(new BigDecimal(100));
             }
@@ -398,18 +353,4 @@ public class PictureController {
         System.out.println(pictureData.toJSONString());
         return picData;
     }
-/*
-    @RequestMapping("/handlePictureFile")
-    public void handlePictureFile() throws Exception {
-        File testFile = new File("D:\\1127-VisioParser_testFile.vsdx");
-        String fileName = testFile.getName();
-        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
-        String path = "D:\\";
-
-        if (suffix.equals("vsdx")) {
-            Map<String, String> map = new VisioParser().parseVisio(testFile,path);
-            String outPut = map.get("jsonBottomLevel");
-            System.out.println(outPut);
-            handlePicture(outPut);
-        }*/
 }

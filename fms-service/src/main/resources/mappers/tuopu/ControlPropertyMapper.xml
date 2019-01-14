@@ -18,26 +18,8 @@
         )
     </insert>
 
-   <!-- <insert id="addCustomProperty" parameterType="com.fms.domain.tuopu.CustomProperty" >
-        INSERT INTO t_custom_property (controlId,property,value)
-        VALUES (
-        #{controlId},
-        #{property},
-        #{value}
 
-        )
-    </insert>-->
-
-<!--    <select id="getPropertyList" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
-        SELECT * FROM t_property
-    </select>
-
-    <select id="getPropertyById" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
-        SELECT * FROM t_property
-        WHERE id = #{id}
-  </select>-->
-
-    <select id="getList" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
+    <select id="getControlPropertyList" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
         SELECT * FROM t_control_property
   </select>
 

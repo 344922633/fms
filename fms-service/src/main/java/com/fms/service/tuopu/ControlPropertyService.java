@@ -23,24 +23,10 @@ public class ControlPropertyService {
         dao.insert(CLASSNAME,"addControlProperty",property);
     }
 
-    public void addControlPropertys(List<ControlProperty> controlProperties,String id){
-
-        //循环赋值外键id
-        for (ControlProperty controlProperty : controlProperties) {
-            controlProperty.setControlId(id);
-            //插入数据
-            dao.insert(CLASSNAME,"addControlProperty",controlProperty);
-        }
-
-    }
 
     public List<ControlProperty> getControlPropertyList(Map<String, Object> params) {
-        return dao.getList(CLASSNAME, "getList", params);
+        return dao.getList(CLASSNAME, "getControlPropertyList", params);
     }
-    public List<ControlProperty> getProperty(Map<String, Object> params) {
-        return dao.getList(CLASSNAME, "getPropertyById", params);
-    }
-
     /**
      * 删除数据，根据外键
      */
