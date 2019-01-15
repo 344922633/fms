@@ -31,7 +31,7 @@ public class BlockManageService {
      * @return
      */
     public List<BlockManage> getList(Map<String, Object> params) {
-        return dao.getList(CLASSNAME, "query", params);
+        return dao.getList(CLASSNAME, "getList", params);
     }
 
     /**
@@ -61,8 +61,7 @@ public class BlockManageService {
      * @return
      */
     public void add(BlockManage block) {
-//        block.setId(System.currentTimeMillis());
-//        dao.insert(CLASSNAME, "add", block);
+
         BlockManage oldBlock = get(block);
         if (oldBlock == null) {
             if (block.getId() == null) {

@@ -60,7 +60,6 @@ public class SchemaService {
                     column.put("value",columnData.get("value"));
                     break;
                 }
-
             }
         }
         Map<String, Object> params = Param.get()

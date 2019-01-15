@@ -26,7 +26,9 @@ public class ColumnMapRelationControl {
         return columnMapRelationService.getColumnMapRelation(columnKeys);
     }
 
-//映射模板新增及更新
+    /**
+     * 映射模板新增及更新
+     */
     @RequestMapping("/addColumnMapRelations")
     public Object addColumnMapRelations(@RequestParam Map<String, Object> params){
         String json = (String) params.get("formList");

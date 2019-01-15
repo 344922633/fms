@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import com.caeit.parser.visioParser.VisioParser;
 import com.fms.domain.tuopu.Picture;
 import com.fms.service.filemanage.FileParserService;
 import com.fms.service.tuopu.ControlService;
@@ -14,12 +13,11 @@ import com.fms.utils.ParamUtil;
 import com.fms.utils.PropertyUtil;
 import com.handu.apollo.base.Page;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
+
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -172,7 +170,8 @@ public class PictureController {
 
         // 将读取的数据转换为JSONObject
         JSONObject jsonObject = JSONObject.parseObject(jsonData);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        //设置日期格式
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = df.format(new Date());
         Picture picture;
 

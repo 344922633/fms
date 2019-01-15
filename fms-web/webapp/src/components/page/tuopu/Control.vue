@@ -116,10 +116,6 @@
                             </div>
                         </el-form-item>
 
-                        <!--<el-form-item label="控件属性"  label-width="100px"  v-for="(item, index) in form.editproperties"-->
-                                      <!--:key="index">-->
-                                <!--<el-input   v-model="item.property" style="width:200px;"></el-input>-->
-                        <!--</el-form-item>-->
 
                         <el-form-item label="控件类型(一级)" label-width="100px">
                             <el-select v-model="form.parentType" filterable placeholder="请选择" style="width:200px;">
@@ -196,15 +192,16 @@
         data() {
             return {
                 tableData: [],
+                editproperties:[],
                 form: {
-                   editproperties:[],
                     name: '',
                     parentType: '',
                     type: '',
                     image: ''
                 },
+
                 editVisible:false,
-                pageSize:20,
+                pageSize:10,
                 //图片是否上传成功
                 uploadSuccessState:false,
                 editDialogVisible:false,
@@ -216,6 +213,7 @@
                 productImgs: [],
                 isMultiple: true,
                 imgLimit: 1,
+                idx: -1,
                 inputs: [
                     {text: ''}
                 ],
@@ -288,7 +286,7 @@
                     return v.text !== ''
                 })
                 console.log(inputsValid,'inputsValid')
-                if (!name || !type || !inputsValid || !imageUrl) {
+                if ( !name || !type || !inputsValid || !imageUrl) {
                     this.$message.warning('请填写完整表单, 并上传图片')
                     return
                 }
@@ -313,11 +311,11 @@
                     // editproperties:this.form.editproperties
                 }
                 //添加
+                console.log(params,'param')
                 url = "mvc/control/operationControl";
                 for(let i = 0,len = tableData.length; i < len; i++) {
                     if(tableData[i].name == this.form.name){
                         this.$message.warning('控件名重复');
-                        loading.close();
                         return ;
                     }
                 }
@@ -354,39 +352,36 @@
                             name: '',
                             type: '',
                         };
-
             },
             //编辑
-            handleEdit(index, row) {
+            async handleEdit(index, row) {
                 this.idx = index;   //下标
-                const item = this.tableData[index];   //所在行数据
-                console.log(item,'item111111111111111111111111111');
+                //const item = this.tableData[index];   //所在行数据
+                console.log(row,'row');
+               // console.log(item,'item111111111111111111111111111');
+               // console.log(item.properties,'item.properties')
+                this.inputs = [
+                    {text: ''}
+                ];
                 this.form = {
-                    id:item.id,
-                    name: item.name,
-                  // editproperties: item.properties,
-                    parentType: item.type1,
-                    type: item.type,
-                    imageUrl: item.image
+                    id:row.id,
+                    name: row.name,
+                    parentType: row.type1,
+                    type: row.type,
+                    imageUrl: row.image
                 };
-                item.properties.forEach(e => {
-                    console.log(e,'e')
+                row.properties.forEach(e => {
                     this.inputs.push({
                         text: e.propertyChinese,
-                        //...e
+                        canDelete: false,
+                         ...e
                     })
                 })
-                // this.inputs.push({
-                //     text: item.properties
-                //
-                // })
-
                 console.log(this.inputs,'this.inputs')
-                console.log(this.form.editproperties,'this.form.editproperties');
-                if(item.image) {
+                if(row.image) {
                     this.uploadSuccessState = true;
                 }
-                this.productImgs = [{url: item.image}];
+                this.productImgs = [{url: row.image}];
                 this.editVisible = true;
             },
 
@@ -394,7 +389,7 @@
             onSubmitEdit(){
                 const {name, type, imageUrl} = this.form;
                 let tableData = this.tableData;
-
+                console.log(tableData,'tableData');
                 const inputsValid = this.inputs.some(v => {
                     return v.text !== ''
                 })
@@ -414,6 +409,7 @@
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
                 var url,params ;
+               //  const {column} = item
                 var params = {
                     name: this.form.name,
                     type: this.form.type,
@@ -422,8 +418,7 @@
                     url: this.form.imageUrl,
                    // properties:JSON.stringify(this.form.editproperties) + JSON.stringify(this.inputs),
                 }
-
-
+                console.log(params.column,'params.column')
                 //添加
                 url = "mvc/control/operationControl";
                 params.id = this.form.id;
@@ -476,7 +471,8 @@
 
             // 确定删除
             async deleteRow(){
-                await this.$axios.post('mvc/control/delControl', {id: this.tableData[this.idx].id});
+                let index = this.pageSize * (this.currentPage - 1) + this.idx;
+                await this.$axios.post('mvc/control/delControl', {id: this.tableData[index].id});
                 await this.getData();
                 this.$message.success('删除成功');
                 this.delVisible = false;

@@ -120,7 +120,7 @@
     </update>
 
 
-    <update id="updateIsParser" parameterType="Map">
+    <update id="updateIsParser" parameterType="map">
         update fms_file set is_parser = #{isParser} where id = #{id}
     </update>
 

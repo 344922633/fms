@@ -225,16 +225,14 @@
                     this.$set(this.selectMap, i, {
                         tables: [],
                         columns: []
+
                     });
                     this.getTables(list[i].schemaId, i);
                     this.getColumnsByTable(list[i].tableId, i)
                 }
 
 
-                //this.getDicByTableId(row.tableId, 0);
-        console.log(this.selectMap,'编辑');
-
-               console.log(this.formList2,'扯淡')
+                //this.getDicByTableId(row.tableId, 0)
                 //const item = this.tableData[index];
             /*    this.form = {
                     key:item.key,

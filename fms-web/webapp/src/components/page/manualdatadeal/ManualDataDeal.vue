@@ -123,8 +123,8 @@
                 }
             },
             handleSave() {
-                this.$axios.post('mvc/insertDataFormasterslave', {
-                    masterslavename: this.masterslave_name,
+                this.$axios.post('mvc/formEntrySendKafka', {
+
                     data: JSON.stringify(this.tableColumns)
                 }).then(res => {
                     this.$notify({

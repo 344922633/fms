@@ -12,7 +12,11 @@ public class MasterSlaveDo {
 
     private long masterTableId;
 
+    private String masterTable;
+
     private long slaveTableId;
+
+    private String slaveTable;
 
     private String type;
 

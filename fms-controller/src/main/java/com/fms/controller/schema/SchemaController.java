@@ -1,5 +1,8 @@
 package com.fms.controller.schema;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fms.domain.schema.ColumnInfo;
 import com.fms.domain.schema.TableInfo;
@@ -11,20 +14,20 @@ import com.fms.service.masterSlave.ColumnValuesService;
 import com.fms.service.masterSlave.MasterSlaveService;
 import com.fms.service.schema.SchemaService;
 import com.fms.utils.ParamUtil;
+import com.fms.utils.PropertyUtil;
 import com.handu.apollo.base.Page;
 import com.handu.apollo.utils.ExtUtil;
 import com.handu.apollo.utils.json.JsonUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.xml.crypto.Data;
+import java.util.*;
 
 @RestController
 public class SchemaController {
@@ -135,12 +138,13 @@ public class SchemaController {
         return schemaService.getTables();
     }
 
-
-/*    @RequestMapping("insertDataFormasterslave")
+   /* JSONObject data = JSONObject.parseObject(columnKeyNamesMap);*/
+    @RequestMapping("insertDataFormasterslave")
     public Object insertDataFormasterslave(String masterslavename, String data) {
 //        if(true){
 //            kafkaTemplate.send("schema",data);
 //        }else{
+
             ObjectMapper mapper = JsonUtil.getMapper();
             MasterSlaveDo masterSlaveDoForQuery = new MasterSlaveDo();
             masterSlaveDoForQuery.setName(masterslavename);
@@ -149,11 +153,13 @@ public class SchemaController {
             if (list != null && list.size() > 0)
             {
                 MasterSlaveDo masterSlaveDo = list.get(0);
-
+                masterSlaveDo.setMasterTable("11111");
+                masterSlaveDo.setSlaveTable("2222");
                 try {
                     if (StringUtils.isNotEmpty(masterSlaveDo.getMasterTable()))
                     {
                         schemaService.insertData(masterSlaveDo.getMasterTable(), mapper.readValue(data, List.class));
+
                         if (StringUtils.isNotEmpty(masterSlaveDo.getSlaveTable()))
                         {
                             schemaService.insertData(masterSlaveDo.getSlaveTable(), mapper.readValue(data, List.class));
@@ -166,7 +172,7 @@ public class SchemaController {
 //        }
 
         return ExtUtil.success("操作成功");
-    }*/
+    }
 
     @RequestMapping("insertData")
     public Object insertData(String tableName, String data) {
@@ -249,33 +255,107 @@ public class SchemaController {
     }
 
 
+    /**
+     *
+     * 表单录入发送kafka
+     * @param data
+     * @return
+     */
+    @RequestMapping("/formEntrySendKafka")
+    public Object formEntrySendKafka(String data) {
+
+        List<Map> oData = JSON.parseArray(data,Map.class);
+        Map<String,Object> params = getParams(oData);
 
 
+        String json = JSON.toJSONString(params);
 
+        System.out.println("kafka消息格式：\n" + json);
+        kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"),json);
 
-
-
-
-
-
-
-
-/*
-
-    //主从关系新增
-    @RequestMapping("getAllMasterTable")
-    public Object getAllMasterTable() {
-
-        return schemaService.getAllMasterTable();
+        return "success";
 
     }
 
+    private Map<String, Object> getParams(List<Map> data) {
 
-    @RequestMapping("getAllGuestTable")
-    public Object getAllGuestTable() {
-        return schemaService.getAllGuestTable();
+        //查询tables
+        Set<String> tables = gettables(data);
+
+       //构建对象
+        Map<String,Object> params = new HashMap<>();
+
+        List<Map<String,Object>> objectDatas = new ArrayList<>();
+        for (String table : tables) {
+            //构建data
+            Map<String,Object> objectData = getObjectData(table,data);
+            objectDatas.add(objectData);
+        }
+
+        params.put("data",objectDatas);
+        params.put("operationSource",PropertyUtil.readValue("DEFAULT_TOPIC"));
+
+
+        return params;
     }
 
-*/
+    private Map<String, Object> getObjectData(String tableId, List<Map> data) {
 
+        Map<String, Object> objectData = new HashMap<>();
+        //构建columns
+        List<Map<String,Object>> columns = new ArrayList<>();
+
+        for (Map<String, Object> datum : data) {
+            Map<String, Object> childdata = (Map<String, Object>) datum.get("column");
+            if(tableId.equals(childdata.get("tableId") + "")){
+                //    "columnEnglish": "DXBM",
+                //            "dataValue": "2133",
+                String columnEnglish = (String) childdata.get("columnEnglish");
+                String dataValue = (String) childdata.get("dataValue");
+
+                Map<String,Object> column = new HashMap<>();
+                column.put("name",columnEnglish.toLowerCase());
+                column.put("value",dataValue);
+
+                columns.add(column);
+
+                //查看字段是否是dxbm
+                if("dxbm".equals(columnEnglish.toLowerCase())){
+                    //存放数据
+                    objectData.put("objectCode",columnEnglish.toLowerCase());
+                    objectData.put("objectCodeValue","dwj_" + dataValue);
+                    objectData.put("operarionType","insert");
+                    objectData.put("schema","renzhi 1208");
+
+                    //根据表id获取表名
+                    String tableName = columnInfoService.queryTableInfoById(Long.parseLong(tableId)).getTableEnglish();
+
+                    objectData.put("table",tableName);
+                }
+            }
+
+        }
+
+        objectData.put("columns",columns);
+
+        return objectData;
+
+    }
+
+    //获取集合中所有tableid
+    private Set<String> gettables(List<Map> data) {
+
+        Set<String> tables = new TreeSet<>();
+
+        for (Map<String, Object> datum : data) {
+            //获取column数据
+            Map<String,Object> column = (Map<String, Object>) datum.get("column");
+            tables.add( column.get("tableId") + "");
+        }
+
+        return tables;
+    }
 }
+
+
+
