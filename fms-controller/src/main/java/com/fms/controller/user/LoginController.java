@@ -82,12 +82,20 @@ public class LoginController {
         }
         return "success";
     }
+
+    /**
+     * 废弃的，不知道有何用，祖传代码，另外 fastdfs 已经改为hdfs，
+     * @return
+     */
+    @Deprecated
     @ResponseBody
     @RequestMapping("getConfig")
     public Object getConfig() {
         Map<String, Object> params = Maps.newHashMap();
-        params.put("fileServerPath", "http://" + env.getProperty("fastdfs.nginxAddress") + ":" + env.getProperty("fastdfs.trackerHttpPort"));
-        params.put("previewPath", env.getProperty("previewPath"));
+//        params.put("fileServerPath", "http://" + env.getProperty("fastdfs.nginxAddress") + ":" + env.getProperty("fastdfs.trackerHttpPort"));
+//        params.put("previewPath", env.getProperty("previewPath"));
+        params.put("fileServerPath","");
+        params.put("previewPath", "");
         return params;
     }
     @ResponseBody

@@ -75,7 +75,9 @@
                 </i-col>
             </Row>
             <Divider>json</Divider>
-            <div ref="result"></div>
+            <div ref="result">
+                <textarea id="ID"  v-show="jsonStr" v-model="jsonStr" style="width:100%;height:300px;overflow:scroll;resize:none;" ></textarea>
+            </div>
       <!--      <Divider>预览</Divider>
             <iframe v-if="previewFileData" :src="previewFileData" height="600px" width="1200px"></iframe>
             <div ref="tuopu" height="300px" align="center">
@@ -124,6 +126,17 @@
          </div>
 
             <Divider> 解析字段</Divider>
+            <!--选择模板-->
+            <!--<Select filterable-->
+                    <!--@on-change="(schemaId) => getTables(schemaId, key)"-->
+                    <!--style="width: 180px"-->
+                    <!--v-model="columnKeyNamesMap[key].schemaId"-->
+                    <!--:clearable="true"-->
+                <!--&gt;-->
+                <!--<Option v-for="(schema,schemaIdx) in columnSelectMap[key].schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>-->
+            <!--</Select>-->
+
+            <!--选择表和字段-->
             <div v-if="columnData && Object.keys(columnData).length" style="height: 300px; overflow-y: auto;">
             <Form inline v-for="(data,key) in columnData" :key="key">
                 <FormItem :label-width="100" :label="key">
@@ -214,6 +227,7 @@
     import ICol from "../../../../node_modules/iview/src/components/grid/col.vue";
     import Vue from 'vue';
     import Bus from '@/components/common/bus'
+    import qs from 'qs';
 
     const originData = {
         form: {
@@ -258,6 +272,8 @@
         columnSelectMap: {},
         schemas: [],
         topologyName: '',
+        templateNameInfos:[],
+        columnMapRelations:[],
     }
 
     export default {
@@ -308,24 +324,28 @@
         created() {
             //重新打开页面 清空数据
             // TODO
-            // Bus.$on('cleanData', () => {
-            //     this.resetData()
-            //     me.fields = [];
-            //     this.jsonStr = "";
-            //     // alert(this.jsonStr);
-            //     this.$refs.result.innerHTML = '';
-            //     if (this.$refs.table.children[0]) {
-            //         this.$refs.table.removeChild(me.$refs.table.children[0]);
-            //     }
-            //     this.$refs.uploadFile[0].clearFiles();
-            //     this.uploadListFile = [];
-            //     this.resultFils = "";
-            // });
-            // Bus.$emit('cleanData', "");
+            Bus.$on('cleanData', () => {
+                this.resetData()
+                this.fields = [];
+                this.jsonStr = "";
+                // alert(this.jsonStr);
+                if (this.$refs.result = null){
+                    this.$refs.result.innerHTML = '';
+                }
+                if (this.$refs.table != null && this.$refs.table.children[0]) {
+                    this.$refs.table.removeChild(this.$refs.table.children[0]);
+                }
+                if (this.$refs.uploadFile != null) {
+                    this.$refs.uploadFile[0].clearFiles();
+                }
+                this.uploadListFile = [];
+                this.resultFils = "";
+            });
+            Bus.$emit('cleanData', "");
         },
-        // beforeDestroy(){
-        //     clearData();
-        // },
+        beforeDestroy(){
+            clearData();
+        },
         computed: {
             tableShowColumns() {
                 let tableShowColumns = [];
@@ -554,11 +574,8 @@
                 if (this.file.recommendParserId) {
                     this.$axios.post('mvc/fileParser/getParamList', {
                         parserId: this.file.recommendParserId
-                    }).then(res => {
-                        console.log(this.parserExtList)   ;
-                        console.log(res.data)   ;
+                    }).then(res => {;
                         this.parserExtList = res.data;
-
                     });
                 }
             },
@@ -571,8 +588,6 @@
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
                 try {
-                    console.log("正在解析");
-                    console.log(this.parserExtList);
                     this.parserExtList.forEach(item => {
                         if (item.parameterName.endsWith('File')) {
                             item.parameterValue = this.resultFils
@@ -583,23 +598,45 @@
                     if (this.$refs.table.children[0]) {
                         this.$refs.table.removeChild(this.$refs.table.children[0]);
                     }
-                    console.warn(this.parserData) ;
-                    console.warn(this.selectFileList);
-                    this.$axios.post('mvc/getConfig').then(res => {
-                        this.config = res.data;
-                        //预览
-                        let fileServerPath = this.config.fileServerPath;
-                        let previewPath = this.config.previewPath;
 
-                        // let fileUrl = fileServerPath + '/' + this.selectFileList[0].groups + '/' + this.selectFileList[0].realPath;
-                        let fileUrl = fileServerPath + '/' + this.file.groups + this.file.realPath;
-                        this.parseStr = previewPath + encodeURIComponent(fileUrl);
-                    }).then(res => {
-                        this.$refs.parsejson.innerHTML = '<textarea id="ID"  style="width:100%;height:300px;overflow:scroll;resize:none;" >' + this.parseStr + '</textarea>'
-                    });
                 } catch (e) {
-
                 }
+                // console.log(this.allKey);
+                // this.$axios.post('mvc/getColumnMapRelation', {
+                //         params: {
+                //             columnKeys: this.allKey
+                //         },
+                //         paramsSerializer: function (params) {
+                //             return qs.stringify(params, {arrayFormat: 'repeat'})
+                //         }
+                //     }
+                //    // qs.stringify(
+                //    //      {columnKeys: this.allKey},
+                //    //     { indices: false }
+                //    //      // { arrayFormat: 'repeat' }
+                // ).then(res => {
+                //     this.templateNameInfos = res.data.templateNameInfos,
+                //     this.columnMapRelations = res.data.columnMapRelations
+                //
+                //     console.log(this.templateNameInfos);
+                //     console.log(this.columnMapRelations);
+                // })
+                // 获取模板
+                // this.$axios.all([
+                //     // 获取模板
+                //     $axios.post('mvc/getColumnMapRelation', {
+                //         this.allKey
+                //     }),
+
+                //     // 获取表和列
+                //     $axios.post('mvc/fileParser/singleParse', {
+                //         id: this.file.recommendParserId,
+                //         params: this.file.id,
+                //         parserExt: JSON.stringify(this.parserExtList)
+                //     })
+                // ])
+
+                // 获取表和列
                 this.$axios.post('mvc/fileParser/singleParse', {
                     id: this.file.recommendParserId,
                     params: this.file.id,
@@ -616,14 +653,12 @@
                     }
                     //展示json结果
                     this.jsonStr = res.data.data.jsonStr;
-                    this.$refs.result.innerHTML = '<textarea id="ID"  style="width:100%;height:300px;overflow:scroll;resize:none;" >' + this.jsonStr + '</textarea>'
+                    // this.$refs.result.innerHTML = '<textarea id="ID"  style="width:100%;height:300px;overflow:scroll;resize:none;" >' + this.jsonStr + '</textarea>'
                     let data = JSON.parse(this.jsonStr);
 
                     //this.jsonTables = {"table1":[{"host":1,"ceshi":2},{"host":1,"ceshi":2}],"table2":[{"host":1,"ceshi":2,"param":"param"},{"host":1,"ceshi":2,"param":"param"}]};
 
-
                     this.jsonTables = JSON.parse(this.jsonStr.toLowerCase());
-
 
                     delete res.data.data.jsonStr;
                     //解析匹配到得表名

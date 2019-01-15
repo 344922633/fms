@@ -19,9 +19,9 @@
                 <!--<el-form-item label="HBASE_ZOOKEEPER_QUORUM：" prop="HBASE_ZOOKEEPER_QUORUM">-->
                     <!--<el-input v-model="form.HBASE_ZOOKEEPER_QUORUM"></el-input>-->
                 <!--</el-form-item>-->
-                <el-form-item label="schema：" prop="propertySchema">
-                    <el-input v-model="form.propertySchema"></el-input>
-                </el-form-item>
+                <!--<el-form-item label="schema：" prop="propertySchema">-->
+                    <!--<el-input v-model="form.propertySchema"></el-input>-->
+                <!--</el-form-item>-->
            <el-form-item>
               <el-button type="primary" @click="onSubmit">提交</el-button>
            </el-form-item>

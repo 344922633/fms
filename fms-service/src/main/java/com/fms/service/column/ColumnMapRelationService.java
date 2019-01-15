@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sun.applet.Main;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,11 +30,15 @@ public class ColumnMapRelationService {
         //根据columnKeys查询模板信息
         List<Map<String, Object>> templateNameInfos = dao.getList(CLASSNAME, "getTemplateNameByColumnKeys", columnKeys);
 
-        //获取模板名称
-        String templateName = (String) templateNameInfos.get(0).get("templateName");
 
-        //根据模板名称查询记录
-        List<ColumnMapRelation> columnMapRelations = dao.getList(CLASSNAME, "getColumnMapRelationByTemplateName", templateName);
+        List<ColumnMapRelation> columnMapRelations = new ArrayList<>();
+        if (templateNameInfos != null && templateNameInfos.size() > 0){
+            //获取模板名称
+            String templateName = (String) templateNameInfos.get(0).get("templateName");
+
+            //根据模板名称查询记录
+            columnMapRelations = dao.getList(CLASSNAME, "getColumnMapRelationByTemplateName", templateName);
+        }
 
         //创建返回数据
         Map<String, Object> data = new HashMap<>();

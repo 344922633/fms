@@ -515,15 +515,6 @@ public class FileParserController {
         Long fid=Long.parseLong(fileParser.getParams());
         fileParser.getParams();
         fileParserService.updateIsParser(fid,1);
-        /*for (Map<String, Object> child : json) {
-            for (Map.Entry<String, Object> entry : child.entrySet()) {
-                set.add(entry.getKey());
-            }
-        }*/
-        //将文件修改为已解析状态
-        Long id=Long.parseLong(fileParser.getParams());
-        fileParser.getParams();
-        fileParserService.updateIsParser(id,1);
 
         result.put("allKeyForDisplay", set);
         result.put("jsonStr", data.get("jsonBottomLevel"));
