@@ -1,9 +1,7 @@
 package com.fms.controller.user;
 
-import com.anniweiya.fastdfs.FastDFSTemplate;
 import com.fms.domain.filemanage.User;
 import com.fms.service.filemanage.DirectoryService;
-import com.fms.service.filemanage.FileService;
 import com.fms.service.user.UserService;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -14,12 +12,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.xml.stream.Location;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -33,70 +28,15 @@ public class LoginController {
     private DirectoryService directoryService;
 
     @Autowired
-    private FileService fileService;
-
-    @Autowired
-    private FastDFSTemplate fastDFSTemplate;
-
-    @Autowired
     private Environment env;
-
-/*
-
-    @RequestMapping("loginFromRemote")
-    public Object loginFromRemote(String username,String password) {
-
-        User gUser = userService.queryName(user);
-
-        String psd = user.getPassword();
-        String md5Password = MD5.md5for32(psd);
-
-        if(md5Password.equals(gUser.getPassword()) && "1".equals(gUser.getState())){
-            return "success";
-        }
-
-        return "fail";
-    }
-
-*/
-
 
     @RequestMapping("login")
     public Object login(User user, HttpServletRequest request) {
-//        userService.getUser();
-        /*Directory dir = new Directory();
-        dir.setText("根目录");
-        dir.setDescription("根目录");
-        dir.setLevel(1);
-        dir.setParentId(0L);
-        dir.setCode("root");
-        dir.setLeaf(false);
-        directoryService.add(dir);
-        Map<String, Object> params = Maps.newHashMap();
-        params.put("parentId", 0);
-        List<Directory> dirs = directoryService.query(params);
-        dir = dirs.get(0);
-        dir.setDescription("根目录了");
-        directoryService.update(dir);
-        directoryService.delete(dir.getId());*/
-//        File f = new File();
-//        f.setId(System.currentTimeMillis());
-//        f.setName("a.txt");
-//        f.setRealPath("a/b/a.txt");
-//        f.setTag("ok");
-//        f.setType("txt");
-//        fileService.add(f);
-//        List<File> files = fileService.query(null);
-//        f = files.get(0);
-//        f.setDescription("en heng");
-//        fileService.update(f);
-//        fileService.delete(f.getId());
-//<<<<<<< U
+
         String [] paths = {"一级","二级","三级"};
         ReentrantLock reentrantLock = new ReentrantLock();
         Long pId=3L;
         System.out.println(directoryService.createRelativePath(pId,paths));
-//=======
 
         User gUser = userService.queryName(user);
 
@@ -111,7 +51,6 @@ public class LoginController {
             //登录标识
             HttpSession session = request.getSession();
             session.setAttribute("user",gUser);
-
 
             return "redirect:http://127.0.0.1:8089";
 

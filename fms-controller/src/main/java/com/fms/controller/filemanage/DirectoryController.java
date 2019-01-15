@@ -1,13 +1,11 @@
 package com.fms.controller.filemanage;
 
-import com.anniweiya.fastdfs.FastDFSTemplate;
-import com.anniweiya.fastdfs.exception.FastDFSException;
 import com.fms.domain.filemanage.Directory;
 import com.fms.domain.filemanage.File;
+import com.fms.service.HdfsService;
 import com.fms.service.filemanage.DirectoryService;
 import com.fms.service.filemanage.FileService;
 import com.google.common.collect.Maps;
-import com.handu.apollo.utils.CollectionUtil;
 import com.handu.apollo.utils.ExtUtil;
 import com.handu.apollo.utils.TreeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,7 @@ public class DirectoryController {
     @Autowired
     private FileService fileService;
     @Autowired
-    private FastDFSTemplate fastDFSTemplate;
+    private HdfsService hdfsService;
 
     /**
      * 根据目录（文件夹）ID获取目录信息
@@ -120,11 +118,8 @@ public class DirectoryController {
         for(File file:fileList){
 //            ids.add(fileparser.getId());
             try {
-                fastDFSTemplate.deleteFile(file.getGroups(), file.getRealPath());
+                hdfsService.delete(file.getRealPath());
                 fileService.delete(file.getId());
-            } catch (FastDFSException e) {
-                fileService.delete(file.getId());
-                e.printStackTrace();
             } catch (NullPointerException e) {
                 fileService.delete(file.getId());
                 e.printStackTrace();

@@ -3,17 +3,16 @@ package com.fms.controller.fileparser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.anniweiya.fastdfs.FastDFSTemplate;
-import com.anniweiya.fastdfs.exception.FastDFSException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fms.domain.filemanage.*;
 import com.fms.domain.schema.ColumnInfo;
 import com.fms.domain.schema.TableInfo;
-import com.fms.domain.filemanage.*;
+import com.fms.service.HdfsService;
 import com.fms.service.ParserDefault.ParserDefaultService;
-import com.fms.service.schema.ColumnSetService;
 import com.fms.service.filemanage.*;
+import com.fms.service.schema.ColumnSetService;
 import com.fms.utils.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -22,7 +21,6 @@ import com.handu.apollo.utils.CollectionUtil;
 import com.handu.apollo.utils.ExtUtil;
 import com.handu.apollo.utils.exception.ApolloRuntimeException;
 import com.handu.apollo.utils.json.JsonUtil;
-import org.apache.commons.collections.bag.SynchronizedSortedBag;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +60,9 @@ public class FileParserController {
 
     @Autowired
     private FileService fileService;
+
     @Autowired
-    private FastDFSTemplate fastDFSTemplate;
+    private HdfsService hdfsService;
     /**
      * 文件分类service
      */
@@ -177,21 +176,16 @@ public class FileParserController {
 
         List<FileParserExt> list = fileParserExtService.getList(params);
 
-        if (!ObjectUtils.isEmpty(list))
-        {
+        if (!ObjectUtils.isEmpty(list)) {
             Map<String, Object> paramsForBlock = new HashMap<>();
             List<BlockManage> blocklist = blockManageService.getList(paramsForBlock);
-            if (!ObjectUtils.isEmpty(blocklist))
-            {
+            if (!ObjectUtils.isEmpty(blocklist)) {
                 BlockManage block = blocklist.get(0);
-                for (FileParserExt fileParserExt : list)
-                {
-                    if ("黑名单".equals(fileParserExt.getParameterName()))
-                    {
+                for (FileParserExt fileParserExt : list) {
+                    if ("黑名单".equals(fileParserExt.getParameterName())) {
                         fileParserExt.setParameterValue(block.getBlackContent());
                     }
-                    if ("白名单".equals(fileParserExt.getParameterName()))
-                    {
+                    if ("白名单".equals(fileParserExt.getParameterName())) {
                         fileParserExt.setParameterValue(block.getWhiteContent());
                     }
                 }
@@ -393,7 +387,7 @@ public class FileParserController {
         }
         try {
             com.fms.domain.filemanage.File local = fileService.get(Long.parseLong(fileParser.getParams()));
-            byte[] buf = fastDFSTemplate.loadFile(local.getGroups(), local.getRealPath());
+            byte[] buf = hdfsService.cat(local.getRealPath());
             String uriStr = "http://" + env.getProperty("fastdfs.nginxAddress") + ":" + env.getProperty("fastdfs.trackerHttpPort") + "/" + local.getGroups() + "/" + local.getRealPath();
             if (Strings.isNullOrEmpty(localParser.getSource())) {
                 throw new ApolloRuntimeException("解析器路径为空！");
@@ -427,15 +421,12 @@ public class FileParserController {
                 List<FileParserExt> parserExtList = JSONObject.parseArray(arrayList.toJSONString(), FileParserExt.class);
 
                 extParams.put("parserExtList", parserExtList);
-            }
-            else
-            {
-                Map<String, Object> params = new HashMap<String,Object>();
-                params.put("parserId",fileParser.getId());
+            } else {
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("parserId", fileParser.getId());
                 List<FileParserExt> parserExtList = fileParserExtService.getList(params);
-                if (!ObjectUtils.isEmpty(parserExtList))
-                {
-                    extParams.put("parserExtList",parserExtList);
+                if (!ObjectUtils.isEmpty(parserExtList)) {
+                    extParams.put("parserExtList", parserExtList);
                 }
             }
             BlockManage condition = new BlockManage();
@@ -455,9 +446,6 @@ public class FileParserController {
             return ParserUtil.parser(localParser, local, temp, extParams);
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (FastDFSException e) {
-            e.printStackTrace();
-            throw new ApolloRuntimeException("文件获取异常");
         } catch (RuntimeException e) {
             e.printStackTrace();
             throw new ApolloRuntimeException(e.getMessage());

@@ -194,20 +194,20 @@
 -->
         <div ref="table" v-show="false"></div>
         <Button type="primary" @click="parseDataSaveDatabase">入库</Button>
-        <Button type="primary" @click="saveTemplateToOrigin">保存映射关系到原模板</Button></center>
+        <Button type="primary" @click="saveTemplateToOrigin">保存映射关系到原模板</Button>
         <Button type="primary" @click="saveTemplateToNew">保存映射关系到新模板</Button>
 
-    <Modal
-            title="请输入模板名称"
-            v-model="templateNameVisible"
-            @on-ok="handleSaveMapInfo"
-            :mask-closable="false">
-        <el-form ref="form" :model="form" :label-position="labelPosition" label-width="100px" :rules="rules">
-            <el-form-item label="模板名称：" >
-                    <el-input v-model="templateName"></el-input>
-            </el-form-item>
-        </el-form>
-    </Modal>
+    <!--<Modal-->
+            <!--title="请输入模板名称"-->
+            <!--v-model="templateNameVisible"-->
+            <!--@on-ok="handleSaveMapInfo"-->
+            <!--:mask-closable="false">-->
+        <!--<el-form ref="form" :model="form" :label-position="left" label-width="100px" :rules="rules">-->
+            <!--<el-form-item label="模板名称：" >-->
+                    <!--<el-input v-model="templateName"></el-input>-->
+            <!--</el-form-item>-->
+        <!--</el-form>-->
+    <!--</Modal>-->
     </div>
 </template>
 <script>
@@ -306,22 +306,22 @@
             }
         },
         created() {
-            var me = this;
             //重新打开页面 清空数据
-            Bus.$on('cleanData', () => {
-                this.resetData()
-                me.fields = [];
-                this.jsonStr = "";
-                // alert(this.jsonStr);
-                this.$refs.result.innerHTML = '';
-                if (me.$refs.table.children[0]) {
-                    me.$refs.table.removeChild(me.$refs.table.children[0]);
-                }
-                this.$refs.uploadFile[0].clearFiles();
-                this.uploadListFile = [];
-                this.resultFils = "";
-            });
-            Bus.$emit('cleanData', "");
+            // TODO
+            // Bus.$on('cleanData', () => {
+            //     this.resetData()
+            //     me.fields = [];
+            //     this.jsonStr = "";
+            //     // alert(this.jsonStr);
+            //     this.$refs.result.innerHTML = '';
+            //     if (this.$refs.table.children[0]) {
+            //         this.$refs.table.removeChild(me.$refs.table.children[0]);
+            //     }
+            //     this.$refs.uploadFile[0].clearFiles();
+            //     this.uploadListFile = [];
+            //     this.resultFils = "";
+            // });
+            // Bus.$emit('cleanData', "");
         },
         // beforeDestroy(){
         //     clearData();
@@ -345,12 +345,16 @@
                 return keys
             }
         },
-        async mounted() {
+        mounted() {
         },
         methods: {
+            // 保存映射关系到原模板   ODO
+            saveTemplateToOrigin(){
+
+            },
+            // 保存映射关系到新模板   ODO
             saveTemplateToNew(){
                 this.templateNameVisible = true;
-
             },
 
             submitTopology() {
@@ -551,6 +555,8 @@
                     this.$axios.post('mvc/fileParser/getParamList', {
                         parserId: this.file.recommendParserId
                     }).then(res => {
+                        console.log(this.parserExtList)   ;
+                        console.log(res.data)   ;
                         this.parserExtList = res.data;
 
                     });
@@ -565,6 +571,8 @@
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
                 try {
+                    console.log("正在解析");
+                    console.log(this.parserExtList);
                     this.parserExtList.forEach(item => {
                         if (item.parameterName.endsWith('File')) {
                             item.parameterValue = this.resultFils
@@ -575,13 +583,16 @@
                     if (this.$refs.table.children[0]) {
                         this.$refs.table.removeChild(this.$refs.table.children[0]);
                     }
+                    console.warn(this.parserData) ;
+                    console.warn(this.selectFileList);
                     this.$axios.post('mvc/getConfig').then(res => {
                         this.config = res.data;
                         //预览
                         let fileServerPath = this.config.fileServerPath;
                         let previewPath = this.config.previewPath;
 
-                        let fileUrl = fileServerPath + '/' + this.selectFileList[0].groups + '/' + this.selectFileList[0].realPath;
+                        // let fileUrl = fileServerPath + '/' + this.selectFileList[0].groups + '/' + this.selectFileList[0].realPath;
+                        let fileUrl = fileServerPath + '/' + this.file.groups + this.file.realPath;
                         this.parseStr = previewPath + encodeURIComponent(fileUrl);
                     }).then(res => {
                         this.$refs.parsejson.innerHTML = '<textarea id="ID"  style="width:100%;height:300px;overflow:scroll;resize:none;" >' + this.parseStr + '</textarea>'
@@ -650,18 +661,20 @@
                 // 获取库
                 await this.getSchemas()
 
-                this.allKey.forEach(key => {
-                    this.$set(this.columnKeyNamesMap, key, {})
+                if(this.allKey != null){
+                    this.allKey.forEach(key => {
+                        this.$set(this.columnKeyNamesMap, key, {})
 
-                    this.$set(this.columnKeyNamesMap[key], 'schemaId', '')
-                    this.$set(this.columnKeyNamesMap[key], 'tableId', '')
+                        this.$set(this.columnKeyNamesMap[key], 'schemaId', '')
+                        this.$set(this.columnKeyNamesMap[key], 'tableId', '')
 
-                    this.$set(this.columnKeyNamesMap[key], 'columnId', '')
-                    this.$set(this.columnSelectMap, key, {})
-                    this.$set(this.columnSelectMap[key], 'schemas', this.schemas)
-                    this.$set(this.columnSelectMap[key], 'tables', [])
-                    this.$set(this.columnSelectMap[key], 'columns', [])
-                })
+                        this.$set(this.columnKeyNamesMap[key], 'columnId', '')
+                        this.$set(this.columnSelectMap, key, {})
+                        this.$set(this.columnSelectMap[key], 'schemas', this.schemas)
+                        this.$set(this.columnSelectMap[key], 'tables', [])
+                        this.$set(this.columnSelectMap[key], 'columns', [])
+                    })
+                }
 
             },
             getSchemas() {
