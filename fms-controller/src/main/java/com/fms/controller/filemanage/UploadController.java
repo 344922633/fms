@@ -1,10 +1,9 @@
 package com.fms.controller.filemanage;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.anniweiya.fastdfs.FastDFSTemplate;
-import com.anniweiya.fastdfs.FastDfsInfo;
-import com.anniweiya.fastdfs.exception.FastDFSException;
 import com.caeit.parser.excel.ExcelParser;
 import com.caeit.parser.json.JsonParser;
 import com.caeit.parser.sql.SqlParser;
@@ -14,7 +13,7 @@ import com.fms.domain.filemanage.FileParserJar;
 import com.fms.domain.filemanage.FileType;
 import com.fms.domain.filemanage.upload.Chunk;
 import com.fms.domain.filemanage.upload.FileInfo;
-import com.fms.domain.property.Property;
+import com.fms.service.HdfsService;
 import com.fms.service.filemanage.*;
 import com.fms.utils.*;
 import com.google.common.base.Strings;
@@ -31,13 +30,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.io.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -65,6 +64,8 @@ public class UploadController {
     private FileParserJarService fileParserJarService;
     @Autowired
     private KafkaTemplate kafkaTemplate;
+    @Autowired
+    private HdfsService hdfsService;
 
     @RequestMapping(value = "/uploadFromFtpFile", method = RequestMethod.POST)
     public void uploadFromFtpFile(HttpServletRequest request, HttpServletResponse response) {
@@ -75,7 +76,7 @@ public class UploadController {
         String path = request.getParameter("path");
 
         Runnable runnable = new Runnable() {
-
+            @Override
             public void run() {
                 Ftp ftp = new Ftp();
                 ftp.setIpAddr(ip);
@@ -89,7 +90,7 @@ public class UploadController {
 
                 String tempFold = env.getProperty("file.tmpPath") + "/ftpFile/" + UUID.randomUUID().toString().replaceAll("-", "");
 
-                Path dirPath = Paths.get(tempFold);
+                java.nio.file.Path dirPath = Paths.get(tempFold);
                 if (!Files.exists(dirPath)) {
                     try {
                         Files.createDirectories(dirPath);
@@ -117,10 +118,7 @@ public class UploadController {
                         files = sf.listFiles(directory);
                         if (files != null && files.size() > 0) {
                             for (ChannelSftp.LsEntry lsEntry : files) {
-                                /*Date currentDate = new Date();
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");*/
 
-                                //String relativePath = sdf.format(currentDate);
                                 String relativePath = ip;
                                 Long dirId = directoryService.createRelativePath(directoryId, relativePath.split("/"));
 
@@ -136,12 +134,11 @@ public class UploadController {
                                 }
                                 if (!fileName.equals(".") && !fileName.equals("..")) {
                                     if (!lsEntry.getAttrs().isDir()) {
-                                        if(sf == null || ! SFTPUtils.isSFTPConnect(sf) ){// 判断SFTP是否连接中
+                                        if (sf == null || !SFTPUtils.isSFTPConnect(sf)) {// 判断SFTP是否连接中
                                             sf = SFTPUtils.getInstance(ftp);// 断开或者是去连接null时，重新连接
                                         }
                                         File download = sf.download(directory + "/" + lsEntry.getFilename(), tempFold + "/" + fileName);
                                         handleFile(download);
-
                                         try {
                                             FileInputStream fis = null;
                                             ByteArrayOutputStream bos = null;
@@ -155,24 +152,22 @@ public class UploadController {
                                             }
                                             buffer = bos.toByteArray();
                                             String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" : fileName.substring(fileName.lastIndexOf(".") + 1);
-                                            FastDfsInfo info = fastDFSTemplate.upload(buffer, suffix);
-                                            if (info != null) {
-                                                saveFile(info, fileName, suffix, dirId, null);
+                                            String realPath = hdfsService.upload(buffer, fileName);
+                                            saveFile(realPath, fileName, suffix, dirId, null);
 
-                                                // 清除文件夹
-                                                File tempFile = new File(tempFold);
-                                                if (tempFile.isDirectory() && tempFile.exists()) {
-                                                    tempFile.delete();
-                                                }
-
+                                            // 清除文件夹
+                                            File tempFile = new File(tempFold);
+                                            if (tempFile.isDirectory() && tempFile.exists()) {
+                                                tempFile.delete();
                                             }
-                                        } catch (FastDFSException e) {
-                                            e.printStackTrace();
-                                        } catch (FileNotFoundException e) {
-                                            e.printStackTrace();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
+
+
+                                    } catch (FileNotFoundException e) {
+                                        e.printStackTrace();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
                                     }
                                 }
                             }
@@ -211,7 +206,7 @@ public class UploadController {
 
                 String tempFold = env.getProperty("file.tmpPath") + "/ftpFile/" + UUID.randomUUID().toString().replaceAll("-", "");
 
-                Path dirPath = Paths.get(tempFold);
+                java.nio.file.Path dirPath = Paths.get(tempFold);
                 if (!Files.exists(dirPath)) {
                     try {
                         Files.createDirectories(dirPath);
@@ -277,17 +272,8 @@ public class UploadController {
 
                                             buffer = bos.toByteArray();
                                             String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" : fileName.substring(fileName.lastIndexOf(".") + 1);
-                                            FastDfsInfo info = fastDFSTemplate.upload(buffer, suffix);
-                                            if (info != null) {
-
-//                                String relativePath = fileInfo.getWebkitRelativePath();
-
-
-                                                //test
-//                                if (!Strings.isNullOrEmpty(relativePath)) {
-//                                }
-
-                                                saveFile(info, fileName, suffix, dirId, null);
+                                            String realPath = hdfsService.upload(buffer, fileName);
+                                            saveFile(realPath, fileName, suffix, dirId, null);
 
                                                 // 清除文件夹
                                                 File tempFile = new File(tempFold);
@@ -295,9 +281,6 @@ public class UploadController {
                                                     tempFile.delete();
                                                 }
 
-                                            }
-                                        } catch (FastDFSException e) {
-                                            e.printStackTrace();
                                         } catch (FileNotFoundException e) {
                                             e.printStackTrace();
                                         } catch (IOException e) {
@@ -364,12 +347,12 @@ public class UploadController {
      */
     private String generatePath(String path, Chunk chunk) throws IOException {
         String dir = path + chunk.getIdentifier();
-        Path dirPath = Paths.get(dir);
+        java.nio.file.Path dirPath = Paths.get(dir);
         if (!Files.exists(dirPath)) {
             Files.createDirectories(dirPath);
         }
         String fileName = chunk.getTotalChunks().intValue() == 1 ? chunk.getFilename() : (chunk.getFilename() + "-" + chunk.getChunkNumber());
-        Path filePath = Paths.get(dirPath + "/" + fileName);
+        java.nio.file.Path filePath = Paths.get(dirPath + "/" + fileName);
         if (!Files.exists(filePath)) {
             Files.createFile(filePath);
         }
@@ -397,9 +380,9 @@ public class UploadController {
         } else {
             String fileTmp = env.getProperty("file.tmpPath") + "/";
             String dir = fileTmp + chunk.getIdentifier();
-            Path dirPath = Paths.get(dir);
+            java.nio.file.Path dirPath = Paths.get(dir);
             String fileName = chunk.getTotalChunks().intValue() == 1 ? chunk.getFilename() : (chunk.getFilename() + "-" + oChunk.getChunkNumber());
-            Path filePath = Paths.get(dirPath + "/" + fileName);
+            java.nio.file.Path filePath = Paths.get(dirPath + "/" + fileName);
             if (!Files.exists(filePath)) {
                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             }
@@ -442,9 +425,7 @@ public class UploadController {
                 dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
             }
 
-            FastDfsInfo info = new FastDfsInfo(file.getGroups(), file.getRealPath());
-
-            saveFile(info, fileName, suffix, dirId, fileInfo.getIdentifier());
+            saveFile(file.getRealPath(), fileName, suffix, dirId, fileInfo.getIdentifier());
             return "合并成功";
         }
 
@@ -469,41 +450,38 @@ public class UploadController {
             }
 
             buffer = bos.toByteArray();
-            FastDfsInfo info = fastDFSTemplate.upload(buffer, suffix);
-            if (info != null) {
-                Long dirId = fileInfo.getDirectoryId();// 根目录 dirId=1
+            String realPath = hdfsService.upload(buffer, fileName);
+            // 根目录 dirId=1
+            Long dirId = fileInfo.getDirectoryId();// 根目录 dirId=1
 
-                if(dirId == 1){
-                    Date currentDate = new Date();
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if(dirId == 1){
+                Date currentDate = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-                    String relativePath = sdf.format(currentDate) + "/" + fileInfo.getWebkitRelativePath();
+                String relativePath = sdf.format(currentDate) + "/" + fileInfo.getWebkitRelativePath();
 
-                    if (!Strings.isNullOrEmpty(relativePath)) {
-                        relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
-                        dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
-                    }
-                }else{
-                    String relativePath = fileInfo.getWebkitRelativePath();
-
-                    if (!Strings.isNullOrEmpty(relativePath)) {
-                        relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
-                        dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
-                    }
+                if (!Strings.isNullOrEmpty(relativePath)) {
+                    relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
+                    dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
                 }
+            }else{
+                String relativePath = fileInfo.getWebkitRelativePath();
 
-                saveFile(info, fileName, suffix, dirId, fileInfo.getIdentifier());
-
-                chunkService.delete(fileInfo.getIdentifier());
-                // 清除文件夹
-                File tempFile = new File(path);
-                if (tempFile.isDirectory() && tempFile.exists()) {
-                    tempFile.delete();
+                if (!Strings.isNullOrEmpty(relativePath)) {
+                    relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
+                    dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
                 }
-
             }
-        } catch (FastDFSException e) {
-            e.printStackTrace();
+
+            saveFile(realPath, fileName, suffix, dirId, fileInfo.getIdentifier());
+
+            chunkService.delete(fileInfo.getIdentifier());
+            // 清除文件夹
+            File tempFile = new File(path);
+            if (tempFile.isDirectory() && tempFile.exists()) {
+                tempFile.delete();
+            }
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -590,13 +568,13 @@ public class UploadController {
      * @param dirId
      * @param fileMd5
      */
-    public void saveFile(FastDfsInfo info, String fileName, String suffix, Long dirId, String fileMd5) {
+    public void saveFile(String realPath, String fileName, String suffix, Long dirId, String fileMd5) {
 
         com.fms.domain.filemanage.File file = new com.fms.domain.filemanage.File();
         file.setId(System.currentTimeMillis());
         file.setName(fileName);
-        file.setRealPath(info.getPath());
-        file.setGroups(info.getGroup());
+        file.setRealPath(realPath);
+        file.setGroups("group1");
         file.setType(suffix);
         file.setDirectoryId(dirId);
         file.setFileMd5(fileMd5);
@@ -666,32 +644,6 @@ public class UploadController {
 
 
         }
-//        if(fileTypeList==null||fileTypeList.size()==0){
-//            file.setClassType("其他");
-//        }else if(fileTypeList.size()>1){
-//            file.setClassType("待分类");
-//        }else{
-//            file.setClassId(fileTypeList.get(0).getId());
-//            file.setClassName(fileTypeList.get(0).getName());
-//            file.setClassType("预分类");
-//            String recommendParserIds = fileTypeList.get(0).getFileParserIds();
-//            String recommendParserId = "";
-//            if(!Strings.isNullOrEmpty(recommendParserIds)){
-//                if(recommendParserIds.indexOf(",")>0){
-//                    recommendParserId = recommendParserIds.substring(0,recommendParserIds.indexOf(","));
-//                }else{
-//                    recommendParserId = recommendParserIds;
-//                }
-//            }
-//
-//            if(!Strings.isNullOrEmpty(recommendParserId)){
-//                file.setRecommendParserId(Long.valueOf(recommendParserId));
-//                FileParser fileParser = fileParserService.get(file.getRecommendParserId());
-//                file.setRecommendParserName(fileParser.getName());
-//            }
-//
-//
-//        }
 
         fileService.add(file);
     }
@@ -706,7 +658,7 @@ public class UploadController {
     public static void merge(String targetFile, String folder) {
         try {
             if (!Files.exists(Paths.get(targetFile))) {
-                Path p = Files.createFile(Paths.get(targetFile));
+                java.nio.file.Path p = Files.createFile(Paths.get(targetFile));
 
                 Files.list(Paths.get(folder))
                         .filter(path -> path.getFileName().toString().contains("-") && !p.getFileName().equals(path.getFileName()))
@@ -821,31 +773,23 @@ public class UploadController {
 
                                     buffer = bos.toByteArray();
                                     String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" : fileName.substring(fileName.lastIndexOf(".") + 1);
-                                    FastDfsInfo info = fastDFSTemplate.upload(buffer, suffix);
-                                    if (info != null) {
-                                        Long dirId = ftp.getDirectoryId();
-//                                String relativePath = fileInfo.getWebkitRelativePath();
+                                    String realPath = hdfsService.upload(buffer, fileName);
 
+                                    Long dirId = ftp.getDirectoryId();
 
-                                        //test
-//                                if (!Strings.isNullOrEmpty(relativePath)) {
-//                                }
-                                        Date currentDate = new Date();
-                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                    Date currentDate = new Date();
+                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-                                        String relativePath = sdf.format(currentDate);
-                                        dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
-                                        saveFile(info, fileName, suffix, dirId, null);
+                                    String relativePath = sdf.format(currentDate);
+                                    dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                                    saveFile(realPath, fileName, suffix, dirId, null);
 
-                                        // 清除文件夹
-                                        File tempFile = new File(tempFold);
-                                        if (tempFile.isDirectory() && tempFile.exists()) {
-                                            tempFile.delete();
-                                        }
-
+                                    // 清除文件夹
+                                    File tempFile = new File(tempFold);
+                                    if (tempFile.isDirectory() && tempFile.exists()) {
+                                        tempFile.delete();
                                     }
-                                } catch (FastDFSException e) {
-                                    e.printStackTrace();
+
                                 } catch (FileNotFoundException e) {
                                     e.printStackTrace();
                                 } catch (IOException e) {
@@ -1105,7 +1049,7 @@ public class UploadController {
                         }
                         OutputStream out = new FileOutputStream(fileLocal);
 
-                        byte[] buf = fastDFSTemplate.loadFile(file.getGroups(), file.getRealPath());
+                        byte[] buf = hdfsService.cat(file.getRealPath());
 
                         if(buf != null){
                             out.write(buf);
@@ -1120,9 +1064,6 @@ public class UploadController {
                         out.flush();
                         out.close();
 
-
-                    } catch (FastDFSException e) {
-                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

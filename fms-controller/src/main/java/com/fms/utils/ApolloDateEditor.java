@@ -58,6 +58,7 @@ public class ApolloDateEditor extends PropertyEditorSupport {
     /**
      * Parse the Date from the given text, using the specified DateFormat.
      */
+    @Override
     public void setAsText(String text) {
         if (this.allowEmpty && !StringUtils.hasText(text)) {
             // Treat empty String as null value.
@@ -79,6 +80,7 @@ public class ApolloDateEditor extends PropertyEditorSupport {
     /**
      * Format the Date as String, using the specified DateFormat.
      */
+    @Override
     public String getAsText() {
         Date value = (Date) getValue();
         if (value != null) {

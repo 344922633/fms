@@ -1,8 +1,6 @@
 package com.fms.controller.filemanage;
 
-import com.anniweiya.fastdfs.FastDFSTemplate;
-import com.anniweiya.fastdfs.FastDfsInfo;
-import com.anniweiya.fastdfs.exception.FastDFSException;
+import com.fms.service.HdfsService;
 import com.fms.service.filemanage.DirectoryService;
 import com.fms.service.filemanage.FileService;
 import com.fms.utils.ParamUtil;
@@ -28,7 +26,7 @@ import java.util.*;
 public class ChunkedUploadController {
     private String serverPath = "/Users/fencho/Documents/tmp/";
     @Autowired
-    private FastDFSTemplate fastDFSTemplate;
+    private HdfsService hdfsService;
 
     @Autowired
     private FileService fileService;
@@ -192,33 +190,30 @@ public class ChunkedUploadController {
 
             buffer = bos.toByteArray();
             String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" :fileName.substring(fileName.lastIndexOf(".") + 1);
-            FastDfsInfo info = fastDFSTemplate.upload(buffer, suffix);
-            if (info != null) {
-                Long dirId = ParamUtil.get(request, "directoryId", 0L);
-                String relativePath = ParamUtil.get(request, "relativePath", null);
-                if (!Strings.isNullOrEmpty(relativePath)) {
-                    relativePath = relativePath.substring(0, relativePath.indexOf("/"));
-                    dirId = directoryService.createRelativePath(dirId, relativePath.split(relativePath));
-                }
-                com.fms.domain.filemanage.File file = new com.fms.domain.filemanage.File();
-                file.setId(System.currentTimeMillis());
-                file.setName(fileName);
-                file.setRealPath(info.getPath());
-                file.setGroups(info.getGroup());
-                file.setType(suffix);
-                file.setDirectoryId(dirId);
-                fileService.add(file);
-                if (outputFile.exists()) {
-                    outputFile.delete();
-                }
-                // 清除文件夹
-                File tempFile = new File(serverPath + "/" + fileMd5);
-                if (tempFile.isDirectory() && tempFile.exists()) {
-                    tempFile.delete();
-                }
+            String realPath = hdfsService.upload(buffer, fileName);
+            Long dirId = ParamUtil.get(request, "directoryId", 0L);
+            String relativePath = ParamUtil.get(request, "relativePath", null);
+            if (!Strings.isNullOrEmpty(relativePath)) {
+                relativePath = relativePath.substring(0, relativePath.indexOf("/"));
+                dirId = directoryService.createRelativePath(dirId, relativePath.split(relativePath));
             }
-        } catch (FastDFSException e) {
-            e.printStackTrace();
+            com.fms.domain.filemanage.File file = new com.fms.domain.filemanage.File();
+            file.setId(System.currentTimeMillis());
+            file.setName(fileName);
+            file.setRealPath(realPath);
+            file.setGroups("");
+            file.setType(suffix);
+            file.setDirectoryId(dirId);
+            fileService.add(file);
+            if (outputFile.exists()) {
+                outputFile.delete();
+            }
+            // 清除文件夹
+            File tempFile = new File(serverPath + "/" + fileMd5);
+            if (tempFile.isDirectory() && tempFile.exists()) {
+                tempFile.delete();
+            }
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

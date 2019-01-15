@@ -1,10 +1,9 @@
 package com.fms.controller.filemanage;
 
-import com.anniweiya.fastdfs.FastDFSTemplate;
-import com.anniweiya.fastdfs.exception.FastDFSException;
 import com.fms.domain.filemanage.File;
 import com.fms.domain.filemanage.FileParser;
 import com.fms.domain.filemanage.FileType;
+import com.fms.service.HdfsService;
 import com.fms.service.filemanage.FileParserService;
 import com.fms.service.filemanage.FileService;
 import com.fms.service.filemanage.FileTypeService;
@@ -16,16 +15,19 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import sun.tools.jconsole.HTMLPane;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +36,7 @@ public class FileController {
     @Autowired
     private FileService fileService;
     @Autowired
-    private FastDFSTemplate fastDFSTemplate;
+    private HdfsService hdfsService;
     @Autowired
     private FileTypeService fileTypeService;
     @Autowired
@@ -92,13 +94,8 @@ public class FileController {
                 return ExtUtil.failure("文件不存在！");
             }
             try {
-                fastDFSTemplate.deleteFile(file.getGroups(), file.getRealPath());
+                hdfsService.delete(file.getRealPath());
                 fileService.delete(id);
-            } catch (FastDFSException e) {
-                if (e.getCause() instanceof NullPointerException) {
-                    fileService.delete(id);
-                }
-                e.printStackTrace();
             } catch (NullPointerException e) {
                 fileService.delete(id);
             }
@@ -118,13 +115,9 @@ public class FileController {
         File file = fileService.get(id);
         if (file != null) {
             try {
-                byte[] buf = fastDFSTemplate.loadFile(file.getGroups(), file.getRealPath());
+                byte[] buf = hdfsService.cat(file.getRealPath());
                 // 设置response的Header
                 String fileName = file.getName();
-//                String fileName = file.getRealPath().substring(file.getRealPath().lastIndexOf("/")+1);
-//                fileName=System.currentTimeMillis()+file.getRealPath().substring(file.getRealPath().lastIndexOf("."));
-//                fileName=fileparser.getName().substring(0,fileparser.getName().lastIndexOf("."))+fileparser.getRealPath().substring(fileparser.getRealPath().lastIndexOf("."));
-
                 response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
                 response.addHeader("Content-Length", "" + buf.length);
                 OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
@@ -132,8 +125,6 @@ public class FileController {
                 toClient.write(buf);
                 toClient.flush();
                 toClient.close();
-            } catch (FastDFSException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
