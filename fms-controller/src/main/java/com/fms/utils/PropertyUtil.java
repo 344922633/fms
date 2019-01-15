@@ -59,31 +59,15 @@ public class PropertyUtil {
      * @param key 键名
      */
     public static String readValue(String key) {
-//        Properties props = new Properties();
-        try {
-//            InputStream in = PropertyUtil.class.getResourceAsStream(fileName);
-//            props.load(in);     ///加载属性列表
 
+        try {
             String value = null;
 
-            //  kafka的数据存在数据库中，会动态修改
-            if(propertyService != null && ("BOOTSTRAP_SERVERS".equals(key) || "DEFAULT_TOPIC".equals(key)
-                || "GROUP_ID_CONFIG".equals(key) || "HBASE_ZOOKEEPER_QUORUM".equals(key)
-                || "schema".equals(key))) {
+            //  kafka的数据存在数据库中，会动态修改 ,只能修改DEFAULT_TOPIC
+            if(propertyService != null && "DEFAULT_TOPIC".equals(key)) {
                 Property property =  propertyService.getAllConfProperty();
-
-                if(property != null){
-                    if ("BOOTSTRAP_SERVERS".equals(key)) {
-                        value = property.getBootStrapServers();
-                    } else if ("DEFAULT_TOPIC".equals(key)) {
-                        value = property.getDefaultTopic();
-                    } else if ("GROUP_ID_CONFIG".equals(key)) {
-                        value = property.getGroupIdConfig();
-                    } else if ("HBASE_ZOOKEEPER_QUORUM".equals(key)) {
-                        value = property.getHbaseZookeeperQuorum();
-                    } else if ("schema".equals(key)) {
-                        value = property.getPropertySchema();
-                    }
+                if (property != null) {
+                    value = property.getDefaultTopic();
                 }
             }
 

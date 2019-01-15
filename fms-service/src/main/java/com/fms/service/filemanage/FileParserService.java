@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 文件解析器服务实现类.
@@ -64,7 +65,7 @@ public class FileParserService {
 
     public void updateIsParser(Long id, int isParser) {
 
-        Map<String,Object> pa = new HashMap<>();
+        ConcurrentHashMap<String,Object> pa = new ConcurrentHashMap<>();
         pa.put("id",id);
         pa.put("isParser",isParser);
         dao.update(CLASSNAME,"updateIsParser",pa);

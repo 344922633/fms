@@ -525,7 +525,6 @@
                     limit: this.pageSize
 
                 }).then((res) => {
-                    console.log(res.data)
                     this.tableData = res.data.list;
                     this.total = res.data.count;
                     this.selectFileList=[];
@@ -1090,7 +1089,6 @@
                     this.$axios.post('mvc/fileParserJar/getJarClassParamListById', {
                           recommendParserId:file.recommendParserId
                      }).then(res => {
-                         console.log(res.data);
                          this.parserExtList = res.data;
                       });
                  }
@@ -1107,7 +1105,6 @@
                         })
                     }
                 })*/
-                console.warn(this.selectFileList)
                 this.parserVisible = true;
 
 
