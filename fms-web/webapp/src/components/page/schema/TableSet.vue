@@ -246,6 +246,7 @@
         this.tableMapItem = row
         this.$axios.post('mvc/getColumnsInfo', {
             id: this.tableData[index].id,
+
             tableName: row.tableEnglish
         }).then(res => {
             // console.log(res.data);
@@ -260,8 +261,19 @@
     saveMapEdit() {
         const {tableChinese, tableEnglish, id} = this.tableMapItem
         this.tableColumns.forEach((column, idx) => {
-            column.isDic = this.checkedArr[idx]
-        column.isMasterKey = this.checkedArr1[idx]
+           if(this.checkedArr[idx]){
+                column.isDic =1
+            }else{
+                column.isDic =0
+            };
+            if(this.checkedArr1[idx]){
+                column.isMasterKey = 1
+            }else{
+                column.isMasterKey = 0
+            }
+
+           /* column.isDic = this.checkedArr[idx]
+            column.isMasterKey = this.checkedArr1[idx]*/
     })
         this.$axios.post('mvc/saveColumnInfos', {
             tableId: id,

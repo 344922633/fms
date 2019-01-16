@@ -1,13 +1,10 @@
 package com.fms.controller.schema;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.DatabindContext;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fms.domain.schema.ColumnInfo;
-import com.fms.domain.schema.TableInfo;
 import com.fms.domain.filemanage.MasterSlaveDo;
-import com.fms.domain.schema.Template;
 import com.fms.service.schema.ColumnInfoService;
 import com.fms.service.schema.ColumnSetService;
 import com.fms.service.masterSlave.ColumnValuesService;
@@ -21,12 +18,11 @@ import com.handu.apollo.utils.json.JsonUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.crypto.Data;
+
 import java.util.*;
 
 @RestController
@@ -107,7 +103,7 @@ public class SchemaController {
 //                Map<String, Object> columnMap = schemaService.getColumnnInfo(tableInfo.getTableEnglish(), column.getColumnEnglish());
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("column", column);
-                
+
                 if (StringUtils.isNotEmpty(column.getDicTableName())) {
                     List<Map<String, Object>> dicList = columnSetService.getDicColumnsByDicName(column.getDicTableName());
                     map.put("dicList", dicList);
@@ -138,37 +134,37 @@ public class SchemaController {
         return schemaService.getTables();
     }
 
-   /* JSONObject data = JSONObject.parseObject(columnKeyNamesMap);*/
+    /* JSONObject data = JSONObject.parseObject(columnKeyNamesMap);*/
     @RequestMapping("insertDataFormasterslave")
     public Object insertDataFormasterslave(String masterslavename, String data) {
 //        if(true){
 //            kafkaTemplate.send("schema",data);
 //        }else{
 
-            ObjectMapper mapper = JsonUtil.getMapper();
-            MasterSlaveDo masterSlaveDoForQuery = new MasterSlaveDo();
-            masterSlaveDoForQuery.setName(masterslavename);
-            List<MasterSlaveDo> list = masterSlaveService.query(masterSlaveDoForQuery);
+        ObjectMapper mapper = JsonUtil.getMapper();
+        MasterSlaveDo masterSlaveDoForQuery = new MasterSlaveDo();
+        masterSlaveDoForQuery.setName(masterslavename);
+        List<MasterSlaveDo> list = masterSlaveService.query(masterSlaveDoForQuery);
 
-            if (list != null && list.size() > 0)
-            {
-                MasterSlaveDo masterSlaveDo = list.get(0);
-                masterSlaveDo.setMasterTable("11111");
-                masterSlaveDo.setSlaveTable("2222");
-                try {
-                    if (StringUtils.isNotEmpty(masterSlaveDo.getMasterTable()))
+        if (list != null && list.size() > 0)
+        {
+            MasterSlaveDo masterSlaveDo = list.get(0);
+            masterSlaveDo.setMasterTable("11111");
+            masterSlaveDo.setSlaveTable("2222");
+            try {
+                if (StringUtils.isNotEmpty(masterSlaveDo.getMasterTable()))
+                {
+                    schemaService.insertData(masterSlaveDo.getMasterTable(), mapper.readValue(data, List.class));
+
+                    if (StringUtils.isNotEmpty(masterSlaveDo.getSlaveTable()))
                     {
-                        schemaService.insertData(masterSlaveDo.getMasterTable(), mapper.readValue(data, List.class));
-
-                        if (StringUtils.isNotEmpty(masterSlaveDo.getSlaveTable()))
-                        {
-                            schemaService.insertData(masterSlaveDo.getSlaveTable(), mapper.readValue(data, List.class));
-                        }
+                        schemaService.insertData(masterSlaveDo.getSlaveTable(), mapper.readValue(data, List.class));
                     }
-                } catch (Exception e) {
-                    return ExtUtil.failure(e.getCause().getMessage());
                 }
+            } catch (Exception e) {
+                return ExtUtil.failure(e.getCause().getMessage());
             }
+        }
 //        }
 
         return ExtUtil.success("操作成功");
@@ -282,7 +278,7 @@ public class SchemaController {
         //查询tables
         Set<String> tables = gettables(data);
 
-       //构建对象
+        //构建对象
         Map<String,Object> params = new HashMap<>();
 
         List<Map<String,Object>> objectDatas = new ArrayList<>();
@@ -307,15 +303,32 @@ public class SchemaController {
 
         for (Map<String, Object> datum : data) {
             Map<String, Object> childdata = (Map<String, Object>) datum.get("column");
+
             if(tableId.equals(childdata.get("tableId") + "")){
                 //    "columnEnglish": "DXBM",
                 //            "dataValue": "2133",
-                String columnEnglish = (String) childdata.get("columnEnglish");
+                Map<String,Object> column = new HashMap<>();
+                String columnEnglish = (String)childdata.get("columnEnglish");
                 String dataValue = (String) childdata.get("dataValue");
 
-                Map<String,Object> column = new HashMap<>();
                 column.put("name",columnEnglish.toLowerCase());
                 column.put("value",dataValue);
+                //判断是否为字典表
+                String dicListName = (String) childdata.get("dicList");
+                if (StringUtils.isNotEmpty(dicListName)){
+                    List<Map> dicList = (List<Map>) datum.get("dicList");
+                    if (dicList != null && dicList.size() > 0){
+                        for (Map m: dicList) {
+                            String mc = (String) m.get("MC");
+
+                            if(dicListName.equals(mc)){
+                                column.put("value",m.get("DM"));
+                                break;
+                            }
+
+                        }
+                    }
+                }
 
                 columns.add(column);
 
@@ -356,6 +369,22 @@ public class SchemaController {
         return tables;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

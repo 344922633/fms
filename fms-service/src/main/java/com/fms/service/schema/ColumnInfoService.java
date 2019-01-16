@@ -3,11 +3,14 @@ package com.fms.service.schema;
 import com.fms.domain.schema.ColumnInfo;
 import com.fms.domain.schema.TableInfo;
 import com.handu.apollo.data.mybatis.Dao;
+import com.handu.apollo.data.utils.Param;
 import com.handu.apollo.utils.CharPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ColumnInfoService {
@@ -54,12 +57,20 @@ public class ColumnInfoService {
         return dao.get(CLASSNAME, "queryColumnInfoBytableId", tableId);
     }
 
-    public void addColunmInfo(ColumnInfo columnInfo) {
+    public void addColumnInfo(ColumnInfo columnInfo) {
         dao.insert(CLASSNAME, "addColumnInfo", columnInfo);
     }
 
     public void updateColumnInfo(ColumnInfo columnInfo) {
         dao.update(CLASSNAME, "updateColumnInfo", columnInfo);
+    }
+
+    public TableInfo getColumnsInfoByTableIdAndColumnEnglish(long tableId ,String columnEnglish) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("columnEnglish", columnEnglish);
+        params.put("tableId", tableId);
+        return dao.get(CLASSNAME, "getColumnsInfoByTableIdAndColumnEnglish", params);
+
     }
 
     public List<String> getDicTable() {

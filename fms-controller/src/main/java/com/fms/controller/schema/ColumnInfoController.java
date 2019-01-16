@@ -22,6 +22,7 @@ public class ColumnInfoController {
     private ColumnInfoService columnInfoService;
     @Autowired
     private SchemaService schemaService;
+
     @RequestMapping("getDicTable")
     public List<String> getDicTable() {
         return columnInfoService.getDicTable();
@@ -48,15 +49,15 @@ public class ColumnInfoController {
         columnInfoService.updateTableInfo(tableInfo);
         columnInfoService.deleteColumnInfo(tid);
         // 字段列表
-        List<Map<String,Object>> tableColumns= schemaService.listColumns(tableEnglish);
+        List<Map<String, Object>> tableColumns = schemaService.listColumns(tableEnglish);
 
-        for (Map<String,Object> map: tableColumns) {
+        for (Map<String, Object> map : tableColumns) {
             ColumnInfo columnInfo = new ColumnInfo();
 
             columnInfo.setColumnEnglish((String) map.get("column_name"));
             columnInfo.setDataType((String) map.get("data_type"));
             columnInfo.setTableId(tid);
-            columnInfoService.addColunmInfo(columnInfo);
+            columnInfoService.addColumnInfo(columnInfo);
         }
 
         return ExtUtil.success("操作成功");
@@ -68,7 +69,7 @@ public class ColumnInfoController {
         //根据tableEnglish查询表是否存在
         Integer count = columnInfoService.countTableInfoByEnglish(tableInfo.getTableEnglish());
 
-        if(count > 0){
+        if (count > 0) {
             return ExtUtil.failure("操作失败,当前表已存在");
         }
 
@@ -77,16 +78,16 @@ public class ColumnInfoController {
         columnInfoService.addTableInfo(tableInfo);
 
         // 字段列表
-        List<Map<String,Object>> tableColumns= schemaService.listColumns(tableInfo.getTableEnglish());
+        List<Map<String, Object>> tableColumns = schemaService.listColumns(tableInfo.getTableEnglish());
 
-        for (Map<String,Object> map: tableColumns) {
+        for (Map<String, Object> map : tableColumns) {
             ColumnInfo columnInfo = new ColumnInfo();
 
             columnInfo.setColumnEnglish((String) map.get("column_name"));
             columnInfo.setDataType((String) map.get("data_type"));
             columnInfo.setTableId(id);
 
-            columnInfoService.addColunmInfo(columnInfo);
+            columnInfoService.addColumnInfo(columnInfo);
         }
 
         return ExtUtil.success("操作成功");
@@ -168,7 +169,7 @@ public class ColumnInfoController {
 
     @RequestMapping("isTableIdExist")
     public boolean isTableIdExist(String tableId) {
-        long tid =  Long.parseLong(tableId);
+        long tid = Long.parseLong(tableId);
         boolean flag = false;
         int count = columnInfoService.queryColumnInfoBytableId(tid);
         if (count > 0) {
@@ -180,15 +181,16 @@ public class ColumnInfoController {
     }
 
     public void saveColumnInfo(List<ColumnInfo> columnInfos, String tableId) {
-//        boolean flag = isTableIdExist(tableId);
+        boolean flag = isTableIdExist(tableId);
         for (ColumnInfo columnInfo : columnInfos) {
-//            if (flag) {
+            if (flag) {
                 //添加操作
                 columnInfoService.updateColumnInfo(columnInfo);
-//            } else {
+            } else {
                 //修改操作
-//                columnInfoService.addColunmInfo(columnInfo);
+                columnInfoService.addColumnInfo(columnInfo);
             }
         }
 
     }
+}
