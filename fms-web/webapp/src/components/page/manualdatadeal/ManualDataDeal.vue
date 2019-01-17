@@ -81,17 +81,17 @@
         created() {
             //this.getTables();
             this.getMenuListFormasterslave();
-            this.timedata=Date();
+            /*this.timedata=Date();*/
         },
         methods: {
             checkType(type){
                 console.log(type == "varchar" || type == "char",type + "....");
-                if(type == "varchar" || type == "char"){
-                    return "text";
-                }else if(type == "int" || type == "long"){
+                if(type == "int" || type == "long"){
                     return "number";
-                }else if(type == "time"){
-                    return "date";
+                }else if(type == "varchar" || type == "char"){
+                    return "text";
+                }else{
+                    return "text";
                 }
             },
             getTables() {

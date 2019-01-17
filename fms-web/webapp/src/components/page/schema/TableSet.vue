@@ -2,6 +2,7 @@
     <div class="container">
         <Button @click="handleAdd">新增</Button>
         <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table"
+
                   ref="multipleTable">
             <el-table-column prop="tableEnglish" align="center" label="表名" width="120">
             </el-table-column>
@@ -45,6 +46,7 @@
                 </Divider>
                 <FormItem v-for="(item, index) in tableColumns" :key="item.columnEnglish" :label="item.columnEnglish">
                     <!--<Input v-if="item.inputType != 'select' && !(item.max_length > 100) " v-model="item.value" :placeholder="item.data_type" :readonly="item.readonly" :value="item.value" style="width:300px;"/>-->
+                   <!-- <Input v-model="item.tableId"  style="width:300px;"/>-->
 
                     <Input v-model="item.columnChinese" :placeholder="item.data_type" :value="item.columnChinese" style="width:300px;"/>
 
@@ -201,6 +203,7 @@
             tableEnglish: this.tableNameEdit,
             tableChinese:this.tableChineseEdit
         });
+        console.log(this.tableIdEdit)
         await this.getData();
         this.editVisible = false;
     },
@@ -224,7 +227,8 @@
         console.log(index)
        // console.log(this.tableData[this.idx].id,"32143546543245675643")
         this.delVisible = false;
-        await this.$axios.post('mvc/deleteTableInfo', {id: this.tableData[index].id});
+        await this.$axios.post('mvc/deleteTableInfo', {
+            id: this.tableData[index].id});
         await this.getData();
         this.$message.success('删除成功');
         this.delVisible = false;
@@ -245,7 +249,7 @@
     getColumns(index, row) {
         this.tableMapItem = row
         this.$axios.post('mvc/getColumnsInfo', {
-            id: this.tableData[index].id,
+            id: this.tableData[(this.currentPage-1)*this.pageSize + index].id,
 
             tableName: row.tableEnglish
         }).then(res => {
