@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 文件解析器服务实现类.
@@ -64,20 +63,12 @@ public class FileParserService {
 
 
     public void updateIsParser(Long id, int isParser) {
-
-        ConcurrentHashMap<String,Object> pa = new ConcurrentHashMap<>();
+        Map<String,Object> pa = new HashMap<>();
         pa.put("id",id);
         pa.put("isParser",isParser);
         dao.update(CLASSNAME,"updateIsParser",pa);
 
     }
-
-/*
-    public List<File> getFileListByName(String name) {
-
-        return dao.getList(CLASSNAME, "getFileListByName", name);
-    }
-*/
 
 
     public void updateIsParserMultiFile(String name, int isParser) {
@@ -108,7 +99,6 @@ public class FileParserService {
 
     public Object invoke(FileParser fileParser) {
         return null;
-//        Object obj = JarLoadUtil.execute(fileParser.getSource(), fileParser.getClassName(), fileParser.getMethodName(), new Class[] {String.class}, new Object[] {"你好"});
     }
 
     public Object getOrderList(String ids) {
@@ -129,15 +119,7 @@ public class FileParserService {
         FileParser fileParser = new FileParser();
         fileParser.setId(parserId);
         fileParser = dao.get(FileParserService.CLASSNAME, "get", fileParser);
-     /*   //将文件修改为已解析状态
-        File file = new File();
-        System.out.print(file.getId());
-        file.setId(file_id);
-        file.setIsParser(1);
-        file.setRecommendParserName(fileParser.getName());
-        file.setClassName(fileParser.getClassName());
-        file.setRecommendParserId(parserId);
-        dao.update(FileService.CLASSNAME, "update", file);*/
+
         return true;
     }
 

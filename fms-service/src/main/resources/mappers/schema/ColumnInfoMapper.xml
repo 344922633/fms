@@ -2,16 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fms.service.schema.ColumnInfoService" >
 
-  <select id="addColumnInfo" parameterType="com.fms.domain.schema.ColumnInfo">
+  <insert id="addColumnInfo" parameterType="com.fms.domain.schema.ColumnInfo">
     insert into column_info(columnEnglish,isDic,isMasterKey,dataType,tableId,schemaId,dicTableName,columnChinese)
-    values(#{columnEnglish},#{isDic},#{isMasterKey},#{dataType},#{tableId},1,#{dicTableName},#{columnChinese})
-  </select>
+    values(#{columnEnglish},#{isDic},#{isMasterKey},#{dataType},#{tableId},#{schemaId},#{dicTableName},#{columnChinese})
+  </insert>
 
   <update id="updateColumnInfo" parameterType="com.fms.domain.schema.ColumnInfo">
     update column_info set columnEnglish = #{columnEnglish},isDic = #{isDic},
-    isMasterKey = #{isMasterKey},dataType = #{dataType},tableId = #{tableId},schemaId = 1,
+    isMasterKey = #{isMasterKey},dataType = #{dataType},tableId = #{tableId},schemaId = #{schemaId},
     dicTableName = #{dicTableName},columnChinese = #{columnChinese} where columnEnglish = #{columnEnglish} and tableId=#{tableId}
   </update>
+
+  <select id="getColumnsInfoByTableIdAndColumnEnglish" parameterType="map" >
+    select * from column_info where tableId = #{tid} and columnEnglish = #{columnEnglish}
+  </select>
+
 
   <delete id="deleteColumnInfo" parameterType="java.lang.Long">
     delete from column_info where tableId = #{tableId}
@@ -21,9 +26,9 @@
     delete from table_info where id = #{id}
   </delete>
 
-  <select id="addTableInfo" parameterType="com.fms.domain.schema.TableInfo">
+  <insert id="addTableInfo" parameterType="com.fms.domain.schema.TableInfo">
     insert into table_info(id,tableEnglish,tableChinese,schemaId) values(#{id},#{tableEnglish},#{tableChinese},1)
-  </select>
+  </insert>
 
   <update id="updateTableInfo" parameterType="com.fms.domain.schema.TableInfo">
     update table_info set tableEnglish = #{tableEnglish},tableChinese = #{tableChinese},schemaId = 1 where id = #{id}

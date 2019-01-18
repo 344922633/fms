@@ -39,7 +39,15 @@
                 <Form v-if="tableColumns" :label-width="100">
                     <FormItem v-for="(item, index) in tableColumns" :data="item.column.dicTableName" :key="item.column.id" :label="item.column.columnChinese">
 
-                        <Input  v-if="item.column.isDic === 0" v-model="item.column.dataValue" :placeholder="item.column.dataType" />
+
+
+                       <!-- 当item.column.isDic === 0 时判断    item.column.columnEnglish.toLowerCase() == 'dxbm'     成立  则生成时间戳赋值给dataValue   只读-->
+                        <Input  v-if="item.column.isDic === 0 && item.column.columnEnglish.toLowerCase() != 'dxbm'" :type="checkType(item.column.dataType)"  v-model="item.column.dataValue" :placeholder="item.column.dataType" >
+                        </Input>
+
+
+                        <Input  v-if="item.column.isDic === 0 && item.column.columnEnglish.toLowerCase() == 'dxbm'" v-model="item.column.dataValue" disabled="disabled">
+                        </Input>
                         <Select v-if="item.column.isDic === 1" v-model="item.column.dicList" filterable>
                             <Option :value="singlevalue.MC" v-for="singlevalue in item.dicList" >{{singlevalue.MC}}</option>
                         </Select>
@@ -63,6 +71,7 @@
                 masterslaveList: [],
                 tableColumns:null,
                 treedata: [],
+                timedata:'',
                 defaultProps: {
                     children: 'children',
                     label: 'name'
@@ -72,13 +81,17 @@
         created() {
             //this.getTables();
             this.getMenuListFormasterslave();
+            /*this.timedata=Date();*/
         },
         methods: {
             checkType(type){
-                if(type == "varchar" || type == "char"){
+                console.log(type == "varchar" || type == "char",type + "....");
+                if(type == "int" || type == "long"){
+                    return "number";
+                }else if(type == "varchar" || type == "char"){
                     return "text";
                 }else{
-                    return "number";
+                    return "text";
                 }
             },
             getTables() {
@@ -107,24 +120,27 @@
                         this.tableColumns = res.data;
                         console.log(res.data, '返回数据');
                         //alert(JSON.stringify(this.tableColumns));
+                        console.log(this.tableColumns);
                         this.tableColumns.forEach((item, index) => {
                             if(item.column_key=="PRI" ){
                                 var val=this.tableColumns[index].placeholder;
                                 val =timestamp;
 
+
                                 this.tableColumns[index].readonly = true;
                                 this.tableColumns[index].value=val;
-                            }else{
-
+                            }else if(item.column.columnEnglish.toLowerCase() == 'dxbm'){
+                                item.column.dataValue = (new Date()).valueOf()+"";
                             }
                         })
-                        this.masterslave_name = masterslaveview_name;
+                        console.log(this.tableColumns);
+                  /*      this.masterslave_name = masterslaveview_name;*/
                     })
                 }
             },
             handleSave() {
-                this.$axios.post('mvc/insertDataFormasterslave', {
-                    masterslavename: this.masterslave_name,
+                this.$axios.post('mvc/formEntrySendKafka', {
+
                     data: JSON.stringify(this.tableColumns)
                 }).then(res => {
                     this.$notify({
@@ -134,6 +150,8 @@
                     });
                 })
             }
+
+
         }
     }
 </script>

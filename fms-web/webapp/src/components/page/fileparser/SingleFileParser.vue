@@ -126,30 +126,15 @@
             </div>
 
             <Divider> 解析字段</Divider>
-            <div>
-            <Form v-if="columnData && Object.keys(columnData).length">
-                <FormItem inline :label-width="100" label="选择模板">
-                    <Select filterable
-
-                            style="width: 180px"
-                            v-model="selectTemplateName"
-                            :clearable="true"
-                    >        <!--@on-change="(schemaId) => conChangeTemplate(schemaId)"-->
-                        <Option v-for="template in  this.templateNameInfos" :value="template.templateName" :key="template.templateName"> {{ template.templateName }}</Option>
-                    </Select>
-                </FormItem>
-
-                <Modal
-                    title="请输入模板名称"
-                    v-model="templateNameVisible"
-                    @on-ok="handleSaveMapNewTemplateName"
-                    :mask-closable="false">
-                    <FormItem inline :label-width="100" label="请输入模板名称">
-                        <Input v-model="newTemplateName"></Input>
-                    </FormItem>
-                </Modal>
-            </Form>
-            </div>
+            <!--选择模板-->
+            <!-- <Select filterable
+                     @on-change="(schemaId) => getTables(schemaId, key)"
+                     style="width: 180px"
+                     v-model="columnKeyNamesMap[key].schemaId"
+                     :clearable="true"
+                 >
+                 <Option v-for="(schema,schemaIdx) in columnSelectMap[key].schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>
+             </Select>-->
 
             <!--选择表和字段-->
             <div v-if="columnData && Object.keys(columnData).length" style="height: 300px; overflow-y: auto;">
@@ -210,6 +195,18 @@
         <Button type="primary" @click="parseDataSaveDatabase">入库</Button>
         <Button type="primary" @click="saveTemplateToOrigin">保存映射关系到原模板</Button>
         <Button type="primary" @click="saveTemplateToNew">保存映射关系到新模板</Button>
+
+        <!--<Modal-->
+        <!--title="请输入模板名称"-->
+        <!--v-model="templateNameVisible"-->
+        <!--@on-ok="handleSaveMapInfo"-->
+        <!--:mask-closable="false">-->
+        <!--<el-form ref="form" :model="form" :label-position="left" label-width="100px" :rules="rules">-->
+        <!--<el-form-item label="模板名称：" >-->
+        <!--<el-input v-model="templateName"></el-input>-->
+        <!--</el-form-item>-->
+        <!--</el-form>-->
+        <!--</Modal>-->
     </div>
 </template>
 <script>
@@ -261,7 +258,6 @@
         columnSelectMap: {},
         schemas: [],
         topologyName: '',
-        selectTemplateName:'',
         templateNameInfos:[],
         columnMapRelations:[],
         // 解析器列表
@@ -426,11 +422,11 @@
                 });
             },
             resetData() {
-              Object.keys(originData).forEach(key =>{
-                  const copy = JSON.parse(JSON.stringify(originData))
-                  const data = copy[key]
-                  this[key] = data
-              })
+                Object.keys(originData).forEach(key =>{
+                    const copy = JSON.parse(JSON.stringify(originData))
+                    const data = copy[key]
+                    this[key] = data
+                })
             },
             handlePreview() {
 
@@ -590,6 +586,7 @@
                         }
                         this.selectData = selectData;
                         this.columnData = columnData;
+                        alert(this.columnData)
                     }
                 })
             },
@@ -625,6 +622,40 @@
 
                 } catch (e) {
                 }
+                // console.log(this.allKey);
+                // this.$axios.post('mvc/getColumnMapRelation', {
+                //         params: {
+                //             columnKeys: this.allKey
+                //         },
+                //         paramsSerializer: function (params) {
+                //             return qs.stringify(params, {arrayFormat: 'repeat'})
+                //         }
+                //     }
+                //    // qs.stringify(
+                //    //      {columnKeys: this.allKey},
+                //    //     { indices: false }
+                //    //      // { arrayFormat: 'repeat' }
+                // ).then(res => {
+                //     this.templateNameInfos = res.data.templateNameInfos,
+                //     this.columnMapRelations = res.data.columnMapRelations
+                //
+                //     console.log(this.templateNameInfos);
+                //     console.log(this.columnMapRelations);
+                // })
+                // 获取模板
+                // this.$axios.all([
+                //     // 获取模板
+                //     $axios.post('mvc/getColumnMapRelation', {
+                //         this.allKey
+                //     }),
+
+                //     // 获取表和列
+                //     $axios.post('mvc/fileParser/singleParse', {
+                //         id: this.file.recommendParserId,
+                //         params: this.file.id,
+                //         parserExt: JSON.stringify(this.parserExtList)
+                //     })
+                // ])
 
                 // 获取表和列
                 this.$axios.post('mvc/fileParser/singleParse', {
@@ -679,7 +710,7 @@
                 })
             },
             changeDefaultTab() {
-              const defaultKey = Object.keys(this.jsonTables)[0]
+                const defaultKey = Object.keys(this.jsonTables)[0]
                 this.toggleTab(0, defaultKey)
             },
             async genParamsByAllKey() {
@@ -710,7 +741,8 @@
 
             // 获取模板下拉框
             getTemplateList(allKey) {
-                let me = this;
+                console.log(allKey) ;
+
                 $.ajax({
                     url:"mvc/getColumnMapRelation",
                     type:"GET",
@@ -718,25 +750,37 @@
                     data: {
                         "columnKeys": allKey,
                     },
-                    success: function(res) {
-                        // 匹配度最高的模板
-                        me.templateNameInfos = res.templateNameInfos;
-                        if (me.templateNameInfos != null && me.templateNameInfos.length > 0){
-                            me.selectTemplateName = me.templateNameInfos[0].selectTemplateName;
-                        }
+                    success: function(data) {
 
-                         // 匹配度最高的模板对应的表列信息
-                        me.columnMapRelations = res.columnMapRelations
-                        // me.columnKeyNamesMap =  me.columnMapRelations
-                        console.log(me.columnKeyNamesMap);
-                        console.log(me.columnMapRelations);
                     }
+
                 })
-            },
 
-            // 模板名改变时触发的函数
-            conChangeTemplate(){
 
+                /*      this.$axios.get('mvc/getColumnMapRelation', {
+                          // params: {
+                          //     columnKeys:JSON.stringify(allKey)
+                          // }
+                          // columnKeys :          JSON.stringify(allKey)
+                          // columnKeys : qs.stringify(JSON.stringify(allKey), {arrayFormat: 'indices'})
+                          traditional: true,
+                          data:{
+                              columnKeys: allKey,
+                              "type":sendMsg
+                          },
+                          paramsSerializer: function(params) {
+                              return qs.stringify(params, {arrayFormat: 'indices'})
+                          }
+                          // columnKeys : qs.stringify(allKey,{ arrayFormat: 'indices' })}
+                          // columnKeys : qs.stringify(allKey, {arrayFormat: 'brackets'})
+                          }
+                      ).then(res => {
+                          this.templateNameInfos = res.data.templateNameInfos,
+                          this.columnMapRelations = res.data.columnMapRelations
+
+                          console.log(this.templateNameInfos);
+                          console.log(this.columnMapRelations);
+                      })*/
             },
 
             // 获取库
@@ -802,8 +846,7 @@
             //     });
             // },
 
-            // 保存到新模板
-            handleSaveMapNewTemplateName() {
+            handleSaveMapInfo() {
 
                 this.$axios.post('mvc/addColumnMapRelations', {
                     templateName:this.templateName,
@@ -974,7 +1017,7 @@
                 }
             }
         }
- }
+    }
 </script>
 <style>
 

@@ -42,7 +42,7 @@
             </if>
         </where>
     </sql>
-    <select id="query" parameterType="map" resultType="com.fms.domain.filemanage.BlockManage">
+    <select id="getList" parameterType="map" resultType="com.fms.domain.filemanage.BlockManage">
         SELECT <include refid="all" />
         FROM block_manage
         <include refid="condition" />

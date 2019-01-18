@@ -65,7 +65,6 @@ public class ColumnSetController {
     @RequestMapping("/getDicNameByTableId")
     public JSONArray getDicNameByTableId(String tableId){
         long tid = Long.parseLong(tableId);
-
         List<ColumnInfo> list = columnSetService.getDicNameByTableId(tid);
 
         JSONArray array = new JSONArray();

@@ -116,10 +116,6 @@
                             </div>
                         </el-form-item>
 
-                        <!--<el-form-item label="控件属性"  label-width="100px"  v-for="(item, index) in form.editproperties"-->
-                                      <!--:key="index">-->
-                                <!--<el-input   v-model="item.property" style="width:200px;"></el-input>-->
-                        <!--</el-form-item>-->
 
                         <el-form-item label="控件类型(一级)" label-width="100px">
                             <el-select v-model="form.parentType" filterable placeholder="请选择" style="width:200px;">
@@ -196,15 +192,16 @@
         data() {
             return {
                 tableData: [],
+                editproperties:[],
                 form: {
-                   editproperties:[],
                     name: '',
                     parentType: '',
                     type: '',
                     image: ''
                 },
+
                 editVisible:false,
-                pageSize:20,
+                pageSize:10,
                 //图片是否上传成功
                 uploadSuccessState:false,
                 editDialogVisible:false,
@@ -216,11 +213,14 @@
                 productImgs: [],
                 isMultiple: true,
                 imgLimit: 1,
-                inputs: [
-                    {text: ''}
-                ],
+                idx: -1,
+                inputs:[
+                    {text:'' ,$noColumn:true}
+                        ],
                 menuList: [],
                 menuIdChildrenMap: {},
+                proEdit:{},
+                valid:false,
             }
         },
         created() {
@@ -241,23 +241,21 @@
                     imageUrl: ""
                 };
                 this.productImgs = [];
-                this.inputs = [
-                    {text: ''}
+                inputs:[
+                    {text:'' ,$noColumn:true}
                 ];
                 this.addVisible = true;
                 this.uploadSuccessState = false;
             },
             // 选择变化
             onChangeType(type) {
-                this.inputs = [
-                    {text: ''}
-                ];
+                this.inputs=[
+                    {text:'' ,$noColumn:true}
+                ]
+                console.log(this.inputs,'this.inputs')
                 const children = this.menuIdChildrenMap[this.form.parentType]  // 下拉框元素
-                console.log(children,'children')
                 const selectedType = children.find(child => child.name === type)    //被选中的类型
-                console.log(selectedType,'selectedType')
                 const { id } = selectedType || {}
-
                 this.form.properties="";
                 this.$axios.post('mvc/listColumnsFormasterslave', { masterSlaveId: id }).then((res) => {
                     console.log(res,'测试')
@@ -265,12 +263,10 @@
                     data = data || [];
                     // console.log(data,'data')
                     data.forEach(item => {
-
                         const {column} = item
-                        console.log(column,'column')
                         //const { columnChinese, columnEnglish } = column
                            this.inputs.push({
-                            text: column.columnChinese,
+                            text:column.columnChinese,
                             canDelete: false,
                              ...item
                         })
@@ -288,11 +284,10 @@
                     return v.text !== ''
                 })
                 console.log(inputsValid,'inputsValid')
-                if (!name || !type || !inputsValid || !imageUrl) {
+                if ( !name || !type || !inputsValid || !imageUrl) {
                     this.$message.warning('请填写完整表单, 并上传图片')
                     return
                 }
-
                 this.inputs = this.inputs.filter(v => {
                     return !!v.text                          //过滤掉inputs里属性为空的，返回的还是一个数组
                 })
@@ -313,11 +308,11 @@
                     // editproperties:this.form.editproperties
                 }
                 //添加
+                console.log(params,'param')
                 url = "mvc/control/operationControl";
                 for(let i = 0,len = tableData.length; i < len; i++) {
                     if(tableData[i].name == this.form.name){
                         this.$message.warning('控件名重复');
-                        loading.close();
                         return ;
                     }
                 }
@@ -329,8 +324,8 @@
                     this.getData();
                     // this.reset()
                     loading.close();
-                    this.inputs = [
-                        {text: ''}
+                    this.inputs=[
+                        {text:'' ,$noColumn:true}
                     ];
                     this.form = {
                         name: '',
@@ -347,54 +342,55 @@
             closeDialog(done){
                         done();
                         this.productImgs = [];
-                        this.inputs = [
-                            {text: ''}
-                        ];
+                this.inputs=[
+                    {text:'' ,$noColumn:true}
+                ];
                         this.form = {
                             name: '',
                             type: '',
                         };
-
             },
             //编辑
-            handleEdit(index, row) {
+            async handleEdit(index, row) {
                 this.idx = index;   //下标
-                const item = this.tableData[index];   //所在行数据
-                console.log(item,'item111111111111111111111111111');
+                //const item = this.tableData[index];   //所在行数据
+                console.log(row,'row');
+                //console.log(item,'item111111111111111111111111111');
+               // console.log(item.properties,'item.properties')
+               //  this.inputs=[
+               //      {text:'' ,$noColumn:true}
+               //  ];
                 this.form = {
-                    id:item.id,
-                    name: item.name,
-                  // editproperties: item.properties,
-                    parentType: item.type1,
-                    type: item.type,
-                    imageUrl: item.image
+                    id:row.id,
+                    name: row.name,
+                    parentType: row.type1,
+                    type: row.type,
+                    imageUrl: row.image
                 };
-                item.properties.forEach(e => {
-                    console.log(e,'e')
+                this.proEdit=row.properties
+                row.properties.forEach(item => {
+                   // console.log(cloumn,'cloumn')
                     this.inputs.push({
-                        text: e.propertyChinese,
-                        //...e
+                        text: item.propertyChinese,
+                        canDelete: false,
+                        ...item
                     })
-                })
-                // this.inputs.push({
-                //     text: item.properties
-                //
-                // })
 
+                })
+              //  console.log(e,'e');
                 console.log(this.inputs,'this.inputs')
-                console.log(this.form.editproperties,'this.form.editproperties');
-                if(item.image) {
+                if(row.image) {
                     this.uploadSuccessState = true;
                 }
-                this.productImgs = [{url: item.image}];
+                this.productImgs = [{url: row.image}];
                 this.editVisible = true;
             },
 
             //编辑提交
-            onSubmitEdit(){
+            onSubmitEdit(index,row){
                 const {name, type, imageUrl} = this.form;
                 let tableData = this.tableData;
-
+                console.log(tableData,'tableData');
                 const inputsValid = this.inputs.some(v => {
                     return v.text !== ''
                 })
@@ -414,6 +410,33 @@
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
                 var url,params ;
+             //  console.log(this.inputs,'inputs');
+                this.inputs.forEach((inp,i)=>{
+                    if(inp.$noColumn==undefined&&inp.column==undefined){
+                        //console.log(inp.$noColumn+'----000')
+                        let obj = {
+                            text:inp.text,
+                            canDelete:inp.canDelete,
+                            column:{
+                                id:inp.id,
+                                columnChinese:inp.propertyChinese,
+                                columnEnglish:inp.property,
+                                tableId:inp.controlId,
+                                isDic:inp.isDic,
+                                isMasterKey:inp.isMasterKey,
+                                dataType:inp.dataType,
+                                schemaId:inp.schemaId,
+                                dicTableName:inp.dicTableName,
+                                dicList:inp.dicList
+                            }
+                        };
+                      //  console.log(obj,'obj')
+                       this.inputs.splice(i,1,obj);
+                    }
+
+                })
+              //  console.log(this.inputs,'inputs11');
+
                 var params = {
                     name: this.form.name,
                     type: this.form.type,
@@ -422,8 +445,7 @@
                     url: this.form.imageUrl,
                    // properties:JSON.stringify(this.form.editproperties) + JSON.stringify(this.inputs),
                 }
-
-
+               // console.log(params,'params')
                 //添加
                 url = "mvc/control/operationControl";
                 params.id = this.form.id;
@@ -437,7 +459,16 @@
 
                     // this.reset()
                     loading.close();
-
+                    this.inputs=[
+                        {text:'' ,$noColumn:true}
+                    ];
+                    this.form = {
+                        name: '',
+                        type: '',
+                    };
+                    // setTimeout(function (){
+                    //     window.location.reload();
+                    // }, 3000);
                 }).catch(e => {
                     console.log(e, '失败')
                     this.editVisible = false;
@@ -445,7 +476,8 @@
                 })
             },
 
-            async getData() {
+
+    async getData() {
                 let {data} = await this.$axios.post('mvc/control/getList');
                 console.log(data, '初始化数据');
                 this.tableData = data;
@@ -476,7 +508,8 @@
 
             // 确定删除
             async deleteRow(){
-                await this.$axios.post('mvc/control/delControl', {id: this.tableData[this.idx].id});
+                let index = this.pageSize * (this.currentPage - 1) + this.idx;
+                await this.$axios.post('mvc/control/delControl', {id: this.tableData[index].id});
                 await this.getData();
                 this.$message.success('删除成功');
                 this.delVisible = false;
@@ -530,7 +563,8 @@
             },
             addInput() {
                 this.inputs.unshift({
-                    text: ''
+                    text: '',
+                    $noColumn:true
                 })
             },
             removeInput(index) {
@@ -542,8 +576,8 @@
                     name: '',
                     type: '',
                 };
-                this.inputs = [
-                    {text: ''}
+                this.inputs=[
+                    {text:'' ,$noColumn:true}
                 ];
                 this.productImgs = [];
                 this.uploadSuccessState = false;
@@ -554,9 +588,9 @@
                 console.log('wwww')
                 this.editVisible=false
 
-                this.inputs = [
-                    {text: ''}
-                ]
+                this.inputs=[
+                    {text:'' ,$noColumn:true}
+                ];
             }
         }
     }

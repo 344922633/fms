@@ -150,6 +150,7 @@ public class ControlController {
                 property = array.getJSONObject(i).getString("text");
                 ControlProperty controlProperty = new ControlProperty();
                 controlProperty.setControlId(controlId);
+                controlProperty.setProperty(property);
                 controlProperty.setPropertyChinese(property);
                 controlProperty.setPropertyFlag(1);
                 controlPropertyService.addControlProperty(controlProperty);

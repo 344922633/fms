@@ -1,8 +1,8 @@
 <template>
     <div class="container">
         <Button @click="handleAdd">新增</Button>
-        <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table"
-                  ref="multipleTable">
+            <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table"
+                      ref="multipleTable">
             <el-table-column prop="id" align="center" label="id" width="120">
             </el-table-column>
             <el-table-column prop="columnKey" align="center" label="键名" width="120">
@@ -79,7 +79,7 @@
             </span>
         </el-dialog>
 
-        <el-dialog title="编辑" :visible.sync="editVisible" width="740px"  >
+        <el-dialog title="编辑" :visible.sync="editVisible" width="740px"  @close='closeDialog' >
             <el-form ref="form"  :label-position="labelPosition" label-width="100px">
             <el-form-item label="模板名称：" prop="templateName">
                 <el-input v-model="formList2[0].templateName" style="width: 180px"></el-input>
@@ -94,8 +94,8 @@
                     </Select>
                 </FormItem>
                 <FormItem label="表名：">
-                    <Select @on-change="(tableId) => getColumnsByTable(tableId,index)" v-model="formList2[index].tableId" filterable style="width: 130px">
-                        <Option v-for="(table,tableIdx) in selectMap[index].tables" :value="table.tableId" :key="table.tableId"> {{ table.tableChinese }}</Option>
+                    <Select @on-change="(tableId) => getColumnsByTable(tableId,index)" v-model="formList2[index]. tableId" filterable style="width: 130px">
+                        <Option v-for="(table,tableIdx) in selectMap[index].tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="字段名：">
@@ -173,6 +173,7 @@
                     columnKey: '',
                     schemaId: '',
                     tableId: '',
+                   tableName:'',
                     columnId: '',
                     dicMap:{}
                 }],
@@ -186,23 +187,13 @@
                     default: []
                 },
                 idx: -1,
-           /*     rules: {
-                    ip: [{required: true, message: '请输入ip', trigger: 'blur'}],
-                    userName: [{required: true, message: '请输入用户名', trigger: 'blur'}],
-                    password: [{required: true, message: '请输入密码', trigger: 'blur'}],
-                    port: [{required: true, message: '请输入端口号', trigger: 'blur'}],
-                    path: [{required: true, message: '请输入路径', trigger: 'blur'}],
-                    format: [{required: true, message: '请选择文件格式', trigger: 'change'}]
-                }*/
             }
         },
 
         created() {
             this.getData();
         },
-        mounted() {
-            this.getParsers()
-        },
+
         methods: {
             async getData() {
                 let {data} = await this.$axios.post('mvc/template/getList');
@@ -211,6 +202,7 @@
 
             async handleEdit(index, row) {
                 this.idx = index;
+
                 this.getSchemas();
                 let templateData = await this.$axios.get('mvc/template/findAllByTemplate', {
                     params: {
@@ -218,71 +210,51 @@
                     }
                 });
                 let list = templateData.data;
-                console.log(list);
                 this.formList2 = list;
+
                 for(let i = 0, arr = list.length; i < arr; i++) {
-                    console.log(list[i])
                     this.$set(this.selectMap, i, {
                         tables: [],
                         columns: []
                     });
+
                     this.getTables(list[i].schemaId, i);
                     this.getColumnsByTable(list[i].tableId, i)
                 }
-
-
-                //this.getDicByTableId(row.tableId, 0);
-        console.log(this.selectMap,'编辑');
-
-               console.log(this.formList2,'扯淡')
-                //const item = this.tableData[index];
-            /*    this.form = {
-                    key:item.key,
-                    column:item.column,
-                    table:item.table,
-                    schema:item.schema,
-                    parser:item.parser
-                };*/
                 this.editVisible = true;
             },
-
             async submitAdd() {
-
                 for(var i in this.formList){
                     this.formList[i].templateName=this.formList[0].templateName
                 }
-                console.log(this.formList, '新增提交数据')
                 this.addVisible = false;
                 await this.$axios.post('mvc/addColumnMapRelations', {
                     formList:JSON.stringify(this.formList)
                 }).then( (result) => {
-            console.log(result, '成功')
-        this.$message.success('提交成功')
-
-    });
+                    this.$message.success('提交成功')
+                        });
+                setTimeout(function (){
+                    window.location.reload();
+                }, 2000);
                 await this.getData();
-
             },
 
             async submitEdit() {
             for(var i in this.formList2){
                 this.formList2[i].templateName=this.formList2[0].templateName
            }
-            console.log(this.formList2,'编辑')
+
             this.editVisible = false;
             await this.$axios.post('mvc/addColumnMapRelations', {
             formList:JSON.stringify(this.formList2)
         }).then( (result) => {
-            console.log(result, '成功')
-            this.$message.success('提交成功')
 
+            this.$message.success('提交成功')
 
         });
         await this.getData();
         this.addVisible = false;
     },
-
-
             handleAdd() {
                 this.getSchemas();
                 this.formList=[{
@@ -300,7 +272,7 @@
                 this.addVisible = true;
             },
             rowPlus(index){
-                console.log(this.formList);
+
                 this.selectMap[this.formList.length]={};
                 this.formList.push({
                     templateName:'',
@@ -311,6 +283,9 @@
                     dicMap:{}
                 })
             },
+            // closeDialog(){
+            //     window.location.reload();
+            // },
             rowRemove(index){
                 this.formList.splice(index,1)
                 this.selectMap.splice(index,1)
@@ -323,7 +298,7 @@
             // 确定删除
             async deleteRow() {
                 let index = this.pageSize * (this.currentPage - 1) + this.idx;
-                console.log(this.pageSize, this.currentPage, this.idx)
+
                 this.delVisible = false;
                 await this.$axios.post('mvc/template/deleteTemplate', {id: this.tableData[index].id});
                 await this.getData();
@@ -341,12 +316,12 @@
                 }
                 this.selectMap = Object.assign({}, this.selectMap);
             },
-            //解析器下拉列表
+           /* //解析器下拉列表
             getParsers() {
                 this.$axios.post('mvc/fileParser/getOrderList', {}).then(res => {
                     this.parserData = res.data ? res.data : [];
                 });
-            },
+            },*/
             //获取库
             getSchemas() {
                 this.$axios.post('mvc/getAllSchemas').then(res => {
@@ -359,42 +334,27 @@
                     schemaId: schemaId
                 }).then(res => {
                     this.$set(this.selectMap[idx], 'tables', res.data)
-                    console.log(this.selectMap)
-                    //this.$set(this.formList[idx], 'tableId', '')
-                   // this.$set(this.formList[idx], 'columnId', '')
-                    //this.$set(this.selectMap[idx], 'columns', null)
-                    //this.$set(this.selectMap[idx], 'dicTables', null)
-                    //this.$set(this.formList[idx], 'dicMap', {})
                     this.refresh()
                 })
+
             },
             changeColumnDicMap(mapName, val) {
                 for (let i in this.formList) {
                     let cur = this.formList[i];
-                    console.log(mapName, val, '选择参数值')
+
                     cur.dicMap[mapName] = val
                     this.$set(cur, 'dicMap', cur.dicMap)
                 }
-                //this.$set(cur, dicMap, cur.dicMap)
             },
             //根据表ID获取字段
             getColumnsByTable(tableId,idx) {
-                console.log(tableId, 'tableId')
                 this.$axios.post('mvc/getColumnsForTable', {tableId}).then(res => {
                     this.$set(this.selectMap[idx], 'columns', res.data)
-                    //this.$set(this.formList[idx], 'columnId', '')
-                    //this.$set(this.selectMap[idx], 'dicTables', null)
-                    //this.$set(this.formList[idx], 'dicMap', {})
                     this.refresh()
-
                     this.getDicByTableId(tableId, idx)
                 })
             },
             getDicByColumn(columnId, key) {
-                // const column = this.columnSelectMap[key]['columns'].find(c => c.id === columnId)
-                // console.log(column)
-                // const {isDic, tableId} = column || {}
-                //     this.getDicByTableId(tableId, key)
             },
            getDicByTableId(tableId, key) {
                 this.$axios.post('mvc/getDicNameByTableId', {
@@ -415,17 +375,8 @@
                         const { columnEnglish } = dicTable
                         this.$set(this.formList[key]['dicMap'], columnEnglish, '')
                     })
-                   // this.getDicColumnsByDicName(dicTable,key);
                 })
             },
-            /*getDicColumnsByDicName(dicTable, key) {
-                this.$axios.post('mvc/getDicColumnsByDicName', {
-                    dicName:dicTable
-                }).then(res => {
-                    thigetDicNameByTableIds.$set(this.selectMap[key], 'dicColumns', res.data)
-                    console.log(res.data)
-                });
-            },*/
         }
     }
 </script>
