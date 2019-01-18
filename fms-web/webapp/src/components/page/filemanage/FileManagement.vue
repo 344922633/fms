@@ -52,6 +52,7 @@
                                  node-key="id"
                                  @node-contextmenu="handleContextMenu"
                                  :default-expanded-keys="[0]"></el-tree>
+
                         <!--目录右键菜单-->
                         <vue-context-menu :contextMenuData="contextMenuData"
                                           @addNode="addNode"
@@ -59,11 +60,34 @@
                                           @deleteNode="deleteNode">
                         </vue-context-menu>
                     </div>
-
-
                 </Card>
 
+                <!-- 目录右键编辑弹出框 -->
+                <el-dialog :title="editTitle" :visible.sync="editVisible" width="30%">
+                    <el-form ref="form" :model="form" label-width="100px">
+                        <el-form-item label="文件夹名称">
+                            <el-input v-model="form.name"></el-input>
+                        </el-form-item>
+
+                    </el-form>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="editVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="saveEdit">确 定</el-button>
+                    </span>
+                </el-dialog>
+
+                <!-- 目录右键删除提示框 -->
+                <el-dialog title="提示" :visible.sync="delVisible" width="300px" center>
+                    <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="delVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="doDeleteTreeNode">确 定</el-button>
+                    </span>
+                </el-dialog>
             </Sider>
+            <!--左侧目录树结束-->
+
+            <!--table-->
             <Layout>
                 <div class="table">
                     <div class="container" style="padding: 0; border: none;width:100%">
@@ -87,7 +111,8 @@
                                             <uploader-btn :directory="true">选择文件夹</uploader-btn>
                                         </uploader-drop>
                                         <uploader-list></uploader-list>
-                               请选则一个目录！     </uploader>
+                                        请选则一个目录！
+                                    </uploader>
                                 </Modal>
                                 <!--上传弹出框用于确认当前选中目录-->
                                 <Modal
@@ -147,19 +172,10 @@
                                          </table>
                                      </div>
                                 </Modal>
+                                <!--文件窗口上传结束-->
 
                                 <Button @click="previewtFile">预览</Button>
-                                <!--预览弹出窗口-->
-                                <Modal
-                                    title="文件预览"
-                                    width="840px"
-                                    scrollable
-                                    v-model="modalPreviewFile"
-                                    :mask-closable="false">
-                                    <div>
-                                        <iframe :src="previewFileData" height="600px" width="800px"></iframe>
-                                    </div>
-                                </Modal>
+
                                 <Button @click="updatebFile">修改</Button>
                                 <!--修改窗口-->
                                 <Modal
@@ -183,14 +199,6 @@
                                                     </Select>
                                                 </td>
                                             </tr>
-                                            &lt;!&ndash;<tr>&ndash;&gt;
-                                                &lt;!&ndash;<td>推荐解析器：</td>&ndash;&gt;
-                                                &lt;!&ndash;<td>&ndash;&gt;
-                                                    &lt;!&ndash;<Select v-model="fileRecommendParserName" @on-change="updateSelectFileRecommendParserName" style="width:300px">&ndash;&gt;
-                                                        &lt;!&ndash;<Option v-for="item in fileParserData" :value="item.id" :key="item.id">{{ item.name }}</Option>&ndash;&gt;
-                                                    &lt;!&ndash;</Select>&ndash;&gt;
-                                                &lt;!&ndash;</td>&ndash;&gt;
-                                            &lt;!&ndash;</tr>&ndash;&gt;
                                             <tr>
                                                 <td>描述信息：</td>
                                                 <td>
@@ -200,6 +208,8 @@
                                         </table>
                                     </div>
                                 </Modal>
+                                <!--修改窗口结束-->
+
                                 <Button @click="deletetFile">删除</Button>
                                 <!--删除确认窗口-->
                                 <Modal
@@ -209,24 +219,17 @@
                                     @on-ok="deleteFileInfo">
                                    <p>确认要删除数据吗？</p>
                                 </Modal>
-                               <!-- <Button @click="removebFile">移动</Button>-->
+                                <!--删除窗口结束-->
 
+                                <!--搜索部分-->
                                 <div style="display:inline-block;">
-                                    <el-input v-model="input" placeholder="请输入内容" style="width:300px;" id="search" @keyup.enter.native = "clickEnter"></el-input>
+                                    <Input v-model="input" placeholder="请输入内容" style="width:300px;" id="search" @keyup.enter.native = "clickEnter"></Input>
                                 </div>
                                 <Button @click="btnFind">查询</Button>
                                 <Button @click="reset">重置</Button>
-
-                                <!--移动目标目录选择框-->
-                                <Modal
-                                    title="目录"
-                                    v-model="modalRemove"
-                                    :mask-closable="false"
-                                    @on-ok="removetFile">
-                                    <Tree :data="treeData" @on-select-change="removeOnSelectChange"></Tree>
-                                </Modal>
-
+                                <!--搜索部分结束-->
                             </div>
+
                             <!--文件列表表格-->
                             <i-table class="tableClass" size="small"  :content="self" height="395" type="selection" :columns="columns4" :data="tableData"  @on-selection-change="selectRowChange"></i-table>
                             <div class="tablePage">
@@ -234,41 +237,16 @@
                                 <Page :total="total" :page-size="pageSize" :page-size-opts="pageSizeOpts" :current="current" @on-change="handleCurrentChange" @on-page-size-change="handleSizeChange" show-sizer />
                             </div>
                         </Card>
-
                     </div>
-
                 </div>
-
             </Layout>
         </Layout>
-            <!-- 目录右键编辑弹出框 -->
-            <el-dialog :title="editTitle" :visible.sync="editVisible" width="30%">
-                <el-form ref="form" :model="form" label-width="100px">
-                    <el-form-item label="文件夹名称">
-                        <el-input v-model="form.name"></el-input>
-                    </el-form-item>
-
-                </el-form>
-                <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
-            </span>
-            </el-dialog>
-
-            <!-- 目录右键删除提示框 -->
-            <el-dialog title="提示" :visible.sync="delVisible" width="300px" center>
-                <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
-                <span slot="footer" class="dialog-footer">
-                <el-button @click="delVisible = false">取 消</el-button>
-                <el-button type="primary" @click="doDeleteTreeNode">确 定</el-button>
-            </span>
-            </el-dialog>
 
         <!--解析页面-->
         <Modal v-model="parserVisible" fullscreen footer-hide @on-visible-change="changeParserVisible">
-            <single-parser v-bind:configProp="config"  v-bind:file="currentFile" v-bind:parserData="parserData" v-bind:parserExtList="parserExtList"
-                           v-bind:columnData="tableColumnData" @after-close="parserVisible = false"></single-parser>
+            <single-parser :configProp="config"  :file="currentFile" :columnData="tableColumnData" @after-close="parserVisible = false"></single-parser>
         </Modal>
+
         <!--遮罩-->
         <Spin size="large" fix v-if="loading">
             <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
@@ -279,7 +257,6 @@
 
 
 <script>
-    // import LyTree from '@/components/common/vue-tree/tree.vue';
     import VueContextMenu from '@/components/common/VueContextMenu.vue';
     import SingleParser from '@/components/page/fileParser/SingleFileParser.vue'
     import Bus from '@/components/common/bus'
@@ -296,7 +273,6 @@
         data() {
             return {
                 flag:0,
-                parserExtList:[],
                 config: {},
                 modal8: false,//上传弹出窗口
                 modal1: false,//上传弹出框用于确认当前选中目录
@@ -304,7 +280,6 @@
                 modalUploadFromFtp: false,
                 modalUpdate:false,//修改窗口
                 modalRemove:false,//移动目标目录选择框
-                modalPreviewFile:false,//预览弹出窗口
                 modalDelete:false,//删除确认窗口
                 parserVisible: false,//解析页面
                 parserData: [],//解析窗口解析器列表
@@ -368,13 +343,13 @@
                             return h('span',{}, params.row.isParser == 1 ? '是' : '否');
                         }
                     },
-            {
-                title: '是否上报',
-                    key: 'isReport',
-                render: (h, params) => {
-                return h('span',{}, params.row.isReport == 1 ? '是' : '否');
-            }
-            },
+                    {
+                        title: '是否上报',
+                            key: 'isReport',
+                        render: (h, params) => {
+                            return h('span',{}, params.row.isReport == 1 ? '是' : '否');
+                        }
+                    },
                     {
                         title: '操作',
                         key: 'action',
@@ -505,17 +480,19 @@
             handleCurrentChange(val) {
                 this.current = val;
                     if(this.flag==0){
-                    this.getData()
-                    }
-                    else
-                    {
-                    this.btnFind()
+                        this.getData()
+                    }else{
+                        this.btnFind()
                     };
             },
             //分页单页条数
             handleSizeChange(val) {
                 this.pageSize = val;
-               if(this.flag==0){this.getData()}else{this.btnFind()};
+               if(this.flag==0){
+                   this.getData()
+               }else{
+                   this.btnFind()
+               };
             },
             //获取文件列表
             getData() {
@@ -523,7 +500,6 @@
                     directoryId:this.tDirectoryId,
                     page: this.current,
                     limit: this.pageSize
-
                 }).then((res) => {
                     this.tableData = res.data.list;
                     this.total = res.data.count;
@@ -531,7 +507,7 @@
                     this.flag=0;
                 })
             },
-
+            // 表格检索
             btnFind() {
                 let that = this;
                 let name=that.input;
@@ -544,32 +520,28 @@
                     this.tableData = res.data.list;
                     this.total = res.data.count;
                     this.selectFileList=[];
-
                     this.flag=1;
                 })
             },
-           clickEnter(){
-            this. btnFind();
-           },
-
-             reset(){
-                    let that = this;
-                    that.input="";
-                    this.getData();
-                },
-
+            // 表格检索框内回车
+            clickEnter(){
+                this. btnFind();
+            },
+            // 表格检索框重置
+            reset(){
+                let that = this;
+                that.input="";
+                this.getData();
+            },
             //递归格式化数据
             convert(childNodes){
                 for (var i = 0; i < childNodes.length; i++) {
+                    if (childNodes[i].text == '根目录') {
+                        childNodes[i].label = localStorage.getItem('ms_username');
+                    } else {
+                        childNodes[i].label = childNodes[i].text;
+                    }
 
-                    if (childNodes[i].text == '根目录')
-                   {
-                    childNodes[i].label = localStorage.getItem('ms_username');
-                   }
-                   else
-                   {
-                   childNodes[i].label = childNodes[i].text;
-                   }
                     childNodes[i].title = childNodes[i].text;
                     if (childNodes[i].children) {
                         this.convert(childNodes[i].children)
@@ -579,8 +551,7 @@
             //获取目录树
             getTreeDate() {
                 var treeUrl='mvc/getDirTree';
-                this.$axios.post(treeUrl, {
-                }).then((res) => {
+                this.$axios.post(treeUrl).then((res) => {
                     this.treeData = res.data;
                     this.convert(this.treeData)
                 })
@@ -588,8 +559,7 @@
             //获取文件类型列表
             getFileTypeData(){
                 var fileTypeUrl='mvc/fileType/listAll';
-                this.$axios.post(fileTypeUrl, {
-                }).then((res) => {
+                this.$axios.post(fileTypeUrl).then((res) => {
                     this.fileTypeData = res.data;
                     // this.convert(this.treeData)
                 })
@@ -597,17 +567,16 @@
             //获取文件解析器列表
             getFileParserData(){
                 var fileParserUrl='mvc/fileParser/getList';
-                this.$axios.post(fileParserUrl, {
-                }).then((res) => {
+                this.$axios.post(fileParserUrl).then((res) => {
                     this.fileParserData = res.data;
                     // this.convert(this.treeData)
                 })
             },
-
             //列表选中时赋值
             selectRowChange(selection){
                 this.selectFileList = selection;
             },
+            // 判断日期是否相同
             isSameDate (d1, d2) {
                 return new Date(d1).toDateString() === new Date(d2).toDateString()
             },
@@ -640,7 +609,6 @@
                             break;
                         }
                     }
-
                 } else {
                     let curNode = treeNode.parent
                     while(curNode.level > 2) {
@@ -764,7 +732,7 @@
             ok () {
                 this.modalUploadChoose = true;
             },
-            ////上传目录取消后不显示上传窗口
+            //上传目录取消后不显示上传窗口
             cancel () {
                 this.modalUploadChoose = false;
             },
@@ -802,7 +770,6 @@
                         });
                     }
                 }).catch(e => {
-
 
                 });
             },
@@ -877,49 +844,31 @@
                         title: '提示',
                         content: '请选则一条记录'
                     });
-     }else if(this.selectFileList.length>1) {
-                         this.$Modal.info({
-                             title: '提示',
-                             content: '一次只能预览一个文件！'
-                         });
-                     }else{
+                }else if(this.selectFileList.length>1) {
+                    this.$Modal.info({
+                        title: '提示',
+                        content: '一次只能预览一个文件！'
+                    });
+                }else{
 
-                         let fileServerPath = this.config.fileServerPath;
-                         let previewPath = this.config.previewPath;
-                         let fileUrl = fileServerPath + '/' +  this.selectFileList[0].groups + '/'+ this.selectFileList[0].realPath;
-                         var filePath = this.selectFileList[0].realPath;
+                     let fileServerPath = this.config.fileServerPath;
+                     let previewPath = this.config.previewPath;
+                     let fileUrl = fileServerPath + '/' +  this.selectFileList[0].groups + '/'+ this.selectFileList[0].realPath;
+                     var filePath = this.selectFileList[0].realPath;
 
-     					// 拿到ip
-     					var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
-     					var ip = ipRex.exec(this.config.fileServerPath);
-     					//var a = "http://47.93.40.219:8888/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");
-     					var a = "http://"+ ip +":8888/index?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/home/huiju/data/fdfs/storage/data")
-     						+'&id='+this.selectFileList[0].id;
-     					var ifr = document.createElement('iframe');
-     					ifr.src = a;
-     					document.body.appendChild(ifr);
-                     }
-                 },
+                    // 拿到ip
+                    var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
+                    var ip = ipRex.exec(this.config.fileServerPath);
+                    //var a = "http://47.93.40.219:8888/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");
+                    var a = "http://"+ ip +":8888/index?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/home/huiju/data/fdfs/storage/data")
+                        +'&id='+this.selectFileList[0].id;
+                    var ifr = document.createElement('iframe');
+                    ifr.src = a;
+                    document.body.appendChild(ifr);
+                 }
+             },
 
-        //            } else {
-                        // this.loadHtml();
-                        //alert("暂不支持此文件格式。。。")
-         //               let fileServerPath = this.config.fileServerPath;
-        //                let previewPath = this.config.previewPath;
-         //               let fileUrl = fileServerPath + '/' +  this.selectFileList[0].groups + '/'+ this.selectFileList[0].realPath;
-        //                this.previewFileData = previewPath + encodeURIComponent(fileUrl);
-       //                 this.modalPreviewFile = true
-        //            }
-            //修改功能保存选中分类
-            // updateSelectFileType(value){
-            //     this.selectNFile.selectClassId=value;
-            // },
-            // 此方法被注释，待确认 TODO
-            updateSelectFileRecommendParserName(value){
-                this.selectNFile.selectFileRecommendParserId=value;
-            },
             updatebFile() { //修改
-
                 if(this.selectFileList.length==0){
                     this.$Modal.info({
                         title: '提示',
@@ -931,13 +880,13 @@
                         content: '一次只能修改一个文件！'
                     });
                 }else{
-
                     this.setSelectNFile();
                     this.getFileTypeData();
                     this.fileRecommendParserName = this.selectNFile.selectFileRecommendParserId;
                     this.modalUpdate=true
                 }
             },
+
             updatetFileInfo() { //修改
                 this.$axios.post('mvc/updateFile', {
                     id: this.selectNFile.selectFileId,
@@ -964,8 +913,9 @@
 
                 })
             },
-            deletetFile() { //删除弹窗
 
+            //删除弹窗
+            deletetFile() {
                 if(this.selectFileList.length==0){
                     this.$Modal.info({
                         title: '提示',
@@ -1009,44 +959,6 @@
             removeOnSelectChange(selectNode){
                 this.removeFileOfDirectoryId = selectNode[0].id;
             },
-            removebFile() { //移动
-                if(this.selectFileList.length==0){
-                    this.$Modal.info({
-                        title: '提示',
-                        content: '至少选择一条数据'
-                    });
-                }else{
-                    this.modalRemove=true
-                }
-            },
-            removetFile() { //移动
-
-
-                var allSize = this.selectFileList.length;
-                var ids ="";
-                for(var i=0;i<allSize;i++) {
-                    ids=ids+","+this.selectFileList[i].id ;
-                }
-                this.$axios.post('mvc/updateFileDirectoryId', {
-                    ids: ids,
-                    directoryId:this.removeFileOfDirectoryId
-                }).then(res => {
-                    if(res.data.success){
-                        this.$notify({
-                            title: '提示',
-                            message: '移动成功！',
-                            type: 'success'
-                        });
-                        this.getData();
-                    }else{
-                        this.$notify({
-                            title: '提示',
-                            message: '移动失败！',
-                            type: 'error'
-                        });
-                    }
-                })
-            },
             //文件下载
             downloadFile(id) {
                 this.$axios.post('mvc/downloadFile', {
@@ -1083,48 +995,16 @@
                 let fileJson = JSON.stringify(file)
                 let newFile = JSON.parse(fileJson)
                 this.currentFile = newFile ? newFile : { name: '' };
-                this.getParsers(file.classId);
 
-                if(file.recommendParserId){
-                    this.$axios.post('mvc/fileParserJar/getJarClassParamListById', {
-                          recommendParserId:file.recommendParserId
-                     }).then(res => {
-                         this.parserExtList = res.data;
-                      });
-                 }
-
-
-                /*this.$axios.post('mvc/listColumns', {
-                    tableName: 'WL_JBSX'
-                }).then(res => {
-                    if (res.data) {
-                        res.data.forEach(c => {
-                            this.tableColumnData.push({
-                                name: c
-                            })
-                        })
-                    }
-                })*/
-                this.parserVisible = true;
-
-
+                 this.parserVisible = true;
             },
-            //解析窗口，解析器下拉列表
-            getParsers(classId) {
 
-                this.$axios.post('mvc/fileParser/getOrderList', {
-                    id: classId
-                }).then(res => {
-                    this.parserData = res.data ? res.data : [];
-                });
-            },
             //关闭解析页面，初始化数据
             changeParserVisible(val) {
                 if (!val) {
                     Bus.$emit('cleanData')
                 }
             },
-
         },
 
         mounted() {

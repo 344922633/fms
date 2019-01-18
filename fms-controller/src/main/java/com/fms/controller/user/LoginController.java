@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 import com.handu.apollo.utils.ExtUtil;
 import com.handu.apollo.utils.MD5;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,9 @@ public class LoginController {
 
     @Autowired
     private Environment env;
+
+    @Value("${hdfs.path}")
+    private String hdfsPath;
 
     @RequestMapping("login")
     public Object login(User user, HttpServletRequest request) {
@@ -94,7 +98,7 @@ public class LoginController {
         Map<String, Object> params = Maps.newHashMap();
 //        params.put("fileServerPath", "http://" + env.getProperty("fastdfs.nginxAddress") + ":" + env.getProperty("fastdfs.trackerHttpPort"));
 //        params.put("previewPath", env.getProperty("previewPath"));
-        params.put("fileServerPath","");
+        params.put("fileServerPath",hdfsPath);
         params.put("previewPath", "");
         return params;
     }

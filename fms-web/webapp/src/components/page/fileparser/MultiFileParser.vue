@@ -1027,7 +1027,7 @@
             };
         },
         created() {
-            this.$axios.post("mvc/getConfig").then(res => {
+            this.$axios.post("mvc//getConfig").then(res => {
                 this.config = res.data;
             });
             this.getAllData();

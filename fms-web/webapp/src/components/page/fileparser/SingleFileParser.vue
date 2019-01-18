@@ -49,18 +49,18 @@
                             <Option value="0"  >否</Option>
                         </Select>
                         <div v-if="item.parameterName == 'File'">
-                        <Upload
-                            ref="uploadFile"
-                            multiple
-                            :before-upload="handleUploadFile"
-                            action="mvc/fileParserJar/uploadFileParam"
-                            :on-success="uploadSuccessFile"
-                            :on-remove="handleRemoveFile"
-                            :on-error="uploadErrorFile">
-                            <Button icon="ios-cloud-upload-outline">上传</Button>
-                            <span>{{resultFils ? resultFils : item.parameterValue}}</span>
-                        </Upload>
-                        <Button style="margin-top: 5px" type="text" @click="FileUpload" :loading="loadingStatus">{{ loadingStatus ? '上传中' : '上传' }}</Button>
+                            <Upload
+                                ref="uploadFile"
+                                multiple
+                                :before-upload="handleUploadFile"
+                                action="mvc/fileParserJar/uploadFileParam"
+                                :on-success="uploadSuccessFile"
+                                :on-remove="handleRemoveFile"
+                                :on-error="uploadErrorFile">
+                                <Button icon="ios-cloud-upload-outline">上传</Button>
+                                <span>{{resultFils ? resultFils : item.parameterValue}}</span>
+                            </Upload>
+                            <Button style="margin-top: 5px" type="text" @click="FileUpload" :loading="loadingStatus">{{ loadingStatus ? '上传中' : '上传' }}</Button>
                         </div>
                     </FormItem>
                 </i-col>
@@ -78,11 +78,11 @@
             <div ref="result">
                 <textarea id="ID"  v-show="jsonStr" v-model="jsonStr" style="width:100%;height:300px;overflow:scroll;resize:none;" ></textarea>
             </div>
-      <!--      <Divider>预览</Divider>
-            <iframe v-if="previewFileData" :src="previewFileData" height="600px" width="1200px"></iframe>
-            <div ref="tuopu" height="300px" align="center">
-                <el-button type="text" icon="el-icon-edit" @click="handlePreview">预览拓扑图</el-button>
-            </div>-->
+            <!--      <Divider>预览</Divider>
+                  <iframe v-if="previewFileData" :src="previewFileData" height="600px" width="1200px"></iframe>
+                  <div ref="tuopu" height="300px" align="center">
+                      <el-button type="text" icon="el-icon-edit" @click="handlePreview">预览拓扑图</el-button>
+                  </div>-->
             <!--拓扑图预览弹出窗口-->
             <Modal
                 title="预览拓扑图"
@@ -91,7 +91,7 @@
                 v-model="modalPreviewFile"
                 :mask-closable="false">
                 <!--<div class="layout">-->
-                    <div id="editor" data-options="region:'center'"></div>
+                <div id="editor" data-options="region:'center'"></div>
                 <!--</div>-->
                 <div slot="footer">
                     <Input style="width: 150px" v-model="topologyName" placeholder="请输入拓扑图名称" />
@@ -103,124 +103,113 @@
             <div ref="parsejson"></div>
 
             <div class="tabs" style="height:39px">
-               <div style="float: left;margin-right: 10px; width: 100px;float: left; margin: 3px 5px 2px 3px;border-radius: 3px;font-size: 12px;overflow: hidden;cursor: pointer;height: 23px;line-height: 23px;border: 1px solid #e9eaec;background: #fff;padding: 0 5px 0 12px;vertical-align: middle;color: #666;transition: all .3s ease-in;"
-               :class="{tableActive:index == tableIndex}" v-for="(value,key,index) in jsonTables" @click="toggleTab(index, key)"><a>{{key}}</a></div>
-           </div>
+                <div style="float: left;margin-right: 10px; width: 100px;float: left; margin: 3px 5px 2px 3px;border-radius: 3px;font-size: 12px;overflow: hidden;cursor: pointer;height: 23px;line-height: 23px;border: 1px solid #e9eaec;background: #fff;padding: 0 5px 0 12px;vertical-align: middle;color: #666;transition: all .3s ease-in;"
+                     :class="{tableActive:index == tableIndex}" v-for="(value,key,index) in jsonTables" @click="toggleTab(index, key)"><a>{{key}}</a></div>
+            </div>
             <!--改表格高度-->
-         <div v-if="jsonTables && Object.keys(jsonTables).length" style="height: 300px; overflow-y: auto;">
-           <table style="border-right:1px solid #ddd;border-bottom:1px solid #ddd;width:100%;overflow-x:scroll;" v-for="(value,key,index) in jsonTables" :key="key" :label="value" :value="key" v-show="index == tableIndex" border="0" cellspacing="0" cellpadding="0">
-                   <thead>
-                   <tr>
-                       <th style="background: #c0c4cc;border: 1px solid #ddd;" v-for="keyvalue in tableKeysForDisplay">
+            <div v-if="jsonTables && Object.keys(jsonTables).length" style="height: 300px; overflow-y: auto;">
+                <table style="border-right:1px solid #ddd;border-bottom:1px solid #ddd;width:100%;overflow-x:scroll;" v-for="(value,key,index) in jsonTables" :key="key" :label="value" :value="key" v-show="index == tableIndex" border="0" cellspacing="0" cellpadding="0">
+                    <thead>
+                    <tr>
+                        <th style="background: #c0c4cc;border: 1px solid #ddd;" v-for="keyvalue in tableKeysForDisplay">
                             {{keyvalue}}
-                       </th>
-                   </tr>
-                   </thead>
-                   <tbody>
-                   <tr v-for="(value, key) in [...value]">
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(value, key) in [...value]">
 
-                       <td v-for="keyvalue in tableKeysForDisplay" style="text-align: center;border-left:1px solid #ddd;border-top:1px solid #ddd">{{value[keyvalue]}}</td>
-                   </tr>
-               </tbody>
-              </table>
-         </div>
+                        <td v-for="keyvalue in tableKeysForDisplay" style="text-align: center;border-left:1px solid #ddd;border-top:1px solid #ddd">{{value[keyvalue]}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <Divider> 解析字段</Divider>
-            <!--选择模板-->
-            <!--<Select filterable-->
-                    <!--@on-change="(schemaId) => getTables(schemaId, key)"-->
-                    <!--style="width: 180px"-->
-                    <!--v-model="columnKeyNamesMap[key].schemaId"-->
-                    <!--:clearable="true"-->
-                <!--&gt;-->
-                <!--<Option v-for="(schema,schemaIdx) in columnSelectMap[key].schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>-->
-            <!--</Select>-->
+            <div>
+            <Form v-if="columnData && Object.keys(columnData).length">
+                <FormItem inline :label-width="100" label="选择模板">
+                    <Select filterable
+
+                            style="width: 180px"
+                            v-model="selectTemplateName"
+                            :clearable="true"
+                    >        <!--@on-change="(schemaId) => conChangeTemplate(schemaId)"-->
+                        <Option v-for="template in  this.templateNameInfos" :value="template.templateName" :key="template.templateName"> {{ template.templateName }}</Option>
+                    </Select>
+                </FormItem>
+
+                <Modal
+                    title="请输入模板名称"
+                    v-model="templateNameVisible"
+                    @on-ok="handleSaveMapNewTemplateName"
+                    :mask-closable="false">
+                    <FormItem inline :label-width="100" label="请输入模板名称">
+                        <Input v-model="newTemplateName"></Input>
+                    </FormItem>
+                </Modal>
+            </Form>
+            </div>
 
             <!--选择表和字段-->
             <div v-if="columnData && Object.keys(columnData).length" style="height: 300px; overflow-y: auto;">
-            <Form inline v-for="(data,key) in columnData" :key="key">
-                <FormItem :label-width="100" :label="key">
-                </FormItem>
-                <FormItem label="选择库">
-                    <Select filterable
-                        @on-change="(schemaId) => getTables(schemaId, key)"
-                        style="width: 180px"
-                        v-model="columnKeyNamesMap[key].schemaId"
-                        :clearable="true"
-                    >
-                        <Option v-for="(schema,schemaIdx) in columnSelectMap[key].schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="选择表">
-                    <Select filterable
-                        @on-change="(tableId) => getColumnsByTable(tableId, key)"
-                        style="width: 180px"
-                        v-model="columnKeyNamesMap[key].tableId"
-                        :clearable="true"
-                    >
-                        <Option v-for="(table,tableIdx) in columnSelectMap[key].tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="选择字段">
-                    <Select filterable
-                        @on-change="(columnId) => getDicByColumn(columnId, key)"
-                        style="width: 180px"
-                        v-model="columnKeyNamesMap[key].columnId"
-                        :clearable="true"
-                    >
-                        <Option v-for="(column,columnIdx) in columnSelectMap[key].columns" :value="column.id" :key="column.id"> {{ column.columnChinese }}</Option>
-                    </Select>
-                </FormItem>
-                <template v-if="columnSelectMap[key] && columnSelectMap[key].dicTables">
-                    <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.columnChinese">
+                <Form inline v-for="(data,key) in columnData" :key="key" v-if="columnKeyNamesMap[key] != null">
+
+                    <FormItem :label-width="100" :label="key">
+                    </FormItem>
+
+                    <FormItem label="选择库">
                         <Select filterable
-                            style="width: 180px"
-                            v-model="columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]"
-                            :clearable="true"
+                                style="width: 180px"
+                                @on-change="(schemaId) =>getTables(schemaId, key)"
+                                v-model="columnKeyNamesMap[key].schemaId"
+                                :clearable="true"
                         >
-                            <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM" :key="dic.DM"> {{ dic.MC }}</Option>
+                            <Option v-for="(schema,schemaIdx) in columnSelectMap[key].schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>
                         </Select>
                     </FormItem>
-                </template>
-            </Form>
+                    <FormItem label="选择表">
+                        <Select filterable
+                                @on-change="(tableId) => getColumnsByTable(tableId, key)"
+                                style="width: 180px"
+                                v-model="columnKeyNamesMap[key].tableId"
+                                :clearable="true"
+                        >
+                            <Option v-for="(table,tableIdx) in columnSelectMap[key].tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="选择字段">
+                        <Select filterable
+                                @on-change="(columnId) => getDicByColumn(columnId, key)"
+                                style="width: 180px"
+                                v-model="columnKeyNamesMap[key].columnId"
+                                :clearable="true"
+                        >
+                            <Option v-for="(column,columnIdx) in columnSelectMap[key].columns" :value="column.id" :key="column.id"> {{ column.columnChinese }}</Option>
+                        </Select>
+                    </FormItem>
+                    <template v-if="columnSelectMap[key] && columnSelectMap[key].dicTables">
+                        <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.columnChinese">
+                            <Select filterable
+                                    style="width: 180px"
+                                    v-model="columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]"
+                                    :clearable="true"
+                            >
+                                <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM" :key="dic.DM"> {{ dic.MC }}</Option>
+                            </Select>
+                        </FormItem>
+                    </template>
+                </Form>
             </div>
-            <!--<Row>
-                <i-col span="8">
-                    <FormItem label="Password" prop="passwd">
-                        <Input type="password" v-model="formCustom.passwd"></Input>
-                    </FormItem>
-                </i-col>
-                <i-col span="8">
-                    <FormItem label="Confirm" prop="passwdCheck">
-                        <Input type="password" v-model="formCustom.passwdCheck"></Input>
-                    </FormItem>
-                </i-col>
-                <i-col span="8">
-                    <FormItem label="Age" prop="age">
-                        <Input type="text" v-model="formCustom.age" number></Input>
-                    </FormItem>
-                </i-col>
-            </Row>-->
+
         </Form>
-<!--
-        <Divider> 解析数据</Divider>
--->
+        <!--
+                <Divider> 解析数据</Divider>
+        -->
         <div ref="table" v-show="false"></div>
         <Button type="primary" @click="parseDataSaveDatabase">入库</Button>
         <Button type="primary" @click="saveTemplateToOrigin">保存映射关系到原模板</Button>
         <Button type="primary" @click="saveTemplateToNew">保存映射关系到新模板</Button>
-
-    <!--<Modal-->
-            <!--title="请输入模板名称"-->
-            <!--v-model="templateNameVisible"-->
-            <!--@on-ok="handleSaveMapInfo"-->
-            <!--:mask-closable="false">-->
-        <!--<el-form ref="form" :model="form" :label-position="left" label-width="100px" :rules="rules">-->
-            <!--<el-form-item label="模板名称：" >-->
-                    <!--<el-input v-model="templateName"></el-input>-->
-            <!--</el-form-item>-->
-        <!--</el-form>-->
-    <!--</Modal>-->
     </div>
 </template>
 <script>
@@ -272,13 +261,28 @@
         columnSelectMap: {},
         schemas: [],
         topologyName: '',
+        selectTemplateName:'',
         templateNameInfos:[],
         columnMapRelations:[],
+        // 解析器列表
+        parserData:[],
+        // 解析器参数
+        parserExtList:[]
     }
 
     export default {
         watch: {
             file(newFile) {
+
+                // 如果file不为null，初始化部分数据
+                if (newFile != null) {
+                    // 获取解析器列表
+                    this.getParsers(this.file.classId);
+                    // 获取推荐解析器
+                    this.getRecommendParser(this.file.recommendParserId);
+                }
+
+                // 以下好像不需要了 TODO
                 const {realPath: filePath} = newFile
                 if (filePath.endsWith("doc") || filePath.endsWith("docx")
                     || filePath.endsWith("xls") || filePath.endsWith("xlsx")
@@ -299,31 +303,26 @@
         data() {
             return JSON.parse(JSON.stringify(originData))
         },
+
         props: {
             //传入的文件信息
             file: {
                 type: Object,
                 default: {
-                    name: '',
-                    recommendParserId: ''
+                    name: '',               // 文件名
+                    classId:'',             // 文件类型id
+                    recommendParserId: ''   // 推荐解析器id
                 }
             },
-            parserData: {
-                type: Array,
-                default: []
-            },
-            parserExtList: {
-                type: Array,
-                default: []
-            },
+            // 获取后台的一些配置
             configProp: {
                 type: Object,
                 default: {}
             }
         },
+
         created() {
             //重新打开页面 清空数据
-            // TODO
             Bus.$on('cleanData', () => {
                 this.resetData()
                 this.fields = [];
@@ -368,11 +367,36 @@
         mounted() {
         },
         methods: {
-            // 保存映射关系到原模板   ODO
+            //解析窗口，解析器下拉列表
+            getParsers(classId) {
+                if (classId == null  || classId == '') {
+                    return;
+                }
+                this.$axios.post('mvc/fileParser/getOrderList', {
+                    id: classId
+                }).then(res => {
+                    this.parserData = res.data ? res.data : [];
+                });
+            },
+
+            //获取推荐解析器
+            getRecommendParser(parserId){
+                if (parserId == null  || parserId == '') {
+                    return;
+                }
+                // 通过推荐解析器Id获取解析器参数
+                this.$axios.post('mvc/fileParserJar/getJarClassParamListById', {
+                    recommendParserId : parserId
+                }).then(res => {
+                    this.parserExtList = res.data;
+                });
+            },
+
+            // 保存映射关系到原模板   TODO
             saveTemplateToOrigin(){
 
             },
-            // 保存映射关系到新模板   ODO
+            // 保存映射关系到新模板   TODO
             saveTemplateToNew(){
                 this.templateNameVisible = true;
             },
@@ -601,40 +625,6 @@
 
                 } catch (e) {
                 }
-                // console.log(this.allKey);
-                // this.$axios.post('mvc/getColumnMapRelation', {
-                //         params: {
-                //             columnKeys: this.allKey
-                //         },
-                //         paramsSerializer: function (params) {
-                //             return qs.stringify(params, {arrayFormat: 'repeat'})
-                //         }
-                //     }
-                //    // qs.stringify(
-                //    //      {columnKeys: this.allKey},
-                //    //     { indices: false }
-                //    //      // { arrayFormat: 'repeat' }
-                // ).then(res => {
-                //     this.templateNameInfos = res.data.templateNameInfos,
-                //     this.columnMapRelations = res.data.columnMapRelations
-                //
-                //     console.log(this.templateNameInfos);
-                //     console.log(this.columnMapRelations);
-                // })
-                // 获取模板
-                // this.$axios.all([
-                //     // 获取模板
-                //     $axios.post('mvc/getColumnMapRelation', {
-                //         this.allKey
-                //     }),
-
-                //     // 获取表和列
-                //     $axios.post('mvc/fileParser/singleParse', {
-                //         id: this.file.recommendParserId,
-                //         params: this.file.id,
-                //         parserExt: JSON.stringify(this.parserExtList)
-                //     })
-                // ])
 
                 // 获取表和列
                 this.$axios.post('mvc/fileParser/singleParse', {
@@ -667,9 +657,9 @@
                     this.getColumns(this.table_name);
                     delete res.data.data.table_name;
                     this.allKey = res.data.data.allKey;
-                    this.allKeyForDisplay = res.data.data.allKeyForDisplay;
-
+                    console.log(this.allKey);
                     delete res.data.data.allKey;
+
                     //key的映射关系
                     this.columnData = res.data.data;
                     let selectData = {};
@@ -697,21 +687,59 @@
                 await this.getSchemas()
 
                 if(this.allKey != null){
-                    this.allKey.forEach(key => {
-                        this.$set(this.columnKeyNamesMap, key, {})
+                    this.allKey.forEach((key,index) => {
+                        let columnValue = {
+                            'schemaId': '',
+                            'tableId': '',
+                            'columnId': ''
+                        }
+                        this.$set(this.columnKeyNamesMap, key, columnValue)
 
-                        this.$set(this.columnKeyNamesMap[key], 'schemaId', '')
-                        this.$set(this.columnKeyNamesMap[key], 'tableId', '')
-
-                        this.$set(this.columnKeyNamesMap[key], 'columnId', '')
-                        this.$set(this.columnSelectMap, key, {})
-                        this.$set(this.columnSelectMap[key], 'schemas', this.schemas)
-                        this.$set(this.columnSelectMap[key], 'tables', [])
-                        this.$set(this.columnSelectMap[key], 'columns', [])
+                        let columnSelectValue = {
+                            'schemas': this.schemas,
+                            'tables': '',
+                            'columns': ''
+                        }
+                        this.$set(this.columnSelectMap, key, columnSelectValue)
                     })
+
+                    // 获取模板下拉框
+                    this.getTemplateList(this.allKey);
                 }
+            },
+
+            // 获取模板下拉框
+            getTemplateList(allKey) {
+                let me = this;
+                $.ajax({
+                    url:"mvc/getColumnMapRelation",
+                    type:"GET",
+                    traditional: true,
+                    data: {
+                        "columnKeys": allKey,
+                    },
+                    success: function(res) {
+                        // 匹配度最高的模板
+                        me.templateNameInfos = res.templateNameInfos;
+                        if (me.templateNameInfos != null && me.templateNameInfos.length > 0){
+                            me.selectTemplateName = me.templateNameInfos[0].selectTemplateName;
+                        }
+
+                         // 匹配度最高的模板对应的表列信息
+                        me.columnMapRelations = res.columnMapRelations
+                        // me.columnKeyNamesMap =  me.columnMapRelations
+                        console.log(me.columnKeyNamesMap);
+                        console.log(me.columnMapRelations);
+                    }
+                })
+            },
+
+            // 模板名改变时触发的函数
+            conChangeTemplate(){
 
             },
+
+            // 获取库
             getSchemas() {
                 return this.$axios.post('mvc/getAllSchemas').then(res => {
                     this.schemas = res.data
@@ -745,7 +773,7 @@
                 this.getDicByTableId(tableId, key)
             },
             getDicByColumn(columnId, key) {
-
+                //选择字段下拉框选择后，暂时不需要处理
             },
             getDicByTableId(tableId, key) {
                 this.$axios.post('mvc/getDicNameByTableId', {
@@ -759,21 +787,23 @@
                         const { columnEnglish } = dicTable
                         this.$set(this.columnKeyNamesMap[key]['dicMap'], columnEnglish, '')
                     })
-                    this.getDicColumnsByDicName(dicTable,key);
-                })
 
+                    // TODO 这句再这里是报错的  dicTable 未定义
+                    // this.getDicColumnsByDicName(dicTable,key);
+                })
             },
 
-                  getDicColumnsByDicName(dicTable, key) {
-                this.$axios.post('mvc/getDicColumnsByDicName', {
-                    dicName:dicTable
-                }).then(res => {
-                    this.$set(this.columnSelectMap[key], 'dicColumns', res.data)
+            // TODO dicColumns 未被使用，此方法暂时注释
+            // getDicColumnsByDicName(dicTable, key) {
+            //     this.$axios.post('mvc/getDicColumnsByDicName', {
+            //         dicName:dicTable
+            //     }).then(res => {
+            //         this.$set(this.columnSelectMap[key], 'dicColumns', res.data)
+            //     });
+            // },
 
-                });
-                  },
-
-            handleSaveMapInfo() {
+            // 保存到新模板
+            handleSaveMapNewTemplateName() {
 
                 this.$axios.post('mvc/addColumnMapRelations', {
                     templateName:this.templateName,
