@@ -128,9 +128,9 @@
             <Divider> 解析字段</Divider>
             <div>
                 <Form v-if="columnData && Object.keys(columnData).length">
-                    <FormItem inline :label-width="100" label="选择模板">
+                    <FormItem inline :label-width="100" label="请选择模板">
                         <Select filterable
-
+                                @on-change="(templateName) => onChangeTemplate(templateName)"
                                 style="width: 180px"
                                 v-model="selectTemplateName"
                                 :clearable="true"
@@ -267,7 +267,9 @@
         // 解析器列表
         parserData:[],
         // 解析器参数
-        parserExtList:[]
+        parserExtList:[],
+        newTemplateName:''
+
     }
 
     export default {
@@ -721,23 +723,60 @@
                     success: function(res) {
                         // 匹配度最高的模板
                         me.templateNameInfos = res.templateNameInfos;
-                        if (me.templateNameInfos != null && me.templateNameInfos.length > 0){
+                      /*  if (me.templateNameInfos != null && me.templateNameInfos.length > 0){
                             me.selectTemplateName = me.templateNameInfos[0].selectTemplateName;
-                        }
-
+                        }*/
+/*
                         // 匹配度最高的模板对应的表列信息
                         me.columnMapRelations = res.columnMapRelations
                         // me.columnKeyNamesMap =  me.columnMapRelations
                         console.log(me.columnKeyNamesMap);
-                        console.log(me.columnMapRelations);
+                        console.log(me.columnMapRelations);*/
                     }
                 })
             },
 
-            // 模板名改变时触发的函数
-            conChangeTemplate(){
 
+
+            // 模板名改变时触发的函数
+            onChangeTemplate(templateName,allkey) {
+                let me = this;
+                $.ajax({
+                    url:encodeURI(encodeURI("mvc/getColumnMapRelationByTemplateName")),
+                    type:"GET",
+                    traditional: true,
+                    data: {
+                        columnKeys: this.allKey,
+                        templateName: templateName
+                    },
+                    success: function(res) {
+                        console.log(me.columnData)
+                        if(res.columnMapRelations!=null){
+                        me.columnMapRelations = res.columnMapRelations;
+                        me.columnKeyNamesMap = me.columnMapRelations;
+                        console.log(Object.keys(me.columnData).length)
+                        }
+                    }
+                })
             },
+
+
+           /* // 模板名改变时触发的函数
+            onChangeTemplate(templateName){
+                this.$axios.post('mvc/getColumnMapRelationByTemplateName', {
+
+                    columnKeys: this.allKey,
+                    templateName:templateName
+
+                }).then(res => {
+                    /!*this.$set(this.columnSelectMap[key], 'tables', res.data)
+                    this.$set(this.columnKeyNamesMap[key], 'tableId', '')
+                    this.$set(this.columnSelectMap[key], 'columns', res.data)
+                    this.$set(this.columnKeyNamesMap[key], 'columnId', '')
+                    this.$set(this.columnSelectMap[key], 'dicTables', null)
+                    this.$set(this.columnKeyNamesMap[key], 'dicMap', {})*!/
+                })
+            },*/
 
             // 获取库
             getSchemas() {

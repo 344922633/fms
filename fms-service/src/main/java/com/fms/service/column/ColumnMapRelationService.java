@@ -41,10 +41,11 @@ public class ColumnMapRelationService {
         Map<String, Object> data = new HashMap<>();
         List<ColumnMapRelation> columnMapRelations = new ArrayList<>();
 
-        //遍历获取前台传过来的columnKey
-        for (String columnKey : columnKeys) {
-            //遍历 获取模板中的columnKeys
-            for (ColumnMapRelation columnMapRelation : columnMapRelationList) {
+        //遍历 获取模板中的columnKeys
+        for (ColumnMapRelation columnMapRelation : columnMapRelationList) {
+
+            //遍历获取前台传过来的columnKey
+            for (String columnKey : columnKeys) {
                 //将对应模板中columnKey与前台传过来像匹配的值添加到list
                 if (columnMapRelation.getColumnKey().equals(columnKey)) {
                     columnMapRelations.add(columnMapRelation);

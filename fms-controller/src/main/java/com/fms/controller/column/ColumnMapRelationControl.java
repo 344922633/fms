@@ -41,6 +41,8 @@ public class ColumnMapRelationControl {
      */
     @RequestMapping("/getColumnMapRelationByTemplateName")
     public Map<String, Object> getColumnMapRelationByTemplateName(@RequestParam(required = false) List<String> columnKeys,String templateName) {
+
+
 /*
         List<ColumnMapRelation> columnMapRelations=columnMapRelationService.getColumnMapRelationByTemplateName(templateName);
         Map<String, Object> data = new HashMap<>();
