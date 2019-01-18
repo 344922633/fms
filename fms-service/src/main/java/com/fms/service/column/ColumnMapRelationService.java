@@ -37,7 +37,8 @@ public class ColumnMapRelationService {
             String templateName = (String) templateNameInfos.get(0).get("templateName");
 
             //根据模板名称查询记录
-            columnMapRelations = dao.getList(CLASSNAME, "getColumnMapRelationByTemplateName", templateName);
+            columnMapRelations = getColumnMapRelationByTemplateName(templateName);
+
         }
 
         //创建返回数据
@@ -47,6 +48,13 @@ public class ColumnMapRelationService {
 
         return data;
     }
+
+
+    public List<ColumnMapRelation> getColumnMapRelationByTemplateName(String templateName) {
+       return dao.getList(CLASSNAME, "getColumnMapRelationByTemplateName", templateName);
+    }
+
+
 
     /**
      * 添加columnMapRelation记录

@@ -102,7 +102,7 @@ public class PictureController {
             JSONObject obj = new JSONObject();
             JSONArray data = new JSONArray();
             JSONObject obj1 = new JSONObject();
-            obj.put("operationSource", "XX_PLATFORM");
+            obj.put("operationSource",PropertyUtil.readValue("DEFAULT_TOPIC"));
             obj1.put("operationType", "INSERT");
             JSONArray columns = new JSONArray();
             JSONObject properties = null;

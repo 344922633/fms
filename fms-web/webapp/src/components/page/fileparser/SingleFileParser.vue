@@ -127,24 +127,26 @@
 
             <Divider> 解析字段</Divider>
             <!--选择模板-->
-            <!--<Select filterable-->
-                    <!--@on-change="(schemaId) => getTables(schemaId, key)"-->
-                    <!--style="width: 180px"-->
-                    <!--v-model="columnKeyNamesMap[key].schemaId"-->
-                    <!--:clearable="true"-->
-                <!--&gt;-->
-                <!--<Option v-for="(schema,schemaIdx) in columnSelectMap[key].schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>-->
-            <!--</Select>-->
+           <!-- <Select filterable
+                    @on-change="(schemaId) => getTables(schemaId, key)"
+                    style="width: 180px"
+                    v-model="columnKeyNamesMap[key].schemaId"
+                    :clearable="true"
+                >
+                <Option v-for="(schema,schemaIdx) in columnSelectMap[key].schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>
+            </Select>-->
 
             <!--选择表和字段-->
             <div v-if="columnData && Object.keys(columnData).length" style="height: 300px; overflow-y: auto;">
-            <Form inline v-for="(data,key) in columnData" :key="key">
+            <Form inline v-for="(data,key) in columnData" :key="key" v-if="columnKeyNamesMap[key] != null">
+
                 <FormItem :label-width="100" :label="key">
                 </FormItem>
+
                 <FormItem label="选择库">
                     <Select filterable
-                        @on-change="(schemaId) => getTables(schemaId, key)"
                         style="width: 180px"
+                        @on-change="(schemaId) =>getTables(schemaId, key)"
                         v-model="columnKeyNamesMap[key].schemaId"
                         :clearable="true"
                     >
@@ -184,23 +186,7 @@
                 </template>
             </Form>
             </div>
-            <!--<Row>
-                <i-col span="8">
-                    <FormItem label="Password" prop="passwd">
-                        <Input type="password" v-model="formCustom.passwd"></Input>
-                    </FormItem>
-                </i-col>
-                <i-col span="8">
-                    <FormItem label="Confirm" prop="passwdCheck">
-                        <Input type="password" v-model="formCustom.passwdCheck"></Input>
-                    </FormItem>
-                </i-col>
-                <i-col span="8">
-                    <FormItem label="Age" prop="age">
-                        <Input type="text" v-model="formCustom.age" number></Input>
-                    </FormItem>
-                </i-col>
-            </Row>-->
+
         </Form>
 <!--
         <Divider> 解析数据</Divider>
@@ -274,11 +260,25 @@
         topologyName: '',
         templateNameInfos:[],
         columnMapRelations:[],
+        // 解析器列表
+        parserData:[],
+        // 解析器参数
+        parserExtList:[]
     }
 
     export default {
         watch: {
             file(newFile) {
+
+                // 如果file不为null，初始化部分数据
+                if (newFile != null) {
+                    // 获取解析器列表
+                    this.getParsers(this.file.classId);
+                    // 获取推荐解析器
+                    this.getRecommendParser(this.file.recommendParserId);
+                }
+
+                // 以下好像不需要了 TODO
                 const {realPath: filePath} = newFile
                 if (filePath.endsWith("doc") || filePath.endsWith("docx")
                     || filePath.endsWith("xls") || filePath.endsWith("xlsx")
@@ -299,31 +299,26 @@
         data() {
             return JSON.parse(JSON.stringify(originData))
         },
+
         props: {
             //传入的文件信息
             file: {
                 type: Object,
                 default: {
-                    name: '',
-                    recommendParserId: ''
+                    name: '',               // 文件名
+                    classId:'',             // 文件类型id
+                    recommendParserId: ''   // 推荐解析器id
                 }
             },
-            parserData: {
-                type: Array,
-                default: []
-            },
-            parserExtList: {
-                type: Array,
-                default: []
-            },
+            // 获取后台的一些配置
             configProp: {
                 type: Object,
                 default: {}
             }
         },
+
         created() {
             //重新打开页面 清空数据
-            // TODO
             Bus.$on('cleanData', () => {
                 this.resetData()
                 this.fields = [];
@@ -368,11 +363,36 @@
         mounted() {
         },
         methods: {
-            // 保存映射关系到原模板   ODO
+            //解析窗口，解析器下拉列表
+            getParsers(classId) {
+                if (classId == null  || classId == '') {
+                    return;
+                }
+                this.$axios.post('mvc/fileParser/getOrderList', {
+                    id: classId
+                }).then(res => {
+                    this.parserData = res.data ? res.data : [];
+                });
+            },
+
+            //获取推荐解析器
+            getRecommendParser(parserId){
+                if (parserId == null  || parserId == '') {
+                    return;
+                }
+                // 通过推荐解析器Id获取解析器参数
+                this.$axios.post('mvc/fileParserJar/getJarClassParamListById', {
+                    recommendParserId : parserId
+                }).then(res => {
+                    this.parserExtList = res.data;
+                });
+            },
+
+            // 保存映射关系到原模板   TODO
             saveTemplateToOrigin(){
 
             },
-            // 保存映射关系到新模板   ODO
+            // 保存映射关系到新模板   TODO
             saveTemplateToNew(){
                 this.templateNameVisible = true;
             },
@@ -566,6 +586,7 @@
                         }
                         this.selectData = selectData;
                         this.columnData = columnData;
+                        alert(this.columnData)
                     }
                 })
             },
@@ -667,9 +688,9 @@
                     this.getColumns(this.table_name);
                     delete res.data.data.table_name;
                     this.allKey = res.data.data.allKey;
-                    this.allKeyForDisplay = res.data.data.allKeyForDisplay;
-
+                    console.log(this.allKey);
                     delete res.data.data.allKey;
+
                     //key的映射关系
                     this.columnData = res.data.data;
                     let selectData = {};
@@ -697,21 +718,72 @@
                 await this.getSchemas()
 
                 if(this.allKey != null){
-                    this.allKey.forEach(key => {
-                        this.$set(this.columnKeyNamesMap, key, {})
+                    this.allKey.forEach((key,index) => {
+                        let columnValue = {
+                            'schemaId': '',
+                            'tableId': '',
+                            'columnId': ''
+                        }
+                        this.$set(this.columnKeyNamesMap, key, columnValue)
 
-                        this.$set(this.columnKeyNamesMap[key], 'schemaId', '')
-                        this.$set(this.columnKeyNamesMap[key], 'tableId', '')
-
-                        this.$set(this.columnKeyNamesMap[key], 'columnId', '')
-                        this.$set(this.columnSelectMap, key, {})
-                        this.$set(this.columnSelectMap[key], 'schemas', this.schemas)
-                        this.$set(this.columnSelectMap[key], 'tables', [])
-                        this.$set(this.columnSelectMap[key], 'columns', [])
+                        let columnSelectValue = {
+                            'schemas': this.schemas,
+                            'tables': '',
+                            'columns': ''
+                        }
+                        this.$set(this.columnSelectMap, key, columnSelectValue)
                     })
-                }
 
+                    // 获取模板下拉框
+                    this.getTemplateList(this.allKey);
+                }
             },
+
+            // 获取模板下拉框
+            getTemplateList(allKey) {
+                console.log(allKey) ;
+
+                $.ajax({
+                    url:"mvc/getColumnMapRelation",
+                    type:"GET",
+                    traditional: true,
+                    data: {
+                        "columnKeys": allKey,
+                    },
+                    success: function(data) {
+
+                    }
+
+                })
+
+
+          /*      this.$axios.get('mvc/getColumnMapRelation', {
+                    // params: {
+                    //     columnKeys:JSON.stringify(allKey)
+                    // }
+                    // columnKeys :          JSON.stringify(allKey)
+                    // columnKeys : qs.stringify(JSON.stringify(allKey), {arrayFormat: 'indices'})
+                    traditional: true,
+                    data:{
+                        columnKeys: allKey,
+                        "type":sendMsg
+                    },
+                    paramsSerializer: function(params) {
+                        return qs.stringify(params, {arrayFormat: 'indices'})
+                    }
+                    // columnKeys : qs.stringify(allKey,{ arrayFormat: 'indices' })}
+                    // columnKeys : qs.stringify(allKey, {arrayFormat: 'brackets'})
+                    }
+                ).then(res => {
+                    this.templateNameInfos = res.data.templateNameInfos,
+                    this.columnMapRelations = res.data.columnMapRelations
+
+                    console.log(this.templateNameInfos);
+                    console.log(this.columnMapRelations);
+                })*/
+            },
+
+            // 获取库
             getSchemas() {
                 return this.$axios.post('mvc/getAllSchemas').then(res => {
                     this.schemas = res.data
@@ -745,7 +817,7 @@
                 this.getDicByTableId(tableId, key)
             },
             getDicByColumn(columnId, key) {
-
+                //选择字段下拉框选择后，暂时不需要处理
             },
             getDicByTableId(tableId, key) {
                 this.$axios.post('mvc/getDicNameByTableId', {
@@ -759,19 +831,20 @@
                         const { columnEnglish } = dicTable
                         this.$set(this.columnKeyNamesMap[key]['dicMap'], columnEnglish, '')
                     })
-                    this.getDicColumnsByDicName(dicTable,key);
-                })
 
+                    // TODO 这句再这里是报错的  dicTable 未定义
+                    // this.getDicColumnsByDicName(dicTable,key);
+                })
             },
 
-                  getDicColumnsByDicName(dicTable, key) {
-                this.$axios.post('mvc/getDicColumnsByDicName', {
-                    dicName:dicTable
-                }).then(res => {
-                    this.$set(this.columnSelectMap[key], 'dicColumns', res.data)
-
-                });
-                  },
+            // TODO dicColumns 未被使用，此方法暂时注释
+            // getDicColumnsByDicName(dicTable, key) {
+            //     this.$axios.post('mvc/getDicColumnsByDicName', {
+            //         dicName:dicTable
+            //     }).then(res => {
+            //         this.$set(this.columnSelectMap[key], 'dicColumns', res.data)
+            //     });
+            // },
 
             handleSaveMapInfo() {
 

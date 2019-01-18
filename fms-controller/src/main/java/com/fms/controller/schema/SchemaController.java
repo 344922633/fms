@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.*;
 
+
+
 @RestController
 public class SchemaController {
     @Autowired
@@ -96,23 +98,6 @@ public class SchemaController {
 
             List<ColumnInfo> returnListForSLave = columnInfoService.getColumnsInfo(masterSlaveDo.getSlaveTableId());
 
-/*            for (ColumnInfo column : returnListForSLave) {
-                TableInfo tableInfo = columnInfoService.queryTableInfoById(column.getTableId());
-                List<ColumnInfo> columnInfoList = columnInfoService.getColumnsInfo(column.getTableId());
-
-//                Map<String, Object> columnMap = schemaService.getColumnnInfo(tableInfo.getTableEnglish(), column.getColumnEnglish());
-                Map<String, Object> map = new HashMap<String, Object>();
-                map.put("column", column);
-
-                if (StringUtils.isNotEmpty(column.getDicTableName())) {
-                    List<Map<String, Object>> dicList = columnSetService.getDicColumnsByDicName(column.getDicTableName());
-                    map.put("dicList", dicList);
-                    if (columnMap != null) {
-                        map.putAll(columnMap);
-                    }
-                }
-                returnList.add(map);
-            }*/
 
             for (ColumnInfo column : returnListForSLave) {
                 Map<String, Object> map = new HashMap<String, Object>();
@@ -134,7 +119,7 @@ public class SchemaController {
         return schemaService.getTables();
     }
 
-    /* JSONObject data = JSONObject.parseObject(columnKeyNamesMap);*/
+
     @RequestMapping("insertDataFormasterslave")
     public Object insertDataFormasterslave(String masterslavename, String data) {
 //        if(true){

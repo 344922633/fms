@@ -187,7 +187,8 @@ export default new Router({
                     path: '/403',
                     component: resolve => require(['../components/page/403.vue'], resolve),
                     meta: { title: '403' }
-                }
+                },
+
             ]
         },
         {

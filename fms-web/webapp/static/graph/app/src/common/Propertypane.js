@@ -17,7 +17,7 @@
         if (options.html) {
             $(element).html(options.html);
         }
-        //$(element).attr(options);
+        // $(element).attr(options);
         return element;
     }
     Q.createElement = createElement;
@@ -60,14 +60,13 @@
                     var option = document.createElement('option');
                     option.value = item.key;
                     option.innerText = item.value;
-                    console.log(option);
                     input.appendChild(option);
                 })
             } else {
                 var input = Q.createElement({
                     tagName: 'input',
                     class: "form-control",
-                    parent: parent
+                    parent: parent,
                 });
             }
 
