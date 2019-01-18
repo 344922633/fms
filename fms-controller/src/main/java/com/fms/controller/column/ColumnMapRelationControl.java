@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import sun.applet.Main;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,24 +23,30 @@ public class ColumnMapRelationControl {
     private ColumnMapRelationService columnMapRelationService;
 
     /**
-     *
      * 单文件解析 根据columnKeys对模板筛选
+     *
      * @param columnKeys
      * @return
      */
     @RequestMapping("/getColumnMapRelation")
-    public Map<String,Object> getColumnMapRelation(@RequestParam(required = false) List<String> columnKeys){
+    public Map<String, Object> getColumnMapRelation(@RequestParam(required = false) List<String> columnKeys) {
         return columnMapRelationService.getColumnMapRelation(columnKeys);
     }
 
     /**
      * 单文件解析  根据templateName匹配对应信息
+     *
      * @param templateName
      * @return
      */
     @RequestMapping("/getColumnMapRelationByTemplateName")
-    public List<ColumnMapRelation> getColumnMapRelationByTemplateName(String templateName) {
-        return columnMapRelationService.getColumnMapRelationByTemplateName(templateName);
+    public Map<String, Object> getColumnMapRelationByTemplateName(@RequestParam(required = false) List<String> columnKeys,String templateName) {
+/*
+        List<ColumnMapRelation> columnMapRelations=columnMapRelationService.getColumnMapRelationByTemplateName(templateName);
+        Map<String, Object> data = new HashMap<>();
+        data.put("columnMapRelations", columnMapRelations);
+        return data;*/
+        return columnMapRelationService.getColumnMapRelationByTemplateName(columnKeys,templateName);
     }
 
 
@@ -47,7 +54,7 @@ public class ColumnMapRelationControl {
      * 映射模板新增及更新
      */
     @RequestMapping("/addColumnMapRelations")
-    public Object addColumnMapRelations(@RequestParam Map<String, Object> params){
+    public Object addColumnMapRelations(@RequestParam Map<String, Object> params) {
         String json = (String) params.get("formList");
         List<ColumnMapRelation> columnMapRelations = JSON.parseArray(json, ColumnMapRelation.class);
         try {
@@ -58,7 +65,7 @@ public class ColumnMapRelationControl {
             return ExtUtil.failure(e.getCause().getMessage());
         }
     }
-    }
+}
 
 
 

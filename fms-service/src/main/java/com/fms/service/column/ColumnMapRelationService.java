@@ -1,15 +1,12 @@
 package com.fms.service.column;
 
-import com.alibaba.druid.sql.visitor.functions.If;
 import com.fms.domain.schema.ColumnDic;
 import com.fms.domain.schema.ColumnMapRelation;
-import com.fms.service.filemanage.ChunkService;
 import com.handu.apollo.data.mybatis.Dao;
 import com.handu.apollo.utils.CharPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.applet.Main;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,35 +27,62 @@ public class ColumnMapRelationService {
         //根据columnKeys查询模板信息
         List<Map<String, Object>> templateNameInfos = dao.getList(CLASSNAME, "getTemplateNameByColumnKeys", columnKeys);
 
-
-        List<ColumnMapRelation> columnMapRelations = new ArrayList<>();
-        if (templateNameInfos != null && templateNameInfos.size() > 0){
-            //获取模板名称
-            String templateName = (String) templateNameInfos.get(0).get("templateName");
-
-            //根据模板名称查询记录
-            columnMapRelations = getColumnMapRelationByTemplateName(templateName);
-
-        }
-
         //创建返回数据
         Map<String, Object> data = new HashMap<>();
         data.put("templateNameInfos", templateNameInfos);
-        data.put("columnMapRelations", columnMapRelations);
 
         return data;
     }
 
 
-    public List<ColumnMapRelation> getColumnMapRelationByTemplateName(String templateName) {
-       return dao.getList(CLASSNAME, "getColumnMapRelationByTemplateName", templateName);
+    public Map<String, Object> getColumnMapRelationByTemplateName(List<String> columnKeys,String templateName) {
+
+        List<ColumnMapRelation> columnMapRelationList = dao.getList(CLASSNAME, "getColumnMapRelationByTemplateName", templateName);
+        Map<String, Object> data = new HashMap<>();
+        List<ColumnMapRelation> columnMapRelations = new ArrayList<>();
+
+        //遍历获取前台传过来的columnKey
+        for (String columnKey : columnKeys) {
+            //遍历 获取模板中的columnKeys
+            for (ColumnMapRelation columnMapRelation : columnMapRelationList) {
+                //将对应模板中columnKey与前台传过来像匹配的值添加到list
+                if (columnMapRelation.getColumnKey().equals(columnKey)) {
+                    columnMapRelations.add(columnMapRelation);
+                    break;
+                }
+            }
+            data.put("columnMapRelations", columnMapRelations);
+        }
+        return data;
     }
+
+//该代码暂留
+  /*  //根据模板名称查询记录
+     *//*columnMapRelations = getColumnMapRelationByTemplateName(templateName);*//*
+    Map<String, Object> data = new HashMap<>();
+        data.put("columnMapRelations", columnMapRelations);
+
+        return data;
+
+    List<ColumnMapRelation> columnMapRelations = new ArrayList<>();
+        if (templateNameInfos != null && templateNameInfos.size() > 0) {
+        //获取模板名称
+        String templateName = (String) templateNameInfos.get(0).get("templateName");
+
+        //根据模板名称查询记录
+        columnMapRelations = getColumnMapRelationByTemplateName(templateName);
+        Map<String, Object> data = new HashMap<>();
+        data.put("columnMapRelations", columnMapRelations);
+        return data;
+    }
+*/
+
+
 
 
 
     /**
      * 添加columnMapRelation记录
-     *
      */
     public void addColumnMapRelations(List<ColumnMapRelation> addColumnMapRelations) {
 
@@ -66,36 +90,37 @@ public class ColumnMapRelationService {
 
         for (ColumnMapRelation columnMapRelation : addColumnMapRelations) {
 
-            if(columnMapRelation.getId() == null){
+            if (columnMapRelation.getId() == null) {
                 columnMapRelation.setId(isColumnMapRelationExists(columnMapRelation, formColumnMapRelations));
             }
 
             if (columnMapRelation.getId() != null) {
                 //修改column_map_relation记录
                 dao.update(CLASSNAME, "updateColumnMapRelationById", columnMapRelation);
-                addOrUpdateColumnDics(columnMapRelation.getDicMap(),columnMapRelation.getId(),"2");
+                addOrUpdateColumnDics(columnMapRelation.getDicMap(), columnMapRelation.getId(), "2");
             } else {
                 //添加
                 long id = System.currentTimeMillis();
                 columnMapRelation.setId(id);
                 dao.insert(CLASSNAME, "insertColumnMapRelation", columnMapRelation);
-                addOrUpdateColumnDics(columnMapRelation.getDicMap(),id,"1");
+                addOrUpdateColumnDics(columnMapRelation.getDicMap(), id, "1");
             }
 
         }
     }
 
     private List<ColumnDic> findColumnDics() {
-        return dao.getList(CLASSNAME,"findColumnDics",null);
+        return dao.getList(CLASSNAME, "findColumnDics", null);
     }
 
     /**
      * 批量插入columnDic对象
+     *
      * @param dicMap 数据
      * @param id
-     * @param type 操作类型，1：添加，2添加或修改
+     * @param type   操作类型，1：添加，2添加或修改
      */
-    private void addOrUpdateColumnDics(Map<String, Object> dicMap,long id,String type) {
+    private void addOrUpdateColumnDics(Map<String, Object> dicMap, long id, String type) {
 
         //查询所有的column_dic表记录
         List<ColumnDic> columnDics = findColumnDics();
@@ -107,17 +132,17 @@ public class ColumnMapRelationService {
             //查看是否当前key是否需要存储
             if (key.startsWith("nz_dic")) {
                 //需要存储,columnDic创建对象
-                String value =  entry.getValue() + "";
+                String value = entry.getValue() + "";
 
-                ColumnDic columnDic = new ColumnDic(id,key,value);
-                if("1".equals(type)){
+                ColumnDic columnDic = new ColumnDic(id, key, value);
+                if ("1".equals(type)) {
                     addColumnDic(columnDic);
-                }else{
+                } else {
                     //查看columnDic是否存在记录
-                    if(isColumnDicExists(columnDics,id,key)){
+                    if (isColumnDicExists(columnDics, id, key)) {
                         //修改
                         updateColumnDicByIdAndKye(columnDic);
-                    }else{
+                    } else {
                         //添加
                         addColumnDic(columnDic);
                     }
@@ -137,7 +162,7 @@ public class ColumnMapRelationService {
             //条件判断，根据id和key
             boolean flag = columnDic.getColumnMapId() == id && columnDic.getDicName().equals(key);
 
-            if(flag){
+            if (flag) {
                 return true;
             }
         }
@@ -147,7 +172,7 @@ public class ColumnMapRelationService {
     }
 
     //插入columnDic对象
-    public void addColumnDic(ColumnDic columnDic){
+    public void addColumnDic(ColumnDic columnDic) {
         //插入数据
         dao.insert(CLASSNAME, "insertColumnDic", columnDic);
     }

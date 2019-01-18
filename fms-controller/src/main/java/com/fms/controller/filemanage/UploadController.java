@@ -1023,7 +1023,8 @@ public class UploadController {
         dIds.add(Long.valueOf(1));
         params.put("ids", dIds);//
         //List<File> fileList = fileService.getFileListByDirectoryIds(params);
-        List<com.fms.domain.filemanage.File> fileList = fileService.getAllFIles();// 写个查询所有的方法
+        // 写个查询所有的方法
+        List<com.fms.domain.filemanage.File> fileList = fileService.getAllFIles();
 
         try {
             String filePath = "";
@@ -1034,6 +1035,8 @@ public class UploadController {
 
             for (com.fms.domain.filemanage.File file : fileList) {
                 boolean isUpload = true;// 判断是否上报
+
+
 
                 File fileLocal = null;
                 if (file != null) {
@@ -1068,6 +1071,7 @@ public class UploadController {
                         e.printStackTrace();
                     }
                 }
+
 
                 //String filePath = "http://"+env.getProperty("fastdfs.nginxAddress")+"/"+file.getGroups()+"/"+file.getRealPath();
                 System.out.println(filePath);
