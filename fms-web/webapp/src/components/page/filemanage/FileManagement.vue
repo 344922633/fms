@@ -123,14 +123,14 @@
                                     @on-cancel="cancel">
                                     <p>当前选中目录名称为 >> {{ tDirectoryText }}</p>
                                 </Modal>
-                                 <!--上传弹出框用于确认是直接上传还是ftp上传-->
+                                <!--上传弹出框用于确认是直接上传还是ftp上传-->
                                 <Modal
                                     title="上传方式"
                                     v-model="modalUploadChoose"
                                     :mask-closable="false"
-                                    >
-                                   <Button @click="uploadFile">文件上传</Button>
-                                   <Button @click="uploadFromFtp">ftp下载</Button>
+                                >
+                                    <Button @click="uploadFile">文件上传</Button>
+                                    <Button @click="uploadFromFtp">ftp下载</Button>
                                 </Modal>
                                 <Modal
                                     title="ftp下载"
@@ -138,39 +138,39 @@
                                     :mask-closable="false"
                                     @on-ok="uploadOK">
                                     <div>
-                                         <table border="1" style="border-style: none; ">
-                                             <tr>
-                                                 <td>ip：</td>
-                                                 <td>
-                                                     <Input v-model="ftpInfo.ip" style="width:300px;"/>
-                                                 </td>
-                                             </tr>
-                                             <tr>
-                                                 <td>用户名：</td>
-                                                 <td>
-                                                     <Input v-model="ftpInfo.userName" style="width:300px;"/>
-                                                 </td>
-                                             </tr>
-                                             <tr>
-                                                 <td>密码：</td>
-                                                 <td>
-                                                     <Input v-model="ftpInfo.password" style="width:300px;" type="password"/>
-                                                 </td>
-                                             </tr>
-                                             <tr>
-                                                 <td>端口号：</td>
-                                                 <td>
-                                                     <Input v-model="ftpInfo.port"  style="width:300px;"/>
-                                                 </td>
-                                             </tr>
-                                             <tr>
-                                                 <td>下载路径：</td>
-                                                 <td>
-                                                     <Input v-model="ftpInfo.path" style="width:300px;"/>
-                                                 </td>
-                                             </tr>
-                                         </table>
-                                     </div>
+                                        <table border="1" style="border-style: none; ">
+                                            <tr>
+                                                <td>ip：</td>
+                                                <td>
+                                                    <Input v-model="ftpInfo.ip" style="width:300px;"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>用户名：</td>
+                                                <td>
+                                                    <Input v-model="ftpInfo.userName" style="width:300px;"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>密码：</td>
+                                                <td>
+                                                    <Input v-model="ftpInfo.password" style="width:300px;" type="password"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>端口号：</td>
+                                                <td>
+                                                    <Input v-model="ftpInfo.port"  style="width:300px;"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>下载路径：</td>
+                                                <td>
+                                                    <Input v-model="ftpInfo.path" style="width:300px;"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                 </Modal>
                                 <!--文件窗口上传结束-->
 
@@ -217,7 +217,7 @@
                                     v-model="modalDelete"
                                     :mask-closable="false"
                                     @on-ok="deleteFileInfo">
-                                   <p>确认要删除数据吗？</p>
+                                    <p>确认要删除数据吗？</p>
                                 </Modal>
                                 <!--删除窗口结束-->
 
@@ -345,7 +345,7 @@
                     },
                     {
                         title: '是否上报',
-                            key: 'isReport',
+                        key: 'isReport',
                         render: (h, params) => {
                             return h('span',{}, params.row.isReport == 1 ? '是' : '否');
                         }
@@ -421,7 +421,7 @@
                 tDirectoryId:0,//当前选中目录树node节点id
                 tDirectoryText:'',//当前选中目录树节点名称
                 //分类数组
-               // treeData: [],
+                // treeData: [],
                 //节点修改数据模型
                 form: {
                     name: '',
@@ -467,11 +467,11 @@
             },
             //文件md5
             preprocess(chunk){
-               if (chunk.file.md5 === '' || chunk.file.md5 == null) {
+                if (chunk.file.md5 === '' || chunk.file.md5 == null) {
                     fileMd5(chunk.file.file, function (err, md5)  {
                         chunk.file.uniqueIdentifier=md5;
                         chunk.preprocessFinished()
-                   })
+                    })
                 } else {
                     chunk.preprocessFinished()
                 }
@@ -479,20 +479,20 @@
             //分页页码
             handleCurrentChange(val) {
                 this.current = val;
-                    if(this.flag==0){
-                        this.getData()
-                    }else{
-                        this.btnFind()
-                    };
+                if(this.flag==0){
+                    this.getData()
+                }else{
+                    this.btnFind()
+                };
             },
             //分页单页条数
             handleSizeChange(val) {
                 this.pageSize = val;
-               if(this.flag==0){
-                   this.getData()
-               }else{
-                   this.btnFind()
-               };
+                if(this.flag==0){
+                    this.getData()
+                }else{
+                    this.btnFind()
+                };
             },
             //获取文件列表
             getData() {
@@ -761,7 +761,7 @@
                             message: '上传成功！',
                             type: 'success'
                         });
-                    refreshData();
+                        refreshData();
                     }else{
                         this.$notify({
                             title: '提示',
@@ -813,7 +813,7 @@
                         } else {
                             msg = '操作成功！';
 
-                          // textNode.children.push(res.data.data);
+                            // textNode.children.push(res.data.data);
 
                         }
                         this.getTreeDate();
@@ -830,13 +830,13 @@
             //文件单行选中赋值
             setSelectNFile(){
                 this.selectNFile.selectFileId=this.selectFileList[0].id,
-                this.selectNFile.selectFileName=this.selectFileList[0].name,
-                this.selectNFile.selectFileType=this.selectFileList[0].type,
-                this.selectNFile.selectFileDescription=this.selectFileList[0].description,
-                this.selectNFile.selectClassName=this.selectFileList[0].className,
-                this.selectNFile.selectFileRecommendParserName=this.selectFileList[0].recommendParserName,
-                this.selectNFile.selectClassId=this.selectFileList[0].classId,
-                this.selectNFile.selectFileRecommendParserId=this.selectFileList[0].recommendParserId
+                    this.selectNFile.selectFileName=this.selectFileList[0].name,
+                    this.selectNFile.selectFileType=this.selectFileList[0].type,
+                    this.selectNFile.selectFileDescription=this.selectFileList[0].description,
+                    this.selectNFile.selectClassName=this.selectFileList[0].className,
+                    this.selectNFile.selectFileRecommendParserName=this.selectFileList[0].recommendParserName,
+                    this.selectNFile.selectClassId=this.selectFileList[0].classId,
+                    this.selectNFile.selectFileRecommendParserId=this.selectFileList[0].recommendParserId
             },
             previewtFile() { //预览
                 if(this.selectFileList.length==0){
@@ -851,10 +851,10 @@
                     });
                 }else{
 
-                     let fileServerPath = this.config.fileServerPath;
-                     let previewPath = this.config.previewPath;
-                     let fileUrl = fileServerPath + '/' +  this.selectFileList[0].groups + '/'+ this.selectFileList[0].realPath;
-                     var filePath = this.selectFileList[0].realPath;
+                    let fileServerPath = this.config.fileServerPath;
+                    let previewPath = this.config.previewPath;
+                    let fileUrl = fileServerPath + '/' +  this.selectFileList[0].groups + '/'+ this.selectFileList[0].realPath;
+                    var filePath = this.selectFileList[0].realPath;
 
                     // 拿到ip
                     var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
@@ -865,8 +865,8 @@
                     var ifr = document.createElement('iframe');
                     ifr.src = a;
                     document.body.appendChild(ifr);
-                 }
-             },
+                }
+            },
 
             updatebFile() { //修改
                 if(this.selectFileList.length==0){
@@ -996,7 +996,7 @@
                 let newFile = JSON.parse(fileJson)
                 this.currentFile = newFile ? newFile : { name: '' };
 
-                 this.parserVisible = true;
+                this.parserVisible = true;
             },
 
             //关闭解析页面，初始化数据
