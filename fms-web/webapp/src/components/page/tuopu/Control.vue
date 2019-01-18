@@ -100,74 +100,74 @@
                         <el-button type="primary" @click="onSubmit">提交</el-button>
                     </el-form-item>
                 </el-form>
-                </el-dialog>
+            </el-dialog>
 
-                <el-dialog title="编辑" :visible.sync="editVisible" :before-close="closeDialog"   :close-on-click-modal="false" :close-on-press-escape="false" width="40%">
-                    <el-form ref="form" :model="form" label-width="100px">
-                        <el-form-item label="控件名称" label-width="100px">
-                            <el-input v-model="form.name" style="width:200px;"></el-input>
-                        </el-form-item>
-                        <el-form-item label-width="100px" label="控件属性" v-for="(item, index) in inputs"
-                                      :key="index">
-                            <div class="proper-wrap">
-                                <el-input :readonly="item.canDelete === false" v-model="item.text" style="width:200px;"></el-input>
-                                <i v-if="index === 0" class="el-icon-plus" @click="addInput"></i>
-                                <i v-if="index !==0 && item.canDelete !== false" class="el-icon-minus" @click="removeInput(index)"></i>
-                            </div>
-                        </el-form-item>
+            <el-dialog title="编辑" :visible.sync="editVisible" :before-close="closeDialog"   :close-on-click-modal="false" :close-on-press-escape="false" width="40%">
+                <el-form ref="form" :model="form" label-width="100px">
+                    <el-form-item label="控件名称" label-width="100px">
+                        <el-input v-model="form.name" style="width:200px;"></el-input>
+                    </el-form-item>
+                    <el-form-item label-width="100px" label="控件属性" v-for="(item, index) in inputs"
+                                  :key="index">
+                        <div class="proper-wrap">
+                            <el-input :readonly="item.canDelete === false" v-model="item.text" style="width:200px;"></el-input>
+                            <i v-if="index === 0" class="el-icon-plus" @click="addInput"></i>
+                            <i v-if="index !==0 && item.canDelete !== false" class="el-icon-minus" @click="removeInput(index)"></i>
+                        </div>
+                    </el-form-item>
 
 
-                        <el-form-item label="控件类型(一级)" label-width="100px">
-                            <el-select v-model="form.parentType" filterable placeholder="请选择" style="width:200px;">
-                                <el-option
-                                    v-for="(menu, menuIdx) in menuList"
-                                    :key="menu.name"
-                                    :label="menu.name"
-                                    :value="menu.name">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="控件类型(二级)" label-width="100px">
-                            <el-select @change="onChangeType" v-model="form.type" filterable placeholder="请选择" style="width:200px;">
-                                <el-option
-                                    v-for="(menu, menuIdx) in menuIdChildrenMap[form.parentType]"
-                                    :key="menu.name"
-                                    :label="menu.name"
-                                    :value="menu.name">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
+                    <el-form-item label="控件类型(一级)" label-width="100px">
+                        <el-select v-model="form.parentType" filterable placeholder="请选择" style="width:200px;">
+                            <el-option
+                                v-for="(menu, menuIdx) in menuList"
+                                :key="menu.name"
+                                :label="menu.name"
+                                :value="menu.name">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="控件类型(二级)" label-width="100px">
+                        <el-select @change="onChangeType" v-model="form.type" filterable placeholder="请选择" style="width:200px;">
+                            <el-option
+                                v-for="(menu, menuIdx) in menuIdChildrenMap[form.parentType]"
+                                :key="menu.name"
+                                :label="menu.name"
+                                :value="menu.name">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
 
-                        <el-form-item label="控件上传" label-width="100px">
-                            <el-upload
-                                ref="elUpload"
-                                :class="uploadSuccessState ? 'uploadSuccess': ''"
-                                action="mvc/control/imgUpload"
-                                list-type="picture-card"
-                                accept="image/*"
-                                :limit="imgLimit"
-                                :file-list="productImgs"
-                                :multiple="isMultiple"
-                                :on-preview="handlePictureCardPreview"
-                                :on-remove="handleRemove"
-                                :on-success="handleUploadSuccess"
-                                :before-upload="beforeAvatarUpload"
-                                :on-exceed="handleExceed"
-                                :on-error="imgUploadError">
-                                <i class="el-icon-plus"></i>
-                            </el-upload>
+                    <el-form-item label="控件上传" label-width="100px">
+                        <el-upload
+                            ref="elUpload"
+                            :class="uploadSuccessState ? 'uploadSuccess': ''"
+                            action="mvc/control/imgUpload"
+                            list-type="picture-card"
+                            accept="image/*"
+                            :limit="imgLimit"
+                            :file-list="productImgs"
+                            :multiple="isMultiple"
+                            :on-preview="handlePictureCardPreview"
+                            :on-remove="handleRemove"
+                            :on-success="handleUploadSuccess"
+                            :before-upload="beforeAvatarUpload"
+                            :on-exceed="handleExceed"
+                            :on-error="imgUploadError">
+                            <i class="el-icon-plus"></i>
+                        </el-upload>
 
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button @click="reset">取 消</el-button>
-                            <el-button type="primary" @click="onSubmitEdit">提交</el-button>
-                        </el-form-item>
-                    </el-form>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button @click="reset">取 消</el-button>
+                        <el-button type="primary" @click="onSubmitEdit">提交</el-button>
+                    </el-form-item>
+                </el-form>
 
-             <!--   <span slot="footer" class="dialog-footer">
-                <el-button @click="addVisible = false">取 消</el-button>
-                <el-button type="primary" @click="submitAdd">确 定</el-button>
-            </span>-->
+                <!--   <span slot="footer" class="dialog-footer">
+                   <el-button @click="addVisible = false">取 消</el-button>
+                   <el-button type="primary" @click="submitAdd">确 定</el-button>
+               </span>-->
             </el-dialog>
             <div class="pagination">
                 <el-pagination
@@ -216,7 +216,7 @@
                 idx: -1,
                 inputs:[
                     {text:'' ,$noColumn:true}
-                        ],
+                ],
                 menuList: [],
                 menuIdChildrenMap: {},
                 proEdit:{},
@@ -265,10 +265,10 @@
                     data.forEach(item => {
                         const {column} = item
                         //const { columnChinese, columnEnglish } = column
-                           this.inputs.push({
+                        this.inputs.push({
                             text:column.columnChinese,
                             canDelete: false,
-                             ...item
+                            ...item
                         })
                     })
                 }).catch(function (error) {
@@ -291,7 +291,7 @@
                 this.inputs = this.inputs.filter(v => {
                     return !!v.text                          //过滤掉inputs里属性为空的，返回的还是一个数组
                 })
-              //  console.log(this.inputs,'this.inputs')
+                //  console.log(this.inputs,'this.inputs')
                 const loading = this.$loading({
                     lock: true,
                     text: '正在保存',
@@ -340,15 +340,15 @@
 
             //关闭清空数据
             closeDialog(done){
-                        done();
-                        this.productImgs = [];
+                done();
+                this.productImgs = [];
                 this.inputs=[
                     {text:'' ,$noColumn:true}
                 ];
-                        this.form = {
-                            name: '',
-                            type: '',
-                        };
+                this.form = {
+                    name: '',
+                    type: '',
+                };
             },
             //编辑
             async handleEdit(index, row) {
@@ -356,10 +356,10 @@
                 //const item = this.tableData[index];   //所在行数据
                 console.log(row,'row');
                 //console.log(item,'item111111111111111111111111111');
-               // console.log(item.properties,'item.properties')
-               //  this.inputs=[
-               //      {text:'' ,$noColumn:true}
-               //  ];
+                // console.log(item.properties,'item.properties')
+                //  this.inputs=[
+                //      {text:'' ,$noColumn:true}
+                //  ];
                 this.form = {
                     id:row.id,
                     name: row.name,
@@ -369,7 +369,7 @@
                 };
                 this.proEdit=row.properties
                 row.properties.forEach(item => {
-                   // console.log(cloumn,'cloumn')
+                    // console.log(cloumn,'cloumn')
                     this.inputs.push({
                         text: item.propertyChinese,
                         canDelete: false,
@@ -377,7 +377,7 @@
                     })
 
                 })
-              //  console.log(e,'e');
+                //  console.log(e,'e');
                 console.log(this.inputs,'this.inputs')
                 if(row.image) {
                     this.uploadSuccessState = true;
@@ -410,7 +410,7 @@
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
                 var url,params ;
-             //  console.log(this.inputs,'inputs');
+                //  console.log(this.inputs,'inputs');
                 this.inputs.forEach((inp,i)=>{
                     if(inp.$noColumn==undefined&&inp.column==undefined){
                         //console.log(inp.$noColumn+'----000')
@@ -430,12 +430,12 @@
                                 dicList:inp.dicList
                             }
                         };
-                      //  console.log(obj,'obj')
-                       this.inputs.splice(i,1,obj);
+                        //  console.log(obj,'obj')
+                        this.inputs.splice(i,1,obj);
                     }
 
                 })
-              //  console.log(this.inputs,'inputs11');
+                //  console.log(this.inputs,'inputs11');
 
                 var params = {
                     name: this.form.name,
@@ -443,9 +443,9 @@
                     type1: this.form.parentType,
                     properties: JSON.stringify(this.inputs),
                     url: this.form.imageUrl,
-                   // properties:JSON.stringify(this.form.editproperties) + JSON.stringify(this.inputs),
+                    // properties:JSON.stringify(this.form.editproperties) + JSON.stringify(this.inputs),
                 }
-               // console.log(params,'params')
+                // console.log(params,'params')
                 //添加
                 url = "mvc/control/operationControl";
                 params.id = this.form.id;
@@ -477,7 +477,7 @@
             },
 
 
-    async getData() {
+            async getData() {
                 let {data} = await this.$axios.post('mvc/control/getList');
                 console.log(data, '初始化数据');
                 this.tableData = data;
@@ -516,7 +516,7 @@
             },
 
             handleRemove(file, fileList) {//移除图片
-            this.uploadSuccessState = false;
+                this.uploadSuccessState = false;
                 console.log(file, fileList);
             },
             handlePictureCardPreview(file) {//预览图片时调用

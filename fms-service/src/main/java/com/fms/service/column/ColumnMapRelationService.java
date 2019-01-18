@@ -57,7 +57,7 @@ public class ColumnMapRelationService {
     }
 
 //该代码暂留
-  /*  //根据模板名称查询记录
+    /*  //根据模板名称查询记录
      *//*columnMapRelations = getColumnMapRelationByTemplateName(templateName);*//*
     Map<String, Object> data = new HashMap<>();
         data.put("columnMapRelations", columnMapRelations);
