@@ -126,42 +126,35 @@
             </div>
 
             <Divider> 解析字段</Divider>
-            <div>
-                <Form v-if="columnData && Object.keys(columnData).length">
+         <!--   <div>
+               <Form v-if="columnData && Object.keys(columnData).length">
                     <FormItem inline :label-width="100" label="请选择模板">
                         <Select filterable
                                 @on-change="(templateName) => onChangeTemplate(templateName)"
                                 style="width: 180px"
                                 v-model="selectTemplateName"
                                 :clearable="true"
-                        >        <!--@on-change="(schemaId) => conChangeTemplate(schemaId)"-->
+                        >        &lt;!&ndash;@on-change="(schemaId) => conChangeTemplate(schemaId)"&ndash;&gt;
                             <Option v-for="template in  this.templateNameInfos" :value="template.templateName" :key="template.templateName"> {{ template.templateName }}</Option>
                         </Select>
                     </FormItem>
 
-                    <Modal
-                        title="请输入模板名称"
-                        v-model="templateNameVisible"
-                        @on-ok="handleSaveMapNewTemplateName"
-                        :mask-closable="false">
-                        <FormItem inline :label-width="100" label="请输入模板名称">
-                            <Input v-model="newTemplateName"></Input>
-                        </FormItem>
-                    </Modal>
+
                 </Form>
-            </div>
+            </div>-->
 
             <!--选择表和字段-->
             <div v-if="columnData && Object.keys(columnData).length" style="height: 300px; overflow-y: auto;">
+
                 <Form inline v-for="(data,key) in columnData" :key="key" v-if="columnKeyNamesMap[key] != null">
 
                     <FormItem :label-width="100" :label="key">
                     </FormItem>
-
                     <FormItem label="选择库">
                         <Select filterable
                                 style="width: 180px"
                                 @on-change="(schemaId) =>getTables(schemaId, key)"
+
                                 v-model="columnKeyNamesMap[key].schemaId"
                                 :clearable="true"
                         >
@@ -206,10 +199,19 @@
         <!--
                 <Divider> 解析数据</Divider>
         -->
+        <Modal
+            title="请输入模板名称"
+            v-model="templateNameVisible"
+            @on-ok="handleSaveMapNewTemplateName"
+            :mask-closable="false">
+            <FormItem inline :label-width="100" label="请输入模板名称">
+                <Input v-model="newTemplateName"></Input>
+            </FormItem>
+        </Modal>
         <div ref="table" v-show="false"></div>
         <Button type="primary" @click="parseDataSaveDatabase">入库</Button>
-        <Button type="primary" @click="saveTemplateToOrigin">保存映射关系到原模板</Button>
-        <Button type="primary" @click="saveTemplateToNew">保存映射关系到新模板</Button>
+       <!-- <Button type="primary" @click="saveTemplateToOrigin">保存映射关系到原模板</Button>
+        <Button type="primary" @click="saveTemplateToNew">保存映射关系到新模板</Button>-->
     </div>
 </template>
 <script>
@@ -268,7 +270,16 @@
         parserData:[],
         // 解析器参数
         parserExtList:[],
-        newTemplateName:''
+        newTemplateName:'',
+        //保存模板
+       /* formList:[{
+            templateName:'',
+            columnKey: '',
+            schemaId: '',
+            tableId: '',
+            columnId: '',
+            dicMap:{}
+        }],*/
 
     }
 
@@ -394,14 +405,64 @@
                 });
             },
 
+
+
+
+
+
+
             // 保存映射关系到原模板   TODO
             saveTemplateToOrigin(){
-
+                 this.$axios.post('mvc/addColumnMapRelations', {
+                    formList:JSON.stringify(this.formList)
+                }).then( (result) => {
+                    this.$message.success('提交成功')
+                });
             },
-            // 保存映射关系到新模板   TODO
+
+            // 保存到新模板
+            handleSaveMapNewTemplateName() {
+                let arr = []
+
+                for(let key in this.columnKeyNamesMap){
+
+                    console.log(this.columnKeyNamesMap);
+                    let obj = {};
+                    obj["columnKey"] = key;
+                    obj["schemaId"] = this.columnKeyNamesMap[key].schemaId;
+                    obj["tableId"] = this.columnKeyNamesMap[key].tableId;
+                    obj["columnId"] = this.columnKeyNamesMap[key].columnId;
+                    obj["templateName"] = this.newTemplateName;
+                    for(let keys in this.columnData) {
+                        if (this.columnKeyNamesMap[key]['dicMap'] != null && key == keys) {
+                            obj["dicMap"] = this.columnKeyNamesMap[key]['dicMap'];
+                        } else {
+                            obj["dicMap"] = {};
+                        }
+                    }
+                        arr.push(obj);
+                }
+
+                this.$axios.post('mvc/addColumnMapRelations', {
+                    formList:JSON.stringify(arr),
+
+                }).then(res => {
+                    this.$notify({
+                        title: '提示',
+                        message: res.data.data,
+                        type: res.data.success ? 'success' : 'error'
+                    });
+                })
+            },
+
+
+            // 保存映射关系到新模板   TODO 显示前判断
             saveTemplateToNew(){
                 this.templateNameVisible = true;
+
             },
+
+
 
             submitTopology() {
                 const name = this.topologyName
@@ -750,33 +811,32 @@
                         templateName: templateName
                     },
                     success: function(res) {
-                        console.log(me.columnData)
+                       /* console.log("columnData")
+                        console.log(me.columnData)*/
                         if(res.columnMapRelations!=null){
-                        me.columnMapRelations = res.columnMapRelations;
-                        me.columnKeyNamesMap = me.columnMapRelations;
-                        console.log(Object.keys(me.columnData).length)
+                            me.columnMapRelations = res.columnMapRelations;
+                            var map = {};
+
+                            me.columnMapRelations.forEach(function(ele) {
+                                map[ele.columnKey] = ele;
+                                console.log("111111111111111")
+                                console.info(map["keywords"]);
+                                console.info(map);
+                                console.log("111111111111111")
+                            })
+                            console.log("22222222222222222222")
+                            me.columnKeyNamesMap = map;
+                            // me.$set(me.columnKeyNamesMap, key, map)
+                            console.log("columnKeyNamesMap")
+                            console.log(me.columnKeyNamesMap)
+
+                            console.log(Object.keys(me.columnData).length)
+
                         }
                     }
                 })
             },
 
-
-           /* // 模板名改变时触发的函数
-            onChangeTemplate(templateName){
-                this.$axios.post('mvc/getColumnMapRelationByTemplateName', {
-
-                    columnKeys: this.allKey,
-                    templateName:templateName
-
-                }).then(res => {
-                    /!*this.$set(this.columnSelectMap[key], 'tables', res.data)
-                    this.$set(this.columnKeyNamesMap[key], 'tableId', '')
-                    this.$set(this.columnSelectMap[key], 'columns', res.data)
-                    this.$set(this.columnKeyNamesMap[key], 'columnId', '')
-                    this.$set(this.columnSelectMap[key], 'dicTables', null)
-                    this.$set(this.columnKeyNamesMap[key], 'dicMap', {})*!/
-                })
-            },*/
 
             // 获取库
             getSchemas() {
@@ -841,21 +901,7 @@
             //     });
             // },
 
-            // 保存到新模板
-            handleSaveMapNewTemplateName() {
 
-                this.$axios.post('mvc/addColumnMapRelations', {
-                    templateName:this.templateName,
-                    columnKeyNamesMap:JSON.stringify(this.columnKeyNamesMap),
-                    parserId:this.file.recommendParserId
-                }).then(res => {
-                    this.$notify({
-                        title: '提示',
-                        message: res.data.data,
-                        type: res.data.success ? 'success' : 'error'
-                    });
-                })
-            },
 
 
             toggleTab(index,key) {
