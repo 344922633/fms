@@ -40,6 +40,14 @@ public class ColumnInfoService {
         return dao.getList(CLASSNAME, "getColumnsInfo", tid);
     }
 
+
+    public List<String>getColumnsInfoDataType(String tableEnglish) {
+
+        return dao.getList(CLASSNAME, "getColumnsInfoDataType", tableEnglish);
+    }
+
+
+
     public List<TableInfo> getAllTables() {
 
         return dao.getList(CLASSNAME, "getAllTables");

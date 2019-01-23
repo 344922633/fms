@@ -400,7 +400,6 @@ public class FileParserController {
                 } else {
                     local.setName(local.getName());
                 }
-
             } else {
                 local.setName(System.currentTimeMillis() + "");
             }
@@ -425,6 +424,7 @@ public class FileParserController {
             } else {
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("parserId", fileParser.getId());
+
                 List<FileParserExt> parserExtList = fileParserExtService.getList(params);
                 if (!ObjectUtils.isEmpty(parserExtList)) {
                     extParams.put("parserExtList", parserExtList);
@@ -517,6 +517,7 @@ public class FileParserController {
 
         return ExtUtil.success(result);
     }
+
 
     //将文件修改为已解析状态
     private void isParser(FileParser fileParser) {

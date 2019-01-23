@@ -109,6 +109,7 @@ public class ColumnInfoController {
             List<ColumnInfo> columnInfos = new ArrayList<ColumnInfo>();
             String data = request.getParameter("data");
             String tableId = request.getParameter("tableId");
+            String tableEnglish = request.getParameter("tableEnglish");
 
             JSONArray btnArray = JSONArray.parseArray(data);
             for (int i = 0; i < btnArray.size(); i++) {
@@ -133,8 +134,19 @@ public class ColumnInfoController {
                 } else {
                     isMasterKey = 0;
                 }
-
                 String dataType = obj.getString("data_type");
+//                获取字段类型并插入
+                List<String> types = getColumnsInfoDataType(tableEnglish);
+
+
+                for (int j = 0; j < types.size(); j++) {
+
+                    if (j == i) {
+                        dataType = types.get(j);
+                    break;
+                    }
+
+                }
                 columnInfo.setDicTableName(dicName);
                 columnInfo.setColumnChinese(columnChinese);
                 columnInfo.setColumnEnglish(columnEnglish);
@@ -153,6 +165,10 @@ public class ColumnInfoController {
             return ExtUtil.failure(e.getMessage());
         }
 
+    }
+    @RequestMapping("getColumnsInfoDataType")
+    public List<String> getColumnsInfoDataType(String tableEnglish) {
+        return columnInfoService.getColumnsInfoDataType(tableEnglish);
     }
 
 

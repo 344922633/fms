@@ -38,6 +38,10 @@
     select * from column_info where tableId = #{tid}
   </select>
 
+  <select id="getColumnsInfoDataType" parameterType="String" resultType="java.lang.String">
+    select data_type from information_schema.columns where table_name=#{tableEnglish}
+  </select>
+
   <select id="getAllTables" resultType="com.fms.domain.schema.TableInfo">
     select * from table_info
   </select>

@@ -64,13 +64,13 @@ public class PropertyUtil {
             String value = null;
 
             //  kafka的数据存在数据库中，会动态修改 ,只能修改DEFAULT_TOPIC
-            if(propertyService != null && "DEFAULT_TOPIC".equals(key)) {
+            /*if(propertyService != null && "DEFAULT_TOPIC".equals(key)) {
                 Property property =  propertyService.getAllConfProperty();
                 if (property != null) {
                     value = property.getDefaultTopic();
                 }
             }
-
+*/
             if (value == null){
                 value = props.getProperty(key);
             }

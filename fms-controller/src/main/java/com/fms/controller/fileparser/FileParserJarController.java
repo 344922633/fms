@@ -209,7 +209,7 @@ public class FileParserJarController {
         } catch (IOException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            return "后端异常...";
+            return "异常...";
         }
 
     }

@@ -240,7 +240,7 @@
         </Modal>
 
         <Modal v-model="parserVisible" title="修改解析器" @on-ok="handleOk">
-            <Select v-model="currentParser">
+            <Select v-model="currentParser" filterable>
                 <Option v-for="(item,key) in parsers" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
         </Modal>
