@@ -15,6 +15,14 @@
         select * from column_map_relation where templateName = #{templateName}
     </select>
 
+
+    <select id="getDicMapByColumnmaprelationId" parameterType="Long" resultType="com.fms.domain.schema.ColumnDic">
+        select dicName,dicValue from column_dic where columnMapId = #{columnMapId}
+    </select>
+
+
+
+
     <select id="findAll" resultType="com.fms.domain.schema.ColumnMapRelation">
         select * from column_map_relation
     </select>

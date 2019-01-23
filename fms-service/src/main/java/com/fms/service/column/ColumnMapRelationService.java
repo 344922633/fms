@@ -43,7 +43,19 @@ public class ColumnMapRelationService {
 
         //遍历 获取模板中的columnKeys
         for (ColumnMapRelation columnMapRelation : columnMapRelationList) {
+            Map<String, Object> dicMap = new HashMap<>();
+            //   根据ID去column中查询
+            List<ColumnDic> ColumnDic = getDicMapByColumnmaprelationId(columnMapRelation.getId());
+            if(ColumnDic!=null){
+                //遍历获取ColumnDic中的dicName 和 dicValue
+                for (ColumnDic columndic : ColumnDic) {
 
+                    dicMap.put(columndic.getDicName(),columndic.getDicValue());
+                }
+                //赋值dicMap到对应的columnMapRelation中
+                columnMapRelation.setDicMap(dicMap);
+            }
+//            columnMapRelation.getDicMap()
             //遍历获取前台传过来的columnKey
             for (String columnKey : columnKeys) {
                 //将对应模板中columnKey与前台传过来像匹配的值添加到list
@@ -53,8 +65,15 @@ public class ColumnMapRelationService {
                 }
             }
             data.put("columnMapRelations", columnMapRelations);
+
         }
         return data;
+    }
+
+
+
+    public List<ColumnDic> getDicMapByColumnmaprelationId(Long columnMapId) {
+        return dao.getList(CLASSNAME, "getDicMapByColumnmaprelationId", columnMapId);
     }
 
 //该代码暂留

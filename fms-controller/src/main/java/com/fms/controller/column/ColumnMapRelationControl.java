@@ -2,6 +2,7 @@ package com.fms.controller.column;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.fms.domain.schema.ColumnDic;
 import com.fms.domain.schema.ColumnMapRelation;
 import com.fms.service.column.ColumnMapRelationService;
 import com.handu.apollo.utils.ExtUtil;
@@ -51,6 +52,10 @@ public class ColumnMapRelationControl {
         return columnMapRelationService.getColumnMapRelationByTemplateName(columnKeys,templateName);
     }
 
+    @RequestMapping("/getDicMapByColumnmaprelationId")
+    public List<ColumnDic> getDicMapByColumnmaprelationId(Long columnMapId) {
+        return columnMapRelationService.getDicMapByColumnmaprelationId(columnMapId);
+    }
 
     /**
      * 映射模板新增及更新

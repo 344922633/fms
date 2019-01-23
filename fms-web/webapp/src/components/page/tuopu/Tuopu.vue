@@ -194,14 +194,6 @@
                         name: '子网设备',
                         images: this.images
                     }, callback: function (editor) {
-   	console.log(editor,"2222222222222222222222222222222222222")
-//     	editor.loadDatas()
-//                         let list = editor.propertyPane.propertyGroup.properties;
-//                         for(let i = 0; i < list.length(); i++){
-//                             if(list[i].name =="DXBM"){
-//
-//                             }
-//                         }
 
                         that.graphEditor = editor
                         var toolbox = editor.toolbox;
@@ -215,6 +207,8 @@
 
                             var id = data.get('id');
                             var properties = that.idPropertiesMap[id] || []
+                            console.log("555555555555555555555")
+                            console.log(properties)
                             return {
                                 group: '属性',
                                 properties: properties

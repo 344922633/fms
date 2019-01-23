@@ -7,6 +7,7 @@
         </Row>
         <div class="table">
             <div class="container">
+
                 <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table" ref="multipleTable" >
                     <el-table-column prop="name" label="图片名称" width="120">
                     </el-table-column>
@@ -105,7 +106,8 @@
 
             // 确定删除
             async deleteRow(){
-                await this.$axios.post('mvc/picture/delete', {id: this.tableData[this.idx].id});
+                let index = this.pageSize * (this.currentPage - 1) + this.idx;
+                await this.$axios.post('mvc/picture/delete', {id: this.tableData[index].id});
                 await this.getData();
                 this.$message.success('删除成功');
                 this.delVisible = false;

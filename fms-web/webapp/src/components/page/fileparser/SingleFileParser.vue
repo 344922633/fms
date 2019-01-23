@@ -126,7 +126,7 @@
             </div>
 
             <Divider> 解析字段</Divider>
-         <!--   <div>
+            <div>
                <Form v-if="columnData && Object.keys(columnData).length">
                     <FormItem inline :label-width="100" label="请选择模板">
                         <Select filterable
@@ -141,7 +141,7 @@
 
 
                 </Form>
-            </div>-->
+            </div>
 
             <!--选择表和字段-->
             <div v-if="columnData && Object.keys(columnData).length" style="height: 300px; overflow-y: auto;">
@@ -168,27 +168,29 @@
                                 v-model="columnKeyNamesMap[key].tableId"
                                 :clearable="true"
                         >
-                            <Option v-for="(table,tableIdx) in columnSelectMap[key].tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
+                            <Option v-for="(table,tableIdx) in columnSelectMap[key].tables" :value="table.id" :data="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
                         </Select>
                     </FormItem>
-                    <FormItem label="选择字段">
+                    <FormItem label="选择字段" :data="columnKeyNamesMap[key].columnId">
+                        {{columnKeyNamesMap[key].columnId}}---
                         <Select filterable
                                 @on-change="(columnId) => getDicByColumn(columnId, key)"
                                 style="width: 180px"
-                                v-model="columnKeyNamesMap[key].columnId"
+                                v-model="columnKeyNamesMap[key].columnId+''"
                                 :clearable="true"
                         >
-                            <Option v-for="(column,columnIdx) in columnSelectMap[key].columns" :value="column.id" :key="column.id"> {{ column.columnChinese }}</Option>
+                            <Option v-for="(column,columnIdx) in columnSelectMap[key].columns" :data="column.id" :value="column.id+''" :key="column.id+''"> {{ column.columnChinese }}</Option>
                         </Select>
                     </FormItem>
                     <template v-if="columnSelectMap[key] && columnSelectMap[key].dicTables">
                         <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.columnChinese">
                             <Select filterable
                                     style="width: 180px"
-                                    v-model="columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]"
+                                    :data="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
+                                    v-model="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
                                     :clearable="true"
                             >
-                                <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM" :key="dic.DM"> {{ dic.MC }}</Option>
+                                <Option v-for="(dic,dicIdx) in dicTable.dicList" :data="dic.DM" :value="dic.DM+''" :key="dic.DM+''"> {{ dic.MC }}</Option>
                             </Select>
                         </FormItem>
                     </template>
@@ -210,8 +212,8 @@
         </Modal>
         <div ref="table" v-show="false"></div>
         <Button type="primary" @click="parseDataSaveDatabase">入库</Button>
-       <!-- <Button type="primary" @click="saveTemplateToOrigin">保存映射关系到原模板</Button>
-        <Button type="primary" @click="saveTemplateToNew">保存映射关系到新模板</Button>-->
+        <Button type="primary" @click="saveTemplateToOrigin">保存映射关系到原模板</Button>
+        <Button type="primary" @click="saveTemplateToNew">保存映射关系到新模板</Button>
     </div>
 </template>
 <script>
@@ -310,6 +312,9 @@
                     let fileUrl = fileServerPath + '/' + newFile.groups + '/' + newFile.realPath;
                     this.previewFileData = previewPath + encodeURIComponent(fileUrl);
                 }
+            },
+            selectTemplateName(){
+                console.log(this.columnKeyNamesMap);
             }
         },
         components: {ICol},
@@ -353,10 +358,10 @@
                 this.uploadListFile = [];
                 this.resultFils = "";
             });
-            Bus.$emit('cleanData', "");
+            // Bus.$emit('cleanData', ""); b
         },
         beforeDestroy(){
-            clearData();
+            // clearData();
         },
         computed: {
             tableShowColumns() {
@@ -756,6 +761,7 @@
                             'tableId': '',
                             'columnId': ''
                         }
+                        console.log('tableid为空')
                         this.$set(this.columnKeyNamesMap, key, columnValue)
 
                         let columnSelectValue = {
@@ -810,22 +816,30 @@
                         columnKeys: this.allKey,
                         templateName: templateName
                     },
-                    success: function(res) {
-                       /* console.log("columnData")
-                        console.log(me.columnData)*/
+                    success: (res) => {
+                       /* console.log("columnData")*/
+                        console.log(this.allKey)
                         if(res.columnMapRelations!=null){
                             me.columnMapRelations = res.columnMapRelations;
                             var map = {};
-
                             me.columnMapRelations.forEach(function(ele) {
+
                                 map[ele.columnKey] = ele;
                                 console.log("111111111111111")
-                                console.info(map["keywords"]);
+                                console.info(ele);
                                 console.info(map);
                                 console.log("111111111111111")
                             })
-                            console.log("22222222222222222222")
                             me.columnKeyNamesMap = map;
+                            console.log(this.columnKeyNamesMap, 'columnKeyNamesMap')
+                            console.log(this.columnSelectMap,'columnSelectMap')
+                            //columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]
+                            for(let key in this.columnData) {
+                                console.log(this.columnKeyNamesMap[key].columnId)
+                                this.getTables(this.columnKeyNamesMap[key].schemaId, key)
+                                this.getColumnsByTable(this.columnKeyNamesMap[key].tableId, key)
+                                this.getDicByColumn(this.columnKeyNamesMap[key].columnId, key)
+                            }
                             // me.$set(me.columnKeyNamesMap, key, map)
                             console.log("columnKeyNamesMap")
                             console.log(me.columnKeyNamesMap)
@@ -850,11 +864,11 @@
                     schemaId: schemaId
                 }).then(res => {
                     this.$set(this.columnSelectMap[key], 'tables', res.data)
-                    this.$set(this.columnKeyNamesMap[key], 'tableId', '')
-                    this.$set(this.columnSelectMap[key], 'columns', res.data)
-                    this.$set(this.columnKeyNamesMap[key], 'columnId', '')
-                    this.$set(this.columnSelectMap[key], 'dicTables', null)
-                    this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
+                    //this.$set(this.columnKeyNamesMap[key], 'tableId', '')
+                   // this.$set(this.columnSelectMap[key], 'columns', res.data)
+                    //this.$set(this.columnKeyNamesMap[key], 'columnId', '')
+                   // this.$set(this.columnSelectMap[key], 'dicTables', null)
+                   // this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
                 })
             },
 
@@ -865,9 +879,9 @@
                     const data = res.data || []
                     const dicData = data.filter(v => v.isDic === 0)
                     this.$set(this.columnSelectMap[key], 'columns',dicData)
-                    this.$set(this.columnKeyNamesMap[key], 'columnId', '')
-                    this.$set(this.columnSelectMap[key], 'dicTables', null)
-                    this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
+                    //this.$set(this.columnKeyNamesMap[key], 'columnId', '')
+                    //this.$set(this.columnSelectMap[key], 'dicTables', null)
+                   // this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
                 })
                 this.getDicByTableId(tableId, key)
             },
@@ -880,11 +894,11 @@
                 }).then(res => {
                     const dicTables = res.data || []
                     this.$set(this.columnSelectMap[key], 'dicTables', dicTables)
-                    this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
+                    //this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
 
                     dicTables.forEach(dicTable => {
                         const { columnEnglish } = dicTable
-                        this.$set(this.columnKeyNamesMap[key]['dicMap'], columnEnglish, '')
+                        //this.$set(this.columnKeyNamesMap[key]['dicMap'], columnEnglish, '')
                     })
 
                     // TODO 这句再这里是报错的  dicTable 未定义
