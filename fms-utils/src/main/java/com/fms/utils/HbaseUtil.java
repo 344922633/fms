@@ -38,6 +38,7 @@ public class HbaseUtil {
     public static void main(String[] args) {
         System.out.println("操作完成:"+PropertyUtilHbase.readValue("HBASE_ZOOKEEPER_QUORUM"));
     }
+
     /**
      * @desc 取得连接
      */

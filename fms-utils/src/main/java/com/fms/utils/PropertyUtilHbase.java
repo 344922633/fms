@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class PropertyUtilHbase {
 
-    static String fileName = "/application.properties"; // /不能少
+    static String fileName = "/hbase.properties"; // /不能少
 
     /**
      * 采用静态方法
