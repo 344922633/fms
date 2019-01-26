@@ -353,13 +353,6 @@
             //编辑
             async handleEdit(index, row) {
                 this.idx = index;   //下标
-                //const item = this.tableData[index];   //所在行数据
-                console.log(row,'row');
-                //console.log(item,'item111111111111111111111111111');
-                // console.log(item.properties,'item.properties')
-                //  this.inputs=[
-                //      {text:'' ,$noColumn:true}
-                //  ];
                 this.form = {
                     id:row.id,
                     name: row.name,

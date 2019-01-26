@@ -798,7 +798,7 @@
                                     {
                                         on: {
                                             click: () => {
-                                              this.setVisible = true;
+                                                this.setVisible = true;
                                             }
                                         }
                                     },
@@ -839,21 +839,21 @@
                                 h("a",{
                                     on: {
                                         click: () => {
-                                        //alert(waitClassData[params.index].type);
-                                        this.$axios.post("mvc/fileParser/getList", {}).then(res => {
-                                            this.parsers = res.data;
-                                        });
-                                        event.stopPropagation();
-                                        this.currentIndex = params.index;
-                                        this.currentParser = params.row.recommendParserId;
-                                        this.currentType = "其他";
-                                        this.fixCon = true;
-                                        let fileServerPath = this.config.fileServerPath;
-                                        let previewPath = this.config.previewPath;
-                                        let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                                        let uri = previewPath + encodeURIComponent(fileUrl);
-                                        this.$refs.result.innerHTML =
-                                            '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                            //alert(waitClassData[params.index].type);
+                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
+                                                this.parsers = res.data;
+                                            });
+                                            event.stopPropagation();
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = "其他";
+                                            this.fixCon = true;
+                                            let fileServerPath = this.config.fileServerPath;
+                                            let previewPath = this.config.previewPath;
+                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                                            let uri = previewPath + encodeURIComponent(fileUrl);
+                                            this.$refs.result.innerHTML =
+                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
                                         }
                                     }
                                 },"预览 |"),
@@ -1319,7 +1319,7 @@
                             limit: _self.limit
                         })
                         .then(res => {
-                         /*   console.log(res.data.list, '待分类')*/
+                            /*   console.log(res.data.list, '待分类')*/
 
                             this.waitClassData = res.data.list;
                         });
@@ -1375,10 +1375,10 @@
                                     this.$notify({
                                         title: "提示",
                                         message:
-                                        "文件" +
-                                        this.preSelection1[index].name +
-                                        "解析失败:" +
-                                        res.data.data,
+                                            "文件" +
+                                            this.preSelection1[index].name +
+                                            "解析失败:" +
+                                            res.data.data,
                                         type: "error"
                                     });
                                 } else {
@@ -1409,10 +1409,10 @@
                                     this.$notify({
                                         title: "提示",
                                         message:
-                                        "文件" +
-                                        this.preSelection2[index].name +
-                                        "解析失败:" +
-                                        res.data.data,
+                                            "文件" +
+                                            this.preSelection2[index].name +
+                                            "解析失败:" +
+                                            res.data.data,
                                         type: "error"
                                     });
                                 } else {
@@ -1443,10 +1443,10 @@
                                     this.$notify({
                                         title: "提示",
                                         message:
-                                        "文件" +
-                                        this.preSelection3[index].name +
-                                        "解析失败:" +
-                                        res.data.data,
+                                            "文件" +
+                                            this.preSelection3[index].name +
+                                            "解析失败:" +
+                                            res.data.data,
                                         type: "error"
                                     });
                                 } else {
@@ -1477,10 +1477,10 @@
                                     this.$notify({
                                         title: "提示",
                                         message:
-                                        "文件" +
-                                        this.preSelection4[index].name +
-                                        "解析失败:" +
-                                        res.data.data,
+                                            "文件" +
+                                            this.preSelection4[index].name +
+                                            "解析失败:" +
+                                            res.data.data,
                                         type: "error"
                                     });
                                 } else {
@@ -1511,10 +1511,10 @@
                                     this.$notify({
                                         title: "提示",
                                         message:
-                                        "文件" +
-                                        this.preSelection5[index].name +
-                                        "解析失败:" +
-                                        res.data.data,
+                                            "文件" +
+                                            this.preSelection5[index].name +
+                                            "解析失败:" +
+                                            res.data.data,
                                         type: "error"
                                     });
                                 } else {
@@ -1545,10 +1545,10 @@
                                     this.$notify({
                                         title: "提示",
                                         message:
-                                        "文件" +
-                                        this.preSelection6[index].name +
-                                        "解析失败:" +
-                                        res.data.data,
+                                            "文件" +
+                                            this.preSelection6[index].name +
+                                            "解析失败:" +
+                                            res.data.data,
                                         type: "error"
                                     });
                                 } else {
@@ -1579,10 +1579,10 @@
                                     this.$notify({
                                         title: "提示",
                                         message:
-                                        "文件" +
-                                        this.preSelection7[index].name +
-                                        "解析失败:" +
-                                        res.data.data,
+                                            "文件" +
+                                            this.preSelection7[index].name +
+                                            "解析失败:" +
+                                            res.data.data,
                                         type: "error"
                                     });
                                 } else {
@@ -1614,10 +1614,10 @@
                                     this.$notify({
                                         title: "提示",
                                         message:
-                                        "文件" +
-                                        this.waitSelection[index].name +
-                                        "解析失败:" +
-                                        res.data.data,
+                                            "文件" +
+                                            this.waitSelection[index].name +
+                                            "解析失败:" +
+                                            res.data.data,
                                         type: "error"
                                     });
                                 } else {
@@ -1649,10 +1649,10 @@
                                     this.$notify({
                                         title: "提示",
                                         message:
-                                        "文件" +
-                                        this.otherSelection[index].name +
-                                        "解析失败:" +
-                                        res.data.data,
+                                            "文件" +
+                                            this.otherSelection[index].name +
+                                            "解析失败:" +
+                                            res.data.data,
                                         type: "error"
                                     });
                                 } else {
@@ -1696,7 +1696,7 @@
 
             //解析前待分类选中
             handleWaitSelectionChange(selection) {
-                  /*  console.log(selection, 'selection')*/
+                /*  console.log(selection, 'selection')*/
                 this.waitSelection = selection;
             },
             //解析器其他分类选中
@@ -1763,7 +1763,7 @@
                     })
                     .then(res => {
                         this.$set(this.idPropertiesMap, id, res.data);
-                       /* console.log(this.idPropertiesMap,'多参数');*/
+                        /* console.log(this.idPropertiesMap,'多参数');*/
                     });
             },
 
@@ -1772,7 +1772,7 @@
                 propertiesMap.paramList = this.idPropertiesMap[this.currentParser];
                 this.waitClassData[this.currentIndex] = Object.assign({},this.waitClassData[this.currentIndex],propertiesMap);
 
-              /*  console.log(this.waitClassData[this.currentIndex], '多參數保存')*/
+                /*  console.log(this.waitClassData[this.currentIndex], '多參數保存')*/
             },
 
             //****多文件解析添加映射******
@@ -1803,8 +1803,8 @@
             async genParamsByAllKey() {
                 // 获取库
                 await this.getSchemas()
-         /*       console.log('+++++++++++++++')
-                console.log(this.schemas)*/
+                /*       console.log('+++++++++++++++')
+                       console.log(this.schemas)*/
                 this.allKey.forEach((key, index, arr) => {
                     // alert(key+"==="+index+"==="+arr);
                     // alert(JSON.stringify(this.columnKeyNamesMap));
@@ -1879,9 +1879,9 @@
                     this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
 
                     //dicTables.forEach(dicTable => {
-                     //   const {dicTableName} = dicTable
-                     //   this.$set(this.columnKeyNamesMap[key]['dicMap'], dicTableName, '')
-                   // })
+                    //   const {dicTableName} = dicTable
+                    //   this.$set(this.columnKeyNamesMap[key]['dicMap'], dicTableName, '')
+                    // })
                     this.getDicColumnsByDicName(dicTable, key);
                 })
 
@@ -1892,7 +1892,7 @@
                     dicName: dicTable
                 }).then(res => {
                     this.$set(this.columnSelectMap[key], 'dicColumns', res.data)
-                   /* console.log(res.data)*/
+                    /* console.log(res.data)*/
                 });
             },
 
@@ -1915,8 +1915,8 @@
             //*******多文件添加映射结束*******
             //右列table rowclick事件
             handleRightRowClick(row) {
-               /* console.info("row------");
-                console.info(row);*/
+                /* console.info("row------");
+                 console.info(row);*/
                 this.highLightRow(row);
                 this.$refs.result.innerHTML =
                     '<textarea id="ID"  style="width:100%;min-height:600px;overflow:scroll;resize:none;" >' +

@@ -204,7 +204,7 @@
         <Modal
             title="请输入模板名称"
             v-model="templateNameVisible"
-            @on-ok="handleSaveMapNewTemplateName"
+            @on-ok="saveTemplate(2)"
             :mask-closable="false">
             <FormItem inline :label-width="100" label="请输入模板名称">
                 <Input v-model="newTemplateName"></Input>
@@ -212,7 +212,7 @@
         </Modal>
         <div ref="table" v-show="false"></div>
         <Button type="primary" @click="parseDataSaveDatabase">入库</Button>
-        <Button type="primary" @click="saveTemplateToOrigin">保存映射关系到原模板</Button>
+        <Button type="primary" @click="saveTemplate(1)">保存映射关系到原模板</Button>
         <Button type="primary" @click="saveTemplateToNew">保存映射关系到新模板</Button>
     </div>
 </template>
@@ -314,7 +314,7 @@
                 }
             },
             selectTemplateName(){
-                console.log(this.columnKeyNamesMap);
+
             }
         },
         components: {ICol},
@@ -358,10 +358,10 @@
                 this.uploadListFile = [];
                 this.resultFils = "";
             });
-            // Bus.$emit('cleanData', ""); b
+
         },
         beforeDestroy(){
-            // clearData();
+
         },
         computed: {
             tableShowColumns() {
@@ -410,34 +410,23 @@
                 });
             },
 
-
-
-
-
-
-
-            // 保存映射关系到原模板   TODO
-            saveTemplateToOrigin(){
-                 this.$axios.post('mvc/addColumnMapRelations', {
-                    formList:JSON.stringify(this.formList)
-                }).then( (result) => {
-                    this.$message.success('提交成功')
-                });
-            },
-
             // 保存到新模板
-            handleSaveMapNewTemplateName() {
+            saveTemplate(l) {
                 let arr = []
 
                 for(let key in this.columnKeyNamesMap){
 
-                    console.log(this.columnKeyNamesMap);
                     let obj = {};
                     obj["columnKey"] = key;
                     obj["schemaId"] = this.columnKeyNamesMap[key].schemaId;
                     obj["tableId"] = this.columnKeyNamesMap[key].tableId;
                     obj["columnId"] = this.columnKeyNamesMap[key].columnId;
-                    obj["templateName"] = this.newTemplateName;
+                    if(l==1){
+                        obj["templateName"] = this.selectTemplateName;
+                    }else if(l=2){
+                        obj["templateName"] = this.newTemplateName;
+                    }
+
                     for(let keys in this.columnData) {
                         if (this.columnKeyNamesMap[key]['dicMap'] != null && key == keys) {
                             obj["dicMap"] = this.columnKeyNamesMap[key]['dicMap'];
@@ -502,14 +491,12 @@
             },
             handlePreview() {
 
-                // localStorage.setItem('__needRefresh__', '1')
-                // localStorage.getItem('__needRefresh__')
                 this.modalPreviewFile = true
                 this.$nextTick(() => {
                     this.renderTopology()
                     this.loadJSONData(this.jsonStr)
                 })
-                // this.$router.push(`tuopu`);
+
             },
 
             renderTopology() {
@@ -559,8 +546,7 @@
                         name: '子网设备',
                         images: this.images
                     }, callback: function (editor) {
-//      	console.log(editor.exportJSON())
-//      	editor.loadDatas()
+
                         that.graphEditor = editor
                         var toolbox = editor.toolbox;
                         toolbox.hideDefaultGroups();
@@ -725,7 +711,6 @@
                     this.getColumns(this.table_name);
                     delete res.data.data.table_name;
                     this.allKey = res.data.data.allKey;
-                    console.log(this.allKey);
                     delete res.data.data.allKey;
 
                     //key的映射关系
@@ -761,7 +746,7 @@
                             'tableId': '',
                             'columnId': ''
                         }
-                        console.log('tableid为空')
+
                         this.$set(this.columnKeyNamesMap, key, columnValue)
 
                         let columnSelectValue = {
@@ -790,15 +775,7 @@
                     success: function(res) {
                         // 匹配度最高的模板
                         me.templateNameInfos = res.templateNameInfos;
-                      /*  if (me.templateNameInfos != null && me.templateNameInfos.length > 0){
-                            me.selectTemplateName = me.templateNameInfos[0].selectTemplateName;
-                        }*/
-/*
-                        // 匹配度最高的模板对应的表列信息
-                        me.columnMapRelations = res.columnMapRelations
-                        // me.columnKeyNamesMap =  me.columnMapRelations
-                        console.log(me.columnKeyNamesMap);
-                        console.log(me.columnMapRelations);*/
+
                     }
                 })
             },
@@ -817,34 +794,33 @@
                         templateName: templateName
                     },
                     success: (res) => {
-                       /* console.log("columnData")*/
-                        console.log(this.allKey)
-                        if(res.columnMapRelations!=null){
+                      if(res.columnMapRelations!=null){
                             me.columnMapRelations = res.columnMapRelations;
                             var map = {};
                             me.columnMapRelations.forEach(function(ele) {
 
                                 map[ele.columnKey] = ele;
-                                console.log("111111111111111")
-                                console.info(ele);
-                                console.info(map);
-                                console.log("111111111111111")
+
                             })
                             me.columnKeyNamesMap = map;
-                            console.log(this.columnKeyNamesMap, 'columnKeyNamesMap')
-                            console.log(this.columnSelectMap,'columnSelectMap')
-                            //columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]
+                            this.allKey.forEach((key,index) => {
+                                let columnValue = {
+                                    'schemaId': '',
+                                    'tableId': '',
+                                    'columnId': ''
+                                }
+                                if(!map[key]) {
+                                    this.$set(this.columnKeyNamesMap, key, columnValue)
+                                }
+                                
+                            })
+
                             for(let key in this.columnData) {
-                                console.log(this.columnKeyNamesMap[key].columnId)
+
                                 this.getTables(this.columnKeyNamesMap[key].schemaId, key)
                                 this.getColumnsByTable(this.columnKeyNamesMap[key].tableId, key)
                                 this.getDicByColumn(this.columnKeyNamesMap[key].columnId, key)
                             }
-                            // me.$set(me.columnKeyNamesMap, key, map)
-                            console.log("columnKeyNamesMap")
-                            console.log(me.columnKeyNamesMap)
-
-                            console.log(Object.keys(me.columnData).length)
 
                         }
                     }
@@ -860,6 +836,7 @@
             },
 
             getTables(schemaId, key) {
+                if(!schemaId && schemaId == '') {return;}
                 this.$axios.post('mvc/getTablesBySchemaId', {
                     schemaId: schemaId
                 }).then(res => {
@@ -873,6 +850,7 @@
             },
 
             getColumnsByTable(tableId, key) {
+                if(!tableId && tableId == '') {return;}
                 this.$axios.post('mvc/getColumnsForTable', {
                     tableId
                 }).then(res => {
