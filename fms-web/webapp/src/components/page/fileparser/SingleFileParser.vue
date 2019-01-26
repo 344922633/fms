@@ -780,8 +780,6 @@
                 })
             },
 
-
-
             // 模板名改变时触发的函数
             onChangeTemplate(templateName,allkey) {
                 let me = this;
@@ -841,11 +839,6 @@
                     schemaId: schemaId
                 }).then(res => {
                     this.$set(this.columnSelectMap[key], 'tables', res.data)
-                    //this.$set(this.columnKeyNamesMap[key], 'tableId', '')
-                   // this.$set(this.columnSelectMap[key], 'columns', res.data)
-                    //this.$set(this.columnKeyNamesMap[key], 'columnId', '')
-                   // this.$set(this.columnSelectMap[key], 'dicTables', null)
-                   // this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
                 })
             },
 
@@ -857,9 +850,7 @@
                     const data = res.data || []
                     const dicData = data.filter(v => v.isDic === 0)
                     this.$set(this.columnSelectMap[key], 'columns',dicData)
-                    //this.$set(this.columnKeyNamesMap[key], 'columnId', '')
-                    //this.$set(this.columnSelectMap[key], 'dicTables', null)
-                   // this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
+
                 })
                 this.getDicByTableId(tableId, key)
             },
@@ -879,8 +870,6 @@
                         //this.$set(this.columnKeyNamesMap[key]['dicMap'], columnEnglish, '')
                     })
 
-                    // TODO 这句再这里是报错的  dicTable 未定义
-                    // this.getDicColumnsByDicName(dicTable,key);
                 })
             },
 
@@ -892,8 +881,6 @@
             //         this.$set(this.columnSelectMap[key], 'dicColumns', res.data)
             //     });
             // },
-
-
 
 
             toggleTab(index,key) {
