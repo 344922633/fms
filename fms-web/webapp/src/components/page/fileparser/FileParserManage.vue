@@ -309,7 +309,7 @@
             this.$axios.post('mvc/fileParser/getParamList')
             .then(res => {
                  this.props = res.data;
-               /*  console.log(this.props)*/
+
               });
 
 
@@ -318,21 +318,15 @@
             handleUpload(file){
                 this.uploadList.push(file);
                 file.status = 'finished'
-                //this.$refs.upload.fileList.push(file);
-
-                // this.$refs.upload.fileList.push(file);
                 return false;
             },
             handleUploadFile(file){
                 this.uploadListFile.push(file);
                 file.status = 'finished'
-                //this.$refs.uploadFile[0].fileList.push(file);
                 return false;
-               /* console.info("文件地址集合："+this.uploadListFile);*/
             },
 
             FileUpload(){
-               /* console.info(this.uploadListFile.length);*/
                 let length = this.uploadListFile.length;
                 if(length != 1){
                     this.$Message.error('有且只能上传一个文件');
@@ -340,13 +334,6 @@
                 }
                 this.loadingStatus = true;
                 let FileNameList=[];
-                //this.$refs.uploadFile[0].clearFiles();
-                    //if (this.uploadListFile) {
-                        //this.uploadListFile.forEach(file => {
-                            //this.$refs.uploadFile[0].post(file);
-                        //})
-                   // }
-
             },
             jarFileUpload () {
                 this.loadingStatus = true;
@@ -412,16 +399,11 @@
                 this.uploadListFile.splice(idx, 1);
             },
             uploadSuccess(response, file, fileList){
-            /*    console.log(file)
-                console.log(fileList)*/
                 this.loadingStatus = false;
                 this.$Message.success('This is a success tip');
             },
             uploadSuccessFile(response, file, fileList){
-           /*     console.log(file)
-                console.log(fileList)*/
                 this.resultFils = file.response;
-               /* console.info(this.resultFils);*/
                 this.loadingStatus = false;
                 this.$Message.success('This is a success tip');
             },
@@ -593,8 +575,6 @@
             },
             //处理编辑弹框确认操作
             handleFormOk() {
-
-             /*   console.info(this.paramList)*/
                 let isValid = true;
                 this.$refs['parserForm'].validate((valid) => {
                     if (!valid) {

@@ -73,7 +73,6 @@
                     this.$message.warning('请填写完整表单')
                     return
                 }
-                console.log(this.form.id)
                 await this.$axios.post('mvc/updateConfProperty', {
                     BOOTSTRAP_SERVERS: this.form.BOOTSTRAP_SERVERS,
                     GROUP_ID_CONFIG: this.form.GROUP_ID_CONFIG,

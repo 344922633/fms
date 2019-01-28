@@ -91,7 +91,6 @@
         methods: {
             getData() {
                 this.$axios.post('mvc/confProperty/applicationConf').then(res => {
-                    console.log(res);
                     this.form.parserPath = res.data.parserPath;
                     this.form.fileTmpPath = res.data.fileTmpPath;
                     this.form.url = res.data.url;

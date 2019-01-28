@@ -48,7 +48,7 @@
         createHtml: function (parent) {
             var input;
             var property = this.property;
-            console.log(property);
+            // console.log(property);
             if (Array.isArray(property.options)) {
                 input = Q.createElement({
                     tagName: 'select',
@@ -318,7 +318,7 @@
             }
 
             result[key] = item;
-            console.log(result, 'result')
+            // console.log(result, 'result')
         })
         return result;
     }
@@ -373,7 +373,7 @@
                 }
             }
         }
-        console.log(properties, 'properties')
+        // console.log(properties, 'properties')
         return properties;
     }
 
@@ -671,7 +671,7 @@
         createItemGroup: function (name, properties) {
             var group = Q.createElement({class: 'class-group', parent: this.dom});
             Q.createElement({tagName: 'h4', parent: group, html: name});
-            console.log(properties, 'properties[name]')
+            // console.log(properties, 'properties[name]')
             for (var name in properties) {
                 this.createItem(group, properties[name]);
             }
@@ -686,10 +686,10 @@
         },
 
         getProperties: function (data) {
-            console.warn(properties);
+            // console.warn(properties);
             var properties = {};
-            console.warn(1);
-            console.warn(properties);
+            // console.warn(1);
+            // console.warn(properties);
             if (this.showDefaultProperties) {
                 getProperties(data, properties);
             }
@@ -703,7 +703,7 @@
 
                 // 为什么不用上面的format？因为 properties中有key是相同的，format之后key相同的会被覆盖
                 var map2 = propertyDefinitions.properties;
-                console.log(propertyDefinitions,'propertyDefinitions')
+                // console.log(propertyDefinitions,'propertyDefinitions')
                 for (var name in map2) {
                     properties[name] = map2[name];
                 }
@@ -712,7 +712,7 @@
         },
         _getProperties: function (data) {
             var properties = this.getProperties(data);
-            console.log(properties, 'properties-datas')
+            // console.log(properties, 'properties-datas')
             return new PropertyGroup(properties);
         },
         _show: function(){
@@ -721,11 +721,11 @@
                 return;
             }
             this.setVisible(true);
-            console.log(datas,'datas')
+            // console.log(datas,'datas')
             this.propertyGroup = this._getProperties(datas[0]);
 
             var group = this.propertyGroup.group;
-            console.log(group, 'group')
+            // console.log(group, 'group')
             for (var groupName in group) {
                 this.createItemGroup(groupName, group[groupName]);
             }

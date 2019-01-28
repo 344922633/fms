@@ -172,7 +172,7 @@
                         </Select>
                     </FormItem>
                     <FormItem label="选择字段" :data="columnKeyNamesMap[key].columnId">
-                        {{columnKeyNamesMap[key].columnId}}---
+
                         <Select filterable
                                 @on-change="(columnId) => getDicByColumn(columnId, key)"
                                 style="width: 180px"
@@ -306,7 +306,7 @@
                     this.previewFileData = ''
                 } else {
                     // this.loadHtml();
-                    //alert("暂不支持此文件格式。。。")
+
                     let fileServerPath = this.configProp.fileServerPath;
                     let previewPath = this.configProp.previewPath;
                     let fileUrl = fileServerPath + '/' + newFile.groups + '/' + newFile.realPath;
@@ -361,7 +361,7 @@
 
         },
         beforeDestroy(){
-
+            // alert("1111111111111111")
         },
         computed: {
             tableShowColumns() {
@@ -413,49 +413,44 @@
             // 保存到新模板
             saveTemplate(l) {
                 let arr = []
-
-                for(let key in this.columnKeyNamesMap){
-
-                    let obj = {};
-                    obj["columnKey"] = key;
-                    obj["schemaId"] = this.columnKeyNamesMap[key].schemaId;
-                    obj["tableId"] = this.columnKeyNamesMap[key].tableId;
-                    obj["columnId"] = this.columnKeyNamesMap[key].columnId;
-                    if(l==1){
-                        obj["templateName"] = this.selectTemplateName;
-                    }else if(l=2){
-                        obj["templateName"] = this.newTemplateName;
-                    }
-
-                    for(let keys in this.columnData) {
-                        if (this.columnKeyNamesMap[key]['dicMap'] != null && key == keys) {
-                            obj["dicMap"] = this.columnKeyNamesMap[key]['dicMap'];
-                        } else {
-                            obj["dicMap"] = {};
+                    for (let key in this.columnKeyNamesMap) {
+                        let obj = {};
+                        obj["columnKey"] = key;
+                        obj["schemaId"] = this.columnKeyNamesMap[key].schemaId;
+                        obj["tableId"] = this.columnKeyNamesMap[key].tableId;
+                        obj["columnId"] = this.columnKeyNamesMap[key].columnId;
+                        if(this.columnKeyNamesMap[key]["columnId+''"]!=undefined){
+                            obj["columnId"] = this.columnKeyNamesMap[key]["columnId+''"];
                         }
-                    }
+
+                        if (l == 1) {
+                            obj["templateName"] = this.selectTemplateName;
+                        } else if (l = 2) {
+                            obj["templateName"] = this.newTemplateName;
+                        }
+
+                        obj["dicMap"] = this.columnKeyNamesMap[key]['dicMap'];
+
                         arr.push(obj);
-                }
+                    }
 
-                this.$axios.post('mvc/addColumnMapRelations', {
-                    formList:JSON.stringify(arr),
+                    this.$axios.post('mvc/addColumnMapRelations', {
+                        formList:JSON.stringify(arr),
 
-                }).then(res => {
-                    this.$notify({
-                        title: '提示',
-                        message: res.data.data,
-                        type: res.data.success ? 'success' : 'error'
-                    });
-                })
-            },
+                    }).then(res => {
+                        this.$notify({
+                            title: '提示',
+                            message: res.data.data,
+                            type: res.data.success ? 'success' : 'error'
+                        });
+                    })
+                },
 
 
             // 保存映射关系到新模板   TODO 显示前判断
             saveTemplateToNew(){
                 this.templateNameVisible = true;
-
             },
-
 
 
             submitTopology() {
@@ -532,11 +527,7 @@
                                     'arrow.from': true
                                 },
                             }
-                            // {
-                            //     name: '创建线条',
-                            //     interactionMode: Q.Consts.INTERACTION_MODE_CREATE_LINE,
-                            //     iconClass: 'q-icon toolbar-line'
-                            // },
+
                         ]
                     })
                 }
@@ -590,7 +581,6 @@
                     this.graphEditor.loadDatas(JSON.parse(res.data))
                 });
             },
-
 
             //计算表格输入框的最大长度
             tableInputMaxLength(key) {
@@ -810,7 +800,7 @@
                                 if(!map[key]) {
                                     this.$set(this.columnKeyNamesMap, key, columnValue)
                                 }
-                                
+
                             })
 
                             for(let key in this.columnData) {

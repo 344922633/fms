@@ -159,7 +159,6 @@
     getDicTables() {
         this.$axios.post('mvc/getDicTable').then(res => {
             this.dicTableName = res.data;
-        console.log(res.data);
     })
     },
 
@@ -197,13 +196,11 @@
     },
 
     async submitEdit() {
-        console.log(this.id)
         await this.$axios.post('mvc/updateTableInfo', {
             tableId: this.tableIdEdit,
             tableEnglish: this.tableNameEdit,
             tableChinese:this.tableChineseEdit
         });
-        console.log(this.tableIdEdit)
         await this.getData();
         this.editVisible = false;
     },
@@ -224,22 +221,12 @@
     // 确定删除
     async deleteRow() {
         let index = this.pageSize * (this.currentPage - 1) + this.idx;
-        console.log(index)
-       // console.log(this.tableData[this.idx].id,"32143546543245675643")
         this.delVisible = false;
         await this.$axios.post('mvc/deleteTableInfo', {
             id: this.tableData[index].id});
         await this.getData();
         this.$message.success('删除成功');
         this.delVisible = false;
-/*
-        let index = this.pageSize * (this.currentPage - 1) + this.idx;
-        console.log(this.pageSize, this.currentPage, this.idx)
-        this.delVisible = false;
-        await this.$axios.post('mvc/template/deleteTemplate', {id: this.tableData[index].id});
-        await this.getData();
-        this.$message.success('删除成功');*/
-
     },
 
     handleCurrentChange(val) {
@@ -253,7 +240,6 @@
 
             tableName: row.tableEnglish
         }).then(res => {
-            // console.log(res.data);
             this.tableColumns = res.data;
         res.data.forEach((val, idx) => {
             this.$set(this.checkedArr, idx, !!val.isDic)
@@ -269,6 +255,7 @@
                 column.isDic =1
             }else{
                 column.isDic =0
+                column.dicTableName = null;
             };
             if(this.checkedArr1[idx]){
                 column.isMasterKey = 1

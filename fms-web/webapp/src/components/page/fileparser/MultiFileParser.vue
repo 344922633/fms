@@ -299,7 +299,6 @@
 
 <script>
     import fileMd5 from "browser-md5-file";
-
     export default {
         name: "draglist",
         data() {
@@ -313,7 +312,6 @@
                 cFshow: false,
                 lGshow: false,
                 pRshow: false,
-
                 config: {},
                 fixCon: false,
                 viewFileName: "",
@@ -448,7 +446,7 @@
                     },
                     {
                         title: "文件名",
-                        //                        width: 80,
+
                         key: "name"
                     },
                     {
@@ -875,7 +873,9 @@
                                 }," 选择解析器 "),
                                 hasMulte? h("a",{
                                     on: {
-                                        click: () => {}
+                                        click: () => {
+                                            this.setVisible = true;
+                                        }
                                     }
                                 },"| 多参数设置"): null
                             ]);
@@ -943,7 +943,6 @@
                     {
                         title: "操作",
                         render: (h, params) => {
-
                             return h("div", [
                                 h(
                                     "a",
@@ -1088,7 +1087,6 @@
             chosePrFile() {
                 this.pRshow = !this.pRshow;
             },
-
             //上传合并
             fileSuccess(rootFile, file, message, chunk) {
                 this.$axios
@@ -1140,15 +1138,14 @@
                 if (text && text.length > 13) {
                     text = text.substring(0, 13) + "...";
                 }
-
                 return (
                     < el-tooltip
                 placement = "right-start" >
                     < div
                 slot = "content" > {node.label
-            }<
-                /div>
-                < span
+                    }<
+                    /div>
+                    < span
                 style = "font-size: 12px" > {text} < /span>
                     < /el-tooltip>
             )
@@ -1309,7 +1306,6 @@
                             }
                             this.handlePreSelectionChange7(this.preClassDataFor7);
                         });
-
                     this.$axios
                         .post("mvc/pageFilesByIsParser", {
                             classType: "待分类",
@@ -1319,8 +1315,6 @@
                             limit: _self.limit
                         })
                         .then(res => {
-                            /*   console.log(res.data.list, '待分类')*/
-
                             this.waitClassData = res.data.list;
                         });
                     this.$axios
@@ -1601,7 +1595,6 @@
                             });
                     });
                 }
-
                 if (this.waitSelection.length > 0) {
                     this.afterWaitClassData = [];
                     this.waitSelection.forEach((item, index) => {
@@ -1693,10 +1686,8 @@
             handlePreSelectionChange7(selection) {
                 this.preSelection7 = selection;
             },
-
             //解析前待分类选中
             handleWaitSelectionChange(selection) {
-                /*  console.log(selection, 'selection')*/
                 this.waitSelection = selection;
             },
             //解析器其他分类选中
@@ -1755,7 +1746,6 @@
                     this.otherData[this.currentIndex].recommendParserId = current.id;
                     this.otherData[this.currentIndex].recommendParserName = current.name;
                 }
-
                 const id = current.id;
                 this.$axios
                     .post("mvc/fileParser/getParamList", {
@@ -1763,18 +1753,13 @@
                     })
                     .then(res => {
                         this.$set(this.idPropertiesMap, id, res.data);
-                        /* console.log(this.idPropertiesMap,'多参数');*/
                     });
             },
-
             handleSetOk() {
                 let propertiesMap = {};
                 propertiesMap.paramList = this.idPropertiesMap[this.currentParser];
                 this.waitClassData[this.currentIndex] = Object.assign({},this.waitClassData[this.currentIndex],propertiesMap);
-
-                /*  console.log(this.waitClassData[this.currentIndex], '多參數保存')*/
             },
-
             //****多文件解析添加映射******
             bcysgx(){
                 this.$set(this.customKeysObj, this.tempFileId, this.selectData);
@@ -1788,31 +1773,24 @@
                 // alert(obj);
                 let firstJson;
                 Object.keys(obj).forEach((key, index)=>{
-
                     let json=obj[key][0];
                     firstJson=json;
-
                 });
                 let keyStr=[];
                 Object.keys(firstJson).forEach((key, index)=>{
                     keyStr.push(key)
                 });
                 return keyStr;
-
             },
             async genParamsByAllKey() {
                 // 获取库
                 await this.getSchemas()
-                /*       console.log('+++++++++++++++')
-                       console.log(this.schemas)*/
                 this.allKey.forEach((key, index, arr) => {
                     // alert(key+"==="+index+"==="+arr);
                     // alert(JSON.stringify(this.columnKeyNamesMap));
                     this.$set(this.columnKeyNamesMap, key, {})
-
                     this.$set(this.columnKeyNamesMap[key], 'schemaId', '')
                     this.$set(this.columnKeyNamesMap[key], 'tableId', '')
-
                     // alert(JSON.stringify(this.columnKeyNamesMap));
                     this.$set(this.columnKeyNamesMap[key], 'columnId', '')
                     this.$set(this.columnSelectMap, key, {})
@@ -1820,14 +1798,12 @@
                     this.$set(this.columnSelectMap[key], 'tables', [])
                     this.$set(this.columnSelectMap[key], 'columns', [])
                 })
-
             },
             getSchemas() {
                 return this.$axios.post('mvc/getAllSchemas').then(res => {
                     this.schemas = res.data
                 })
             },
-
             getTables(schemaId, key) {
                 this.$axios.post('mvc/getTablesBySchemaId', {
                     schemaId: schemaId
@@ -1840,7 +1816,6 @@
                     this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
                 })
             },
-
             // getColumnsByTable(tableId, key) {
             //     this.$axios.post('mvc/getColumnsForTable', {
             //         tableId
@@ -1865,10 +1840,6 @@
                 this.getDicByTableId(tableId, key)
             },
             getDicByColumn(columnId, key) {
-                // const column = this.columnSelectMap[key]['columns'].find(c => c.id === columnId)
-                // console.log(column)
-                // const {isDic, tableId} = column || {}
-                // this.getDicByTableId(tableId, key)
             },
             getDicByTableId(tableId, key) {
                 this.$axios.post('mvc/getDicNameByTableId', {
@@ -1877,59 +1848,40 @@
                     const dicTables = res.data || []
                     this.$set(this.columnSelectMap[key], 'dicTables', dicTables)
                     this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
-
                     //dicTables.forEach(dicTable => {
                     //   const {dicTableName} = dicTable
                     //   this.$set(this.columnKeyNamesMap[key]['dicMap'], dicTableName, '')
                     // })
                     this.getDicColumnsByDicName(dicTable, key);
                 })
-
             },
-
             getDicColumnsByDicName(dicTable, key) {
                 this.$axios.post('mvc/getDicColumnsByDicName', {
                     dicName: dicTable
                 }).then(res => {
                     this.$set(this.columnSelectMap[key], 'dicColumns', res.data)
-                    /* console.log(res.data)*/
+
                 });
             },
-
             toggleTab(index) {
                 this.tableIndex = index;
             },
-            // handleSaveMapInfo() {
-            //     console.log(this.columnKeyNamesMap)
-            //     this.$axios.post('mvc/saveColumnMapInfos', {
-            //         columnKeyNamesMap: JSON.stringify(this.columnKeyNamesMap),
-            //         parserId: this.file.recommendParserId
-            //     }).then(res => {
-            //         this.$notify({
-            //             title: '提示',
-            //             message: res.data.data,
-            //             type: res.data.success ? 'success' : 'error'
-            //         });
-            //     })
-            // },
-            //*******多文件添加映射结束*******
-            //右列table rowclick事件
+
             handleRightRowClick(row) {
-                /* console.info("row------");
-                 console.info(row);*/
+
                 this.highLightRow(row);
                 this.$refs.result.innerHTML =
                     '<textarea id="ID"  style="width:100%;min-height:600px;overflow:scroll;resize:none;" >' +
                     row.parseResult +
                     "</textarea>";
                 this.allKey=this.getAllKeys(JSON.parse(row.parseResult));
-                // alert(this.allKey);
+
                 this.tempFileId=row.id;
                 if(this.columnKeyNamesMapObj.hasOwnProperty(row.id)){
                     delete this.columnKeyNamesMapObj[row.id];
                 }
                 this.columnKeyNamesMap={};
-                //alert(this.tempFileId);
+
                 this.jsonTables = JSON.parse(row.parseResult);
                 this.genParamsByAllKey();
             },
@@ -1951,7 +1903,6 @@
                 }
                 if (!(row.classType == "待分类" && row.isParser == 0)) {
                     this.$refs.currentRowTable2.clearCurrentRow();
-
                 }
                 if (!(row.classType == "其他" && row.isParser == 0)) {
                     this.$refs.currentRowTable3.clearCurrentRow();
@@ -1965,7 +1916,6 @@
                 if (!(row.classType == "其他" && row.isParser == 1)) {
                     this.$refs.currentRowTable6.clearCurrentRow();
                 }
-
             },
             handleExport() {
                 if (this.parsed == 0) {
@@ -2067,7 +2017,6 @@
         display: flex;
         user-select: none;
     }
-
     .drag-box-item {
         flex: 1;
         min-width: 300px;
@@ -2076,7 +2025,6 @@
         border-radius: 6px;
         border: 1px #e1e4e8 solid;
     }
-
     .tableActive {
         border: 1px solid #409eff;
         background-color: #409eff;
@@ -2088,7 +2036,6 @@
         background-color: rgb(247, 247, 247);
         width: 570px;
     }
-
     .item-title {
         padding: 8px 8px 8px 12px;
         font-size: 14px;
@@ -2096,15 +2043,12 @@
         color: #24292e;
         font-weight: 600;
     }
-
     .demo-spin-icon-load {
         animation: ani-demo-spin 1s linear infinite;
     }
-
     .ivu-spin-fix {
         top: 30px;
     }
-
     .item-title-sel {
         padding: 8px 8px;
         font-size: 14px;

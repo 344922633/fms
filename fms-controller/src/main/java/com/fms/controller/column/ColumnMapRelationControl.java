@@ -43,7 +43,6 @@ public class ColumnMapRelationControl {
     @RequestMapping("/getColumnMapRelationByTemplateName")
     public Map<String, Object> getColumnMapRelationByTemplateName(@RequestParam(required = false) List<String> columnKeys,String templateName) {
 
-
 /*
         List<ColumnMapRelation> columnMapRelations=columnMapRelationService.getColumnMapRelationByTemplateName(templateName);
         Map<String, Object> data = new HashMap<>();
@@ -64,6 +63,7 @@ public class ColumnMapRelationControl {
     public Object addColumnMapRelations(@RequestParam Map<String, Object> params) {
         String json = (String) params.get("formList");
         List<ColumnMapRelation> columnMapRelations = JSON.parseArray(json, ColumnMapRelation.class);
+
         try {
             columnMapRelationService.addColumnMapRelations(columnMapRelations);
             return ExtUtil.success("操作成功");

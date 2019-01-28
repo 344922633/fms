@@ -997,6 +997,7 @@
                 this.currentFile = newFile ? newFile : { name: '' };
 
                 this.parserVisible = true;
+
             },
 
             //关闭解析页面，初始化数据
