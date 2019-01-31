@@ -3,6 +3,8 @@ package com.fms.domain.filemanage;
 import com.handu.apollo.base.LongVo;
 import lombok.Data;
 
+import java.sql.Date;
+
 @Data
 public class File extends LongVo implements Cloneable{
     //文件名称
@@ -38,9 +40,11 @@ public class File extends LongVo implements Cloneable{
     private String mapTemplateName;
     //是否保存
     private Integer isSaveTemplateName;
+    //文件添加时间
+    private Date addTime;
+
     //是否上报
     private Integer isReport;
-
     public Object clone() {
         File file = null;
         try {

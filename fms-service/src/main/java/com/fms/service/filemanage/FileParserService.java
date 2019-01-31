@@ -15,6 +15,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -63,19 +64,26 @@ public class FileParserService {
 
 
     public void updateIsParser(Long id, int isParser) {
+        Date utilDate  =new Date();
+        java.sql.Date parseTime = new java.sql.Date(utilDate.getTime());
+
         Map<String,Object> pa = new HashMap<>();
         pa.put("id",id);
         pa.put("isParser",isParser);
+        pa.put("parseTime",parseTime);
+
         dao.update(CLASSNAME,"updateIsParser",pa);
 
     }
 
 
     public void updateIsParserMultiFile(String name, int isParser) {
-
+        Date utilDate  =new Date();
+        java.sql.Date parseTime = new java.sql.Date(utilDate.getTime());
         Map<String, Object> p = new HashMap<>();
         p.put("name", name);
         p.put("isParser", isParser);
+        p.put("parseTime",parseTime);
         dao.update(CLASSNAME, "updateIsParserMultiFile", p);
 
     }

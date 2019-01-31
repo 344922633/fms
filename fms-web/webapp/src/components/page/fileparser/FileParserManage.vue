@@ -106,18 +106,18 @@
             <block-manage :parser="current" :blockInfo="blockInfo" @after-close="blockVisible=false"></block-manage>
         </Modal>
 
-        <Modal v-model="configDefault" :title="会员默认解析器" :model="parserDefaultPaform" @on-visible-change="handleVisibleChange" footer-hide>
-            <el-form ref="parserDefaultForm" :model="parserDefaultPaform" label-width="80px">
-               <el-form-item label="文件解析器" label-width="100px">
+        <!--<Modal v-model="configDefault" :title="会员默认解析器" :model="parserDefaultPaform" @on-visible-change="handleVisibleChange" footer-hide>-->
+            <!--<el-form ref="parserDefaultForm" :model="parserDefaultPaform" label-width="80px">-->
+               <!--<el-form-item label="文件解析器" label-width="100px">-->
 
-                   <el-checkbox v-for="item in fileParserList" :label="item.id" :key="item.id" v-model="checked">{{item.name}}</el-checkbox>
-                </el-form-item>
-            </el-form>
-                <div style="text-align:right">
-                    <el-button @click="configDefault = false">取 消</el-button>
-                    <el-button type="primary" @click="saveEdit">确 定</el-button>
-                </div>
-        </Modal>
+                   <!--<el-checkbox v-for="item in fileParserList" :label="item.id" :key="item.id" v-model="checked">{{item.name}}</el-checkbox>-->
+                <!--</el-form-item>-->
+            <!--</el-form>-->
+                <!--<div style="text-align:right">-->
+                    <!--<el-button @click="configDefault = false">取 消</el-button>-->
+                    <!--<el-button type="primary" @click="saveEdit">确 定</el-button>-->
+                <!--</div>-->
+        <!--</Modal>-->
 
     </div>
 </template>

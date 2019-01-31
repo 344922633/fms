@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -389,7 +390,7 @@ public class FileParserController {
         try {
             com.fms.domain.filemanage.File local = fileService.get(Long.parseLong(fileParser.getParams()));
             byte[] buf = hdfsService.cat(local.getRealPath());
-            String uriStr = "http://" + env.getProperty("fastdfs.nginxAddress") + ":" + env.getProperty("fastdfs.trackerHttpPort") + "/" + local.getGroups() + "/" + local.getRealPath();
+//            String uriStr = "http://" + env.getProperty("fastdfs.nginxAddress") + ":" + env.getProperty("fastdfs.trackerHttpPort") + "/" + local.getGroups() + "/" + local.getRealPath();
             if (Strings.isNullOrEmpty(localParser.getSource())) {
                 throw new ApolloRuntimeException("解析器路径为空！");
             }
@@ -520,10 +521,10 @@ public class FileParserController {
 
 
     //将文件修改为已解析状态
+
     private void isParser(FileParser fileParser) {
         Long id = Long.parseLong(fileParser.getParams());
         fileParserService.updateIsParser(id, 1);
-        ;
     }
 
     /**

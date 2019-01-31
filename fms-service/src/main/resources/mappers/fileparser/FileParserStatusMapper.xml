@@ -9,6 +9,13 @@
         <result column="COLUMN_DESC" property="column_desc"/>
     </resultMap>
 
+    <sql id="all">
+        id,
+        name,
+        add_time as addTime,
+        real_path as realPath,
+        type
+    </sql>
 
     <select id="getAllFileAmount" resultType="integer">
     SELECT COUNT(*) from fms_file
@@ -23,6 +30,21 @@
     SELECT COUNT(*) from fms_file WHERE is_parser= #{isParser}
     </select>
 
+    <select id="getAllFileAmountByTime" resultType="integer" parameterType="map">
+    SELECT COUNT(*) from fms_file WHERE parse_time between #{startTime} and #{endTime}
+    </select>
 
+    <select id="getFileSum" resultType="integer" parameterType="map">
+    SELECT COUNT(*) from fms_file WHERE add_time between #{startTime} and #{endTime}
+    </select>
 
+    <select id="getParsedFileAmountByTime" resultType="integer">
+    SELECT COUNT(*) from fms_file WHERE parse_time between #{startTime} and #{endTime} and is_parser=#{isParser}
+    </select>
+
+    <select id="getUploadTimeCount" resultType="com.fms.domain.filemanage.File" parameterType="map">
+    SELECT <include refid="all" />
+    from fms_file
+    WHERE add_time between #{startTime} and #{endTime}
+    </select>
 </mapper>

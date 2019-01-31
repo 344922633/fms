@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.servlet.http.HttpServletRequest;
 
 @ComponentScan(basePackages = {"com.handu.apollo", "com.fms"})
-@Import({MvcConfig.class, FastdfsConfig.class, HdfsConfig.class})
+@Import({MvcConfig.class,HdfsConfig.class})
 @PropertySource("classpath:/application.properties")
 public class AppConfig {
     @Bean
@@ -79,22 +79,22 @@ public class AppConfig {
                 String fileUploadPath = (String) config.getProperty("fileUploadPath");
                 String posyspath = (String) config.getProperty("posyspath");
                 String popassword = (String) config.getProperty("popassword");
-                String poolTotal = (String) config.getProperty("fastdfs.poolTotal");
-                String poolMaxIdle = (String) config.getProperty("fastdfs.poolMaxIdle");
-                String connectTimeout = (String) config.getProperty("fastdfs.connectTimeout");
-                String networkTimeout = (String) config.getProperty("fastdfs.networkTimeout");
-                String trackerHttpPort = (String) config.getProperty("fastdfs.trackerHttpPort");
+//                String poolTotal = (String) config.getProperty("fastdfs.poolTotal");
+//                String poolMaxIdle = (String) config.getProperty("fastdfs.poolMaxIdle");
+//                String connectTimeout = (String) config.getProperty("fastdfs.connectTimeout");
+//                String networkTimeout = (String) config.getProperty("fastdfs.networkTimeout");
+//                String trackerHttpPort = (String) config.getProperty("fastdfs.trackerHttpPort");
                 obj.put("parserPath", parserPath);
                 obj.put("fileTmpPath", fileTmpPath);
                 obj.put("url", url);
                 obj.put("fileUploadPath", fileUploadPath);
                 obj.put("posyspath", posyspath);
                 obj.put("popassword", popassword);
-                obj.put("poolTotal", poolTotal);
-                obj.put("poolMaxIdle", poolMaxIdle);
-                obj.put("connectTimeout", connectTimeout);
-                obj.put("networkTimeout", networkTimeout);
-                obj.put("trackerHttpPort", trackerHttpPort);
+//                obj.put("poolTotal", poolTotal);
+//                obj.put("poolMaxIdle", poolMaxIdle);
+//                obj.put("connectTimeout", connectTimeout);
+//                obj.put("networkTimeout", networkTimeout);
+//                obj.put("trackerHttpPort", trackerHttpPort);
                 System.out.println(obj.toJSONString());
             } catch (ConfigurationException cex) {
                 System.err.println("loading of the configuration file failed");
@@ -131,15 +131,15 @@ public class AppConfig {
                 config.setProperty("fileUploadPath", fileUploadPath);
                 config.setProperty("posyspath", posyspath);
                 config.setProperty("popassword", popassword);
-                config.setProperty("fastdfs.poolTotal", poolTotal);
-                config.setProperty("fastdfs.poolMaxIdle", poolMaxIdle);
-                config.setProperty("fastdfs.connectTimeout", connectTimeout);
-                config.setProperty("fastdfs.networkTimeout", networkTimeout);
-                config.setProperty("fastdfs.trackerHttpPort", trackerHttpPort);
+//                config.setProperty("fastdfs.poolTotal", poolTotal);
+//                config.setProperty("fastdfs.poolMaxIdle", poolMaxIdle);
+//                config.setProperty("fastdfs.connectTimeout", connectTimeout);
+//                config.setProperty("fastdfs.networkTimeout", networkTimeout);
+//                config.setProperty("fastdfs.trackerHttpPort", trackerHttpPort);
 
                 //PropertiesConfiguration config  = new PropertiesConfiguration(profilepath);
                 config.setReloadingStrategy(new FileChangedReloadingStrategy());
-                System.out.println(config.getString("fastdfs.trackerHttpPort"));
+
             } catch (ConfigurationException cex) {
                 System.err.println("loading of the configuration file failed");
             }

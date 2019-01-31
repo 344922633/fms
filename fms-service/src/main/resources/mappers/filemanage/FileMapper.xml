@@ -68,7 +68,8 @@
         is_export,
         map_template_name,
         is_save_template_name,
-        is_report
+        is_report,
+        add_time
     </sql>
     <sql id="condition">
         <if test="name != null and name != ''">
@@ -193,7 +194,8 @@
         #{isExport},
         #{mapTemplateName},
         #{isSaveTemplateName},
-        #{isReport}
+        #{isReport},
+        #{addTime}
         )
     </insert>
 
@@ -248,7 +250,6 @@
         <if test="isExport != null">
             is_export = #{isExport},
         </if>
-
 
         id = #{id}
         WHERE id = #{id}

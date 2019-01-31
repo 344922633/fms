@@ -1,9 +1,7 @@
 package com.fms.controller.filemanage;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.anniweiya.fastdfs.FastDFSTemplate;
 import com.caeit.parser.excel.ExcelParser;
 import com.caeit.parser.json.JsonParser;
 import com.caeit.parser.sql.SqlParser;
@@ -46,8 +44,6 @@ import java.util.concurrent.TimeUnit;
 public class UploadController {
     //    @Value("${prop.upload-folder}")
 
-    @Autowired
-    private FastDFSTemplate fastDFSTemplate;
     @Autowired
     private DirectoryService directoryService;
     @Autowired

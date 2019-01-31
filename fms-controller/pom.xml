@@ -59,17 +59,6 @@
         </dependency>
         <!--fastdfs 支持-->
         <dependency>
-            <groupId>org.csource</groupId>
-            <artifactId>fastdfs-client-java</artifactId>
-            <version>1.27-SNAPSHOT</version>
-        </dependency>
-        <!-- fastdfs 连接池 -->
-        <dependency>
-            <groupId>com.anniweiya.fastdfs</groupId>
-            <artifactId>fastdfs-client</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.28</version>

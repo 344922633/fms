@@ -121,12 +121,18 @@
 
 
     <update id="updateIsParser" parameterType="map">
-        update fms_file set is_parser = #{isParser} where id = #{id}
+        update fms_file
+        set is_parser = #{isParser},
+        parse_time = #{parseTime}
+        where id = #{id}
     </update>
 
 
     <update id="updateIsParserMultiFile" parameterType="Map">
-        update fms_file set is_parser = #{isParser} where name = #{name}
+        update fms_file
+        set is_parser = #{isParser},
+        parse_time = #{parseTime}
+        where name = #{name}
     </update>
 
 

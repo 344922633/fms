@@ -8,8 +8,9 @@
         <Page :current="curPage" :total="totalCount" :page-size="pageSize" @on-change="handlePageChange"
               show-total />
 
-        <Modal v-model="formVisible" :title="formTitle" :model="parser" @on-visible-change="handleVisibleChange" @on-ok="handleFormOk" footer-hide>
-            <Form :label-width="80" ref="parserForm">
+        <!--<Modal v-model="formVisible" :title="formTitle" :model="parser" @on-visible-change="handleVisibleChange" @on-ok="handleFormOk" footer-hide>-->
+        <Modal v-model="formVisible" :title="formTitle" @on-visible-change="handleVisibleChange" @on-ok="handleFormOk" footer-hide>
+            <Form :label-width="80" ref="parserForm" :model="masterSlave">
                 <FormItem prop="name" label="关系名称">
                     <Input v-model="masterSlave.name"/>
                 </FormItem>
@@ -165,7 +166,8 @@
         created() {
             this.getData();
             this.getTables();
-            this.getTables2();
+            // 报错了
+            // this.getTables2();
         },
         methods: {
             //修改操作
@@ -173,14 +175,15 @@
                 row.file = null;
                 this.formTitle = '修改';
                 if(row.id){
+                    let me = this;
                     this.$axios.post('mvc/masterSlave/findOne', {
                         id:row.id
                     }).then(res => {
-                        this.masterSlave = res.data;
+                        me.masterSlave = res.data;
                         this.formVisible = true;
                     }).catch(e => {
 
-                        this.formVisible = true;
+                        // this.formVisible = true;
                     });
 
                 }
@@ -232,7 +235,8 @@
                 };
                 this.formVisible = true;
                 this.getTables();
-                this.getTables2();
+                // 报错了
+                // this.getTables2();
 
             },
             //编辑弹框显示状态监听

@@ -1,94 +1,5 @@
 <template>
     <div>
-        <!--<el-row :gutter="20">
-            <el-col :span="8">
-                <el-card shadow="hover" class="mgb20" style="height:252px;">
-                    <div class="user-info">
-                        <img src="static/img/img.jpg" class="user-avator" alt="">
-                        <div class="user-info-cont">
-                            <div class="user-info-name">{{name}}</div>
-                            <div>{{role}}</div>
-                        </div>
-                    </div>
-                    <div class="user-info-list">上次登录时间：<span>2018-01-01</span></div>
-                    <div class="user-info-list">上次登录地点：<span>东莞</span></div>
-                </el-card>
-                <el-card shadow="hover" style="height:252px;">
-                    <div slot="header" class="clearfix">
-                        <span>语言详情</span>
-                    </div>
-                    Vue
-                    <el-progress :percentage="71.3" color="#42b983"></el-progress>
-                    JavaScript
-                    <el-progress :percentage="24.1" color="#f1e05a"></el-progress>
-                    CSS
-                    <el-progress :percentage="3.7"></el-progress>
-                    HTML
-                    <el-progress :percentage="0.9" color="#f56c6c"></el-progress>
-                </el-card>
-            </el-col>
-            <el-col :span="16">
-                <el-row :gutter="20" class="mgb20">
-                    <el-col :span="8">
-                        <el-card shadow="hover" :body-style="{padding: '0px'}">
-                            <div class="grid-content grid-con-1">
-                                <i class="el-icon-lx-people grid-con-icon"></i>
-                                <div class="grid-cont-right">
-                                    <div class="grid-num">1234</div>
-                                    <div>用户访问量</div>
-                                </div>
-                            </div>
-                        </el-card>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-card shadow="hover" :body-style="{padding: '0px'}">
-                            <div class="grid-content grid-con-2">
-                                <i class="el-icon-lx-notice grid-con-icon"></i>
-                                <div class="grid-cont-right">
-                                    <div class="grid-num">321</div>
-                                    <div>系统消息</div>
-                                </div>
-                            </div>
-                        </el-card>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-card shadow="hover" :body-style="{padding: '0px'}">
-                            <div class="grid-content grid-con-3">
-                                <i class="el-icon-lx-goods grid-con-icon"></i>
-                                <div class="grid-cont-right">
-                                    <div class="grid-num">5000</div>
-                                    <div>数量</div>
-                                </div>
-                            </div>
-                        </el-card>
-                    </el-col>
-                </el-row>
-                <el-card shadow="hover" style="height:403px;">
-                    <div slot="header" class="clearfix">
-                        <span>待办事项</span>
-                        <el-button style="float: right; padding: 3px 0" type="text">添加</el-button>
-                    </div>
-                    <el-table :data="todoList" :show-header="false" height="304" style="width: 100%;font-size:14px;">
-                        <el-table-column width="40">
-                            <template slot-scope="scope">
-                                <el-checkbox v-model="scope.row.status"></el-checkbox>
-                            </template>
-                        </el-table-column>
-                        <el-table-column>
-                            <template slot-scope="scope">
-                                <div class="todo-item" :class="{'todo-item-del': scope.row.status}">{{scope.row.title}}</div>
-                            </template>
-                        </el-table-column>
-                        <el-table-column width="60">
-                            <template slot-scope="scope">
-                                <i class="el-icon-edit"></i>
-                                <i class="el-icon-delete"></i>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                </el-card>
-            </el-col>
-        </el-row>-->
         <el-row :gutter="20">
             <el-col :span="12">
                 <el-card shadow="hover">
@@ -102,6 +13,23 @@
             </el-col>
         </el-row>
 
+
+        <!--文件解析详情-->
+        <el-date-picker
+            value-format="yyyy-MM-dd"
+            v-model="value1"
+            type="date"
+            placeholder="选择日期">
+        </el-date-picker>
+        <el-date-picker
+            value-format="yyyy-MM-dd"
+            v-model="value2"
+            align="right"
+            type="date"
+            placeholder="选择日期"
+        >
+        </el-date-picker>
+        <el-button size="mini" type="primary" @click="getTimeCount">查询</el-button>
         <el-table
             :data="analyseFiles"
             border
@@ -124,7 +52,49 @@
                 prop="Percent"
                 label="已解析 / 总文件">
             </el-table-column>
-
+        </el-table>
+        <br>
+<!--上传文件详情-->
+        <div>
+        <el-date-picker
+            value-format="yyyy-MM-dd"
+            v-model="value3"
+            type="date"
+            placeholder="选择日期">
+        </el-date-picker>
+        <el-date-picker
+            value-format="yyyy-MM-dd"
+            v-model="value4"
+            align="right"
+            type="date"
+            placeholder="选择日期"
+            >
+        </el-date-picker>
+        <el-button size="mini" type="primary" @click="getUploadTimeCount">查询</el-button>
+            <span>&nbsp;&nbsp;期间文件总数: {{ fileSum }}</span>
+        </div>
+        <el-table
+            :data="fileCount"
+            border
+            style="width: 49%">
+            <el-table-column
+                prop="realPath"
+                label="文件路径"
+                width="180">
+            </el-table-column>
+            <el-table-column
+                prop="name"
+                label="文件名"
+                width="180">
+            </el-table-column>
+            <el-table-column
+                prop="type"
+                label="文件类型">
+            </el-table-column>
+            <el-table-column
+                prop="addTime"
+                label="上传时间">
+            </el-table-column>
         </el-table>
 
     </div>
@@ -208,7 +178,13 @@
                     bottomPadding: 30,
                     topPadding: 30
                 },
-                analyseFiles:null
+                value1: '',
+                value2: '',
+                value3: '',
+                value4: '',
+                analyseFiles:null,
+                fileCount:null,
+                fileSum:null
             }
         },
         components: {
@@ -237,8 +213,58 @@
                 //获取文件解析数据
                 this.$axios.get('mvc/getAnalyseFiles').then(res => {
                     this.analyseFiles = res.data;
-            });
+            })
             },
+            getTimeCount(){
+
+                //获取文件解析数据
+                let obj = {};
+                if(this.value1==''||this.value2==''){
+                    alert("请填写完整日期后查询")
+                    return;
+                }
+                obj["startTime"] = this.value1;
+                obj["endTime"] = this.value2;
+
+                this.$axios.post('mvc/getTimeCount', {
+                    param:JSON.stringify(obj),
+                }).then(res => {
+                    this.analyseFiles = res.data;
+                    console.log(this.analyseFiles )
+                });
+
+
+            },
+            //文件详情
+            getUploadTimeCount(){
+
+                let obj = {};
+                if(this.value3==''||this.value4==''){
+                    alert("请填写完整日期后查询")
+                    return;
+                }
+                obj["startTime"] = this.value3;
+                obj["endTime"] = this.value4;
+
+
+                this.$axios.post('mvc/getFileSum', {
+                    param:JSON.stringify(obj),
+                }).then(res => {
+                    this.fileSum = res.data;
+                });
+
+
+                this.$axios.post('mvc/getUploadTimeCount', {
+                    param:JSON.stringify(obj),
+                }).then(res => {
+                    this.fileCount = res.data;
+                    console.log(this.fileCount)
+                });
+
+
+            },
+
+
             changeDate(){
                 const now = new Date().getTime();
                 this.data.forEach((item, index) => {
@@ -267,7 +293,9 @@
                 this.$axios.post('mvc/getFileSuffixStatistic').then(res => {
                     this.data1 = res.data;
             })
-            }
+            },
+
+
         }
     }
 

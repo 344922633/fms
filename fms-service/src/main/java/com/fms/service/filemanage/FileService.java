@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +84,10 @@ public class FileService {
      * @param file
      */
     public void add(File file) {
+
+        Date utilDate  =new Date();
+        java.sql.Date addtime = new java.sql.Date(utilDate.getTime());
+        file.setAddTime(addtime);
         dao.insert(CLASSNAME, "add", file);
     }
 
