@@ -34,6 +34,9 @@ public class PictureService {
 	public List<Picture> getList(Map<String, Object> params) {
 		return dao.getList(CLASSNAME, "getList", params);
 	}
+	public int query(String name) {
+		return dao.get(CLASSNAME, "query", name);
+	}
 
 	public Page<Picture> page(Map<String, Object> params, Page page) {
 		return dao.page(CLASSNAME, "query", "queryCount", params, page);

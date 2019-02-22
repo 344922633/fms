@@ -20,7 +20,8 @@ public class ManuallyService {
         return dao.getList(CLASSNAME, "query", manual);
     }
 
-    public List<String> getAllNzList(Manual manual) {
-        return dao.getList(CLASSNAME, "getAllNzList", manual);
+    public List<String> getAllXxList(Manual manual) {
+        return dao.getList(CLASSNAME, "getAllXxList", manual);
     }
+
 }

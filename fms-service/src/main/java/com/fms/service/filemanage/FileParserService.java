@@ -199,9 +199,10 @@ public class FileParserService {
         //json中所有的key
         Set<String> set = new HashSet<>();
         for (Map<String, Object> child : data) {
-            for (Map.Entry<String, Object> entry : child.entrySet()) {
-                set.add(entry.getKey().toLowerCase());
-            }
+//            for (Map.Entry<String, Object> entry : child.entrySet()) {
+//                set.add(entry.getValue().toString().toLowerCase());
+//            }
+            set.add(child.get("name").toString().toLowerCase());
         }
         result.put("allKey", set);
         //查询所有表的字段信息
@@ -231,7 +232,7 @@ public class FileParserService {
                     }
                 }
             }
-            if (num >= maxNum) {
+            if (num > maxNum) {
                 maxNum = num;
                 maxTable = entry.getKey();
                 maxExistFields = existFields;

@@ -248,7 +248,6 @@ public class SchemaController {
         List<Map> oData = JSON.parseArray(data,Map.class);
         Map<String,Object> params = getParams(oData);
 
-
         String json = JSON.toJSONString(params);
 
         System.out.println("kafka消息格式：\n" + json);

@@ -28,6 +28,11 @@ public class ColumnInfoController {
         return columnInfoService.getDicTable();
     }
 
+    @RequestMapping("getXxDicTable")
+    public List<String> getXxDicTable() {
+        return columnInfoService.getXxDicTable();
+    }
+
     @RequestMapping("/deleteTableInfo")
     public Object deleteTableInfo(String id) {
         long tid = Long.parseLong(id);

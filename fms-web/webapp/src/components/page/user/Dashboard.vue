@@ -230,7 +230,6 @@
                     param:JSON.stringify(obj),
                 }).then(res => {
                     this.analyseFiles = res.data;
-                    console.log(this.analyseFiles )
                 });
 
 
@@ -258,7 +257,6 @@
                     param:JSON.stringify(obj),
                 }).then(res => {
                     this.fileCount = res.data;
-                    console.log(this.fileCount)
                 });
 
 

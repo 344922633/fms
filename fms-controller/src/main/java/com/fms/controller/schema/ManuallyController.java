@@ -25,14 +25,15 @@ public class ManuallyController {
         Manual manual = new Manual();
         return manuallyService.query(manual);
     }
-    @RequestMapping("getAllNzList")
-    public Object getAllNzList() {
+
+
+    @RequestMapping("getAllXxList")
+    public Object getAllXxList() {
     Manual manual = new Manual();
 
-    List<String> list =  manuallyService.getAllNzList(manual);
+    List<String> list =  manuallyService.getAllXxList(manual);
     return  list;
 }
-
 
     @RequestMapping("listColumnsForTable")
     public List<Map<String,Object>> listColumnsForTable(String tableName) {

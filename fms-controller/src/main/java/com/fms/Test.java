@@ -36,23 +36,23 @@ public class Test {
         FileParser localParser = new FileParser();
 
         localParser.setId(1539050371244L);
-        localParser.setName("Txt解析器");
+        localParser.setName("Ppt解析器");
         localParser.setSource("E:\\unstructuredTextParser.jar");
-        localParser.setClassName("com.caeit.parser.txt.TxtParser");
+        localParser.setClassName("com.caeit.parser.ppt.PptParser");
         localParser.setParams("黑名单,白名单");
-        localParser.setMethodName("parseTxt");
+        localParser.setMethodName("parsePpt");
 
 //        文件信息
         com.fms.domain.filemanage.File local = new com.fms.domain.filemanage.File();
 
         local.setId(1548141683207L);
-        local.setName("微信.txt");
-        local.setRealPath("E:\\微信.txt");
-        local.setType("txt");
+        local.setName("PptParser_testFile.pptx");
+        local.setRealPath("E:\\PptParser_testFile.pptx");
+        local.setType("pptx");
         local.setDirectoryId(1548141683189L);
         local.setClassId(1539053408647L);
-        local.setClassName("txt文件");
-        local.setFileMd5("e6638044cce1868bad340f60ade2e743");
+        local.setClassName("pptx文件");
+        local.setFileMd5("ca4dd54ace46104d1dd554409de8dd26");
 
 //        二进制转换
         FileInputStream fstream = null;
@@ -61,7 +61,7 @@ public class Test {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        File file = new File("E:\\微信.txt");
+        File file = new File("E:\\PptParser_testFile.pptx");
 
         byte[] buf = new byte[(int) file.length()];
 

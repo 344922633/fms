@@ -151,13 +151,13 @@
                 }
             },
             async getTables() {
-        return this.$axios.post('mvc/getAllNzList').then(res => {
+        return this.$axios.post('mvc/getAllXxList').then(res => {
             this.tableNames = res.data;
     })
     },
 
     getDicTables() {
-        this.$axios.post('mvc/getDicTable').then(res => {
+        this.$axios.post('mvc/getXxDicTable').then(res => {
             this.dicTableName = res.data;
     })
     },

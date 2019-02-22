@@ -4,7 +4,7 @@
 
 
     <insert id="addControlProperty" parameterType="com.fms.domain.tuopu.ControlProperty" >
-        INSERT INTO t_control_property (controlId,propertyChinese,property,customProperty,dataType,dicName,dicList,isDic,propertyFlag)
+        INSERT INTO t_control_property (controlId,propertyChinese,property,customProperty,dataType,dicName,dicList,isDic,propertyFlag,tableId)
         VALUES (
         #{controlId},
         #{propertyChinese},
@@ -14,7 +14,8 @@
         #{dicName},
         #{dicList},
         #{isDic},
-        #{propertyFlag}
+        #{propertyFlag},
+        #{tableId}
         )
     </insert>
 

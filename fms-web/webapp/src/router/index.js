@@ -114,7 +114,7 @@ export default new Router({
                 {
                     path: '/manualDataDeal',
                     component: resolve => require(['../components/page/manualdatadeal/ManualDataDeal.vue'], resolve),
-                    meta: { title: '单文件解析' }
+                    meta: { title: '表单录入' }
                 },
                 {
                     path: '/tuopu',

@@ -85,6 +85,10 @@ public class ColumnInfoService {
         return dao.getList(CLASSNAME, "getDicTable", null);
     }
 
+    public List<String> getXxDicTable() {
+        return dao.getList(CLASSNAME, "getXxDicTable", null);
+    }
+
     public Integer countTableInfoByEnglish(String tableEnglish){
         return dao.get(CLASSNAME,"countTableInfoByEnglish",tableEnglish);
     }

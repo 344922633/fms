@@ -21,6 +21,10 @@
         FROM t_picture
     </select>
 
+    <select id="query" parameterType="string" resultType="int">
+        select count(*) from t_picture where name =#{name};
+    </select>
+
 
     <delete id="delete" parameterType="Long">
         DELETE FROM t_picture

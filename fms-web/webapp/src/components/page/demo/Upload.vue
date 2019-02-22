@@ -82,7 +82,6 @@
                 this.cropImg = this.defaultSrc;
             },
             parentTypeed(res) {
-                console.log(res)
             },
             handleError(){
                 this.$notify.error({

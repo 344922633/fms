@@ -28,12 +28,6 @@
         select * from column_info where tableId=#{tableId}
     </select>
 
-    <select id="getAllTables" resultType="string">
-        select table_name
-        from information_schema.tables
-        where TABLE_SCHEMA=(select database())
-    </select>
-
     <select id="getTableNameById" parameterType="java.lang.Long" resultType="java.lang.String">
         select tableChinese
         from table_info

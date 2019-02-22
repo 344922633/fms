@@ -11,10 +11,10 @@
         <!--<Modal v-model="formVisible" :title="formTitle" :model="parser" @on-visible-change="handleVisibleChange" @on-ok="handleFormOk" footer-hide>-->
         <Modal v-model="formVisible" :title="formTitle" @on-visible-change="handleVisibleChange" @on-ok="handleFormOk" footer-hide>
             <Form :label-width="80" ref="parserForm" :model="masterSlave">
-                <FormItem prop="name" label="关系名称">
+                <FormItem prop="name" label="目标名称">
                     <Input v-model="masterSlave.name"/>
                 </FormItem>
-                <FormItem prop="type" label="关系名称">
+                <FormItem prop="type" label="目标类型">
                     <Input v-model="masterSlave.type"/>
                 </FormItem>
 

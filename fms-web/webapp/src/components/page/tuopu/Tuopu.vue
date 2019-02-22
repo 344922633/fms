@@ -97,13 +97,20 @@
             getControlData() {
                 return this.$axios.post('mvc/control/getList').then((res) => {  //接口返回数据
                     let { data } = res
-                    data.forEach(d => {
+                    data.forEach((d,i) => {
+
                         // d.image = '/static/img/img.jpg'
                         d.label = d.name
                         d.clientProperties ={
                             id: d.id
                         }
-                        delete d.type
+
+                        if(i==0){
+                             d.type = 'Group'
+                        }else{
+                            delete d.type
+                        }
+
                     })
                     this.images = data
                 }).catch(function (error) {
@@ -208,7 +215,6 @@
                             var id = data.get('id');
                             var properties = that.idPropertiesMap[id] || []
 
-                             console.log(properties)
                             return {
                                 group: '属性',
                                 properties: properties
@@ -279,7 +285,11 @@
                     return
                 }
                 const json = this.graphEditor.exportJSON()
-
+                // console.log(json)
+                //  if (JSON.stringify(json).search("Group") != -1) {
+                //         this.$message.error('没有父组件')
+                //         return
+                //     }
                 const loading = this.$loading({
                     lock: true,
                     text: '正在保存',
@@ -291,7 +301,13 @@
                     name,
                     json:JSON.stringify(json)
                 }).then((res) => {  //接口返回数据
-                    this.$message.success('保存成功')
+                   console.log(res);
+                    if(this.Data = res.data.success){
+                        this.$message.success('保存成功')
+                    }else{
+                        alert("名称重复")
+                    }
+
                     loading.close()
                 }).catch(function (error) {
                     loading.close()

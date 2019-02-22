@@ -23,6 +23,7 @@ public class ControlProperty {
 	private int isDic;
 	private String dicList;
 	private String value;
+	private String tableId;
 	private int propertyFlag;
 
 }

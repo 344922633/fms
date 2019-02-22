@@ -39,12 +39,9 @@
                 <Form v-if="tableColumns" :label-width="100">
                     <FormItem v-for="(item, index) in tableColumns" :data="item.column.dicTableName" :key="item.column.id" :label="item.column.columnChinese">
 
-
-
                        <!-- 当item.column.isDic === 0 时判断    item.column.columnEnglish.toLowerCase() == 'dxbm'     成立  则生成时间戳赋值给dataValue   只读-->
                         <Input  v-if="item.column.isDic === 0 && item.column.columnEnglish.toLowerCase() != 'dxbm'" :type="checkType(item.column.dataType)"  v-model="item.column.dataValue" :placeholder="item.column.dataType" >
                         </Input>
-
 
                         <Input  v-if="item.column.isDic === 0 && item.column.columnEnglish.toLowerCase() == 'dxbm'" v-model="item.column.dataValue" disabled="disabled">
                         </Input>
@@ -85,7 +82,6 @@
         },
         methods: {
             checkType(type){
-                console.log(type == "varchar" || type == "char",type + "....");
                 if(type == "int" || type == "long"){
                     return "number";
                 }else if(type == "varchar" || type == "char"){
@@ -110,7 +106,6 @@
 
             },
             getColumns(data) {
-                console.warn(data) ;
                 if(data  != null && (data.children == null ||  data.children.length() == 0)){
                     var masterslaveview_id = data.id;
                     var timestamp = (new Date()).valueOf();
@@ -118,14 +113,11 @@
                         masterSlaveId: masterslaveview_id
                     }).then(res => {
                         this.tableColumns = res.data;
-                        console.log(res.data, '返回数据');
                         //alert(JSON.stringify(this.tableColumns));
-                        console.log(this.tableColumns);
                         this.tableColumns.forEach((item, index) => {
                             if(item.column_key=="PRI" ){
                                 var val=this.tableColumns[index].placeholder;
                                 val =timestamp;
-
 
                                 this.tableColumns[index].readonly = true;
                                 this.tableColumns[index].value=val;
@@ -133,7 +125,6 @@
                                 item.column.dataValue = (new Date()).valueOf()+"";
                             }
                         })
-                        console.log(this.tableColumns);
                   /*      this.masterslave_name = masterslaveview_name;*/
                     })
                 }
@@ -150,8 +141,6 @@
                     });
                 })
             }
-
-
         }
     }
 </script>

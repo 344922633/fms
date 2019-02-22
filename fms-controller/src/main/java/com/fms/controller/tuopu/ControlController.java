@@ -108,7 +108,7 @@ public class ControlController {
     @RequestMapping("operationControl")
     public Object operationControl(@RequestParam(value = "name") String name, String type,String type1, String url, String properties, String id) {
         try {
-        if (name != null && properties != null) {
+        if (id != null && name != null && properties != null) {
             //清空control_property数据
             controlPropertyService.delControlPropertyByControlId(id);
             //清空control数据
@@ -136,12 +136,14 @@ public class ControlController {
                 String columnEnglish = columnObj.getString("columnEnglish");
                 String columnChinese = columnObj.getString("columnChinese");
                 String dicName = columnObj.getString("dicTableName");
+                String tableId = columnObj.getString("tableId");
                 ControlProperty controlProperty = new ControlProperty();
                 controlProperty.setProperty(columnEnglish);
                 controlProperty.setPropertyChinese(columnChinese);
                 controlProperty.setIsDic(Integer.valueOf(isDic));
                 controlProperty.setDataType(data_type);
                 controlProperty.setDicName(dicName);
+                controlProperty.setTableId(tableId);
                 controlProperty.setDicList(dicList);
                 controlProperty.setPropertyFlag(0);
                 controlProperty.setControlId(controlId);

@@ -142,7 +142,6 @@
 
                 </Form>
             </div>
-
             <!--选择表和字段-->
             <div v-if="columnData && Object.keys(columnData).length" style="height: 300px; overflow-y: auto;">
 
@@ -294,7 +293,7 @@
                     // 获取解析器列表
                     this.getParsers(this.file.classId);
                     // 获取推荐解析器
-                    this.getRecommendParser(this.file.recommendParserId);
+                    // this.getRecommendParser(this.file.recommendParserId);
                 }
 
                 // 以下好像不需要了 TODO
@@ -603,7 +602,9 @@
                 this.currentRowData = data;
                 this.updateTableRowDataIsShow = true;
             },
+
             getColumns(table_name) {
+                console.warn(table_name)
                 this.$axios.post('mvc/listColumns', {
                     tableName: table_name
                 }).then(res => {
@@ -633,6 +634,9 @@
                             }
                         }
                         this.selectData = selectData;
+
+                        console.log("1");
+                        console.log(this.columnData)
                         this.columnData = columnData;
                     }
                 })
@@ -694,9 +698,13 @@
 
                     this.jsonTables = JSON.parse(this.jsonStr.toLowerCase());
 
+
+                    // console.log(this.jsonTables)
+                    // console.log(res.data)
                     delete res.data.data.jsonStr;
                     //解析匹配到得表名
                     this.table_name = res.data.data.table_name;
+                    // console.log(this.table_name)
                     //根据表名获取该表字段信息
                     this.getColumns(this.table_name);
                     delete res.data.data.table_name;
@@ -762,6 +770,7 @@
                     data: {
                         "columnKeys": allKey,
                     },
+
                     success: function(res) {
                         // 匹配度最高的模板
                         me.templateNameInfos = res.templateNameInfos;
@@ -802,7 +811,7 @@
                                 }
 
                             })
-
+                          console.log(this.columnData)
                             for(let key in this.columnData) {
 
                                 this.getTables(this.columnKeyNamesMap[key].schemaId, key)
@@ -983,14 +992,6 @@
                 return false;
 
             },
-            uploadSuccessFile(response, file, fileList) {
-
-                this.resultFils = file.response;
-
-                this.loadingStatus = false;
-                this.$Message.success('This is a success tip');
-            },
-
             uploadSuccessFile(response, file, fileList) {
 
                 this.resultFils = file.response;

@@ -252,16 +252,13 @@
                 this.inputs=[
                     {text:'' ,$noColumn:true}
                 ]
-                console.log(this.inputs,'this.inputs')
                 const children = this.menuIdChildrenMap[this.form.parentType]  // 下拉框元素
                 const selectedType = children.find(child => child.name === type)    //被选中的类型
                 const { id } = selectedType || {}
                 this.form.properties="";
                 this.$axios.post('mvc/listColumnsFormasterslave', { masterSlaveId: id }).then((res) => {
-                    console.log(res,'测试')
                     let { data } = res;
                     data = data || [];
-                    // console.log(data,'data')
                     data.forEach(item => {
                         const {column} = item
                         //const { columnChinese, columnEnglish } = column
@@ -271,6 +268,7 @@
                             ...item
                         })
                     })
+                    console.log(this.inputs);
                 }).catch(function (error) {
                     console.log(error);
                 })
@@ -283,7 +281,6 @@
                 const inputsValid = this.inputs.some(v => {
                     return v.text !== ''
                 })
-                console.log(inputsValid,'inputsValid')
                 if ( !name || !type || !inputsValid || !imageUrl) {
                     this.$message.warning('请填写完整表单, 并上传图片')
                     return
@@ -291,7 +288,6 @@
                 this.inputs = this.inputs.filter(v => {
                     return !!v.text                          //过滤掉inputs里属性为空的，返回的还是一个数组
                 })
-                //  console.log(this.inputs,'this.inputs')
                 const loading = this.$loading({
                     lock: true,
                     text: '正在保存',
@@ -317,7 +313,6 @@
                     }
                 }
                 this.$axios.post(url, params).then( (result) => {
-                    console.log(result, '成功')
                     this.editVisible = false;
                     this.addVisible = false;
                     this.$message.success('提交成功')
@@ -332,7 +327,6 @@
                         type: '',
                     };
                 }).catch(e => {
-                    console.log(e, '失败')
                     this.editVisible = false;
                     loading.close()
                 })
@@ -362,7 +356,6 @@
                 };
                 this.proEdit=row.properties
                 row.properties.forEach(item => {
-                    // console.log(cloumn,'cloumn')
                     this.inputs.push({
                         text: item.propertyChinese,
                         canDelete: false,
@@ -370,8 +363,6 @@
                     })
 
                 })
-                //  console.log(e,'e');
-                console.log(this.inputs,'this.inputs')
                 if(row.image) {
                     this.uploadSuccessState = true;
                 }
@@ -383,7 +374,6 @@
             onSubmitEdit(index,row){
                 const {name, type, imageUrl} = this.form;
                 let tableData = this.tableData;
-                console.log(tableData,'tableData');
                 const inputsValid = this.inputs.some(v => {
                     return v.text !== ''
                 })
@@ -403,10 +393,8 @@
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
                 var url,params ;
-                //  console.log(this.inputs,'inputs');
                 this.inputs.forEach((inp,i)=>{
                     if(inp.$noColumn==undefined&&inp.column==undefined){
-                        //console.log(inp.$noColumn+'----000')
                         let obj = {
                             text:inp.text,
                             canDelete:inp.canDelete,
@@ -423,12 +411,10 @@
                                 dicList:inp.dicList
                             }
                         };
-                        //  console.log(obj,'obj')
                         this.inputs.splice(i,1,obj);
                     }
 
                 })
-                //  console.log(this.inputs,'inputs11');
 
                 var params = {
                     name: this.form.name,
@@ -438,13 +424,11 @@
                     url: this.form.imageUrl,
                     // properties:JSON.stringify(this.form.editproperties) + JSON.stringify(this.inputs),
                 }
-                // console.log(params,'params')
                 //添加
                 url = "mvc/control/operationControl";
                 params.id = this.form.id;
 
                 this.$axios.post(url, params).then( (result) => {
-                    console.log(result, '成功')
                     this.editVisible = false;
                     this.addVisible = false;
                     this.$message.success('提交成功')
@@ -463,7 +447,6 @@
                     //     window.location.reload();
                     // }, 3000);
                 }).catch(e => {
-                    console.log(e, '失败')
                     this.editVisible = false;
                     loading.close()
                 })
@@ -472,7 +455,6 @@
 
             async getData() {
                 let {data} = await this.$axios.post('mvc/control/getList');
-                console.log(data, '初始化数据');
                 this.tableData = data;
                 // this.inputs = data[0].cpList;
             },
@@ -489,7 +471,6 @@
                     data.forEach((item) => {
                         this.$set(this.menuIdChildrenMap, item.name, item.children)
                     })
-                    console.log(this.menuIdChildrenMap,'这是什么')
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -510,20 +491,16 @@
 
             handleRemove(file, fileList) {//移除图片
                 this.uploadSuccessState = false;
-                console.log(file, fileList);
             },
             handlePictureCardPreview(file) {//预览图片时调用
-                console.log(file);
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
             },
             handleEditPictureCardPreview(file) {//预览图片时调用
-                console.log(file);
                 this.dialogImageUrl = file.url;
                 this.editDialogVisible = true;
             },
             beforeAvatarUpload(file) {//文件上传之前调用做一些拦截限制
-                console.log(file);
                 const isJPG = true;
                 // const isJPG = file.type === 'image/jpeg';
                 const isLt2M = file.size / 1024 / 1024 < 2;
@@ -548,10 +525,8 @@
             },
             handleExceed(files, fileList) {//图片上传超过数量限制
                 this.$message.error('上传图片只能一张!');
-                console.log(file, fileList);
             },
             imgUploadError(err, file, fileList) {//图片上传失败调用
-                console.log(err);
                 this.$message.error('上传图片失败!');
             },
             addInput() {
@@ -578,7 +553,6 @@
             },
 
             reset(done){
-                console.log('wwww')
                 this.editVisible=false
 
                 this.inputs=[

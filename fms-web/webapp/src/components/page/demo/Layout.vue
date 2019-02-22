@@ -561,8 +561,6 @@
                 document.body.removeChild(link)
             },
             handleConfirm(node) {
-                console.log(node)
-                console.log(this.contextNode)
                 this.$axios.post('/mvc/addPictureCategoryPermission', {
                     depId: node.id,
                     pictureCategoryId: this.contextNode.id
