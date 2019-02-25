@@ -16,14 +16,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hadoop.hbase.protobuf.generated.CellProtos;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -107,22 +105,41 @@ public class ExcelUtil {
 		if (cell == null) {
 			return "";
 		}
-		switch (cell.getCellType()) {
-			case 0:
+//		poi版本变更
+//		switch (cell.getCellType()) {
+//			case 0:
+//				if (HSSFDateUtil.isCellDateFormatted(cell)) {
+//					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//					return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue())).toString();
+//				}
+//				return df.format(cell.getNumericCellValue());
+//			case 1:
+//				return cell.getStringCellValue();
+//			case 2:
+//				return cell.getCellFormula();
+//			case 3:
+//				return "";
+//			case 4:
+//				return cell.getBooleanCellValue() + "";
+//			case 5:
+//				return cell.getErrorCellValue() + "";
+//		}
+		switch (cell.getCellTypeEnum()) {
+			case NUMERIC:
 				if (HSSFDateUtil.isCellDateFormatted(cell)) {
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue())).toString();
 				}
 				return df.format(cell.getNumericCellValue());
-			case 1:
+			case STRING:
 				return cell.getStringCellValue();
-			case 2:
+			case FORMULA:
 				return cell.getCellFormula();
-			case 3:
+			case BLANK:
 				return "";
-			case 4:
+			case BOOLEAN:
 				return cell.getBooleanCellValue() + "";
-			case 5:
+			case ERROR:
 				return cell.getErrorCellValue() + "";
 		}
 		return "";

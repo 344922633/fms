@@ -31,7 +31,6 @@ public class FileParserExtService {
 		return dao.getList(CLASSNAME, "query", params);
 	}
 
-
 	public FileParserExt get(Long id) {
 		return dao.get(CLASSNAME, "get", id);
 	}

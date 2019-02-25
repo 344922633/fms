@@ -108,23 +108,28 @@ public class ControlController {
     @RequestMapping("operationControl")
     public Object operationControl(@RequestParam(value = "name") String name, String type,String type1, String url, String properties, String id) {
         try {
-        if (id != null && name != null && properties != null) {
-            //清空control_property数据
-            controlPropertyService.delControlPropertyByControlId(id);
-            //清空control数据
-            controlService.delete(id);
-        }
+
         Control control = new Control();
-        String controlId = String.valueOf(System.currentTimeMillis());
-        control.setId(controlId);
+
         control.setImage(url);
         control.setType(type);
         control.setType1(type1);
         control.setName(name);
-        controlService.add(control);
+        if (id != null && name != null && properties != null) {
+            //清空control_property数据
+             controlPropertyService.delControlPropertyByControlId(id);
+        }
+        if (id != null && controlService.query(id)!=0){
+            control.setId(id);
+            controlService.update(control);
+        }else{
+            String controlId = String.valueOf(System.currentTimeMillis());
+            control.setId(controlId);
+            controlService.add(control);
+        }
+
         JSONArray array = JSONArray.parseArray(properties);
         String property;
-        String columnInfo;
         for (int i = 0; i < array.size(); i++) {
             JSONObject propertyJson = array.getJSONObject(i);
             if (propertyJson.containsKey("column")) {
@@ -146,12 +151,12 @@ public class ControlController {
                 controlProperty.setTableId(tableId);
                 controlProperty.setDicList(dicList);
                 controlProperty.setPropertyFlag(0);
-                controlProperty.setControlId(controlId);
+                controlProperty.setControlId(control.getId());
                 controlPropertyService.addControlProperty(controlProperty);
             } else {
                 property = array.getJSONObject(i).getString("text");
                 ControlProperty controlProperty = new ControlProperty();
-                controlProperty.setControlId(controlId);
+                controlProperty.setControlId(control.getId());
                 controlProperty.setProperty(property);
                 controlProperty.setPropertyChinese(property);
                 controlProperty.setPropertyFlag(1);

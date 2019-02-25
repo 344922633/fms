@@ -148,6 +148,9 @@
         </div>
 
         <Modal v-model="fixCon" title="解析结果" width="1500px" ok-text="保存映射关系" @on-ok="bcysgx">
+            <!--<i-col span="4">-->
+                <!--<Button @click="handlePreview">预览拓扑图</Button>-->
+            <!--</i-col>-->
             <div class="drag-box-item">
                 <div class="item-title">结果<p>文件名：{{ viewFileName }}</p></div>
                 <div ref="result"></div>
@@ -1229,6 +1232,17 @@
                     this.convert(this.treeData);
                 });
             },
+
+            // //拓扑图预览
+            // handlePreview() {
+            //
+            //     this.modalPreviewFile = true
+            //     this.$nextTick(() => {
+            //         this.renderTopology()
+            //         this.loadJSONData(this.jsonStr)
+            //     })
+            //
+            // },
             //文件上传
             fileUpload() {
                 if (this.tDirectoryId == 0 || this.tDirectoryText == "") {

@@ -78,84 +78,165 @@ public class PictureController {
         return pictureService.page(params, page);
     }
 
+////主从表字段信息分类后卡夫卡格式
+//    @ResponseBody
+//    @RequestMapping("sendDataToKafka")
+//    public void sendDataToKafka(HttpServletRequest request) throws IOException {
+////        String jsonData = "{\n" +
+////                "    \"datas\": [\n" +
+////                "        {\n" +
+////                "            \"_className\": \"Q.Node\",\n" +
+////                "            \"json\": {\n" +
+////                "                \"image\": \"/fms/static/img/1550803183632.png\",\n" +
+////                "                \"location\": {\n" +
+////                "                    \"x\": -308.27981305673757,\n" +
+////                "                    \"y\": -219.3316180560916\n" +
+////                "                },\n" +
+////                "                \"name\": \"核心路由器\",\n" +
+////                "                \"properties\": {\n" +
+////                "                    \"id\": \"1550803184720\",\n" +
+////                "                    \"table1\": {\n" +
+////                "                        \"DXBM\": \"12331\",\n" +
+////                "                        \"DXFL\": \"2\",\n" +
+////                "                        \"tableId\": \"1550801127654\"\n" +
+////                "                    },\n" +
+////                "                    \"table2\": {\n" +
+////                "                        \"DXMC\": \"1321321\",\n" +
+////                                        "\"DXBM\": \"12331\",\n" +
+////                "                        \"KZMC\": \"1321312321\",\n" +
+////                "                        \"SBLB\": \"1\",\n" +
+////                "                        \"tableId\": \"1550801131740\"\n" +
+////                "                    }\n" +
+////                "                }\n" +
+////                "            }\n" +
+////                "        }\n" +
+////                "    ],\n" +
+////                "    \"scale\": 0.8264462809917362,\n" +
+////                "    \"tx\": 521.7767050055684,\n" +
+////                "    \"ty\": 335.37517504635684,\n" +
+////                "    \"version\": \"2.0\"\n" +
+////                "}";
+//
+//
+//
+//        String jsonData = request.getParameter("json");
+//
+//        // 将读取的数据转换为JSONObject
+//        JSONObject jsonObject = JSONObject.parseObject(jsonData);
+//        JSONArray btnArray = jsonObject.getJSONArray("datas");
+//
+//        // 循环获取控件
+//        for (int i = 0; i < btnArray.size(); i++) {
+//            JSONArray column1 = new JSONArray();
+//            JSONArray column2 = new JSONArray();
+//            JSONObject properties = null;
+//            JSONObject parent = null;
+//            JSONObject table1 = null;
+//            JSONObject table2 = null;
+//            String str = "";
+//            String refId = "";
+//            JSONObject obj = new JSONObject();
+//            JSONArray data = new JSONArray();
+//            JSONObject obj1 = new JSONObject();
+//            JSONObject obj2 = new JSONObject();
+//            JSONObject columnObj1 = new JSONObject();
+//            JSONObject columnObj2 = new JSONObject();
+//            String table1Id = null;
+//            String table2Id = null;
+//            JSONObject kongjianObj = btnArray.getJSONObject(i);
+//            JSONObject json = kongjianObj.getJSONObject("json");
+//
+//            //这个字段需要再添加
+////            if (json.containsKey("parent")) {
+////                parent = JSON.parseObject(json.getString("parent"));
+////                refId = table1.get(parent).toString();
+////            }
+//
+//
+//            if (json.containsKey("properties")) {
+//                properties = JSON.parseObject(json.getString("properties"));
+//                table1 = JSON.parseObject(properties.getString("table1"));
+//                table2 = JSON.parseObject(properties.getString("table2"));
+//                Iterator<String> colIt1 = table1.keySet().iterator();
+//                Iterator<String> colIt2 = table2.keySet().iterator();
+//
+//                while (colIt1.hasNext()) {
+//                    String jsonKey = colIt1.next();
+//                    if (jsonKey.equals("tableId")) {
+//                        str = table1.get(jsonKey).toString();
+//                        table1Id = String.valueOf(table1.get(jsonKey));
+//                        continue;
+//                    }
+//                    if (jsonKey.toLowerCase().equals("dxbm")) {
+//                        str = table1.get(jsonKey).toString();
+//                        obj1.put("objectCode", "dxbm");
+//                        obj1.put("objectCodeValue", str);
+//                        continue;
+//                    }
+//                    JSONObject jsonCol = new JSONObject();
+//                    jsonCol.put("name", jsonKey.toLowerCase());
+//                    jsonCol.put("value", table1.get(jsonKey));
+//                    column1.add(jsonCol);
+//                }
+//
+//
+//                obj1.put("operationType", "INSERT");
+//                String tableName1 = getTableByTableId(table1Id);
+//                obj1.put("schema", env.getProperty("schema"));
+//                obj1.put("table",tableName1);
+//                columnObj1.put("name", "dxbm");
+//                columnObj1.put("value", str);
+//                column1.add(columnObj1);
+//                obj1.put("columns", column1);
+//                data.add(obj1);
+//                obj.put("data", data);
+//                while (colIt2.hasNext()) {
+//                    String jsonKey = colIt2.next();
+//                    if (jsonKey.equals("tableId")) {
+//                        str = table2.get(jsonKey).toString();
+//                        table2Id = String.valueOf(table2.get(jsonKey));
+//                        continue;
+//                    }
+//
+//                    if (jsonKey.toLowerCase().equals("dxbm")) {
+//                        str = table2.get(jsonKey).toString();
+//                        obj2.put("objectCode", "dxbm");
+//                        obj2.put("objectCodeValue", str);
+//                        continue;
+//                    }
+//                    JSONObject jsonCol = new JSONObject();
+//                    jsonCol.put("name", jsonKey.toLowerCase());
+//                    jsonCol.put("value", table2.get(jsonKey));
+//                    column2.add(jsonCol);
+//                }
+//
+//                obj2.put("operationType", "INSERT");
+//                String tableName2 = getTableByTableId(table2Id);
+//                obj2.put("schema", env.getProperty("schema"));
+//                obj2.put("table",tableName2);
+//                columnObj2.put("name", "dxbm");
+//                columnObj2.put("value", str);
+//                column2.add(columnObj2);
+//                obj2.put("columns", column2);
+//                data.add(obj2);
+//                obj.put("operationSource",PropertyUtil.readValue("DEFAULT_TOPIC"));
+//                obj.put("data", data);
+//                System.out.println(obj.toJSONString());
+//                kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), obj.toJSONString());
+//            }
+//        }
+//        }
+//
+//        public String getTableByTableId(String tableId){
+//            long id = Long.valueOf(tableId);
+//        return fileParserService.getTableByTableId(id);
+//
+//        }
+//
+//
+//
 
-    @ResponseBody
-    @RequestMapping("sendDataToKafka")
-    public void sendDataToKafka(HttpServletRequest request) throws IOException {
-        String idStr = request.getParameter("id");
-        Long id = null;
-        if (StringUtils.isNotEmpty(idStr)) {
-            id = Long.parseLong(idStr);
-        }
-        String jsonData = request.getParameter("json");
-        String name = request.getParameter("name");
 
-        // 将读取的数据转换为JSONObject
-        JSONObject jsonObject = JSONObject.parseObject(jsonData);
-
-        JSONArray btnArray = jsonObject.getJSONArray("datas");
-
-        // 循环获取控件
-        for (int i = 0; i < btnArray.size(); i++) {
-            String str = "";
-            JSONObject kongjianObj = btnArray.getJSONObject(i);
-            JSONObject json = kongjianObj.getJSONObject("json");
-            JSONObject obj = new JSONObject();
-            JSONArray data = new JSONArray();
-            JSONObject obj1 = new JSONObject();
-            obj.put("operationSource",PropertyUtil.readValue("DEFAULT_TOPIC"));
-            obj1.put("operationType", "INSERT");
-            JSONArray columns = new JSONArray();
-            JSONObject properties = null;
-            JSONObject columnObj1 = new JSONObject();
-            if (json.containsKey("properties")) {
-                properties = JSON.parseObject(json.getString("properties"));
-                Iterator<String> colIt = properties.keySet().iterator();
-                while (colIt.hasNext()) {
-                    String jsonKey = colIt.next();
-                    if (jsonKey.equals("id")) {
-                        continue;
-                    }
-                    if (jsonKey.toLowerCase().equals("dxbm")) {
-                        str = properties.get(jsonKey).toString();
-                        obj1.put("objectCode", "dxbm");
-                        obj1.put("objectCodeValue", str);
-                        continue;
-                    }
-                    JSONObject jsonCol = new JSONObject();
-                    jsonCol.put("name", jsonKey.toLowerCase());
-                    jsonCol.put("value", properties.get(jsonKey));
-                    columns.add(jsonCol);
-                }
-                String tableName = getTable(columns.toJSONString());
-                obj1.put("schema", env.getProperty("schema"));
-                obj1.put("table",tableName);
-                columnObj1.put("name", "dxbm");
-                columnObj1.put("value", str);
-                columns.add(columnObj1);
-                obj1.put("columns", columns);
-                data.add(obj1);
-                obj.put("data", data);
-                System.out.println(obj.toJSONString());
-                kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), obj.toJSONString());
-            }
-        }
-        }
-
-        public String getTable(String str) {
-
-            List<Map<String, Object>> json = new ArrayList<>();
-            try {
-                JSONArray arrayList = JSONArray.parseArray(str);
-                json.addAll(JSONUtils.jsonToObject(arrayList.toJSONString(), List.class, Map.class));
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            Map<String, Object> result = fileParserService.parseData(json);
-            System.out.println(result.get("table_name").toString());
-            return result.get("table_name").toString();
-        }
 
 
     @ResponseBody
@@ -208,455 +289,6 @@ public class PictureController {
 
     @RequestMapping("/handlePicture")
     public String handlePicture(String jsonStr) {
-//        jsonStr="{\n" +
-//                "    \"page0\": [\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"16\",\n" +
-//                "            \"height\": \"0.984251968503937\",\n" +
-//                "            \"id\": \"1\",\n" +
-//                "            \"masterName\": \"服务器\",\n" +
-//                "            \"name\": \"服务器\",\n" +
-//                "            \"pinX\": \"9.224411383401687\",\n" +
-//                "            \"pinY\": \"8.890051405581442\",\n" +
-//                "            \"text\": \"192.168.1.20\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"0.7086614173228346\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"10,14\",\n" +
-//                "            \"height\": \"0.984251968503937\",\n" +
-//                "            \"id\": \"2\",\n" +
-//                "            \"masterName\": \"PC\",\n" +
-//                "            \"name\": \"PC\",\n" +
-//                "            \"pinX\": \"11.44882083222059\",\n" +
-//                "            \"pinY\": \"10.56327975203814\",\n" +
-//                "            \"text\": \"192.168.2.55\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"0.984251968503937\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"12\",\n" +
-//                "            \"height\": \"0.984251968503937\",\n" +
-//                "            \"id\": \"3\",\n" +
-//                "            \"masterName\": \"便携电脑\",\n" +
-//                "            \"name\": \"便携电脑\",\n" +
-//                "            \"pinX\": \"13.90945075348043\",\n" +
-//                "            \"pinY\": \"10.26800416148696\",\n" +
-//                "            \"text\": \"192.168.2.200\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"0.984251968503937\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"11,12,14,16\",\n" +
-//                "            \"height\": \"0.984251968503937\",\n" +
-//                "            \"id\": \"4\",\n" +
-//                "            \"masterName\": \"路由器\",\n" +
-//                "            \"name\": \"路由器\",\n" +
-//                "            \"pinX\": \"12.13779721017334\",\n" +
-//                "            \"pinY\": \"8.79162620873105\",\n" +
-//                "            \"text\": \"核心路由器\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"0.984251968503937\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"11,13\",\n" +
-//                "            \"height\": \"1.496062992125984\",\n" +
-//                "            \"id\": \"5\",\n" +
-//                "            \"masterName\": \"ATM 交换机\",\n" +
-//                "            \"name\": \"ATM 交换机\",\n" +
-//                "            \"pinX\": \"12.30512004481901\",\n" +
-//                "            \"pinY\": \"6.783752192983016\",\n" +
-//                "            \"text\": \"ATM交换机\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"1.122047244094488\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"13,15\",\n" +
-//                "            \"height\": \"0.984251968503937\",\n" +
-//                "            \"id\": \"6\",\n" +
-//                "            \"masterName\": \"防火墙\",\n" +
-//                "            \"name\": \"防火墙\",\n" +
-//                "            \"pinX\": \"11.74409642277177\",\n" +
-//                "            \"pinY\": \"4.460917547313726\",\n" +
-//                "            \"text\": \"防火墙\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"0.5905511811023622\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"10\",\n" +
-//                "            \"height\": \"0.7874015748031495\",\n" +
-//                "            \"id\": \"7\",\n" +
-//                "            \"masterName\": \"打印机\",\n" +
-//                "            \"name\": \"打印机\",\n" +
-//                "            \"pinX\": \"9.578742092063106\",\n" +
-//                "            \"pinY\": \"10.76013014573892\",\n" +
-//                "            \"text\": \"打印机\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"0.7874015748031495\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"15\",\n" +
-//                "            \"height\": \"0.3937007874015748\",\n" +
-//                "            \"id\": \"8\",\n" +
-//                "            \"masterName\": \"调制解调器\",\n" +
-//                "            \"name\": \"调制解调器\",\n" +
-//                "            \"pinX\": \"9.578742092063106\",\n" +
-//                "            \"pinY\": \"4.460917547313726\",\n" +
-//                "            \"text\": \"Modem1\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"0.5511811023622047\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"\",\n" +
-//                "            \"height\": \"1.250108330895425\",\n" +
-//                "            \"id\": \"9\",\n" +
-//                "            \"name\": \"图片9\",\n" +
-//                "            \"pinX\": \"9.350122283116388\",\n" +
-//                "            \"pinY\": \"6.660774862367737\",\n" +
-//                "            \"text\": \"\",\n" +
-//                "            \"type\": \"3\",\n" +
-//                "            \"width\": \"1.008420720255643\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"2\",\n" +
-//                "            \"FromId\": \"7\",\n" +
-//                "            \"IsLineType\": \"1\",\n" +
-//                "            \"IsTwoWay\": \"1\",\n" +
-//                "            \"beginX\": \"9.578742092063106\",\n" +
-//                "            \"beginY\": \"10.76013014573892\",\n" +
-//                "            \"connectId\": \"2,7\",\n" +
-//                "            \"endX\": \"11.1535452416694\",\n" +
-//                "            \"endY\": \"10.76013014573892\",\n" +
-//                "            \"height\": \"0.3149606299212597\",\n" +
-//                "            \"id\": \"10\",\n" +
-//                "            \"masterName\": \"通信链路\",\n" +
-//                "            \"name\": \"通信链路.109\",\n" +
-//                "            \"pinX\": \"10.36614366686625\",\n" +
-//                "            \"pinY\": \"10.76013014573892\",\n" +
-//                "            \"text\": \"1\",\n" +
-//                "            \"type\": \"1\",\n" +
-//                "            \"width\": \"1.574803149606298\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"4\",\n" +
-//                "            \"FromId\": \"5\",\n" +
-//                "            \"IsLineType\": \"1\",\n" +
-//                "            \"IsTwoWay\": \"1\",\n" +
-//                "            \"beginX\": \"12.4633389351291\",\n" +
-//                "            \"beginY\": \"7.329587749160263\",\n" +
-//                "            \"connectId\": \"4,5\",\n" +
-//                "            \"endX\": \"12.13779721017334\",\n" +
-//                "            \"endY\": \"8.79162620873105\",\n" +
-//                "            \"height\": \"0.3149606299212597\",\n" +
-//                "            \"id\": \"11\",\n" +
-//                "            \"masterName\": \"通信链路\",\n" +
-//                "            \"name\": \"通信链路.108\",\n" +
-//                "            \"pinX\": \"12.30056807265122\",\n" +
-//                "            \"pinY\": \"8.060606978945657\",\n" +
-//                "            \"text\": \"5\",\n" +
-//                "            \"type\": \"1\",\n" +
-//                "            \"width\": \"1.497843073206032\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"3\",\n" +
-//                "            \"FromId\": \"4\",\n" +
-//                "            \"IsLineType\": \"1\",\n" +
-//                "            \"IsTwoWay\": \"1\",\n" +
-//                "            \"beginX\": \"12.53149799757492\",\n" +
-//                "            \"beginY\": \"9.165641956762542\",\n" +
-//                "            \"connectId\": \"3,4\",\n" +
-//                "            \"endX\": \"13.57763278737128\",\n" +
-//                "            \"endY\": \"9.80461322225767\",\n" +
-//                "            \"height\": \"0.3149606299212597\",\n" +
-//                "            \"id\": \"12\",\n" +
-//                "            \"masterName\": \"通信链路\",\n" +
-//                "            \"name\": \"通信链路.107\",\n" +
-//                "            \"pinX\": \"13.0545653924731\",\n" +
-//                "            \"pinY\": \"9.485127589510107\",\n" +
-//                "            \"text\": \"3\",\n" +
-//                "            \"type\": \"1\",\n" +
-//                "            \"width\": \"1.225839417114129\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"5\",\n" +
-//                "            \"FromId\": \"6\",\n" +
-//                "            \"IsLineType\": \"1\",\n" +
-//                "            \"IsTwoWay\": \"1\",\n" +
-//                "            \"beginX\": \"11.74409642277177\",\n" +
-//                "            \"beginY\": \"4.460917547313726\",\n" +
-//                "            \"connectId\": \"5,6\",\n" +
-//                "            \"endX\": \"12.30512004481901\",\n" +
-//                "            \"endY\": \"6.783752192983016\",\n" +
-//                "            \"height\": \"0.3149606299212597\",\n" +
-//                "            \"id\": \"13\",\n" +
-//                "            \"masterName\": \"通信链路\",\n" +
-//                "            \"name\": \"通信链路.106\",\n" +
-//                "            \"pinX\": \"12.02460823379539\",\n" +
-//                "            \"pinY\": \"5.622334870148372\",\n" +
-//                "            \"text\": \"6\",\n" +
-//                "            \"type\": \"1\",\n" +
-//                "            \"width\": \"2.389625137049028\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"4\",\n" +
-//                "            \"FromId\": \"2\",\n" +
-//                "            \"IsLineType\": \"1\",\n" +
-//                "            \"IsTwoWay\": \"1\",\n" +
-//                "            \"beginX\": \"11.44882083222059\",\n" +
-//                "            \"beginY\": \"10.56327975203814\",\n" +
-//                "            \"connectId\": \"4,2\",\n" +
-//                "            \"endX\": \"11.97133445682158\",\n" +
-//                "            \"endY\": \"9.266347307984091\",\n" +
-//                "            \"height\": \"0.3149606299212597\",\n" +
-//                "            \"id\": \"14\",\n" +
-//                "            \"masterName\": \"通信链路\",\n" +
-//                "            \"name\": \"通信链路.105\",\n" +
-//                "            \"pinX\": \"11.71007764452109\",\n" +
-//                "            \"pinY\": \"9.914813530011113\",\n" +
-//                "            \"text\": \"2\",\n" +
-//                "            \"type\": \"1\",\n" +
-//                "            \"width\": \"1.398232545871275\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"6\",\n" +
-//                "            \"FromId\": \"8\",\n" +
-//                "            \"IsLineType\": \"1\",\n" +
-//                "            \"IsTwoWay\": \"1\",\n" +
-//                "            \"beginX\": \"9.806375979302071\",\n" +
-//                "            \"beginY\": \"4.492397583657235\",\n" +
-//                "            \"connectId\": \"6,8\",\n" +
-//                "            \"endX\": \"11.55905705269303\",\n" +
-//                "            \"endY\": \"4.539657704794042\",\n" +
-//                "            \"height\": \"0.3149606299212597\",\n" +
-//                "            \"id\": \"15\",\n" +
-//                "            \"masterName\": \"通信链路\",\n" +
-//                "            \"name\": \"通信链路.104\",\n" +
-//                "            \"pinX\": \"10.68271651599755\",\n" +
-//                "            \"pinY\": \"4.516027644225638\",\n" +
-//                "            \"text\": \"7\",\n" +
-//                "            \"type\": \"1\",\n" +
-//                "            \"width\": \"1.753318129739362\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"4\",\n" +
-//                "            \"FromId\": \"1\",\n" +
-//                "            \"IsLineType\": \"1\",\n" +
-//                "            \"IsTwoWay\": \"1\",\n" +
-//                "            \"beginX\": \"9.578742092063106\",\n" +
-//                "            \"beginY\": \"8.79162620873105\",\n" +
-//                "            \"connectId\": \"4,1\",\n" +
-//                "            \"endX\": \"11.64567122592137\",\n" +
-//                "            \"endY\": \"8.79162620873105\",\n" +
-//                "            \"height\": \"0.3149606299212597\",\n" +
-//                "            \"id\": \"16\",\n" +
-//                "            \"masterName\": \"通信链路\",\n" +
-//                "            \"name\": \"通信链路\",\n" +
-//                "            \"pinX\": \"10.61220665899224\",\n" +
-//                "            \"pinY\": \"8.79162620873105\",\n" +
-//                "            \"text\": \"4\",\n" +
-//                "            \"type\": \"1\",\n" +
-//                "            \"width\": \"2.066929133858267\"\n" +
-//                "        }\n" +
-//                "    ],\n" +
-//                "    \"page1\": [\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"9\",\n" +
-//                "            \"height\": \"0.984251968503937\",\n" +
-//                "            \"id\": \"1\",\n" +
-//                "            \"masterName\": \"服务器\",\n" +
-//                "            \"name\": \"服务器\",\n" +
-//                "            \"pinX\": \"3.144094857419868\",\n" +
-//                "            \"pinY\": \"3.575441122491828\",\n" +
-//                "            \"text\": \"192.168.1.20\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"0.7086614173228346\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"6,8\",\n" +
-//                "            \"height\": \"0.984251968503937\",\n" +
-//                "            \"id\": \"2\",\n" +
-//                "            \"masterName\": \"PC\",\n" +
-//                "            \"name\": \"PC\",\n" +
-//                "            \"pinX\": \"5.368504306238772\",\n" +
-//                "            \"pinY\": \"5.248669468948526\",\n" +
-//                "            \"text\": \"192.168.2.55\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"0.984251968503937\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"7\",\n" +
-//                "            \"height\": \"0.984251968503937\",\n" +
-//                "            \"id\": \"3\",\n" +
-//                "            \"masterName\": \"便携电脑\",\n" +
-//                "            \"name\": \"便携电脑\",\n" +
-//                "            \"pinX\": \"7.829134227498611\",\n" +
-//                "            \"pinY\": \"4.953393878397346\",\n" +
-//                "            \"text\": \"192.168.2.200\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"0.984251968503937\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"7,8,9\",\n" +
-//                "            \"height\": \"0.984251968503937\",\n" +
-//                "            \"id\": \"4\",\n" +
-//                "            \"masterName\": \"路由器\",\n" +
-//                "            \"name\": \"路由器\",\n" +
-//                "            \"pinX\": \"6.05748068419152\",\n" +
-//                "            \"pinY\": \"3.477015925641436\",\n" +
-//                "            \"text\": \"核心路由器\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"0.984251968503937\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"0\",\n" +
-//                "            \"FromId\": \"0\",\n" +
-//                "            \"IsLineType\": \"0\",\n" +
-//                "            \"IsTwoWay\": \"0\",\n" +
-//                "            \"connectId\": \"6\",\n" +
-//                "            \"height\": \"0.7874015748031495\",\n" +
-//                "            \"id\": \"5\",\n" +
-//                "            \"masterName\": \"打印机\",\n" +
-//                "            \"name\": \"打印机\",\n" +
-//                "            \"pinX\": \"3.498425566081287\",\n" +
-//                "            \"pinY\": \"5.445519862649306\",\n" +
-//                "            \"text\": \"打印机\",\n" +
-//                "            \"type\": \"0\",\n" +
-//                "            \"width\": \"0.7874015748031495\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"2\",\n" +
-//                "            \"FromId\": \"5\",\n" +
-//                "            \"IsLineType\": \"1\",\n" +
-//                "            \"IsTwoWay\": \"1\",\n" +
-//                "            \"beginX\": \"3.498425566081287\",\n" +
-//                "            \"beginY\": \"5.445519862649306\",\n" +
-//                "            \"connectId\": \"2,5\",\n" +
-//                "            \"endX\": \"5.073228715687582\",\n" +
-//                "            \"endY\": \"5.445519862649306\",\n" +
-//                "            \"height\": \"0.3149606299212597\",\n" +
-//                "            \"id\": \"6\",\n" +
-//                "            \"masterName\": \"通信链路\",\n" +
-//                "            \"name\": \"通信链路.109\",\n" +
-//                "            \"pinX\": \"4.285827140884434\",\n" +
-//                "            \"pinY\": \"5.445519862649306\",\n" +
-//                "            \"text\": \"1\",\n" +
-//                "            \"type\": \"1\",\n" +
-//                "            \"width\": \"1.574803149606295\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"3\",\n" +
-//                "            \"FromId\": \"4\",\n" +
-//                "            \"IsLineType\": \"1\",\n" +
-//                "            \"IsTwoWay\": \"1\",\n" +
-//                "            \"beginX\": \"6.451181471593102\",\n" +
-//                "            \"beginY\": \"3.851031673672928\",\n" +
-//                "            \"connectId\": \"3,4\",\n" +
-//                "            \"endX\": \"7.497316261389462\",\n" +
-//                "            \"endY\": \"4.490002939168056\",\n" +
-//                "            \"height\": \"0.3149606299212597\",\n" +
-//                "            \"id\": \"7\",\n" +
-//                "            \"masterName\": \"通信链路\",\n" +
-//                "            \"name\": \"通信链路.107\",\n" +
-//                "            \"pinX\": \"6.974248866491282\",\n" +
-//                "            \"pinY\": \"4.170517306420492\",\n" +
-//                "            \"text\": \"3\",\n" +
-//                "            \"type\": \"1\",\n" +
-//                "            \"width\": \"1.225839417114134\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"4\",\n" +
-//                "            \"FromId\": \"2\",\n" +
-//                "            \"IsLineType\": \"1\",\n" +
-//                "            \"IsTwoWay\": \"1\",\n" +
-//                "            \"beginX\": \"5.368504306238772\",\n" +
-//                "            \"beginY\": \"5.248669468948526\",\n" +
-//                "            \"connectId\": \"4,2\",\n" +
-//                "            \"endX\": \"5.891017930839761\",\n" +
-//                "            \"endY\": \"3.951737024894478\",\n" +
-//                "            \"height\": \"0.3149606299212597\",\n" +
-//                "            \"id\": \"8\",\n" +
-//                "            \"masterName\": \"通信链路\",\n" +
-//                "            \"name\": \"通信链路.105\",\n" +
-//                "            \"pinX\": \"5.629761118539267\",\n" +
-//                "            \"pinY\": \"4.600203246921502\",\n" +
-//                "            \"text\": \"2\",\n" +
-//                "            \"type\": \"1\",\n" +
-//                "            \"width\": \"1.398232545871276\"\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "            \"EndId\": \"4\",\n" +
-//                "            \"FromId\": \"1\",\n" +
-//                "            \"IsLineType\": \"1\",\n" +
-//                "            \"IsTwoWay\": \"1\",\n" +
-//                "            \"beginX\": \"3.498425566081287\",\n" +
-//                "            \"beginY\": \"3.477015925641436\",\n" +
-//                "            \"connectId\": \"4,1\",\n" +
-//                "            \"endX\": \"5.565354699939552\",\n" +
-//                "            \"endY\": \"3.477015925641436\",\n" +
-//                "            \"height\": \"0.3149606299212597\",\n" +
-//                "            \"id\": \"9\",\n" +
-//                "            \"masterName\": \"通信链路\",\n" +
-//                "            \"name\": \"通信链路\",\n" +
-//                "            \"pinX\": \"4.531890133010419\",\n" +
-//                "            \"pinY\": \"3.477015925641436\",\n" +
-//                "            \"text\": \"4\",\n" +
-//                "            \"type\": \"1\",\n" +
-//                "            \"width\": \"2.066929133858265\"\n" +
-//                "        }\n" +
-//                "    ]\n" +
-//                "}";
         String picData="";
         JSONObject pictureData = new JSONObject();
         pictureData.put("version", "2.0");
@@ -807,6 +439,91 @@ public class PictureController {
         picData=pictureData.toJSONString();
         System.out.println(pictureData.toJSONString());
         return picData;
+    }
+
+    //以下代码已经替换作废
+
+
+
+    public String getTable(String str) {
+
+        List<Map<String, Object>> json = new ArrayList<>();
+        try {
+            JSONArray arrayList = JSONArray.parseArray(str);
+            json.addAll(JSONUtils.jsonToObject(arrayList.toJSONString(), List.class, Map.class));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Map<String, Object> result = fileParserService.parseData(json);
+        System.out.println(result.get("table_name").toString());
+        return result.get("table_name").toString();
+    }
+
+
+
+
+    @ResponseBody
+    @RequestMapping("sendDataToKafka")
+    public void sendDataToKafka(HttpServletRequest request) throws IOException {
+        String idStr = request.getParameter("id");
+        Long id = null;
+        if (StringUtils.isNotEmpty(idStr)) {
+            id = Long.parseLong(idStr);
+        }
+        String jsonData = request.getParameter("json");
+        String name = request.getParameter("name");
+
+        // 将读取的数据转换为JSONObject
+        JSONObject jsonObject = JSONObject.parseObject(jsonData);
+
+        JSONArray btnArray = jsonObject.getJSONArray("datas");
+
+        // 循环获取控件
+        for (int i = 0; i < btnArray.size(); i++) {
+            String str = "";
+            JSONObject kongjianObj = btnArray.getJSONObject(i);
+            JSONObject json = kongjianObj.getJSONObject("json");
+            JSONObject obj = new JSONObject();
+            JSONArray data = new JSONArray();
+            JSONObject obj1 = new JSONObject();
+            obj.put("operationSource",PropertyUtil.readValue("DEFAULT_TOPIC"));
+            obj1.put("operationType", "INSERT");
+            JSONArray columns = new JSONArray();
+            JSONObject properties = null;
+            JSONObject columnObj1 = new JSONObject();
+            if (json.containsKey("properties")) {
+                properties = JSON.parseObject(json.getString("properties"));
+                Iterator<String> colIt = properties.keySet().iterator();
+                while (colIt.hasNext()) {
+                    String jsonKey = colIt.next();
+                    if (jsonKey.equals("id")) {
+                        continue;
+                    }
+                    if (jsonKey.toLowerCase().equals("dxbm")) {
+                        str = properties.get(jsonKey).toString();
+                        obj1.put("objectCode", "dxbm");
+                        obj1.put("objectCodeValue", str);
+                        continue;
+                    }
+                    JSONObject jsonCol = new JSONObject();
+                    jsonCol.put("name", jsonKey.toLowerCase());
+                    jsonCol.put("value", properties.get(jsonKey));
+                    columns.add(jsonCol);
+                }
+                String tableName = getTable(columns.toJSONString());
+                obj1.put("schema", env.getProperty("schema"));
+                obj1.put("table",tableName);
+                columnObj1.put("name", "dxbm");
+                columnObj1.put("value", str);
+                columns.add(columnObj1);
+                obj1.put("columns", columns);
+                data.add(obj1);
+                obj.put("data", data);
+                System.out.println(obj.toJSONString());
+                kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), obj.toJSONString());
+            }
+        }
     }
 
 

@@ -36,7 +36,7 @@
                 </i-col>
                 <i-col span="6">
                     <FormItem label="解析器">
-                        <Select filterable v-if="file" v-model="file.recommendParserId" @on-change="getparamList">
+                        <Select ref="parserSelect" filterable v-if="file" v-model="file.recommendParserId" @on-change="getparamList">
                             <Option v-for="item in parserData" :value="item.id" :key="item.id">{{ item.name }}</Option>
                         </Select>
                     </FormItem>
@@ -292,7 +292,9 @@
                 if (newFile != null) {
                     // 获取解析器列表
                     this.getParsers(this.file.classId);
+
                     // 获取推荐解析器
+                    this.getparamList(this.file.recommendParserId)
                     // this.getRecommendParser(this.file.recommendParserId);
                 }
 
@@ -356,11 +358,12 @@
                 }
                 this.uploadListFile = [];
                 this.resultFils = "";
+                this.$refs.parserSelect.setQuery(null);
             });
 
         },
         beforeDestroy(){
-            // alert("1111111111111111")
+
         },
         computed: {
             tableShowColumns() {
@@ -386,9 +389,9 @@
         methods: {
             //解析窗口，解析器下拉列表
             getParsers(classId) {
-                if (classId == null  || classId == '') {
-                    return;
-                }
+                // if (classId == null  || classId == '') {
+                //     return;
+                // }
                 this.$axios.post('mvc/fileParser/getOrderList', {
                     id: classId
                 }).then(res => {
@@ -445,12 +448,10 @@
                     })
                 },
 
-
             // 保存映射关系到新模板   TODO 显示前判断
             saveTemplateToNew(){
                 this.templateNameVisible = true;
             },
-
 
             submitTopology() {
                 const name = this.topologyName
@@ -572,7 +573,6 @@
                 });
             },
 
-
             loadJSONData(res) {
                 this.$axios.post('mvc/picture/handlePicture', {
                     jsonStr: res
@@ -642,10 +642,10 @@
                 })
             },
 
-            getparamList() {
-                if (this.file.recommendParserId) {
+            getparamList(recommendParserId) {
+                if (recommendParserId) {
                     this.$axios.post('mvc/fileParser/getParamList', {
-                        parserId: this.file.recommendParserId
+                        parserId: recommendParserId
                     }).then(res => {;
                         this.parserExtList = res.data;
                     });

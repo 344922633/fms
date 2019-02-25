@@ -172,11 +172,8 @@ public class FileParserController {
     @RequestMapping("getParamList")
     public Object getParamList(String parserId) {
         Map<String, Object> params = new HashMap<String, Object>();
-
         params.put("parserId", parserId);
-
         List<FileParserExt> list = fileParserExtService.getList(params);
-
         if (!ObjectUtils.isEmpty(list)) {
             Map<String, Object> paramsForBlock = new HashMap<>();
             List<BlockManage> blocklist = blockManageService.getList(paramsForBlock);

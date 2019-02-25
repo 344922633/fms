@@ -21,6 +21,12 @@
         #{image}
         )
     </insert>
+    <update id="update" parameterType="com.fms.domain.tuopu.Control">
+        UPDATE t_control
+        SET
+          name=#{name},type=#{type},type1=#{type1},image = #{image}
+        WHERE id=#{id}
+    </update>
 
 
 
@@ -34,17 +40,16 @@
         FROM t_control
     </select>
 
+    <select id="query" parameterType="String" resultType="integer">
+        SELECT count(*)
+        FROM t_control
+        where id = #{id}
+    </select>
     <delete id="delete" parameterType="String">
         DELETE FROM t_control
         WHERE id = #{id}
     </delete>
 
-    <update id="update" parameterType="com.fms.domain.tuopu.Control">
-        UPDATE t_control
-        SET
-          name=#{name},type=#{type},image = #{image}
-        WHERE id=#{id}
-    </update>
 
     <select id="queryPropertyById" parameterType="String" resultType="com.fms.domain.tuopu.ControlProperty">
         SELECT *

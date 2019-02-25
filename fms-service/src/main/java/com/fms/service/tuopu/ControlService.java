@@ -33,11 +33,15 @@ public class ControlService {
     public void add(Control control) {
         dao.insert(CLASSNAME, "add", control);
     }
-
+    public void update(Control control) {
+        dao.update(CLASSNAME, "update", control);
+    }
     public List<Control> getControl(String name) {
         return dao.getList(CLASSNAME, "getControl", name);
     }
-
+    public int query(String id) {
+        return dao.get(CLASSNAME, "query", id);
+    }
     public void delete(String id) {
         dao.delete(CLASSNAME, "delete", id);
     }

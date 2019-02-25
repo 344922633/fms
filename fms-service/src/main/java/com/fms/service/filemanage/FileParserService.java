@@ -88,6 +88,10 @@ public class FileParserService {
 
     }
 
+    public String getTableByTableId(Long id){
+        return dao.get(CLASSNAME, "getTableByTableId", id);
+    }
+
 
     public void delete(Long id) {
         dao.delete(CLASSNAME, "delete", id);
@@ -113,7 +117,7 @@ public class FileParserService {
         Map<String, Object> params = Param.get()
                 .put("ids", ids)
                 .build();
-        return dao.getList(CLASSNAME, "queryOrderList", params);
+        return dao.getList(CLASSNAME, "getOrderList", params);
     }
 
     /**

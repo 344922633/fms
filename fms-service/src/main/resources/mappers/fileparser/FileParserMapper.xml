@@ -43,11 +43,6 @@
         WHERE id = #{id}
     </select>
 
- <!--   <select id="getFile" parameterType="String" resultType="com.fms.domain.filemanage.FileParser">
-        SELECT <include refid="all" />
-        FROM file_parser
-        WHERE name LIKE CONCAT('%',#{name},'%')
-    </select>-->
     <sql id="condition">
         <if test="name != null and name != ''">
             AND name = #{name}
@@ -66,7 +61,7 @@
         </if>
 
     </sql>
-    <select id="queryOrderList" parameterType="map" resultType="com.fms.domain.filemanage.FileParser">
+    <select id="getOrderList" parameterType="map" resultType="com.fms.domain.filemanage.FileParser">
         SELECT <include refid="all" />
         FROM file_parser
         WHERE id IN (#{ids})
@@ -75,6 +70,7 @@
         FROM file_parser
         WHERE id NOT IN (#{ids})
     </select>
+
     <select id="query" parameterType="map" resultType="com.fms.domain.filemanage.FileParser">
         SELECT <include refid="all" />
         FROM file_parser
@@ -136,11 +132,15 @@
     </update>
 
 
+    <select id="getTableByTableId" parameterType="long" resultType="string">
+        select tableEnglish FROM table_info
+        WHERE id = #{id}
+    </select>
+
     <delete id="delete" parameterType="long">
         DELETE FROM file_parser
         WHERE id = #{id}
     </delete>
-
     <!--根据id查询对应的解析器名称-->
     <select id="getNamesByIds" parameterType="map" resultType="string">
         SELECT GROUP_CONCAT(name)
