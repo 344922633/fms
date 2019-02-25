@@ -484,13 +484,14 @@
                                             this.currentIndex = params.index;
                                             this.currentParser = params.row.recommendParserId;
                                             this.currentType = "预分类1";
-                                            this.fixCon = true;
-                                            let fileServerPath = this.config.fileServerPath;
-                                            let previewPath = this.config.previewPath;
-                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                                            let uri = previewPath + encodeURIComponent(fileUrl);
-                                            this.$refs.result.innerHTML =
-                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                            // this.fixCon = true;
+                                            // let fileServerPath = this.config.fileServerPath;
+                                            // let previewPath = this.config.previewPath;
+                                            // let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                                            // let uri = previewPath + encodeURIComponent(fileUrl);
+                                            // this.$refs.result.innerHTML =
+                                            //     '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                            this.preview(row);
                                         }
                                     }
                                 },"预览 |"),
@@ -838,13 +839,14 @@
                                                 this.currentIndex = params.index;
                                                 this.currentParser = params.row.recommendParserId;
                                                 this.currentType = "待分类";
-                                                this.fixCon = true;
-                                                let fileServerPath = this.config.fileServerPath;
-                                                let previewPath = this.config.previewPath;
-                                                let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                                                let uri = previewPath + encodeURIComponent(fileUrl);
-                                                this.$refs.result.innerHTML =
-                                                    '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                                // this.fixCon = true;
+                                                // let fileServerPath = this.config.fileServerPath;
+                                                // let previewPath = this.config.previewPath;
+                                                // let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                                                // let uri = previewPath + encodeURIComponent(fileUrl);
+                                                // this.$refs.result.innerHTML =
+                                                //     '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                                this.preview(row);
                                             }
                                         }
                                     },
@@ -930,13 +932,14 @@
                                             this.currentIndex = params.index;
                                             this.currentParser = params.row.recommendParserId;
                                             this.currentType = "其他";
-                                            this.fixCon = true;
-                                            let fileServerPath = this.config.fileServerPath;
-                                            let previewPath = this.config.previewPath;
-                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                                            let uri = previewPath + encodeURIComponent(fileUrl);
-                                            this.$refs.result.innerHTML =
-                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                            // this.fixCon = true;
+                                            // let fileServerPath = this.config.fileServerPath;
+                                            // let previewPath = this.config.previewPath;
+                                            // let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                                            // let uri = previewPath + encodeURIComponent(fileUrl);
+                                            // this.$refs.result.innerHTML =
+                                            //     '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                            this.preview(row);
                                         }
                                     }
                                 },"预览 |"),
@@ -2206,14 +2209,7 @@
                 // this.$refs.result.innerHTML =
                 //     '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
 
-                // 新版预览
-                var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
-                var ip = ipRex.exec(this.config.fileServerPath);
-                var a ="http://"+ ip +":8888/index?filePath="+ row.realPath +'&id='+ row.id;
-// var a ="http://localhost:8888/index?filePath="+row.realPath+'&id='+row.id;
-                var ifr = document.createElement('iframe ');
-                ifr.src = a;
-                document.body.appendChild(ifr);
+                this.preview(row);
             },
             highLightRow(row) {
                 this.viewFileName = row.name;
@@ -2321,6 +2317,18 @@
                             type: "error"
                         });
                     });
+            },
+
+            // 新版预览
+            preview(row){
+                // 新版预览
+                var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
+                var ip = ipRex.exec(this.config.fileServerPath);
+                var a ="http://"+ ip +":8888/index?filePath="+ row.realPath +'&id='+ row.id;
+// var a ="http://localhost:8888/index?filePath="+row.realPath+'&id='+row.id;
+                var ifr = document.createElement('iframe');
+                ifr.src = a;
+                document.body.appendChild(ifr);
             }
         },
         watch: {
