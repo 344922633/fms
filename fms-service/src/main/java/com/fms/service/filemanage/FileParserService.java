@@ -206,7 +206,9 @@ public class FileParserService {
 //            for (Map.Entry<String, Object> entry : child.entrySet()) {
 //                set.add(entry.getValue().toString().toLowerCase());
 //            }
-            set.add(child.get("name").toString().toLowerCase());
+            if(child.get("name")!=null){
+                set.add(child.get("name").toString().toLowerCase());
+            }
         }
         result.put("allKey", set);
         //查询所有表的字段信息

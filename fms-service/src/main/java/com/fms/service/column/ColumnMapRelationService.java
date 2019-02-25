@@ -145,6 +145,9 @@ public class ColumnMapRelationService {
         //查询所有的column_dic表记录
         List<ColumnDic> columnDics = findColumnDics();
 
+        if (dicMap == null ){
+            return;
+        }
         //遍历map
         for (Map.Entry<String, Object> entry : dicMap.entrySet()) {
             //获取key
