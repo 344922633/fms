@@ -1,6 +1,5 @@
 package com.fms.utils;
 
-import com.caeit.parser.ppt.PptParser;
 import com.fms.domain.filemanage.File;
 import com.fms.domain.filemanage.FileParser;
 import com.fms.domain.filemanage.FileParserExt;
