@@ -557,7 +557,6 @@ public class UploadController {
 
     /**
      * 保存文件
-     *
      * @param info
      * @param fileName
      * @param suffix
@@ -590,9 +589,7 @@ public class UploadController {
             file.setClassId(fileTypeList.get(0).getId());
             file.setClassName(fileTypeList.get(0).getName());
             file.setFatherClassName(fileTypeList.get(0).getType());
-
         }
-
 
         if (fileTypeList == null || fileTypeList.size() == 0) {
             file.setClassType("其他");
@@ -637,8 +634,6 @@ public class UploadController {
                     }
                 }
             }
-
-
         }
 
         fileService.add(file);

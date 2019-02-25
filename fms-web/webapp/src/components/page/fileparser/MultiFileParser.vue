@@ -511,7 +511,8 @@
                                                 this.parserVisible = true;
                                             }
                                         }
-                                    }," 选择解析器 "),
+                                    },
+                                    " 选择解析器 "),
                                 hasMulte? h("a",{
                                     on: {
                                         click: () => {
@@ -543,7 +544,33 @@
                         title: "操作",
                         key: "recommendParserName",
                         render: (h, params) => {
+                            const {row, index} = params || {};
+                            const {recommendParserId} = row || {};
+                            const hasMulte =
+                                this.idPropertiesMap[recommendParserId] &&
+                                this.idPropertiesMap[recommendParserId].length;
                             return h("div", [
+                                h("a",{
+                                    on: {
+                                        click: () => {
+                                            //alert(waitClassData[params.index].type);
+                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
+                                                this.parsers = res.data;
+                                            });
+                                            event.stopPropagation();
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = "预分类2";
+                                            this.fixCon = true;
+                                            let fileServerPath = this.config.fileServerPath;
+                                            let previewPath = this.config.previewPath;
+                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                                            let uri = previewPath + encodeURIComponent(fileUrl);
+                                            this.$refs.result.innerHTML =
+                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                        }
+                                    }
+                                },"预览 |"),
                                 h(
                                     "a",
                                     {
@@ -561,9 +588,14 @@
                                                 this.parserVisible = true;
                                             }
                                         }
-                                    },
-                                    "选择解析器"
-                                )
+                                    }," 选择解析器 "),
+                                hasMulte? h("a",{
+                                    on: {
+                                        click: () => {
+                                            this.setVisible = true;
+                                        }
+                                    }
+                                },"| 多参数设置"): null
                             ]);
                         }
                     }
@@ -588,7 +620,33 @@
                         title: "操作",
                         key: "recommendParserName",
                         render: (h, params) => {
+                            const {row, index} = params || {};
+                            const {recommendParserId} = row || {};
+                            const hasMulte =
+                                this.idPropertiesMap[recommendParserId] &&
+                                this.idPropertiesMap[recommendParserId].length;
                             return h("div", [
+                                h("a",{
+                                    on: {
+                                        click: () => {
+                                            //alert(waitClassData[params.index].type);
+                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
+                                                this.parsers = res.data;
+                                            });
+                                            event.stopPropagation();
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = "预分类3";
+                                            this.fixCon = true;
+                                            let fileServerPath = this.config.fileServerPath;
+                                            let previewPath = this.config.previewPath;
+                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                                            let uri = previewPath + encodeURIComponent(fileUrl);
+                                            this.$refs.result.innerHTML =
+                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                        }
+                                    }
+                                },"预览 |"),
                                 h(
                                     "a",
                                     {
@@ -606,9 +664,14 @@
                                                 this.parserVisible = true;
                                             }
                                         }
-                                    },
-                                    "选择解析器"
-                                )
+                                    }," 选择解析器 "),
+                                hasMulte? h("a",{
+                                    on: {
+                                        click: () => {
+                                            this.setVisible = true;
+                                        }
+                                    }
+                                },"| 多参数设置"): null
                             ]);
                         }
                     }
@@ -633,7 +696,33 @@
                         title: "操作",
                         key: "recommendParserName",
                         render: (h, params) => {
+                            const {row, index} = params || {};
+                            const {recommendParserId} = row || {};
+                            const hasMulte =
+                                this.idPropertiesMap[recommendParserId] &&
+                                this.idPropertiesMap[recommendParserId].length;
                             return h("div", [
+                                h("a",{
+                                    on: {
+                                        click: () => {
+                                            //alert(waitClassData[params.index].type);
+                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
+                                                this.parsers = res.data;
+                                            });
+                                            event.stopPropagation();
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = "预分类4";
+                                            this.fixCon = true;
+                                            let fileServerPath = this.config.fileServerPath;
+                                            let previewPath = this.config.previewPath;
+                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                                            let uri = previewPath + encodeURIComponent(fileUrl);
+                                            this.$refs.result.innerHTML =
+                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                        }
+                                    }
+                                },"预览 |"),
                                 h(
                                     "a",
                                     {
@@ -651,9 +740,14 @@
                                                 this.parserVisible = true;
                                             }
                                         }
-                                    },
-                                    "选择解析器"
-                                )
+                                    }," 选择解析器 "),
+                                hasMulte? h("a",{
+                                    on: {
+                                        click: () => {
+                                            this.setVisible = true;
+                                        }
+                                    }
+                                },"| 多参数设置"): null
                             ]);
                         }
                     }
@@ -678,7 +772,33 @@
                         title: "操作",
                         key: "recommendParserName",
                         render: (h, params) => {
+                            const {row, index} = params || {};
+                            const {recommendParserId} = row || {};
+                            const hasMulte =
+                                this.idPropertiesMap[recommendParserId] &&
+                                this.idPropertiesMap[recommendParserId].length;
                             return h("div", [
+                                h("a",{
+                                    on: {
+                                        click: () => {
+                                            //alert(waitClassData[params.index].type);
+                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
+                                                this.parsers = res.data;
+                                            });
+                                            event.stopPropagation();
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = "预分类5";
+                                            this.fixCon = true;
+                                            let fileServerPath = this.config.fileServerPath;
+                                            let previewPath = this.config.previewPath;
+                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                                            let uri = previewPath + encodeURIComponent(fileUrl);
+                                            this.$refs.result.innerHTML =
+                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                        }
+                                    }
+                                },"预览 |"),
                                 h(
                                     "a",
                                     {
@@ -696,9 +816,14 @@
                                                 this.parserVisible = true;
                                             }
                                         }
-                                    },
-                                    "选择解析器"
-                                )
+                                    }," 选择解析器 "),
+                                hasMulte? h("a",{
+                                    on: {
+                                        click: () => {
+                                            this.setVisible = true;
+                                        }
+                                    }
+                                },"| 多参数设置"): null
                             ]);
                         }
                     }
@@ -723,7 +848,33 @@
                         title: "操作",
                         key: "recommendParserName",
                         render: (h, params) => {
+                            const {row, index} = params || {};
+                            const {recommendParserId} = row || {};
+                            const hasMulte =
+                                this.idPropertiesMap[recommendParserId] &&
+                                this.idPropertiesMap[recommendParserId].length;
                             return h("div", [
+                                h("a",{
+                                    on: {
+                                        click: () => {
+                                            //alert(waitClassData[params.index].type);
+                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
+                                                this.parsers = res.data;
+                                            });
+                                            event.stopPropagation();
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = "预分类6";
+                                            this.fixCon = true;
+                                            let fileServerPath = this.config.fileServerPath;
+                                            let previewPath = this.config.previewPath;
+                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                                            let uri = previewPath + encodeURIComponent(fileUrl);
+                                            this.$refs.result.innerHTML =
+                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                        }
+                                    }
+                                },"预览 |"),
                                 h(
                                     "a",
                                     {
@@ -741,9 +892,14 @@
                                                 this.parserVisible = true;
                                             }
                                         }
-                                    },
-                                    "选择解析器"
-                                )
+                                    }," 选择解析器 "),
+                                hasMulte? h("a",{
+                                    on: {
+                                        click: () => {
+                                            this.setVisible = true;
+                                        }
+                                    }
+                                },"| 多参数设置"): null
                             ]);
                         }
                     }
@@ -768,7 +924,33 @@
                         title: "操作",
                         key: "recommendParserName",
                         render: (h, params) => {
+                            const {row, index} = params || {};
+                            const {recommendParserId} = row || {};
+                            const hasMulte =
+                                this.idPropertiesMap[recommendParserId] &&
+                                this.idPropertiesMap[recommendParserId].length;
                             return h("div", [
+                                h("a",{
+                                    on: {
+                                        click: () => {
+                                            //alert(waitClassData[params.index].type);
+                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
+                                                this.parsers = res.data;
+                                            });
+                                            event.stopPropagation();
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = "预分类7";
+                                            this.fixCon = true;
+                                            let fileServerPath = this.config.fileServerPath;
+                                            let previewPath = this.config.previewPath;
+                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                                            let uri = previewPath + encodeURIComponent(fileUrl);
+                                            this.$refs.result.innerHTML =
+                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                        }
+                                    }
+                                },"预览 |"),
                                 h(
                                     "a",
                                     {
@@ -786,9 +968,14 @@
                                                 this.parserVisible = true;
                                             }
                                         }
-                                    },
-                                    "选择解析器"
-                                )
+                                    }," 选择解析器 "),
+                                hasMulte? h("a",{
+                                    on: {
+                                        click: () => {
+                                            this.setVisible = true;
+                                        }
+                                    }
+                                },"| 多参数设置"): null
                             ]);
                         }
                     }
