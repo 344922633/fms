@@ -467,7 +467,33 @@
                         title: "操作",
                         key: "recommendParserName",
                         render: (h, params) => {
+                            const {row, index} = params || {};
+                            const {recommendParserId} = row || {};
+                            const hasMulte =
+                                this.idPropertiesMap[recommendParserId] &&
+                                this.idPropertiesMap[recommendParserId].length;
                             return h("div", [
+                                h("a",{
+                                    on: {
+                                        click: () => {
+                                            //alert(waitClassData[params.index].type);
+                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
+                                                this.parsers = res.data;
+                                            });
+                                            event.stopPropagation();
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
+                                            this.currentType = "预分类1";
+                                            this.fixCon = true;
+                                            let fileServerPath = this.config.fileServerPath;
+                                            let previewPath = this.config.previewPath;
+                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                                            let uri = previewPath + encodeURIComponent(fileUrl);
+                                            this.$refs.result.innerHTML =
+                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                        }
+                                    }
+                                },"预览 |"),
                                 h(
                                     "a",
                                     {
@@ -485,9 +511,14 @@
                                                 this.parserVisible = true;
                                             }
                                         }
-                                    },
-                                    "选择解析器"
-                                )
+                                    }," 选择解析器 "),
+                                hasMulte? h("a",{
+                                    on: {
+                                        click: () => {
+                                            this.setVisible = true;
+                                        }
+                                    }
+                                },"| 多参数设置"): null
                             ]);
                         }
                     }
@@ -2167,13 +2198,22 @@
 
             //左列table rowclick 事件1
             handleLeftRowClick(row) {
-                this.highLightRow(row);
-                let fileServerPath = this.config.fileServerPath;
-                let previewPath = this.config.previewPath;
-                let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                let uri = previewPath + encodeURIComponent(fileUrl);
-                this.$refs.result.innerHTML =
-                    '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                // this.highLightRow(row);
+                // let fileServerPath = this.config.fileServerPath;
+                // let previewPath = this.config.previewPath;
+                // let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
+                // let uri = previewPath + encodeURIComponent(fileUrl);
+                // this.$refs.result.innerHTML =
+                //     '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+
+                // 新版预览
+                var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
+                var ip = ipRex.exec(this.config.fileServerPath);
+                var a ="http://"+ ip +":8888/index?filePath="+ row.realPath +'&id='+ row.id;
+// var a ="http://localhost:8888/index?filePath="+row.realPath+'&id='+row.id;
+                var ifr = document.createElement('iframe ');
+                ifr.src = a;
+                document.body.appendChild(ifr);
             },
             highLightRow(row) {
                 this.viewFileName = row.name;
