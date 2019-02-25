@@ -20,12 +20,12 @@
                 </FormItem>
                 <FormItem prop="source" label="Jar名称">
                     <!--<Input v-model="parser.name"/>-->
-                    <Select v-model="parser.source" filterable @on-change="getParserClassNameList" clearable>
+                    <Select ref="parserClassNameSelect" v-model="parser.source" filterable @on-change="getParserClassNameList" clearable>
                         <Option v-for="(item,index) in parserNameList" :value="item.path" :key="index" >{{ item.name }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="填写方式">
-                    <Select v-model="parser.inputType" filterable>
+                    <Select v-model="parser.inputType" >
                         <Option value="0" >自动获取类名及方法名</Option>
                         <Option value="1" >手动输入类名及方法名</Option>
                     </Select>
@@ -557,6 +557,9 @@
             //编辑弹框显示状态监听
             handleVisibleChange(val) {
                 if (!val) {
+                    this.$refs.parserClassNameSelect.setQuery(null);
+                    this.$refs.parserClassNameRef.setQuery(null);
+                    this.$refs.parserMethodNameRef.setQuery(null);
                     this.$refs['parserForm'].resetFields();
                 }
             },

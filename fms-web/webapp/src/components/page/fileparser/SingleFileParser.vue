@@ -129,13 +129,13 @@
             <div>
                <Form v-if="columnData && Object.keys(columnData).length">
                     <FormItem inline :label-width="100" label="请选择模板">
-                        <Select filterable
+                        <Select
                                 @on-change="(templateName) => onChangeTemplate(templateName)"
                                 style="width: 180px"
                                 v-model="selectTemplateName"
-                                :clearable="true"
-                        >        &lt;!&ndash;@on-change="(schemaId) => conChangeTemplate(schemaId)"&ndash;&gt;
-                            <Option v-for="template in  this.templateNameInfos" :value="template.templateName" :key="template.templateName"> {{ template.templateName }}</Option>
+                                :clearable="true">
+
+                            <Option v-for="template in  templateNameInfos" :value="template.templateName" :key="template.templateName"> {{ template.templateName }}</Option>
                         </Select>
                     </FormItem>
 
@@ -150,7 +150,7 @@
                     <FormItem :label-width="100" :label="key">
                     </FormItem>
                     <FormItem label="选择库">
-                        <Select filterable
+                        <Select
                                 style="width: 180px"
                                 @on-change="(schemaId) =>getTables(schemaId, key)"
 
@@ -161,7 +161,7 @@
                         </Select>
                     </FormItem>
                     <FormItem label="选择表">
-                        <Select filterable
+                        <Select
                                 @on-change="(tableId) => getColumnsByTable(tableId, key)"
                                 style="width: 180px"
                                 v-model="columnKeyNamesMap[key].tableId"
@@ -172,7 +172,7 @@
                     </FormItem>
                     <FormItem label="选择字段" :data="columnKeyNamesMap[key].columnId">
 
-                        <Select filterable
+                        <Select
                                 @on-change="(columnId) => getDicByColumn(columnId, key)"
                                 style="width: 180px"
                                 v-model="columnKeyNamesMap[key].columnId+''"
@@ -183,7 +183,7 @@
                     </FormItem>
                     <template v-if="columnSelectMap[key] && columnSelectMap[key].dicTables">
                         <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.columnChinese">
-                            <Select filterable
+                            <Select
                                     style="width: 180px"
                                     :data="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
                                     v-model="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
@@ -628,8 +628,9 @@
                         });
 
                         let selectData = {};
+                        console.log(this.columnData);
                         for (let key in columnData) {
-                            if (this.columnData[key].length > 0) {
+                            if (this.columnData[key]!=null && this.columnData[key].length > 0) {
                                 selectData[key] = columnData[key][0];
                             }
                         }
@@ -708,7 +709,7 @@
                     //根据表名获取该表字段信息
                     this.getColumns(this.table_name);
                     delete res.data.data.table_name;
-                    this.allKey = res.data.data.allKey;
+                    this.allKey = res.data.data.allKeyForDisplay;
                     delete res.data.data.allKey;
 
                     //key的映射关系
