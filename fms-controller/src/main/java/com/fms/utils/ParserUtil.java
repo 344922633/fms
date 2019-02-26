@@ -45,8 +45,9 @@ public class ParserUtil {
                     {
                         classes[i+1]=boolean.class;
                         //params[i+1] = Integer.valueOf(parserExtList.get(i).getParameterValue()) ;
-                        if("true".equals(parserExtList.get(i).getParameterValue()))
-                        {
+                        if("true".equals(parserExtList.get(i).getParameterValue())||
+                                "1".equals(parserExtList.get(i).getParameterValue()) ){
+
                             params[i+1] = true ;
                         }
                         else

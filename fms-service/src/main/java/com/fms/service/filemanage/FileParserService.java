@@ -203,9 +203,7 @@ public class FileParserService {
         //json中所有的key
         Set<String> set = new HashSet<>();
         for (Map<String, Object> child : data) {
-//            for (Map.Entry<String, Object> entry : child.entrySet()) {
-//                set.add(entry.getValue().toString().toLowerCase());
-//            }
+
             if(child.get("name")!=null){
                 set.add(child.get("name").toString().toLowerCase());
             }
@@ -228,6 +226,7 @@ public class FileParserService {
         for (Map.Entry<String, List<Map<String, String>>> entry : tables.entrySet()) {
             int num = 0;
             Set<String> existFields = new LinkedHashSet<>();
+
             for (Map<String, String> table : entry.getValue()) {
                 String column_name = table.get("column_name").toLowerCase();
                 for (String key : set) {
@@ -249,6 +248,7 @@ public class FileParserService {
         for (String key : set) {
             Set<String> arrayList = new LinkedHashSet<>();
             //已经匹配到得字段，数据无法修改，只能取匹配到的列
+            if(maxExistFields!=null){
             if (maxExistFields.contains(key)) {
                 arrayList.add(key);
                 result.put(key, arrayList);
@@ -263,6 +263,7 @@ public class FileParserService {
                     }
                 }
                 result.put(key, arrayList);
+            }
             }
         }
         result.put("table_name", maxTable);

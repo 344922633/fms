@@ -461,25 +461,20 @@ public class FileParserController {
 
     @RequestMapping("singleParse")
     public Object singleParse(@ModelAttribute FileParser fileParser) {
-
         //解析文件内容
         Map<String, String> data = this.readFileContent(fileParser);
         if (data == null) {
             return ExtUtil.failure("文件解析失败");
         }
         List<Map<String, Object>> json = new ArrayList<>();
-
         //json中所有的key
         Set<String> set = new HashSet<>();
-
         try {
             if (data.get("validateFileType") != null && data.get("validateFileType").equals("false")) {
                 return ExtUtil.failure("文件格式不匹配");
             }
-
             String jsonBottom = data.get("jsonBottomLevel");
             JSONObject jb = JSON.parseObject(jsonBottom);
-
             jsonBottom = "[" + data.get("jsonBottomLevel") + "]";
             JSONArray arrayList = JSONArray.parseArray(jsonBottom);
 
@@ -500,19 +495,17 @@ public class FileParserController {
                     String key = it.next();
                     String value = jsonObject.getString(key);
                     json.addAll(JSONUtils.jsonToObject(value, List.class, Map.class));
-
                 }
-
             }
-
         } catch (Exception e) {
             return ExtUtil.failure(e.getMessage());
         }
+
+
         Map<String, Object> result = fileParserService.parseData(json);
         isParser(fileParser);
         result.put("allKeyForDisplay", set);
         result.put("jsonStr", data.get("jsonBottomLevel"));
-
         return ExtUtil.success(result);
     }
 

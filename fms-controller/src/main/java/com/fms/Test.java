@@ -129,6 +129,13 @@ public class Test {
             fileParserExt4.setParameterValue("1");
             parserExtList.add(fileParserExt4);
 
+            FileParserExt fileParserExt5 = new FileParserExt();
+            fileParserExt5.setId(1544091268648L);
+            fileParserExt5.setParserId(1539050371244L);
+            fileParserExt5.setParameterName("String");
+            fileParserExt5.setParameterDesc("visoPath");
+            fileParserExt5.setParameterValue("E:\\");
+            parserExtList.add(fileParserExt5);
 
             if (!ObjectUtils.isEmpty(parserExtList)) {
                 extParams.put("parserExtList", parserExtList);
