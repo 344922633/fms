@@ -268,7 +268,7 @@
                             ...item
                         })
                     })
-                    console.log(this.inputs);
+
                 }).catch(function (error) {
                     console.log(error);
                 })
@@ -310,7 +310,7 @@
                     // editproperties:this.form.editproperties
                 }
                 //添加
-                console.log(params,'param')
+
                 url = "mvc/control/operationControl";
 
                 this.$axios.post(url, params).then( (result) => {
@@ -383,12 +383,12 @@
                     this.$message.warning('请填写完整表单, 并上传图片')
                     return
                 }
-                for(let i = 0,len = tableData.length; i < len; i++) {
-                    if(tableData[i].name == this.form.name){
-                        this.$message.warning('控件名重复');
-                        return
-                    }
-                }
+                // for(let i = 0,len = tableData.length; i < len; i++) {
+                //     if(tableData[i].name == this.form.name){
+                //         this.$message.warning('控件名重复');
+                //         return
+                //     }
+                // }
 
                 this.inputs = this.inputs.filter(v => {
                     return !!v.text

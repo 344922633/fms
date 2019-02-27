@@ -277,7 +277,7 @@ public class PictureController {
             }
         }
         }else{
-            return ExtUtil.failure("系统出错了");
+            return ExtUtil.failure("名称重复");
         }
     return ExtUtil.success("操作成功");
     }

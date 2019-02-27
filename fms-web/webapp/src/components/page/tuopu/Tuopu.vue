@@ -31,7 +31,7 @@
     const initProperties = (arr) => {
         const ret = []
         arr.forEach(item => {
-            console.log(item)
+
             const {
                 propertyFlag,
                 property,
@@ -55,7 +55,7 @@
             }
             ret.push(propertyOption)
         })
-        console.log(ret)
+
         return ret
     }
 
@@ -107,7 +107,7 @@
                     data.forEach(item => {
                         ret[item.controlId] = initProperties(item.properties)
                     })
-                    console.log('ret!!', ret)
+
                     this.idPropertiesMap = ret
                 }).catch(function (error) {
                     console.log(error);
@@ -183,8 +183,7 @@
                         name: '子网设备',
                         images: this.images
                     }, callback: function (editor) {
-//      	console.log(editor.exportJSON())
-//      	editor.loadDatas()
+
                         that.graphEditor = editor
                         var toolbox = editor.toolbox;
                         toolbox.hideDefaultGroups();
@@ -232,19 +231,7 @@
                     console.log(error);
                 });
             },
-            /*
-                        getQueryData() {
-                            const id = this.$route.query.id
-                            this.$axios.post('mvc/picture/handlePicture',{id}).then((res) => {
-                                const {data} = res
-                                if (data) {
-                                    const {json} = data
-                                    this.loadJSONData(json)
-                                }
-                            }).catch(function (error) {
-                                console.log(error);
-                            });
-                        },*/
+
             loadJSONData(res) {
                 try{
                     res = JSON.parse(res)
@@ -264,6 +251,14 @@
                     this.$message.error('请输入图片名称')
                     return
                 }
+                // for(let i = 0,len = tableData.length; i < len; i++) {
+                //     if(tableData[i].name == this.form.name){
+                //         this.$message.warning('控件名重复');
+                //         return
+                //     }
+                // }
+
+
                 const json = this.graphEditor.exportJSON()
 
                 const loading = this.$loading({
@@ -276,8 +271,9 @@
                     id,
                     name,
                     json:JSON.stringify(json)
-                }).then((res) => {  //接口返回数据
-                    this.$message.success('保存成功')
+                }).then((res) => {
+                    //接口返回数据
+                    this.$message.warning(res.data.data)
                     loading.close()
                 }).catch(function (error) {
                     loading.close()

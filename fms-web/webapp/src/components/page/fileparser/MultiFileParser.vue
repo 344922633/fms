@@ -17,7 +17,7 @@
                         </el-col>
                         <el-col :span="3">
 
-                            <Select v-model="numOfSelect" filterable>
+                            <Select v-model="numOfSelect" >
                                 <Option v-for="(item,key) in numOfSelectOptions" :value="item" :key="item">{{ item }}
                                 </Option>
                             </Select>
@@ -147,7 +147,7 @@
 
         </div>
 
-        <Modal v-model="fixCon" title="解析结果" width="1500px" ok-text="保存映射关系" @on-ok="bcysgx">
+        <Modal v-model="fixCon" title="解析结果" width="1500px" >
             <!--<i-col span="4">-->
                 <!--<Button @click="handlePreview">预览拓扑图</Button>-->
             <!--</i-col>-->
@@ -187,17 +187,17 @@
                 </table>
             </div>
 
-            <Divider> 解析字段</Divider>
+
 
             <div>
-                <Form v-if="columnData && Object.keys(columnData).length" style="height: 80px; overflow-y: auto;">
+                <Form v-if="columnData && Object.keys(columnData).length" style="height: 100px">
                     <FormItem inline :label-width="100" label="请选择模板">
-                        <Select filterable
+                        <Select
                                 @on-change="(templateName) => onChangeTemplate(templateName)"
                                 style="width: 180px"
                                 v-model="selectTemplateName"
                                 :clearable="true"
-                        >        &lt;!&ndash;@on-change="(schemaId) => conChangeTemplate(schemaId)"&ndash;&gt;
+                        >
                             <Option v-for="template in  this.templateNameInfos" :value="template.templateName" :key="template.templateName"> {{ template.templateName }}</Option>
                         </Select>
                     </FormItem>
@@ -210,7 +210,7 @@
                     <FormItem :label-width="100" :label="key"></FormItem>
 
                     <FormItem label="选择库">
-                        <Select filterable
+                        <Select
                                 style="width: 180px"
                                 @on-change="(schemaId) =>getTables(schemaId, key)"
 
@@ -222,8 +222,8 @@
                     </FormItem>
 
                     <FormItem label="选择表">
-                        {{columnKeyNamesMap[key].tableId}}
-                        <Select filterable
+
+                        <Select
                                 @on-change="(tableId) => getColumnsByTable(tableId, key)"
                                 style="width: 180px"
                                 v-model="columnKeyNamesMap[key].tableId"
@@ -234,7 +234,7 @@
                     </FormItem>
                     <FormItem label="选择字段" :data="columnKeyNamesMap[key].columnId">
 
-                        <Select filterable
+                        <Select
                                 @on-change="(columnId) => getDicByColumn(columnId, key)"
                                 style="width: 180px"
                                 v-model="columnKeyNamesMap[key].columnId+''"
@@ -245,7 +245,7 @@
                     </FormItem>
                     <template v-if="columnSelectMap[key] && columnSelectMap[key].dicTables">
                         <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.columnChinese">
-                            <Select filterable
+                            <Select
                                     style="width: 180px"
                                     :data="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
                                     v-model="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
@@ -269,10 +269,11 @@
                 <div ref="table" v-show="false"></div>
                 <Button type="primary" @click="saveTemplate(1)">保存映射关系到原模板</Button>
                 <Button type="primary" @click="saveTemplateToNew">保存映射关系到新模板</Button>
+            <div slot="footer"></div>
         </Modal>
 
         <Modal v-model="parserVisible" title="修改解析器" @on-ok="handleOk">
-            <Select v-model="currentParser" filterable>
+            <Select v-model="currentParser" >
                 <Option v-for="(item,key) in parsers" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
         </Modal>
@@ -477,13 +478,13 @@
                                     on: {
                                         click: () => {
                                             //alert(waitClassData[params.index].type);
-                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
-                                                this.parsers = res.data;
-                                            });
-                                            event.stopPropagation();
-                                            this.currentIndex = params.index;
-                                            this.currentParser = params.row.recommendParserId;
-                                            this.currentType = "预分类1";
+                                            // this.$axios.post("mvc/fileParser/getList", {}).then(res => {
+                                            //     this.parsers = res.data;
+                                            // });
+                                            // event.stopPropagation();
+                                            // this.currentIndex = params.index;
+                                            // this.currentParser = params.row.recommendParserId;
+                                            // this.currentType = "预分类1";
                                             // this.fixCon = true;
                                             // let fileServerPath = this.config.fileServerPath;
                                             // let previewPath = this.config.previewPath;
@@ -554,21 +555,7 @@
                                 h("a",{
                                     on: {
                                         click: () => {
-                                            //alert(waitClassData[params.index].type);
-                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
-                                                this.parsers = res.data;
-                                            });
-                                            event.stopPropagation();
-                                            this.currentIndex = params.index;
-                                            this.currentParser = params.row.recommendParserId;
-                                            this.currentType = "预分类2";
-                                            this.fixCon = true;
-                                            let fileServerPath = this.config.fileServerPath;
-                                            let previewPath = this.config.previewPath;
-                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                                            let uri = previewPath + encodeURIComponent(fileUrl);
-                                            this.$refs.result.innerHTML =
-                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                            this.preview(row);
                                         }
                                     }
                                 },"预览 |"),
@@ -630,21 +617,7 @@
                                 h("a",{
                                     on: {
                                         click: () => {
-                                            //alert(waitClassData[params.index].type);
-                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
-                                                this.parsers = res.data;
-                                            });
-                                            event.stopPropagation();
-                                            this.currentIndex = params.index;
-                                            this.currentParser = params.row.recommendParserId;
-                                            this.currentType = "预分类3";
-                                            this.fixCon = true;
-                                            let fileServerPath = this.config.fileServerPath;
-                                            let previewPath = this.config.previewPath;
-                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                                            let uri = previewPath + encodeURIComponent(fileUrl);
-                                            this.$refs.result.innerHTML =
-                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                            this.preview(row);
                                         }
                                     }
                                 },"预览 |"),
@@ -706,21 +679,7 @@
                                 h("a",{
                                     on: {
                                         click: () => {
-                                            //alert(waitClassData[params.index].type);
-                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
-                                                this.parsers = res.data;
-                                            });
-                                            event.stopPropagation();
-                                            this.currentIndex = params.index;
-                                            this.currentParser = params.row.recommendParserId;
-                                            this.currentType = "预分类4";
-                                            this.fixCon = true;
-                                            let fileServerPath = this.config.fileServerPath;
-                                            let previewPath = this.config.previewPath;
-                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                                            let uri = previewPath + encodeURIComponent(fileUrl);
-                                            this.$refs.result.innerHTML =
-                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                            this.preview(row);
                                         }
                                     }
                                 },"预览 |"),
@@ -782,21 +741,7 @@
                                 h("a",{
                                     on: {
                                         click: () => {
-                                            //alert(waitClassData[params.index].type);
-                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
-                                                this.parsers = res.data;
-                                            });
-                                            event.stopPropagation();
-                                            this.currentIndex = params.index;
-                                            this.currentParser = params.row.recommendParserId;
-                                            this.currentType = "预分类5";
-                                            this.fixCon = true;
-                                            let fileServerPath = this.config.fileServerPath;
-                                            let previewPath = this.config.previewPath;
-                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                                            let uri = previewPath + encodeURIComponent(fileUrl);
-                                            this.$refs.result.innerHTML =
-                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                            this.preview(row);
                                         }
                                     }
                                 },"预览 |"),
@@ -858,21 +803,7 @@
                                 h("a",{
                                     on: {
                                         click: () => {
-                                            //alert(waitClassData[params.index].type);
-                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
-                                                this.parsers = res.data;
-                                            });
-                                            event.stopPropagation();
-                                            this.currentIndex = params.index;
-                                            this.currentParser = params.row.recommendParserId;
-                                            this.currentType = "预分类6";
-                                            this.fixCon = true;
-                                            let fileServerPath = this.config.fileServerPath;
-                                            let previewPath = this.config.previewPath;
-                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                                            let uri = previewPath + encodeURIComponent(fileUrl);
-                                            this.$refs.result.innerHTML =
-                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                            this.preview(row);
                                         }
                                     }
                                 },"预览 |"),
@@ -934,21 +865,7 @@
                                 h("a",{
                                     on: {
                                         click: () => {
-                                            //alert(waitClassData[params.index].type);
-                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
-                                                this.parsers = res.data;
-                                            });
-                                            event.stopPropagation();
-                                            this.currentIndex = params.index;
-                                            this.currentParser = params.row.recommendParserId;
-                                            this.currentType = "预分类7";
-                                            this.fixCon = true;
-                                            let fileServerPath = this.config.fileServerPath;
-                                            let previewPath = this.config.previewPath;
-                                            let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                                            let uri = previewPath + encodeURIComponent(fileUrl);
-                                            this.$refs.result.innerHTML =
-                                                '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
+                                            this.preview(row);
                                         }
                                     }
                                 },"预览 |"),
@@ -1007,38 +924,13 @@
                                 this.idPropertiesMap[recommendParserId] &&
                                 this.idPropertiesMap[recommendParserId].length;
                             return h("div", [
-                                h(
-                                    "a",
-                                    {
-                                        on: {
-                                            click: () => {
-                                                //alert(waitClassData[params.index].type);
-                                                this.$axios
-                                                    .post(
-                                                        "mvc/fileParser/getListForWaitClass?fileSuffix=" +
-                                                        this.waitClassData[params.index].type,
-                                                        {}
-                                                    )
-                                                    .then(res => {
-                                                        this.parsers = res.data;
-                                                    });
-                                                event.stopPropagation();
-                                                this.currentIndex = params.index;
-                                                this.currentParser = params.row.recommendParserId;
-                                                this.currentType = "待分类";
-                                                // this.fixCon = true;
-                                                // let fileServerPath = this.config.fileServerPath;
-                                                // let previewPath = this.config.previewPath;
-                                                // let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                                                // let uri = previewPath + encodeURIComponent(fileUrl);
-                                                // this.$refs.result.innerHTML =
-                                                //     '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
-                                                this.preview(row);
-                                            }
+                                h("a",{
+                                    on: {
+                                        click: () => {
+                                            this.preview(row);
                                         }
-                                    },
-                                    "预览 |"
-                                ),
+                                    }
+                                },"预览 |"),
                                 h(
                                     "a",
                                     {
@@ -1111,21 +1003,6 @@
                                 h("a",{
                                     on: {
                                         click: () => {
-                                            //alert(waitClassData[params.index].type);
-                                            this.$axios.post("mvc/fileParser/getList", {}).then(res => {
-                                                this.parsers = res.data;
-                                            });
-                                            event.stopPropagation();
-                                            this.currentIndex = params.index;
-                                            this.currentParser = params.row.recommendParserId;
-                                            this.currentType = "其他";
-                                            // this.fixCon = true;
-                                            // let fileServerPath = this.config.fileServerPath;
-                                            // let previewPath = this.config.previewPath;
-                                            // let fileUrl = fileServerPath + "/" + row.groups + "/" + row.realPath;
-                                            // let uri = previewPath + encodeURIComponent(fileUrl);
-                                            // this.$refs.result.innerHTML =
-                                            //     '<iframe src="' + uri + '" height="600" width="98%"></iframe>';
                                             this.preview(row);
                                         }
                                     }
@@ -2421,6 +2298,7 @@
                 }
             },
             handleExport() {
+
                 if (this.parsed == 0) {
                     this.$notify({
                         title: "提示",
@@ -2433,43 +2311,75 @@
                 let parserData = [];
                 let dataId=[];
                 //加入预分类解析数据
-                this.afterPreClassData.forEach(item => {
-                    this.afterPreSelection.forEach(item1 => {
-                        if ((item1.id = item.id)) {
+                //这句代码以前是最外层循环，应该是写错了 会导致数据多次重复
+                // this.afterPreClassData.forEach(item => {
+                    this.afterPreSelection.forEach(item => {
+                    if ((item!=null)) {
                             data.push(item.parseResult);//把每个文件的id拼接在数据之后
                             parserData.push({
                                 parserId: item.recommendParserId,
                                 fileId: item.id
                             });
-                            dataId.push(item.id);//加入id标识
-                        }
+
+                            //目的是去重
+                            //[{"fileId":1551093019920,"parserId": 1551143976882},{"fileId": 1551093017005,"parserId": 1551143976882}]
+                            //分隔符
+                        //     let object = {};
+                        //     let data2 = [];
+                        //     if(parserData.length>1){
+                        //     for(let j=0;j<parserData.length;j++){
+                        //         if(object != {}){
+                        //         if(parserData[j].fileId == object.fileId && parserData[j].parserId == object.parserId){
+                        //             data2.push ({
+                        //                 parserId: parserData[j].fileId,
+                        //                 fileId: parserData[j].parserId
+                        //                 });
+                        //             };
+                        //         };
+                        //         object= parserData[j];
+                        //     };
+                        //     parserData = data2;
+                        // };
+                        //     //这里也是为了给dataId去重
+                        //     if(dataId != null && dataId.length != 0){
+                        //         for(let j=0;j<dataId.length;j++){
+                        //             if(dataId[j]==item.id){
+                        //                 break;
+                        //             }
+                        //         };
+                        //     }else {
+                        //         dataId.push(item1.id);//加入id标识
+                         dataId.push(item.id);//加入id标识
+                            // };
+                            //分隔符
+                        };
                     });
-                });
+                // });
                 //加入待分类解析数据
-                this.afterWaitClassData.forEach(item => {
-                    this.afterWaitSelection.forEach(item1 => {
-                        if ((item1.id = item.id)) {
-                            data.push(item.parseResult);
-                            parserData.push({
-                                parserId: item.recommendParserId,
-                                fileId: item.id
-                            });
-                            dataId.push(item.id);//加入id标识
-                        }
-                    });
+
+                this.afterWaitSelection.forEach(item => {
+                    if ((item!=null)) {
+                        data.push(item.parseResult);//把每个文件的id拼接在数据之后
+                        parserData.push({
+                            parserId: item.recommendParserId,
+                            fileId: item.id
+                        });
+                                dataId.push(item.id);//加入id标识
+                            //分隔符
+                    };
                 });
                 //加入未分类解析数据
-                this.afterOtherData.forEach(item => {
-                    this.afterOtherSelection.forEach(item1 => {
-                        if ((item1.id = item.id)) {
-                            data.push(item.parseResult);
-                            parserData.push({
-                                parserId: item.recommendParserId,
-                                fileId: item.id
-                            });
-                            dataId.push(item.id);//加入id标识
-                        }
-                    });
+
+                this.afterOtherSelection.forEach(item => {
+                    if ((item!=null)) {
+                        data.push(item.parseResult);//把每个文件的id拼接在数据之后
+                        parserData.push({
+                            parserId: item.recommendParserId,
+                            fileId: item.id
+                        });
+                        dataId.push(item.id);//加入id标识
+                        //分隔符
+                    };
                 });
                 if (data.length == 0) {
                     this.$notify({
@@ -2479,13 +2389,15 @@
                     });
                     return;
                 }
+
+
                 this.$axios
                     .post("mvc/fileParser/multiParseSaveDataToHBase", {
                         dataJSON: data.join("#"),
                         parserDataJSON: JSON.stringify(parserData),
                         dataIdJSON:dataId.join("#"),
                         customKeysObj:JSON.stringify(this.customKeysObj),
-                        columnKeyNamesMapObj:JSON.stringify(this.columnKeyNamesMapObj)
+                        columnKeyNamesMapObj:JSON.stringify(this.columnKeyNamesMap)
                     })
                     .then(res => {
                         this.$notify({

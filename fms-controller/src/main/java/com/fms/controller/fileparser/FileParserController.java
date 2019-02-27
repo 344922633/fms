@@ -678,8 +678,8 @@ public class FileParserController {
                     } else {
                         file.setParseResult(data.get("jsonBottomLevel"));
                         //将文件修改为已解析状态
-                        String name = file.getName();
-                        fileParserService.updateIsParserMultiFile(name, 1);
+//                        String name = file.getName();
+//                        fileParserService.updateIsParserMultiFile(name, 1);
 
                     }
                 }
@@ -734,42 +734,48 @@ public class FileParserController {
      * @param data
      * @return
      */
-    private void singleFileStrFormatNew(JSONObject json, JSONObject data) {
+    private Object singleFileStrFormatNew(JSONObject json, JSONObject data) {
+        boolean result = false;
+
+
         System.out.println(json);
-        JSONObject jsonNew = new JSONObject();
-        for (String key : json.keySet()) {
-            JSONArray array = json.getJSONArray(key);
-            JSONArray arrayNew = new JSONArray();
+                   JSONObject jsonNew = new JSONObject();
+            for (String key : json.keySet()) {
+                JSONArray array = json.getJSONArray(key);
+                JSONArray arrayNew = new JSONArray();
 
-            for (int i = 0; i < array.size(); i++) {
-                JSONObject obj = array.getJSONObject(i);
-                JSONObject objNew = new JSONObject();
-                for (String key1 : obj.keySet()) {
-                    objNew.put(key1.toLowerCase(), obj.get(key1));
+                for (int i = 0; i < array.size(); i++) {
+                    JSONObject obj = array.getJSONObject(i);
+                    JSONObject objNew = new JSONObject();
+                    for (String key1 : obj.keySet()) {
+                        objNew.put(key1.toLowerCase(), obj.get(key1));
+                    }
+                    arrayNew.add(objNew);
                 }
-                arrayNew.add(objNew);
+                jsonNew.put(key, arrayNew);
             }
-            jsonNew.put(key, arrayNew);
-        }
 
-        System.out.println(jsonNew);
+            System.out.println(jsonNew);
 
-        // 获取日志key
-        String logKeyStr = "";
-        for (String logKey : jsonNew.keySet()) {
-            logKeyStr = logKey;
-            // 日志数组，遍历获取kafka消息
-            JSONArray logArray = jsonNew.getJSONArray(logKeyStr);
+            // 获取日志key
+            String logKeyStr = "";
+            for (String logKey : jsonNew.keySet()) {
+                logKeyStr = logKey;
+                // 日志数组，遍历获取kafka消息
+                JSONArray logArray = jsonNew.getJSONArray(logKeyStr);
 
-            Map<String, Set<String>> map = new HashMap<String, Set<String>>();
-            Map<String, String> valueMap = new HashMap<String, String>();
-            Map<String, JSONObject> dicMap = new HashMap<String, JSONObject>();
+                Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+                Map<String, String> valueMap = new HashMap<String, String>();
+                Map<String, JSONObject> dicMap = new HashMap<String, JSONObject>();
 
             for (String key : data.keySet()) {
                 JSONObject colJson = data.getJSONObject(key);
-
+                //当schemeId为空或者0时不发 kafka
                 // columnId 为空，不发kafka
                 String columnId = colJson.getString("columnId");
+                String schemaId = colJson.getString("schemaId");
+
+            if (StringUtils.isNotEmpty(schemaId) && !(schemaId.equals("0"))) {
                 if (StringUtils.isNotEmpty(columnId)) {
                     String table_schema = colJson.getString("schemaId") + "_" + colJson.getString("tableId");
 
@@ -786,6 +792,7 @@ public class FileParserController {
                     valueMap.put(valueKey, key.toLowerCase());
                     dicMap.put(table_schema, colJson.getJSONObject("dicMap"));
                 }
+            }
             }
 
             for (int i = 0; i < logArray.size(); i++) {
@@ -821,7 +828,6 @@ public class FileParserController {
                     for (String colId : colSet) {
                         JSONObject columnJson = new JSONObject();
                         // 75 29 10
-
                         ColumnInfo columnInfo = columnSetService.getColumnInfo(Integer.valueOf(colId));
                         // 获取column名称  ：非枚举字段
                         columnJson.put("name", columnInfo.getColumnEnglish().toLowerCase());
@@ -860,12 +866,16 @@ public class FileParserController {
                 }
 
                 System.out.println("kafka消息格式：\n" + rootObj);
+
+
                 kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), rootObj.toJSONString());
+                result = true;
              /*   kafkaTemplate.send(env.getProperty("DEFAULT_TOPIC"),
                         rootObj.toJSONString());*/
             }
-        }
 
+        }
+       return result;
 
     }
 
@@ -890,6 +900,7 @@ public class FileParserController {
 
         //数据入库
         boolean result = fileParserService.parseDataSaveDataHBase(file_id, parserId, jsonStr, fileInfo, fileType, fileMD5, fileName);
+
         if (result) {
             return ExtUtil.success("入库成功");
         } else {
@@ -902,37 +913,46 @@ public class FileParserController {
      * 多文件解析入HBase库
      */
     @RequestMapping("multiParseSaveDataToHBase")
-    public Object multiParseSaveDataToHBase(String dataJSON, String parserDataJSON, String dataIdJSON, String customKeysObj, String columnKeyNamesMapObj) {
+    public Object multiParseSaveDataToHBase(String dataJSON, String parserDataJSON, String dataIdJSON, String columnKeyNamesMapObj) {
         boolean result = false;
-        //转换完毕后的解析数据
-        List<List<Map<String, Object>>> finalParseData = new LinkedList<>();
+
+//        //转换完毕后的解析数据
+//         List<List<Map<String, Object>>> finalParseData = new LinkedList<>();
         //解析器和文件信息
         List<Map<String, Long>> parserData = JSONUtils.jsonToObject(parserDataJSON, List.class, Map.class);
         //多个解析结果拆分开
         String s[] = dataJSON.split("#");
         String id[] = dataIdJSON.split("#");
+
         for (int i = 0; i < s.length; i++) {
             if (i % 2 == 0) {
                 com.fms.domain.filemanage.File file = fileService.get(parserData.get(i).get("fileId"));
                 String fileMD5 = file.getFileMd5();
                 String fileName = file.getName();
                 String fileInfo = file.toString();
+                Long parserId = file.getRecommendParserId();
+                Long file_id  = file.getId();
+
                 List<FileType> typeList = fileTypeService.getListByFileParserId(parserData.get(i).get("parserId"));
                 String fileType = typeList.get(0).getType();
                 //数据入库;
+                String jsonStr = s[i];
+//                result = fileParserService.multiParseDataSaveDataHBase(file_id, parserId, jsonStr, fileInfo, fileType, fileMD5, fileName);
                 //发送kafka
-                JSONObject data = JSONObject.parseObject(s[i]);
-                JSONObject jsonTemp = JSONObject.parseObject(columnKeyNamesMapObj);
-                if (jsonTemp.containsKey(id[i])) {
-                    //如果配置了才发akafka
-                    JSONObject json = jsonTemp.getJSONObject(id[i]);
+                JSONObject json = JSONObject.parseObject(s[i]);
+//                JSONObject jsonTemp = JSONObject.parseObject(columnKeyNamesMapObj);
+                JSONObject data = JSONObject.parseObject(columnKeyNamesMapObj);
+//                if(jsonTemp!=null){
+//                if (jsonTemp.containsKey(id[i])) {
+////                    如果配置了才发akafka
+//                    JSONObject json = jsonTemp.getJSONObject(id[i]);
+//
                     singleFileStrFormatNew(json, data);
-                }
-
-
+//                }
+//                }
             }
-
         }
+        //解析结果入库
         if (result) {
             return ExtUtil.success("入库成功");
         } else {

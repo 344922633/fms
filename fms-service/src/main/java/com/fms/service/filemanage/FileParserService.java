@@ -423,7 +423,6 @@ public class FileParserService {
         //将文件修改为已解析状态
         File file = new File();
         file.setId(file_id);
-        file.setIsParser(1);
         file.setRecommendParserName(fileParser.getName());
         file.setClassName(fileParser.getClassName());
         file.setRecommendParserId(parserId);
@@ -441,28 +440,7 @@ public class FileParserService {
     /**
      * 解析数据并入HBase库(多文件)
      */
-    public boolean multiParseDataSaveDataHBase(List<List<Map<String, Object>>> finalParseData, List<Map<String, Long>> parserData, String jsonStr, String fileInfo, String fileType, String fileMD5, String fileName) {
-        int index = 0;
-        for (List<Map<String, Object>> item : finalParseData) {
-//			Map<String,Object> parseData=this.multiParseData(item);
-            //构建入库数据
-//			Map<String,Object> sqlData=this.buildSqlData(item,parseData.get("table_name").toString(), (Map<String, String>) parseData.get("customKey"));
-            //批量插入数据
-//			dao.insert(CLASSNAME,"parseDataSaveDatabase",sqlData);
-            Map<String, Long> parserItem = parserData.get(index);
-            FileParser fileParser = new FileParser();
-            fileParser.setId(parserItem.get("parserId"));
-            fileParser = dao.get(FileParserService.CLASSNAME, "get", fileParser);
-            //将文件修改为已解析状态
-            File file = new File();
-            file.setId(parserItem.get("fileId"));
-            file.setIsParser(1);
-            file.setRecommendParserName(fileParser.getName());
-            file.setClassName(fileParser.getClassName());
-            file.setRecommendParserId(parserItem.get("parserId"));
-            dao.update(FileService.CLASSNAME, "update", file);
-            index++;
-        }
+    public boolean multiParseDataSaveDataHBase(Long file_id, Long parserId, String jsonStr, String fileInfo, String fileType, String fileMD5, String fileName) {
 
         HbaseUtil.getHbaseConnection();
 

@@ -138,8 +138,6 @@
                             <Option v-for="template in  templateNameInfos" :value="template.templateName" :key="template.templateName"> {{ template.templateName }}</Option>
                         </Select>
                     </FormItem>
-
-
                 </Form>
             </div>
             <!--选择表和字段-->
