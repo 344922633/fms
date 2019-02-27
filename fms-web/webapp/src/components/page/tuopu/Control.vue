@@ -148,7 +148,7 @@
                             :limit="imgLimit"
                             :file-list="productImgs"
                             :multiple="isMultiple"
-                            :on-preview="handlePictureCardPreview"
+                            :on-preview="handleEditPictureCardPreview"
                             :on-remove="handleRemove"
                             :on-success="handleUploadSuccess"
                             :before-upload="beforeAvatarUpload"
@@ -259,15 +259,22 @@
                 this.$axios.post('mvc/listColumnsFormasterslave', { masterSlaveId: id }).then((res) => {
                     let { data } = res;
                     data = data || [];
+                    let i =0;
                     data.forEach(item => {
                         const {column} = item
+                        //接受后台传的图片地址
+                        const {image} = item;
+                        this.productImgs = [{url: item.image}];
                         //const { columnChinese, columnEnglish } = column
                         this.inputs.push({
                             text:column.columnChinese,
                             canDelete: false,
                             ...item
                         })
+
+
                     })
+
 
                 }).catch(function (error) {
                     console.log(error);
@@ -508,17 +515,14 @@
                 this.editDialogVisible = true;
             },
             beforeAvatarUpload(file) {//文件上传之前调用做一些拦截限制
-                const isJPG = true;
+
                 // const isJPG = file.type === 'image/jpeg';
                 const isLt2M = file.size / 1024 / 1024 < 2;
 
-                // if (!isJPG) {
-                //   this.$message.error('上传头像图片只能是 JPG 格式!');
-                // }
                 if (!isLt2M) {
                     this.$message.error('上传图片大小不能超过 2MB!');
                 }
-                return isJPG && isLt2M;
+                return isLt2M;
             },
             handleUploadSuccess(res, file) {//图片上传成功
                 const {success, error, url} = res

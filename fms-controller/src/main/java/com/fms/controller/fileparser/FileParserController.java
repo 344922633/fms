@@ -678,8 +678,8 @@ public class FileParserController {
                     } else {
                         file.setParseResult(data.get("jsonBottomLevel"));
                         //将文件修改为已解析状态
-//                        String name = file.getName();
-//                        fileParserService.updateIsParserMultiFile(name, 1);
+                        String name = file.getName();
+                        fileParserService.updateIsParserMultiFile(name, 1);
 
                     }
                 }
@@ -937,7 +937,7 @@ public class FileParserController {
                 String fileType = typeList.get(0).getType();
                 //数据入库;
                 String jsonStr = s[i];
-//                result = fileParserService.multiParseDataSaveDataHBase(file_id, parserId, jsonStr, fileInfo, fileType, fileMD5, fileName);
+                result = fileParserService.multiParseDataSaveDataHBase(file_id, parserId, jsonStr, fileInfo, fileType, fileMD5, fileName);
                 //发送kafka
                 JSONObject json = JSONObject.parseObject(s[i]);
 //                JSONObject jsonTemp = JSONObject.parseObject(columnKeyNamesMapObj);
@@ -952,7 +952,7 @@ public class FileParserController {
 //                }
             }
         }
-        //解析结果入库
+
         if (result) {
             return ExtUtil.success("入库成功");
         } else {

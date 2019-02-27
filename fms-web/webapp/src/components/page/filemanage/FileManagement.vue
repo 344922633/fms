@@ -194,7 +194,7 @@
                                             <tr>
                                                 <td>分类：</td>
                                                 <td>
-                                                    <Select v-model="selectNFile.selectClassId" style="width:300px">
+                                                    <Select v-model="selectNFile.selectClassId" clearable style="width:300px">
                                                         <Option v-for="item in fileTypeData" :value="item.id" :key="item.id">{{ item.name }}</Option>
                                                     </Select>
                                                 </td>

@@ -28,6 +28,28 @@
                         <Option v-for="item in tableNames" :value="item.id" :key="item.id">{{ item.tableChinese }}</Option>
                     </Select>
                 </FormItem>
+                <FormItem prop="image" label="图片">
+                    <el-upload  v-model="masterSlave.image"
+                        class="upload-idCard"
+                        ref="elUpload"
+                        :class=" canAddPic  ? 'uploadSuccess': ''"
+                        action="mvc/control/imgUpload"
+                        :on-success="handleUploadSuccess"
+                        :on-remove="handleRemove"
+                        list-type="picture-card"
+                        accept="image/*"
+                        :limit="imgLimit"
+                        :file-list="productImgs"
+                        :on-preview="handlePictureCardPreview"
+                        :before-upload="beforeAvatarUpload"
+                    >
+                        <i class="el-icon-plus"></i>
+                    </el-upload>
+                    <el-dialog :visible.sync="dialogVisible">
+                        <img width="100%" :src="dialogImageUrl" alt="">
+                    </el-dialog>
+                </FormItem>
+
 
                 <FormItem>
                     <Button type="success" long @click="handleFormOk">提交</Button>
@@ -49,17 +71,29 @@
         components: {
             BlockManage
         },
+        computed: {
+            canAddPic() {
+                return this.uploadSuccessState || (this.productImgs.length > 0)
+            }
+        },
         data () {
             return {
+                uploadSuccessState:false,
                 tableNames:[],
                 tableNames2:[],
                  masterSlave: {
                     name: '',
                     type: '',
                     masterTable:'',
-                    slaveTable:''
+                    slaveTable:'',
+                     image: ''
                 },
 
+                //图片
+                dialogImageUrl: '',
+                dialogVisible: false,
+                imgLimit: 1,
+                productImgs: [],
 
                 param1:"参数1",
                 paramDesc1:"参数1的描述",
@@ -75,6 +109,7 @@
                 seleteId:'',
                 //表格数据
                 tableData: [],
+
                 //当前页数
                 curPage: 1,
                 //总条数
@@ -180,6 +215,7 @@
                         id:row.id
                     }).then(res => {
                         me.masterSlave = res.data;
+                        me.productImgs = [{url: row.image}];
                         this.formVisible = true;
                     }).catch(e => {
 
@@ -188,6 +224,7 @@
 
                 }
             },
+
             //删除操作
             deleteInfo(row){
                 this.seleteId=row.id
@@ -231,7 +268,8 @@
                     name: '',
                     type: '',
                     masterTable:'',
-                    slaveTable:''
+                    slaveTable:'',
+                    image: ''
                 };
                 this.formVisible = true;
                 this.getTables();
@@ -242,12 +280,20 @@
             //编辑弹框显示状态监听
             handleVisibleChange(val) {
                 if (!val) {
+                    //清空
+                    this.$refs.elUpload.clearFiles();
+                    this.productImgs=[];
+                    this.uploadSuccessState = false;
                     this.$refs['parserForm'].resetFields();
                 }
             },
             //处理编辑弹框确认操作
             handleFormOk() {
-
+                const {name, type,masterTableId,slaveTableId} = this.masterSlave;
+                if ( !name || !type || !masterTableId || !slaveTableId) {
+                this.$message.warning('请填写完整表单, 并上传图片')
+                    return
+                }
                 let isValid = true;
                 this.$refs['parserForm'].validate((valid) => {
                     if (!valid) {
@@ -290,11 +336,82 @@
                 })
             },
 
+            handleUploadSuccess(res, file) {//图片上传成功
+                const {success, error, url} = res
+                if (!success) {
+                    this.$message.error(error);
+                    this.$refs.elUpload.clearFiles()
+                    return
+                }
+                // this.masterSlave.image = url;
+                this.uploadSuccessState = true;
+            },
+            handleRemove(file, fileList) {//移除图片
+                this.uploadSuccessState = false;
+                this.productImgs = [];
+            },
+
+            handlePictureCardPreview(file) {//预览图片时调用
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
+            },
+            beforeAvatarUpload(file) {//文件上传之前调用做一些拦截限制
+
+                // const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!');
+                }
+                return isLt2M;
+            },
         }
     }
 </script>
-<style scoped>
+<style>
     .tableBtn {
         margin: 5px;
     }
+
+     .uploadSuccess .el-upload.el-upload--picture-card{
+         display:none;
+     }
+    .uploadImgMask .el-dialog__wrapper{
+        z-index:999999 !important;
+    }
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .el-upload__input {
+        display: none !important;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
+    }
+
+    /* .avatar {
+         cancelCrop width: 178px;
+         height: 178px;
+         display: block;
+     }
+ */
+    .proper-wrap {
+        margin-bottom: 12px;
+    }
+
 </style>

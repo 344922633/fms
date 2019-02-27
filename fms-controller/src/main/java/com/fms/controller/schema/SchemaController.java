@@ -80,7 +80,7 @@ public class SchemaController {
         masterSlaveDoForQuery.setId(masterSlaveId);
         List<MasterSlaveDo> list = masterSlaveService.query(masterSlaveDoForQuery);
 
-        List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> returnList = new ArrayList<>();
         if (list != null && list.size() > 0) {
             MasterSlaveDo masterSlaveDo = list.get(0);
 
@@ -98,7 +98,6 @@ public class SchemaController {
 
             List<ColumnInfo> returnListForSLave = columnInfoService.getColumnsInfo(masterSlaveDo.getSlaveTableId());
 
-
             for (ColumnInfo column : returnListForSLave) {
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("column", column);
@@ -108,6 +107,9 @@ public class SchemaController {
                 }
                 returnList.add(map);
             }
+            Map<String, Object> ma =new HashMap<>();
+            ma.put("image",masterSlaveDo.getImage());
+            returnList.add(returnList.size(),ma);
             return returnList;
         }
         return null;
@@ -205,18 +207,20 @@ public class SchemaController {
 
     @RequestMapping("/masterSlave/add")
     public Object addmasterSlave(MasterSlaveDo masterSlaveDo) {
+        if(masterSlaveService.queryName(masterSlaveDo.getName()) !=0){
+                return ExtUtil.failure("名称重复");
+        }
+
+
         try {
             masterSlaveService.add(masterSlaveDo);
+
         } catch (Exception e) {
             return ExtUtil.failure(e.getCause().getMessage());
         }
         return ExtUtil.success("操作成功");
     }
 
-    @RequestMapping("/masterSlave/findOne")
-    public Object findOne(Integer id){
-        return masterSlaveService.findMasterSlaveById(id);
-    }
 
     @RequestMapping("/masterSlave/update")
     public Object updatemasterSlave(MasterSlaveDo masterSlaveDo) {
@@ -227,6 +231,11 @@ public class SchemaController {
             return ExtUtil.failure(e.getCause().getMessage());
         }
         return ExtUtil.success("操作成功");
+    }
+
+    @RequestMapping("/masterSlave/findOne")
+    public Object findOne(Integer id){
+        return masterSlaveService.findMasterSlaveById(id);
     }
 
     @RequestMapping("/masterSlave/delete")

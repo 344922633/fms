@@ -9,12 +9,19 @@
         <if test="name != null and name != ''">
             AND name = #{name}
         </if>
-        <if test="masterTableId != 0">
-            AND masterTableId = #{masterTableId}
-        </if>
         <if test="type != null and type != ''">
             AND type = #{type}
         </if>
+        <if test="masterTableId != null and masterTableId != '' and masterTableId != 0">
+            AND masterTableId = #{masterTableId}
+        </if>
+        <if test="slaveTableId != null and slaveTableId != ''and slaveTableId != 0">
+            AND masterTableId = #{masterTableId}
+        </if>
+        <if test="image != null and image != ''and image != 0">
+            AND image = #{image}
+        </if>
+
     </sql>
 
 
@@ -31,17 +38,23 @@
     </select>
 
     <insert id="add" parameterType="com.fms.domain.filemanage.MasterSlaveDo">
-        INSERT INTO t_masterslave (name,type,masterTableId,slaveTableId)
+        INSERT INTO t_masterslave (name,type,masterTableId,slaveTableId,image)
         VALUES (
         #{name},
         #{type},
         #{masterTableId},
-        #{slaveTableId}
+        #{slaveTableId},
+        #{image}
         )
     </insert>
+
+    <select id="queryName" parameterType="string" resultType="int">
+        select count(*) from t_masterslave where name =#{name};
+    </select>
+
     <update id="update" parameterType="com.fms.domain.filemanage.MasterSlaveDo">
         update t_masterslave set slaveTableId = #{slaveTableId},
-        `name` = #{name},masterTableId = #{masterTableId},`type` = #{type}
+        `name` = #{name},masterTableId = #{masterTableId},`type` = #{type},`image` = #{image}
         where id = #{id}
     </update>
 
@@ -55,7 +68,7 @@
     </select>
 
     <select id="findMasterSlaveById" resultType="Map" parameterType="Integer">
-        select id,masterTableId,slaveTableId,`type`, `name` from t_masterslave where id = #{id}
+        select id,masterTableId,slaveTableId,`type`, `name`,image from t_masterslave where id = #{id}
     </select>
 </mapper>
 

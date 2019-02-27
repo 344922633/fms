@@ -18,6 +18,8 @@ public class MasterSlaveDo {
 
     private String slaveTable;
 
+    private String image;
+
     private String type;
 
     private String lable;

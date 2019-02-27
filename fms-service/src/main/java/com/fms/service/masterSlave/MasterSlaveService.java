@@ -28,6 +28,10 @@ public class MasterSlaveService {
         dao.insert(CLASSNAME, "add", masterSlaveDo);
     }
 
+    public int queryName(String name) {
+        return dao.get(CLASSNAME, "queryName", name);
+    }
+
     public void update(MasterSlaveDo masterSlaveDo) {
         dao.update(CLASSNAME, "update", masterSlaveDo);
     }
