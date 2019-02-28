@@ -3,7 +3,7 @@
         <Button @click="handleAdd">新增</Button>
         <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table"
                   ref="multipleTable">
-            <el-table-column prop="id" align="center" label="id" width="120">
+            <el-table-column prop="templateName" align="center" label="模板名称" width="120">
             </el-table-column>
             <el-table-column prop="columnKey" align="center" label="键名" width="120">
             </el-table-column>
@@ -34,17 +34,17 @@
                         <el-input v-model="formList[index].columnKey" style="width: 130px"></el-input>
                     </FormItem>
                     <FormItem label="库名：" >
-                        <Select @on-change="(schemaId) => getTables(schemaId,index)" v-model="formList[index].schemaId" filterable style="width: 130px">
+                        <Select @on-change="(schemaId) => getTables(schemaId,index)" v-model="formList[index].schemaId" style="width: 130px">
                             <Option v-for="(schema,schemaIdx) in schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>
                         </Select>
                     </FormItem>
                     <FormItem label="表名：">
-                        <Select @on-change="(tableId) => getColumnsByTable(tableId,index)" v-model="formList[index].tableId" filterable style="width: 130px">
+                        <Select @on-change="(tableId) => getColumnsByTable(tableId,index)" v-model="formList[index].tableId" style="width: 130px">
                             <Option v-for="(table,tableIdx) in selectMap[index].tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
                         </Select>
                     </FormItem>
                     <FormItem label="字段名：">
-                        <Select @on-change="(columnId) => getDicByColumn(columnId,index)" v-model="formList[index].columnId" filterable style="width: 130px">
+                        <Select @on-change="(columnId) => getDicByColumn(columnId,index)" v-model="formList[index].columnId" style="width: 130px">
                             <Option v-for="(column,columnIdx) in selectMap[index].columns" :value="column.id" :key="column.id"> {{ column.columnChinese }}</Option>
                         </Select>
                     </FormItem>

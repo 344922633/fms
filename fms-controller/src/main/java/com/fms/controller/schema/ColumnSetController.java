@@ -84,7 +84,17 @@ public class ColumnSetController {
     @RequestMapping("/getColumnsForTable")
     public List<ColumnInfo> getColumnsForTable(String tableId){
         long tid=Long.parseLong(tableId);
-        return columnSetService.getColumnsForTable(tid);
+        List<ColumnInfo> ColumnInfos = new ArrayList<>();
+        //根据表查出所有字段
+        List<ColumnInfo> columnInfoList=columnSetService.getColumnsForTable(tid);
+        //根据是否有字段中文名进行过滤
+        for(ColumnInfo columnInfo : columnInfoList) {
+            if(columnInfo.getColumnChinese()!=null){
+                ColumnInfos.add(columnInfo);
+            }
+        }
+        return ColumnInfos;
+
     }
 
     @RequestMapping("/getTablesBySchemaId")

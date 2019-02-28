@@ -45,10 +45,13 @@
                 <Divider>字段信息({{tableMapItem.tableChinese}})
                 </Divider>
                 <FormItem v-for="(item, index) in tableColumns" :key="item.columnEnglish" :label="item.columnEnglish">
-                    <!--<Input v-if="item.inputType != 'select' && !(item.max_length > 100) " v-model="item.value" :placeholder="item.data_type" :readonly="item.readonly" :value="item.value" style="width:300px;"/>-->
-                   <!-- <Input v-model="item.tableId"  style="width:300px;"/>-->
 
-                    <Input v-model="item.columnChinese" :placeholder="item.data_type" :value="item.columnChinese" style="width:300px;"/>
+                    <!--&lt;!&ndash;DXBM字段显示时间戳  只读&ndash;&gt;    :type="checkType(item.dataType)"                      -->
+
+                    <Input v-model="item.columnChinese" v-if="item.columnEnglish.toLowerCase() != 'dxbm'" :placeholder="item.dataType"  :value="item.columnChinese" style="width:300px;"/>
+
+                    <Input v-model="item.columnChinese" v-if="item.columnEnglish.toLowerCase() == 'dxbm'" disabled="disabled" :value="item.columnChinese" style="width:300px;"/>
+
 
                     <Select v-if="checkedArr[index]" filterable v-model="item.dicTableName" style="width:300px;">
                         <Option v-for="item in dicTableName" :value="item" :key="item">{{ item }}</Option>
@@ -112,10 +115,12 @@
 
 <script>
     export default {
+
         data() {
             return {
                 table_name: '',
                 tableChinese: '',
+                dataType: '',
                 tableNameEdit: '',
                 tableMapItem: {},
                 tableColumns: [],
@@ -143,18 +148,18 @@
             this.getDicTables();
         },
         methods: {
-            checkType(type){
-                if(type == "varchar" || type == "char"){
-                    return "test";
-                }else{
-                    return "number";
-                }
-            },
-            async getTables() {
+            // checkType(type){
+            //     if(type == "varchar" || type == "char"){
+            //         return "test";
+            //     }else{
+            //         return "number";
+            //     }
+            // },
+        async getTables() {
         return this.$axios.post('mvc/getAllXxList').then(res => {
             this.tableNames = res.data;
-    })
-    },
+            })
+            },
 
     getDicTables() {
         this.$axios.post('mvc/getXxDicTable').then(res => {
