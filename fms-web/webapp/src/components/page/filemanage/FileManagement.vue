@@ -895,7 +895,7 @@
                     name:this.selectNFile.selectFileName,
                     description:this.selectNFile.selectFileDescription,
                     type:this.selectNFile.selectFileType,
-                    classId:this.selectNFile.selectClassId,
+                    classId:this.selectNFile.selectClassId || null,
                     recommendParserId:this.selectNFile.selectFileRecommendParserId
                 }).then(res => {
                     if(res.data.success){

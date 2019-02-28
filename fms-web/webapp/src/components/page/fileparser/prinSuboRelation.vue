@@ -8,7 +8,6 @@
         <Page :current="curPage" :total="totalCount" :page-size="pageSize" @on-change="handlePageChange"
               show-total />
 
-        <!--<Modal v-model="formVisible" :title="formTitle" :model="parser" @on-visible-change="handleVisibleChange" @on-ok="handleFormOk" footer-hide>-->
         <Modal v-model="formVisible" :title="formTitle" @on-visible-change="handleVisibleChange" @on-ok="handleFormOk" footer-hide>
             <Form :label-width="80" ref="parserForm" :model="masterSlave">
                 <FormItem prop="name" label="目标名称">
@@ -19,33 +18,33 @@
                 </FormItem>
 
                 <FormItem prop="masterTable" label="主表">
-                     <Select v-model="masterSlave.masterTableId" filterable>
+                    <Select v-model="masterSlave.masterTableId">
                         <Option v-for="item in tableNames" :value="item.id" :key="item.id">{{ item.tableChinese }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem prop="slaveTable" label="从表">
-                    <Select v-model="masterSlave.slaveTableId" filterable>
+                    <Select v-model="masterSlave.slaveTableId">
                         <Option v-for="item in tableNames" :value="item.id" :key="item.id">{{ item.tableChinese }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem prop="image" label="图片">
-                    <el-upload  v-model="masterSlave.image"
-                        class="upload-idCard"
-                        ref="elUpload"
-                        :class=" canAddPic  ? 'uploadSuccess': ''"
-                        action="mvc/control/imgUpload"
-                        :on-success="handleUploadSuccess"
-                        :on-remove="handleRemove"
-                        list-type="picture-card"
-                        accept="image/*"
-                        :limit="imgLimit"
-                        :file-list="productImgs"
-                        :on-preview="handlePictureCardPreview"
-                        :before-upload="beforeAvatarUpload"
+                    <el-upload v-model="masterSlave.image"
+                                ref="elUpload"
+                                :class=" canAddPic  ? 'uploadSuccess': ''"
+                                action="mvc/control/imgUpload"
+                                list-type="picture-card"
+                                accept="image/*"
+                                :limit="imgLimit"
+                                :file-list="productImgs"
+                                :on-preview="handlePictureCardPreview"
+                                :on-remove="handleRemove"
+                                :on-success="handleUploadSuccess"
+                                :before-upload="beforeAvatarUpload"
+                                :on-error="imgUploadError"
                     >
                         <i class="el-icon-plus"></i>
                     </el-upload>
-                    <el-dialog :visible.sync="dialogVisible">
+                    <el-dialog class="uploadImgMask" :visible.sync="dialogVisible">
                         <img width="100%" :src="dialogImageUrl" alt="">
                     </el-dialog>
                 </FormItem>
@@ -81,20 +80,18 @@
                 uploadSuccessState:false,
                 tableNames:[],
                 tableNames2:[],
-                 masterSlave: {
+                masterSlave: {
                     name: '',
                     type: '',
                     masterTable:'',
                     slaveTable:'',
-                     image: ''
+                    image: ''
                 },
-
                 //图片
                 dialogImageUrl: '',
                 dialogVisible: false,
                 imgLimit: 1,
                 productImgs: [],
-
                 param1:"参数1",
                 paramDesc1:"参数1的描述",
                 parserNameList:[],
@@ -109,7 +106,6 @@
                 seleteId:'',
                 //表格数据
                 tableData: [],
-
                 //当前页数
                 curPage: 1,
                 //总条数
@@ -141,14 +137,17 @@
                     masterTable: [
                         { required: true, message: '主表为必填项', trigger: 'blur' }
                     ]
-
                 },
                 //编辑框标题
                 formTitle: '新增',
                 columns: [
                     {
-                        title: '关系名称',
+                        title: '目标名称',
                         key: 'name'
+                    },
+                    {
+                        title: '目标类型',
+                        key: 'type'
                     },
                     {
                         title: '主表',
@@ -215,16 +214,16 @@
                         id:row.id
                     }).then(res => {
                         me.masterSlave = res.data;
-                        me.productImgs = [{url: row.image}];
+                        if(row.image!=null && row.image!=undefined && row.image != ""){
+                            me.productImgs = [{url: row.image}];
+                        }
+
                         this.formVisible = true;
                     }).catch(e => {
-
                         // this.formVisible = true;
                     });
-
                 }
             },
-
             //删除操作
             deleteInfo(row){
                 this.seleteId=row.id
@@ -275,7 +274,6 @@
                 this.getTables();
                 // 报错了
                 // this.getTables2();
-
             },
             //编辑弹框显示状态监听
             handleVisibleChange(val) {
@@ -291,7 +289,7 @@
             handleFormOk() {
                 const {name, type,masterTableId,slaveTableId} = this.masterSlave;
                 if ( !name || !type || !masterTableId || !slaveTableId) {
-                this.$message.warning('请填写完整表单, 并上传图片')
+                    this.$message.warning('请填写完整表单, 并上传图片')
                     return
                 }
                 let isValid = true;
@@ -329,13 +327,14 @@
             handleCurrentChange(c) {
                 this.current = c;
             },
-             getTables() {
+            getTables() {
                 this.$axios.post('mvc/getAllTables').then(res => {
-
                     this.tableNames = res.data;
                 })
             },
-
+            imgUploadError(err, file, fileList) {//图片上传失败调用
+                this.$message.error('上传图片失败!');
+            },
             handleUploadSuccess(res, file) {//图片上传成功
                 const {success, error, url} = res
                 if (!success) {
@@ -343,23 +342,20 @@
                     this.$refs.elUpload.clearFiles()
                     return
                 }
-                // this.masterSlave.image = url;
+                this.masterSlave.image = url;
                 this.uploadSuccessState = true;
             },
             handleRemove(file, fileList) {//移除图片
                 this.uploadSuccessState = false;
                 this.productImgs = [];
             },
-
             handlePictureCardPreview(file) {//预览图片时调用
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
             },
             beforeAvatarUpload(file) {//文件上传之前调用做一些拦截限制
-
                 // const isJPG = file.type === 'image/jpeg';
                 const isLt2M = file.size / 1024 / 1024 < 2;
-
                 if (!isLt2M) {
                     this.$message.error('上传图片大小不能超过 2MB!');
                 }
@@ -372,10 +368,9 @@
     .tableBtn {
         margin: 5px;
     }
-
-     .uploadSuccess .el-upload.el-upload--picture-card{
-         display:none;
-     }
+    .uploadSuccess .el-upload.el-upload--picture-card{
+        display:none;
+    }
     .uploadImgMask .el-dialog__wrapper{
         z-index:999999 !important;
     }
@@ -386,15 +381,12 @@
         position: relative;
         overflow: hidden;
     }
-
     .avatar-uploader .el-upload:hover {
         border-color: #409EFF;
     }
-
     .el-upload__input {
         display: none !important;
     }
-
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
@@ -403,7 +395,6 @@
         line-height: 178px;
         text-align: center;
     }
-
     /* .avatar {
          cancelCrop width: 178px;
          height: 178px;
@@ -413,5 +404,4 @@
     .proper-wrap {
         margin-bottom: 12px;
     }
-
 </style>

@@ -226,9 +226,7 @@
         <if test="groups!=null">
             groups = #{groups},
         </if>
-        <if test="classId != null">
-            class_id = #{classId},
-        </if>
+
         <if test="classType != null">
             class_type = #{classType},
         </if>
@@ -250,8 +248,10 @@
         <if test="isExport != null">
             is_export = #{isExport},
         </if>
+        <if test="classId != null">
+            class_id = #{classId}
+        </if>
 
-        id = #{id}
         WHERE id = #{id}
     </update>
 

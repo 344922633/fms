@@ -15,6 +15,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -178,6 +179,13 @@ public class FileController {
                 file.setRecommendParserName(fileParser.getName());
             }
 
+        }
+        //文件管理修改   如果穿null  删除关联解析器
+        if(file.getClassId()==null){
+            file.setClassId(0L);
+            file.setClassName("");
+            file.setRecommendParserId(0L);
+            file.setRecommendParserName("");
         }
         fileService.update(file);
         return ExtUtil.success("文件修改成功！");

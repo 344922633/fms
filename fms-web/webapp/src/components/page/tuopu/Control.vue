@@ -265,6 +265,9 @@
                         //接受后台传的图片地址
                         const {image} = item;
                         this.productImgs = [{url: item.image}];
+                        if(image!=undefined){
+                            this.uploadSuccessState = true;
+                        };
                         //const { columnChinese, columnEnglish } = column
                         this.inputs.push({
                             text:column.columnChinese,
