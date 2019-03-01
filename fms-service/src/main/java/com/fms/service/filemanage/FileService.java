@@ -70,6 +70,12 @@ public class FileService {
         return dao.getList(CLASSNAME, "query", params);
     }
 
+    public String getTextById(Long id) {
+        return dao.get(CLASSNAME, "getTextById", id);
+    }
+    public String getNameById(Long id) {
+        return dao.get(CLASSNAME, "getNameById", id);
+    }
     /**
      * 根据所属文件夹id列表查询文件
      * @param params

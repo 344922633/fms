@@ -124,6 +124,20 @@
         FROM fms_file
         WHERE id = #{id}
     </select>
+
+    <select id="getTextById" parameterType="long" resultType="string">
+        SELECT
+        text
+        FROM fms_directory
+        WHERE id = #{id}
+    </select>
+    <select id="getNameById" parameterType="long" resultType="string">
+        SELECT
+        name
+        FROM fms_directory
+        WHERE id = #{id}
+    </select>
+
     <select id="query" parameterType="map" resultType="com.fms.domain.filemanage.File">
         SELECT
         <include refid="all"/>

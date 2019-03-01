@@ -379,7 +379,7 @@ public class UploadController {
                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             }
         }
-        return chunk;
+         return chunk;
     }
 
     /**
