@@ -147,7 +147,7 @@
 
         </div>
 
-        <Modal v-model="fixCon" title="解析结果" width="1500px" >
+        <Modal v-model="fixCon" title="解析结果" width="80%" >
             <!--<i-col span="4">-->
                 <!--<Button @click="handlePreview">预览拓扑图</Button>-->
             <!--</i-col>-->
@@ -1975,7 +1975,7 @@
                 //解析匹配到得表名
                 // this.table_name = this.jsonTables.table_name;
                 this.table_name = "fms_file";
-                 console.log(this.table_name)
+
                 this.getColumns(this.table_name);
                 this.changeDefaultTab()
                  this.genParamsByAllKey();
@@ -2066,7 +2066,7 @@
                             })
 
                             for(let key in me.columnData) {
-                                console.log(me.columnKeyNamesMap[key])
+
                                 me.getTables(me.columnKeyNamesMap[key].schemaId, key)
                                 me.getColumnsByTable(me.columnKeyNamesMap[key].tableId, key)
                                 me.getDicByColumn(me.columnKeyNamesMap[key].columnId, key)
@@ -2207,18 +2207,15 @@
                         });
 
                         let selectData = {};
-                        console.log("1");
-                        console.log(columnData)
+
                         for (let key in columnData) {
                             if (columnData[key].length > 0) {
                                 selectData[key] = columnData[key][0];
                             }
                         }
                         me.selectData = selectData;
-
                         me.columnData = columnData;
-                        console.log("1");
-                        console.log(me.columnData)
+
                     }
                 })
             },

@@ -243,7 +243,7 @@
         </Layout>
 
         <!--解析页面-->
-        <Modal v-model="parserVisible" fullscreen footer-hide @on-visible-change="changeParserVisible">
+        <Modal v-model="parserVisible" width="80%" footer-hide @on-visible-change="changeParserVisible">
             <single-parser :configProp="config"  :file="currentFile" :columnData="tableColumnData" @after-close="parserVisible = false"></single-parser>
         </Modal>
 
@@ -699,12 +699,13 @@
                     type: file.type,
                     location: rootFile.path,
                     webkitRelativePath:file.file.webkitRelativePath,
+                    // directoryId:1,
                     directoryId:this.tDirectoryId,
                     text:this.tDirectoryText,
-                }).then(function (response) {
-
+                }).then((res) => {
+                    this.$message.warning(res.data.data)
                 }).catch(function (error) {
-
+                    console.log(error);
                 });
             },
             // 一个根文件（文件夹）成功上传完成。

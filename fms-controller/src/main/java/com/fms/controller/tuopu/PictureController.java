@@ -234,22 +234,26 @@ public class PictureController {
 //        }
 //
 //
-//
-
 
 
 
     @ResponseBody
     @RequestMapping("insertData")
     public Object insertData(HttpServletRequest request) throws IOException {
-        String idStr = request.getParameter("id");
-        Long id = null;
-        if (StringUtils.isNotEmpty(idStr)) {
-            id = Long.parseLong(idStr);
+        Long id ;
+        if(StringUtils.isNotEmpty(request.getParameter("id"))){
+            id = Long.parseLong( request.getParameter("id"));
+        }else{
+            id = null;
+        }
+
+        if(id !=null){
+            pictureService.deleteNameById(id);
         }
         String jsonData = request.getParameter("json");
         String name = request.getParameter("name");
         //根据name判断
+
         if(pictureService.query(name) == 0){
 
         // 将读取的数据转换为JSONObject
@@ -261,7 +265,7 @@ public class PictureController {
 
         if (jsonObject != null) {
             // 取出所有控件读取属性
-            if (StringUtils.isEmpty(idStr)) {
+            if (id==null) {
                 picture = new Picture();
                 picture.setJson(jsonData);
                 picture.setName(name);

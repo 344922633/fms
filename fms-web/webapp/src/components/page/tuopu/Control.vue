@@ -48,7 +48,7 @@
                     </el-form-item>
 
                     <el-form-item label="控件类型(一级)" label-width="100px">
-                        <el-select v-model="form.parentType" filterable placeholder="请选择" style="width:200px;">
+                        <el-select v-model="form.parentType" placeholder="请选择" style="width:200px;">
                             <el-option
                                 v-for="(menu, menuIdx) in menuList"
                                 :key="menu.name"
@@ -58,7 +58,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="控件类型(二级)" label-width="100px">
-                        <el-select @change="onChangeType" v-model="form.type" filterable placeholder="请选择" style="width:200px;">
+                        <el-select @change="onChangeType" v-model="form.type" placeholder="请选择" style="width:200px;">
                             <el-option
                                 v-for="(menu, menuIdx) in menuIdChildrenMap[form.parentType]"
                                 :key="menu.name"
@@ -118,7 +118,7 @@
 
 
                     <el-form-item label="控件类型(一级)" label-width="100px">
-                        <el-select v-model="form.parentType" filterable placeholder="请选择" style="width:200px;">
+                        <el-select v-model="form.parentType" placeholder="请选择" style="width:200px;">
                             <el-option
                                 v-for="(menu, menuIdx) in menuList"
                                 :key="menu.name"
@@ -128,7 +128,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="控件类型(二级)" label-width="100px">
-                        <el-select @change="onChangeType" v-model="form.type" filterable placeholder="请选择" style="width:200px;">
+                        <el-select @change="onChangeType" v-model="form.type" placeholder="请选择" style="width:200px;">
                             <el-option
                                 v-for="(menu, menuIdx) in menuIdChildrenMap[form.parentType]"
                                 :key="menu.name"
@@ -260,13 +260,15 @@
                     let { data } = res;
                     data = data || [];
                     let i =0;
+                    let me = this;
                     data.forEach(item => {
                         const {column} = item
                         //接受后台传的图片地址
                         const {image} = item;
-                        this.productImgs = [{url: item.image}];
+                        me.productImgs = [{url: item.image}];
                         if(image!=undefined){
-                            this.uploadSuccessState = true;
+                            me.form.imageUrl = item.image;
+                            me.uploadSuccessState = true;
                         };
                         //const { columnChinese, columnEnglish } = column
                         this.inputs.push({

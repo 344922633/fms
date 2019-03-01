@@ -54,7 +54,7 @@
                         </FormItem>
                         <FormItem v-for="dicTable in selectMap[index].dicTables" :label="dicTable.dicTableName">
                             <Select @on-change="(val)=>{changeColumnDicMap(dicTable,val)}"
-                                    v-model="formList[index]['dicMap'][dicTable.dicTableName]" filterable style="width: 180px">
+                                    v-model="formList[index]['dicMap'][dicTable.dicTableName]" style="width: 180px">
                                 <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM" :key="dic.DM"> {{ dic.MC }}</Option>
                             </Select>
                         </FormItem>
@@ -81,17 +81,17 @@
                         <el-input v-model="item.columnKey" style="width: 130px"></el-input>
                     </FormItem>
                     <FormItem label="库名：" >
-                        <Select @on-change="(schemaId) => getTables(schemaId,index)" v-model="item.schemaId" filterable style="width: 130px">
+                        <Select @on-change="(schemaId) => getTables(schemaId,index)" v-model="item.schemaId" style="width: 130px">
                             <Option v-for="(schema,schemaIdx) in schemas" :value="schema.id" :key="schemaIdx"> {{ schema.name }}</Option>
                         </Select>
                     </FormItem>
                     <FormItem label="表名：">
-                        <Select @on-change="(tableId) => getColumnsByTable(tableId,index)" v-model="formList2[index]. tableId" filterable style="width: 130px">
+                        <Select @on-change="(tableId) => getColumnsByTable(tableId,index)" v-model="formList2[index]. tableId" style="width: 130px">
                             <Option v-for="(table,tableIdx) in selectMap[index].tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
                         </Select>
                     </FormItem>
                     <FormItem label="字段名：">
-                        <Select @on-change="(columnId) => getDicByColumn(columnId,index)" v-model="formList2[index].columnId" filterable style="width: 130px">
+                        <Select @on-change="(columnId) => getDicByColumn(columnId,index)" v-model="formList2[index].columnId" style="width: 130px">
                             <Option v-for="(column,columnIdx) in selectMap[index].columns" :data="column.id" :value="column.id" :key="column.id"> {{ column.columnChinese }}</Option>
                         </Select>
                     </FormItem>
@@ -101,7 +101,7 @@
                         </FormItem>
                         <FormItem v-for="dicTable in selectMap[index].dicTables" :label="dicTable.dicTableName">
                             <Select @on-change="(val)=>{changeColumnDicMap(dicTable,val)}"
-                                    v-model="formList2[index]['dicMap'][dicTable.dicTableName]"  filterable style="width: 180px">
+                                    v-model="formList2[index]['dicMap'][dicTable.dicTableName]" style="width: 180px">
 
                                 <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM+''"  :key="dic.DM"> {{ dic.MC }}</Option>
                             </Select>

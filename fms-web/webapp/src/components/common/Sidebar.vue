@@ -48,11 +48,11 @@
                         index: '2',
                         title: '人工录入',
                         subs:[
-                            {
-                                index: 'manualDataDeal',
-                                title: '表单录入',
-                                icon: 'el-icon-edit'
-                            },
+                            // {
+                            //     index: 'manualDataDeal',
+                            //     title: '表单录入',
+                            //     icon: 'el-icon-edit'
+                            // },
                             {
                                 index: 'tuopu',
                                 title: '拓扑图管理',

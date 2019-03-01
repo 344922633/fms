@@ -111,11 +111,11 @@ export default new Router({
                         component: resolve => require(['../components/page/fileparser/prinSuboRelation.vue'], resolve),
                     meta: { title: '主从关系管理' }
                 },
-                {
-                    path: '/manualDataDeal',
-                    component: resolve => require(['../components/page/manualdatadeal/ManualDataDeal.vue'], resolve),
-                    meta: { title: '表单录入' }
-                },
+                // {
+                //     path: '/manualDataDeal',
+                //     component: resolve => require(['../components/page/manualdatadeal/ManualDataDeal.vue'], resolve),
+                //     meta: { title: '表单录入' }
+                // },
                 {
                     path: '/tuopu',
                     component: resolve => require(['../components/page/tuopu/Tuopu.vue'], resolve),

@@ -9,16 +9,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-/*import com.caeit.parser.excel.ExcelParser;
-import com.caeit.parser.xml.XmlParser;*/
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
-import org.junit.jupiter.api.Test;
-import org.springframework.kafka.core.KafkaTemplate;
 
 public class FtpUtil {
 
@@ -132,7 +125,6 @@ public class FtpUtil {
     /**
      * ftp上传文件
      *
-     * @param f
      * @throws Exception
      */
     public static void uploadFTP(String fileDir) throws Exception {

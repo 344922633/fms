@@ -53,6 +53,9 @@ public class PictureService {
 	public void delete(Long id) {
 		dao.delete(CLASSNAME, "delete", id);
 	}
+	public void deleteNameById(Long id) {
+		dao.update(CLASSNAME, "deleteNameById", id);
+	}
 
 	public void update(Picture picture) {
 		dao.update(CLASSNAME, "update", picture);

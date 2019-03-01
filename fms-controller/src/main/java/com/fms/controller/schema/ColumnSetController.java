@@ -87,14 +87,13 @@ public class ColumnSetController {
         List<ColumnInfo> ColumnInfos = new ArrayList<>();
         //根据表查出所有字段
         List<ColumnInfo> columnInfoList=columnSetService.getColumnsForTable(tid);
-        //根据是否有字段中文名进行过滤
+        //根据是否有字段中文名进行过滤   //根据是否为DXBM进行过滤
         for(ColumnInfo columnInfo : columnInfoList) {
-            if(columnInfo.getColumnChinese()!=null){
+            if(columnInfo.getColumnChinese()!=null && !columnInfo.getColumnEnglish().toLowerCase().equals("dxbm")){
                 ColumnInfos.add(columnInfo);
             }
         }
         return ColumnInfos;
-
     }
 
     @RequestMapping("/getTablesBySchemaId")

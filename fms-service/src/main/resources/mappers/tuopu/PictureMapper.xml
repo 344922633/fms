@@ -31,6 +31,13 @@
         WHERE id = #{id}
     </delete>
 
+   <update id="deleteNameById" parameterType="Long">
+        UPDATE t_picture
+        SET
+          name=null
+        WHERE id = #{id}
+    </update>
+
 
     <insert id="add" parameterType="com.fms.domain.tuopu.Picture" >
         INSERT INTO t_picture (name,json,userId,time)

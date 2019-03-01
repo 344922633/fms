@@ -2,10 +2,6 @@ package com.fms.controller.filemanage;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.caeit.parser.excel.ExcelParser;
-import com.caeit.parser.json.JsonParser;
-import com.caeit.parser.sql.SqlParser;
-import com.caeit.parser.xml.XmlParser;
 import com.fms.domain.filemanage.FileParser;
 import com.fms.domain.filemanage.FileParserJar;
 import com.fms.domain.filemanage.FileType;
@@ -134,7 +130,7 @@ public class UploadController {
                                             sf = SFTPUtils.getInstance(ftp);// 断开或者是去连接null时，重新连接
                                         }
                                         File download = sf.download(directory + "/" + lsEntry.getFilename(), tempFold + "/" + fileName);
-                                        handleFile(download);
+//                                        handleFile(download);
                                         try {
                                             FileInputStream fis = null;
                                             ByteArrayOutputStream bos = null;
@@ -557,7 +553,6 @@ public class UploadController {
 
     /**
      * 保存文件
-     * @param info
      * @param fileName
      * @param suffix
      * @param dirId
@@ -804,162 +799,162 @@ public class UploadController {
      * @param file
      * @throws Exception
      */
-    public void handleFile(File file) throws Exception {
-        try {
-
-            String fileName = file.getName();
-            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
-            //JSONArray kafkaArray = new JSONArray();
-
-
-            if (suffix.equals("xml")) {
-                Map<String, String> map = new XmlParser().parseXml(file);
-                String outPut = map.get("jsonBottomLevel");
-                System.out.println("xml:"+outPut);
-                getKafka(outPut);
-/*
-                JSONObject outPutJson = JSONObject.parseObject(outPut);
-//                fileParserService.parseData(json2List())
-                Iterator<String> it = outPutJson.keySet().iterator();
-
-                if (it.hasNext()) {
-                    String key = it.next();// entitys entity
-                    JSONArray array = outPutJson.getJSONArray(key);//就是匹配字段的源数据
-
-                    String tableName = getTable(array.toJSONString());
-
-
-                    // JSONArray array = JSONArray.parseArray(tableStr);
-                            *//*    String schema="";
-                                if(jsonObject.containsKey("schema")){
-                                    schema= jsonObject.getString("schema");
-                                }
-                                String table="";
-                                if(jsonObject.containsKey("table")){
-                                    table= jsonObject.getString("table");
-                                }*//*
-
-
-                    for (int i = 0; i < array.size(); i++) {
-                        JSONObject obj = new JSONObject();
-                        JSONArray data = new JSONArray();
-
-                        JSONObject obj1 = new JSONObject();
-                        obj1.put("operationType", "INSERT");
-                        obj1.put("objectCode", "dxbm");
-                        obj.put("operationSource", "XX_PLATFORM");
-                     *//*       obj1.put("schema", schema);
-                        obj1.put("table", "zw_kzsx_sb");
-*//*
-                        JSONArray columns = new JSONArray();
-
-                        JSONObject jsonObject = array.getJSONObject(i);
-                        Iterator<String> colIt = jsonObject.keySet().iterator();
-                        while (colIt.hasNext()) {
-
-                            String jsonKey = colIt.next();
-                            if (jsonKey.equals("schema")) {
-                                obj1.put("schema", jsonObject.get(jsonKey).toString());
-                                continue;
-                            }
-                            if (jsonKey.equals("table")) {
-                                obj1.put("table", tableName);
-                                continue;
-                            }
-                            if (jsonKey.equals("dxbm")) {
-                                obj1.put("objectCodeValue", jsonObject.get(jsonKey).toString());
-                            }
-
-                            JSONObject jsonCol = new JSONObject();
-                            jsonCol.put("name", jsonKey.toLowerCase());
-                            jsonCol.put("value", jsonObject.get(jsonKey));
-                            columns.add(jsonCol);
-
-                        }
-                        obj1.put("columns", columns);
-                        data.add(obj1);
-                        obj.put("data", data);
-                        System.out.println(obj.toJSONString());
-                        kafkaTemplate.send("operation_3rd1", obj.toJSONString());
-                    }
-
-                }*/
-            } else if (suffix.equals("json")) {
-
-                Map<String, String> map = new JsonParser().parseJson(file);
-                String outPut = map.get("jsonBottomLevel");
-                System.out.println("json:"+outPut);
-
-                getKafka(outPut);
-
-            } else if (suffix.equals("sql")) {
-
-                Map<String, String> map = new SqlParser().parseSql(file);
-                String outPut = map.get("jsonBottomLevel");
-                System.out.println("sql:"+outPut);
-
-                getKafka(outPut);
-
-            } else if (suffix.equals("xls") || suffix.equals("xlsx")) {
-                Map<String, String> map = new ExcelParser().parseExcel(file, true); //true 表示是否行排列，false表示列排列，目前仅支持行排列即可
-                String outPut = map.get("jsonBottomLevel");
-                System.out.println("xls:"+outPut);
-                getKafka(outPut);
-
-        /*        JSONObject outPutJson = JSONObject.parseObject(outPut);
-                Iterator<String> it = outPutJson.keySet().iterator();
-                if (it.hasNext()) {
-                    String key = it.next();// entitys entity
-                    JSONArray array = outPutJson.getJSONArray(key);
-
-                    String tableName = getTable(array.toJSONString());
-                    for (int i = 0; i < array.size(); i++) {
-                        JSONObject obj = new JSONObject();
-                        JSONArray data = new JSONArray();
-
-                        JSONObject obj1 = new JSONObject();
-                        obj1.put("operationType", "INSERT");
-                        obj1.put("objectCode", "dxbm");
-                        obj.put("operationSource", "XX_PLATFORM");
-                                     *//*       obj1.put("schema", schema);
-                                        obj1.put("table", "zw_kzsx_sb");
-                *//*
-                        JSONArray columns = new JSONArray();
-
-                        JSONObject jsonObject = array.getJSONObject(i);
-                        Iterator<String> colIt = jsonObject.keySet().iterator();
-                        while (colIt.hasNext()) {
-
-                            String jsonKey = colIt.next();
-                            if (jsonKey.equals("schema")) {
-                                obj1.put("schema", jsonObject.get(jsonKey).toString());
-                                continue;
-                            }
-                            if (jsonKey.equals("table")) {
-                                obj1.put("table", tableName);
-                                continue;
-                            }
-                            if (jsonKey.equals("dxbm")) {
-                                obj1.put("objectCodeValue", jsonObject.get(jsonKey).toString());
-                            }
-
-                            JSONObject jsonCol = new JSONObject();
-                            jsonCol.put("name", jsonKey.toLowerCase());
-                            jsonCol.put("value", jsonObject.get(jsonKey));
-                            columns.add(jsonCol);
-
-                        }
-                        obj1.put("columns", columns);
-                        data.add(obj1);
-                        obj.put("data", data);
-                        System.out.println(obj.toJSONString());
-                        kafkaTemplate.send("operation_3rd1", obj.toJSONString());
-                    }
-                }*/
-            }
-        } catch (Exception e) {
-        }
-    }
+//    public void handleFile(File file) throws Exception {
+//        try {
+//
+//            String fileName = file.getName();
+//            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+//            //JSONArray kafkaArray = new JSONArray();
+//
+//
+//            if (suffix.equals("xml")) {
+//                Map<String, String> map = new XmlParser().parseXml(file);
+//                String outPut = map.get("jsonBottomLevel");
+//                System.out.println("xml:"+outPut);
+//                getKafka(outPut);
+///*
+//                JSONObject outPutJson = JSONObject.parseObject(outPut);
+////                fileParserService.parseData(json2List())
+//                Iterator<String> it = outPutJson.keySet().iterator();
+//
+//                if (it.hasNext()) {
+//                    String key = it.next();// entitys entity
+//                    JSONArray array = outPutJson.getJSONArray(key);//就是匹配字段的源数据
+//
+//                    String tableName = getTable(array.toJSONString());
+//
+//
+//                    // JSONArray array = JSONArray.parseArray(tableStr);
+//                            *//*    String schema="";
+//                                if(jsonObject.containsKey("schema")){
+//                                    schema= jsonObject.getString("schema");
+//                                }
+//                                String table="";
+//                                if(jsonObject.containsKey("table")){
+//                                    table= jsonObject.getString("table");
+//                                }*//*
+//
+//
+//                    for (int i = 0; i < array.size(); i++) {
+//                        JSONObject obj = new JSONObject();
+//                        JSONArray data = new JSONArray();
+//
+//                        JSONObject obj1 = new JSONObject();
+//                        obj1.put("operationType", "INSERT");
+//                        obj1.put("objectCode", "dxbm");
+//                        obj.put("operationSource", "XX_PLATFORM");
+//                     *//*       obj1.put("schema", schema);
+//                        obj1.put("table", "zw_kzsx_sb");
+//*//*
+//                        JSONArray columns = new JSONArray();
+//
+//                        JSONObject jsonObject = array.getJSONObject(i);
+//                        Iterator<String> colIt = jsonObject.keySet().iterator();
+//                        while (colIt.hasNext()) {
+//
+//                            String jsonKey = colIt.next();
+//                            if (jsonKey.equals("schema")) {
+//                                obj1.put("schema", jsonObject.get(jsonKey).toString());
+//                                continue;
+//                            }
+//                            if (jsonKey.equals("table")) {
+//                                obj1.put("table", tableName);
+//                                continue;
+//                            }
+//                            if (jsonKey.equals("dxbm")) {
+//                                obj1.put("objectCodeValue", jsonObject.get(jsonKey).toString());
+//                            }
+//
+//                            JSONObject jsonCol = new JSONObject();
+//                            jsonCol.put("name", jsonKey.toLowerCase());
+//                            jsonCol.put("value", jsonObject.get(jsonKey));
+//                            columns.add(jsonCol);
+//
+//                        }
+//                        obj1.put("columns", columns);
+//                        data.add(obj1);
+//                        obj.put("data", data);
+//                        System.out.println(obj.toJSONString());
+//                        kafkaTemplate.send("operation_3rd1", obj.toJSONString());
+//                    }
+//
+//                }*/
+//            } else if (suffix.equals("json")) {
+//
+//                Map<String, String> map = new JsonParser().parseJson(file);
+//                String outPut = map.get("jsonBottomLevel");
+//                System.out.println("json:"+outPut);
+//
+//                getKafka(outPut);
+//
+//            } else if (suffix.equals("sql")) {
+//
+//                Map<String, String> map = new SqlParser().parseSql(file);
+//                String outPut = map.get("jsonBottomLevel");
+//                System.out.println("sql:"+outPut);
+//
+//                getKafka(outPut);
+//
+//            } else if (suffix.equals("xls") || suffix.equals("xlsx")) {
+//                Map<String, String> map = new ExcelParser().parseExcel(file, true); //true 表示是否行排列，false表示列排列，目前仅支持行排列即可
+//                String outPut = map.get("jsonBottomLevel");
+//                System.out.println("xls:"+outPut);
+//                getKafka(outPut);
+//
+//        /*        JSONObject outPutJson = JSONObject.parseObject(outPut);
+//                Iterator<String> it = outPutJson.keySet().iterator();
+//                if (it.hasNext()) {
+//                    String key = it.next();// entitys entity
+//                    JSONArray array = outPutJson.getJSONArray(key);
+//
+//                    String tableName = getTable(array.toJSONString());
+//                    for (int i = 0; i < array.size(); i++) {
+//                        JSONObject obj = new JSONObject();
+//                        JSONArray data = new JSONArray();
+//
+//                        JSONObject obj1 = new JSONObject();
+//                        obj1.put("operationType", "INSERT");
+//                        obj1.put("objectCode", "dxbm");
+//                        obj.put("operationSource", "XX_PLATFORM");
+//                                     *//*       obj1.put("schema", schema);
+//                                        obj1.put("table", "zw_kzsx_sb");
+//                *//*
+//                        JSONArray columns = new JSONArray();
+//
+//                        JSONObject jsonObject = array.getJSONObject(i);
+//                        Iterator<String> colIt = jsonObject.keySet().iterator();
+//                        while (colIt.hasNext()) {
+//
+//                            String jsonKey = colIt.next();
+//                            if (jsonKey.equals("schema")) {
+//                                obj1.put("schema", jsonObject.get(jsonKey).toString());
+//                                continue;
+//                            }
+//                            if (jsonKey.equals("table")) {
+//                                obj1.put("table", tableName);
+//                                continue;
+//                            }
+//                            if (jsonKey.equals("dxbm")) {
+//                                obj1.put("objectCodeValue", jsonObject.get(jsonKey).toString());
+//                            }
+//
+//                            JSONObject jsonCol = new JSONObject();
+//                            jsonCol.put("name", jsonKey.toLowerCase());
+//                            jsonCol.put("value", jsonObject.get(jsonKey));
+//                            columns.add(jsonCol);
+//
+//                        }
+//                        obj1.put("columns", columns);
+//                        data.add(obj1);
+//                        obj.put("data", data);
+//                        System.out.println(obj.toJSONString());
+//                        kafkaTemplate.send("operation_3rd1", obj.toJSONString());
+//                    }
+//                }*/
+//            }
+//        } catch (Exception e) {
+//        }
+//    }
 
 
     /**

@@ -25,7 +25,7 @@
         <el-dialog title="新增" :visible.sync="addVisible" width="40%">
             <Form :label-width="100">
                 <FormItem label="选择表">
-                    <Select filterable v-model="table_name" style="width:300px;">
+                    <Select v-model="table_name" style="width:300px;">
                         <Option v-for="item in tableNames" :value="item" :key="item">{{ item }}</Option>
                     </Select>
                 </FormItem>
@@ -53,7 +53,7 @@
                     <Input v-model="item.columnChinese" v-if="item.columnEnglish.toLowerCase() == 'dxbm'" disabled="disabled" :value="item.columnChinese" style="width:300px;"/>
 
 
-                    <Select v-if="checkedArr[index]" filterable v-model="item.dicTableName" style="width:300px;">
+                    <Select v-if="checkedArr[index]" v-model="item.dicTableName" style="width:300px;">
                         <Option v-for="item in dicTableName" :value="item" :key="item">{{ item }}</Option>
                     </Select>
 
@@ -76,7 +76,7 @@
         <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
             <Form :label-width="100">
                 <FormItem label="选择表">
-                    <Select filterable v-model="tableNameEdit" style="width:300px;">
+                    <Select v-model="tableNameEdit" style="width:300px;">
                         <Option v-for="item in tableNames" :value="item" :key="item">{{ item }}</Option>
                     </Select>
                 </FormItem>
