@@ -57,4 +57,8 @@ public class ControlService {
     public List<ControlProperty> queryPropertyById(String controlId) {
         return dao.getList(CLASSNAME, "queryPropertyById", controlId);
     }
+
+    public List<ControlProperty> getTablesId(String id) {
+        return dao.getList(CLASSNAME, "getTablesId", id);
+    }
 }

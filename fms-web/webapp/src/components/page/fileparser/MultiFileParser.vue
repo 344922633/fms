@@ -42,7 +42,7 @@
                         <div v-show="dBshow">
                             <Table highlight-row ref="currentRowTable1" :data="preClassDataFor1"
                                    :columns="preClassColumns1" min-height="300" height="400" tref="1"
-                                   @on-row-click="handleLeftRowClick"
+
                                    @on-selection-change="handlePreSelectionChange1"></Table>
                         </div>
                         <div style="border:1px dashed #c0c4cc"></div>
@@ -52,7 +52,7 @@
                         <div v-show="tPshow">
                             <Table highlight-row ref="currentRowTable1" :data="preClassDataFor2"
                                    :columns="preClassColumns2" min-height="300" height="400" tref="1"
-                                   @on-row-click="handleLeftRowClick"
+
                                    @on-selection-change="handlePreSelectionChange2"></Table>
                         </div>
                         <div style="border:1px dashed #c0c4cc"></div>
@@ -62,7 +62,7 @@
                         <div v-show="jGshow">
                             <Table highlight-row ref="currentRowTable1" :data="preClassDataFor3"
                                    :columns="preClassColumns3" min-height="300" height="400" tref="1"
-                                   @on-row-click="handleLeftRowClick"
+
                                    @on-selection-change="handlePreSelectionChange3"></Table>
                         </div>
                         <div style="border:1px dashed #c0c4cc"></div>
@@ -72,7 +72,7 @@
                         <div v-show="tXshow">
                             <Table highlight-row ref="currentRowTable1" :data="preClassDataFor4"
                                    :columns="preClassColumns4" min-height="300" height="400" tref="1"
-                                   @on-row-click="handleLeftRowClick"
+
                                    @on-selection-change="handlePreSelectionChange4"></Table>
                         </div>
                         <div style="border:1px dashed #c0c4cc"></div>
@@ -82,7 +82,7 @@
                         <div v-show="cFshow">
                             <Table highlight-row ref="currentRowTable1" :data="preClassDataFor5"
                                    :columns="preClassColumns5" min-height="300" height="400" tref="1"
-                                   @on-row-click="handleLeftRowClick"
+
                                    @on-selection-change="handlePreSelectionChange5"></Table>
                         </div>
                         <div style="border:1px dashed #c0c4cc"></div>
@@ -92,7 +92,7 @@
                         <div v-show="lGshow">
                             <Table highlight-row ref="currentRowTable1" :data="preClassDataFor6"
                                    :columns="preClassColumns6" min-height="300" height="400" tref="1"
-                                   @on-row-click="handleLeftRowClick"
+
                                    @on-selection-change="handlePreSelectionChange6"></Table>
                         </div>
                         <div style="border:1px dashed #c0c4cc"></div>
@@ -102,7 +102,7 @@
                         <div v-show="pRshow">
                             <Table highlight-row ref="currentRowTable1" :data="preClassDataFor7"
                                    :columns="preClassColumns7" min-height="300" height="400" tref="1"
-                                   @on-row-click="handleLeftRowClick"
+
                                    @on-selection-change="handlePreSelectionChange7"></Table>
                         </div>
                         <div style="border:1px dashed #c0c4cc"></div>
@@ -295,7 +295,7 @@
                       @file-complete="fileComplete" @complete="complete" @file-success="fileSuccess">
                 <uploader-unsupport></uploader-unsupport>
                 <uploader-drop>
-                    <p>拖拽文件或文件夹到这里 或者</p>
+
                     <uploader-btn>选择文件</uploader-btn>
                     <uploader-btn :directory="true">选择文件夹</uploader-btn>
                 </uploader-drop>
@@ -521,7 +521,9 @@
                                             this.setVisible = true;
                                         }
                                     }
-                                },"| 多参数设置"): null
+                                },
+                                "| 多参数设置")
+                                : null
                             ]);
                         }
                     }
@@ -641,7 +643,7 @@
                                     }," 选择解析器 "),
                                 hasMulte? h("a",{
                                     on: {
-                                        click: () => {
+                                        change: () => {
                                             this.setVisible = true;
                                         }
                                     }
@@ -875,7 +877,9 @@
                                         on: {
                                             click: () => {
                                                 this.$axios
-                                                    .post("mvc/fileParser/getList", {})
+                                                    .post(
+                                                "mvc/fileParser/getList?fileSuffix=" +
+                                                this.waitClassData[params.index].type, {})
                                                     .then(res => {
                                                         this.parsers = res.data;
                                                     });
@@ -940,9 +944,7 @@
                                                 this.$axios
                                                     .post(
                                                         "mvc/fileParser/getListForWaitClass?fileSuffix=" +
-                                                        this.waitClassData[params.index].type,
-                                                        {}
-                                                    )
+                                                        this.waitClassData[params.index].type, {})
                                                     .then(res => {
                                                         this.parsers = res.data;
                                                     });
@@ -2040,7 +2042,7 @@
                     type:"GET",
                     traditional: true,
                     data: {
-                        columnKeys: me.allKey,
+                        columnKeys: this.allKey,
                         templateName: templateName
                     },
                     success: (res) => {
@@ -2053,23 +2055,23 @@
 
                             })
                             me.columnKeyNamesMap = map;
-                            me.allKey.forEach((key,index) => {
+                            this.allKey.forEach((key,index) => {
                                 let columnValue = {
                                     'schemaId': '',
                                     'tableId': '',
                                     'columnId': ''
                                 }
                                 if(!map[key]) {
-                                    me.$set(me.columnKeyNamesMap, key, columnValue)
+                                    this.$set(this.columnKeyNamesMap, key, columnValue)
                                 }
 
                             })
 
-                            for(let key in me.columnData) {
+                            for(let key in this.columnData) {
 
-                                me.getTables(me.columnKeyNamesMap[key].schemaId, key)
-                                me.getColumnsByTable(me.columnKeyNamesMap[key].tableId, key)
-                                me.getDicByColumn(me.columnKeyNamesMap[key].columnId, key)
+                                this.getTables(this.columnKeyNamesMap[key].schemaId, key)
+                                this.getColumnsByTable(this.columnKeyNamesMap[key].tableId, key)
+                                this.getDicByColumn(this.columnKeyNamesMap[key].columnId, key)
                             }
 
                         }
@@ -2112,11 +2114,11 @@
                 }).then(res => {
                     const dicTables = res.data || []
                     this.$set(this.columnSelectMap[key], 'dicTables', dicTables)
-                    //this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
+                    this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
 
                     dicTables.forEach(dicTable => {
                         const { columnEnglish } = dicTable
-                        //this.$set(this.columnKeyNamesMap[key]['dicMap'], columnEnglish, '')
+                        this.$set(this.columnKeyNamesMap[key]['dicMap'], columnEnglish, '')
                     })
 
                 })
@@ -2223,6 +2225,7 @@
             // 保存到新模板
             saveTemplate(l) {
                 let arr = []
+
                 for (let key in this.columnKeyNamesMap) {
                     let obj = {};
                     obj["columnKey"] = key;
@@ -2233,14 +2236,18 @@
                         obj["columnId"] = this.columnKeyNamesMap[key]["columnId+''"];
                     }
 
+                    obj["dicMap"] = this.columnKeyNamesMap[key]['dicMap'];
                     if (l == 1) {
-                        obj["templateName"] = this.selectTemplateName;
-                    } else if (l = 2) {
+                        if(this.selectTemplateName==null || this.selectTemplateName==undefined || this.selectTemplateName=="" ){
+                            this.$message.warning("请填写模板名称");
+                            return false;
+                        }else{
+                            obj["templateName"] = this.selectTemplateName;
+                        }
+
+                    } else {
                         obj["templateName"] = this.newTemplateName;
                     }
-
-                    obj["dicMap"] = this.columnKeyNamesMap[key]['dicMap'];
-
                     arr.push(obj);
                 }
 
@@ -2420,8 +2427,9 @@
                 // 新版预览
                 var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
                 var ip = ipRex.exec(this.config.fileServerPath);
-                var a ="http://"+ ip +":8888/index?filePath="+ row.realPath +'&id='+ row.id;
-// var a ="http://localhost:8888/index?filePath="+row.realPath+'&id='+row.id;
+                // var a ="http://"+ ip +":8888/index?filePath="+ row.realPath +'&id='+ row.id;
+                // var a ="http://localhost:8888/index?filePath="+row.realPath+'&id='+row.id;
+                var a ="http://datanode3:8888/index?filePath="+ row.realPath +'&id='+ row.id;
                 var ifr = document.createElement('iframe');
                 ifr.src = a;
                 document.body.appendChild(ifr);

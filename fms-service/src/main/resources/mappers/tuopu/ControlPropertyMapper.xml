@@ -24,6 +24,9 @@
         SELECT * FROM t_control_property
   </select>
 
+    <select id="getColumnByControlIdAndTableId" parameterType="map" resultType="com.fms.domain.tuopu.ControlProperty">
+        SELECT * FROM t_control_property where controlId = #{controlId} and tableId = #{tableId}
+  </select>
 
     <delete id="delControlPropertyByControlId" parameterType="String">
         delete from t_control_property where controlId = #{controlId}

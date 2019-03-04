@@ -95,7 +95,7 @@
                   @file-complete="fileComplete" @complete="complete" @file-success="fileSuccess">
             <uploader-unsupport></uploader-unsupport>
             <uploader-drop>
-                <p>拖拽文件或文件夹到这里 或者</p>
+
                 <uploader-btn>选择文件</uploader-btn>
                 <uploader-btn :directory="true">选择文件夹</uploader-btn>
             </uploader-drop>

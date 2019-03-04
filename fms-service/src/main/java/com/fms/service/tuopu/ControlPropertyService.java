@@ -33,4 +33,8 @@ public class ControlPropertyService {
     public void delControlPropertyByControlId(String controlId) {
         dao.delete(CLASSNAME,"delControlPropertyByControlId",controlId);
     }
+
+    public List<ControlProperty> getColumnByControlIdAndTableId(Map<String, Object> params) {
+        return dao.getList(CLASSNAME, "getColumnByControlIdAndTableId", params);
+    }
 }

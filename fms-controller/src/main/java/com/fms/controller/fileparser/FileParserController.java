@@ -772,8 +772,14 @@ public class FileParserController {
                 JSONObject colJson = data.getJSONObject(key);
                 //当schemeId为空或者0时不发 kafka
                 // columnId 为空，不发kafka
+                //columnId1为前台传值问题，其实是columnId修改后的值，不知道为什么要这么传
                 String columnId = colJson.getString("columnId");
                 String schemaId = colJson.getString("schemaId");
+                String columnId1 = colJson.getString("columnId+''");
+                if(columnId1!=null){
+                    columnId=columnId1;
+                }
+
 
             if (StringUtils.isNotEmpty(schemaId) && !(schemaId.equals("0"))) {
                 if (StringUtils.isNotEmpty(columnId)) {
@@ -787,8 +793,13 @@ public class FileParserController {
                     }
                     column.add(columnId);
                     map.put(table_schema, column);
-
-                    String valueKey = table_schema + "_" + colJson.getString("columnId");
+                    //columnId2 与 columnID1 是一个道理
+                    String columnId2 = colJson.getString("columnId+''");
+                    if(columnId2!=null){
+                        columnId=columnId1;
+                    }
+//                    String valueKey = table_schema + "_" + colJson.getString("columnId");
+                    String valueKey = table_schema + "_" + columnId;
                     valueMap.put(valueKey, key.toLowerCase());
                     dicMap.put(table_schema, colJson.getJSONObject("dicMap"));
                 }
@@ -800,7 +811,7 @@ public class FileParserController {
                 String objectCodeValue = "dwj_" + System.nanoTime();
 
                 JSONObject rootObj = new JSONObject();
-                rootObj.put("operationSource", PropertyUtil.readValue("DEFAULT_TOPIC"));
+                rootObj.put("operationSource", PropertyUtil.readValue("OPERATION_SOURCE"));
 
                 JSONArray infoArr = new JSONArray();
                 for (Map.Entry<String, Set<String>> entry : map.entrySet()) {
@@ -870,8 +881,8 @@ public class FileParserController {
 
                 kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), rootObj.toJSONString());
                 result = true;
-             /*   kafkaTemplate.send(env.getProperty("DEFAULT_TOPIC"),
-                        rootObj.toJSONString());*/
+//               kafkaTemplate.send(env.getProperty("DEFAULT_TOPIC"),
+//                        rootObj.toJSONString());
             }
 
         }

@@ -70,4 +70,11 @@
     select count(*) from table_info where tableEnglish = #{tableEnglish}
   </select>
 
+
+  <select id="getTableEnglish" parameterType="java.lang.Long" resultType="com.fms.domain.schema.TableInfo">
+        select tableEnglish
+        from table_info
+        where id=#{id}
+    </select>
+
 </mapper>

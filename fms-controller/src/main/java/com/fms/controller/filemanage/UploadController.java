@@ -82,7 +82,7 @@ public class UploadController {
 
                 String tempFold = env.getProperty("file.tmpPath") + "/ftpFile/" + UUID.randomUUID().toString().replaceAll("-", "");
 
-                java.nio.file.Path dirPath = Paths.get(tempFold);
+                Path dirPath = Paths.get(tempFold);
                 if (!Files.exists(dirPath)) {
                     try {
                         Files.createDirectories(dirPath);
@@ -198,7 +198,7 @@ public class UploadController {
 
                 String tempFold = env.getProperty("file.tmpPath") + "/ftpFile/" + UUID.randomUUID().toString().replaceAll("-", "");
 
-                java.nio.file.Path dirPath = Paths.get(tempFold);
+                Path dirPath = Paths.get(tempFold);
                 if (!Files.exists(dirPath)) {
                     try {
                         Files.createDirectories(dirPath);
@@ -339,12 +339,12 @@ public class UploadController {
      */
     private String generatePath(String path, Chunk chunk) throws IOException {
         String dir = path + chunk.getIdentifier();
-        java.nio.file.Path dirPath = Paths.get(dir);
+        Path dirPath = Paths.get(dir);
         if (!Files.exists(dirPath)) {
             Files.createDirectories(dirPath);
         }
         String fileName = chunk.getTotalChunks().intValue() == 1 ? chunk.getFilename() : (chunk.getFilename() + "-" + chunk.getChunkNumber());
-        java.nio.file.Path filePath = Paths.get(dirPath + "/" + fileName);
+        Path filePath = Paths.get(dirPath + "/" + fileName);
         if (!Files.exists(filePath)) {
             Files.createFile(filePath);
         }
@@ -372,9 +372,9 @@ public class UploadController {
         } else {
             String fileTmp = env.getProperty("file.tmpPath") + "/";
             String dir = fileTmp + chunk.getIdentifier();
-            java.nio.file.Path dirPath = Paths.get(dir);
+            Path dirPath = Paths.get(dir);
             String fileName = chunk.getTotalChunks().intValue() == 1 ? chunk.getFilename() : (chunk.getFilename() + "-" + oChunk.getChunkNumber());
-            java.nio.file.Path filePath = Paths.get(dirPath + "/" + fileName);
+            Path filePath = Paths.get(dirPath + "/" + fileName);
             if (!Files.exists(filePath)) {
                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             }
@@ -389,38 +389,48 @@ public class UploadController {
      * @return
      */
     @PostMapping("/mergeFile")
-    public String mergeFile(FileInfo fileInfo) {
+    public Object mergeFile(FileInfo fileInfo) {
         String uploadFolder = env.getProperty("file.tmpPath");
         String fileName = fileInfo.getFilename();
         String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" : fileName.substring(fileName.lastIndexOf(".") + 1);
         String path = uploadFolder + "/" + fileInfo.getIdentifier() + "/" + fileInfo.getFilename();
         Map<String, Object> params = Maps.newHashMap();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         params.put("fileMd5", fileInfo.getIdentifier());
         List<com.fms.domain.filemanage.File> files = fileService.query(params);
+
         if (CollectionUtil.isNotEmpty(files)) {
-            com.fms.domain.filemanage.File file = files.get(0);
-            Long dirId = fileInfo.getDirectoryId();
+            for (com.fms.domain.filemanage.File file : files) {
+                //进行文件名和MD5校验  如果匹配进行合并
+                if (file.getName().equals(fileInfo.getFilename()) && file.getFileMd5().equals(fileInfo.getIdentifier())) {
 
-            if(dirId == 1){
-                Date currentDate = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-                String relativePath = sdf.format(currentDate) + "/" + fileInfo.getWebkitRelativePath();
-
-                if (!Strings.isNullOrEmpty(relativePath)) {
-                    relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
-                    dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                    //文件所在位置
+                    String text = fileService.getTextById(file.getDirectoryId());
+                    return ExtUtil.failure("重复文件所在文件夹位置:" + text);
                 }
-            }else{
-                String relativePath = fileInfo.getWebkitRelativePath();
-                relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
-                dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+//                com.fms.domain.filemanage.File file = files.get(0);
+                Long dirId = fileInfo.getDirectoryId();
+
+                if (dirId == 1) {
+                    Date currentDate = new Date();
+                    String relativePath = sdf.format(currentDate) + "/" + fileInfo.getWebkitRelativePath();
+                    if (!Strings.isNullOrEmpty(relativePath)) {
+                        relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
+                        dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                        saveFile(file.getRealPath(), fileName, suffix, dirId, fileInfo.getIdentifier());
+                    }
+                }else{
+                    String relativePath = fileInfo.getWebkitRelativePath();
+                    if (!Strings.isNullOrEmpty(relativePath)) {
+                        relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
+                        dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                        saveFile(file.getRealPath(), fileName, suffix, dirId, fileInfo.getIdentifier());
+                    }
+                }
+
+                return "合并成功";
             }
-
-            saveFile(file.getRealPath(), fileName, suffix, dirId, fileInfo.getIdentifier());
-            return "合并成功";
         }
-
         String folder = uploadFolder + "/" + fileInfo.getIdentifier();
         merge(path, folder);
         fileInfo.setLocation(path);
@@ -448,17 +458,14 @@ public class UploadController {
 
             if(dirId == 1){
                 Date currentDate = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
                 String relativePath = sdf.format(currentDate) + "/" + fileInfo.getWebkitRelativePath();
 
-                if (!Strings.isNullOrEmpty(relativePath)) {
+                if(!Strings.isNullOrEmpty(relativePath)) {
                     relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
                     dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
                 }
             }else{
                 String relativePath = fileInfo.getWebkitRelativePath();
-
                 if (!Strings.isNullOrEmpty(relativePath)) {
                     relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
                     dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
@@ -466,7 +473,6 @@ public class UploadController {
             }
 
             saveFile(realPath, fileName, suffix, dirId, fileInfo.getIdentifier());
-
             chunkService.delete(fileInfo.getIdentifier());
             // 清除文件夹
             File tempFile = new File(path);
@@ -479,8 +485,7 @@ public class UploadController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return "合并成功";
+        return ExtUtil.success("上传成功");
     }
 
 
@@ -644,7 +649,7 @@ public class UploadController {
     public static void merge(String targetFile, String folder) {
         try {
             if (!Files.exists(Paths.get(targetFile))) {
-                java.nio.file.Path p = Files.createFile(Paths.get(targetFile));
+                Path p = Files.createFile(Paths.get(targetFile));
 
                 Files.list(Paths.get(folder))
                         .filter(path -> path.getFileName().toString().contains("-") && !p.getFileName().equals(path.getFileName()))

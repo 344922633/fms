@@ -106,12 +106,11 @@
                                               @file-complete="fileComplete" @complete="complete" @file-success="fileSuccess">
                                         <uploader-unsupport></uploader-unsupport>
                                         <uploader-drop>
-                                            <p>拖拽文件或文件夹到这里 或者</p>
+
                                             <uploader-btn>选择文件</uploader-btn>
                                             <uploader-btn :directory="true">选择文件夹</uploader-btn>
                                         </uploader-drop>
                                         <uploader-list></uploader-list>
-                                        请选则一个目录！
                                     </uploader>
                                 </Modal>
                                 <!--上传弹出框用于确认当前选中目录-->
@@ -441,8 +440,8 @@
                     chunkSize: 1024 * 1024 * 5
                 },
                 statusText: {
-                    success: '成功了',
-                    error: '出错了',
+                    success: '执行完毕',
+                    error: '文件重复',
                     uploading: '上传中',
                     paused: '暂停中',
                     waiting: '等待中'
@@ -707,6 +706,7 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
+
             },
             // 一个根文件（文件夹）成功上传完成。
             fileComplete() {
@@ -714,6 +714,7 @@
             },
             //文件上传
             fileUpload(){
+
                 if(this.tDirectoryId==0 || this.tDirectoryText==''){
                     this.$Modal.info({
                         title: '提示',
@@ -726,6 +727,7 @@
                     });
                 }else{
                     this.modal1 = true;
+
                 }
 
             },
@@ -740,6 +742,7 @@
 
             uploadFile () {
                 this.modal8 = true;
+                this.modalUploadChoose = false;
             },
 
             uploadFromFtp () {
@@ -860,7 +863,8 @@
                     var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
                     var ip = ipRex.exec(this.config.fileServerPath);
                     // var ip = '39.104.131.29';
-                    var a ="http://"+ ip +":8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
+                    var a ="http://datanode3:8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
+                    // var a ="http://"+ ip +":8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
 // alert(a);
 //var a = "http://47.93.40.219:8888/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");
 // var a = "http://"+ ip +":8888/index?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/home/huiju/data/fdfs/storage/data")

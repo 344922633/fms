@@ -181,6 +181,7 @@
                     </FormItem>
                     <template v-if="columnSelectMap[key] && columnSelectMap[key].dicTables">
                         <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.columnChinese">
+
                             <Select
                                     style="width: 180px"
                                     :data="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
@@ -415,6 +416,7 @@
                 let arr = []
                     for (let key in this.columnKeyNamesMap) {
                         let obj = {};
+
                         obj["columnKey"] = key;
                         obj["schemaId"] = this.columnKeyNamesMap[key].schemaId;
                         obj["tableId"] = this.columnKeyNamesMap[key].tableId;
@@ -430,6 +432,8 @@
                         }
 
                         obj["dicMap"] = this.columnKeyNamesMap[key]['dicMap'];
+
+                        this.columnSelectMap;
 
                         arr.push(obj);
                     }
@@ -858,24 +862,23 @@
                 }).then(res => {
                     const dicTables = res.data || []
                     this.$set(this.columnSelectMap[key], 'dicTables', dicTables)
-                    //this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
+                    this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
 
                     dicTables.forEach(dicTable => {
                         const { columnEnglish } = dicTable
-                        //this.$set(this.columnKeyNamesMap[key]['dicMap'], columnEnglish, '')
+                        this.$set(this.columnKeyNamesMap[key]['dicMap'], columnEnglish, '')
                     })
-
                 })
             },
 
             // TODO dicColumns 未被使用，此方法暂时注释
-            // getDicColumnsByDicName(dicTable, key) {
-            //     this.$axios.post('mvc/getDicColumnsByDicName', {
-            //         dicName:dicTable
-            //     }).then(res => {
-            //         this.$set(this.columnSelectMap[key], 'dicColumns', res.data)
-            //     });
-            // },
+            getDicColumnsByDicName(dicTable, key) {
+                this.$axios.post('mvc/getDicColumnsByDicName', {
+                    dicName:dicTable
+                }).then(res => {
+                    this.$set(this.columnSelectMap[key], 'dicColumns', res.data)
+                });
+            },
 
 
             toggleTab(index,key) {
@@ -962,6 +965,7 @@
 
 
             parseDataSaveDatabase() {
+                this.$message('执行入库');
                 this.$axios.post('mvc/fileParser/parseDataSaveHBase', {
                     parserId: this.file.recommendParserId,
                     file_id: this.file.id,

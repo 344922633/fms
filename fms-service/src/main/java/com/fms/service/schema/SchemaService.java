@@ -74,6 +74,9 @@ public class SchemaService {
     public String getTableNameById(long tid){
         return dao.get(CLASSNAME, "getTableNameById", tid);
     }
+    public String getTableEnglish(long id){
+        return dao.get(CLASSNAME, "getTableEnglish", id);
+    }
 
 
 }

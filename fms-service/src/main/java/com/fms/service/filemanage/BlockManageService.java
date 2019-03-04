@@ -33,6 +33,9 @@ public class BlockManageService {
     public List<BlockManage> getList(Map<String, Object> params) {
         return dao.getList(CLASSNAME, "getList", params);
     }
+    public BlockManage getCountById(long id) {
+        return dao.get(CLASSNAME, "getCountById", id);
+    }
 
     /**
      * 根据id更新名单信息
@@ -53,13 +56,37 @@ public class BlockManageService {
     public void updateByParserId(BlockManage blockManage) {
         dao.update(CLASSNAME, "updateByParserId", blockManage);
     }
-
+    public void deleteById(long id) {
+        dao.delete(CLASSNAME, "deleteById", id);
+    }
     /**
      * 插入名单信息
      *
      * @param block 名单信息
      * @return
-     */
+//     */
+//    public void add(BlockManage block) {
+//        long id = 1L;
+//        //获取已有信息
+//        BlockManage oldBlock = getCountById(id);
+//        BlockManage newBlock =new BlockManage();
+//            if (!StringUtils.isBlank(block.getBlackContent())) {
+//                newBlock.setBlackContent(oldBlock.getBlackContent() + "," + block.getBlackContent());
+//            }else{
+//                newBlock.setBlackContent(oldBlock.getBlackContent());
+//            }
+//
+//            if (!StringUtils.isBlank(block.getWhiteContent())) {
+//                newBlock.setWhiteContent(oldBlock.getWhiteContent() + "," + block.getWhiteContent());
+//            }else{
+//                newBlock.setWhiteContent(oldBlock.getWhiteContent());
+//            }
+//        newBlock.setUpdated(new Date());
+//        newBlock.setId(1L);
+//        deleteById(id);
+//        addNewCount(newBlock);
+//}
+
     public void add(BlockManage block) {
 
         BlockManage oldBlock = get(block);
@@ -81,6 +108,9 @@ public class BlockManageService {
 
     }
 
+
+
+
     /**
      * 查询名单信息
      *
@@ -89,5 +119,9 @@ public class BlockManageService {
      */
     public BlockManage get(BlockManage block) {
         return dao.get(CLASSNAME, "get", block);
+    }
+
+    public void addNewCount(BlockManage newBlock) {
+         dao.insert(CLASSNAME, "addNewCount", newBlock);
     }
 }

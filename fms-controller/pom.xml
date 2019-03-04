@@ -88,25 +88,25 @@
             <artifactId>ExcelParser</artifactId>
             <version>1.0</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.fms</groupId>-->
-            <!--<artifactId>XmlParser</artifactId>-->
-            <!--<version>1.3</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.fms</groupId>-->
-            <!--<artifactId>visioParser</artifactId>-->
-            <!--<version>1.0</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.fms</groupId>-->
-            <!--<artifactId>JsonParser</artifactId>-->
-            <!--<version>1.0</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.fms</groupId>-->
-            <!--<artifactId>SqlParser</artifactId>-->
-            <!--<version>1.0</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.fms</groupId>
+            <artifactId>XmlParser</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fms</groupId>
+            <artifactId>visioParser</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fms</groupId>
+            <artifactId>JsonParser</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fms</groupId>
+            <artifactId>SqlParser</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

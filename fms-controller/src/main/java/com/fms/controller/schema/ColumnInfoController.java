@@ -87,10 +87,10 @@ public class ColumnInfoController {
 
         for (Map<String, Object> map : tableColumns) {
             ColumnInfo columnInfo = new ColumnInfo();
-                //如果字段是DXBM就生成时间戳
-            if(((String) map.get("column_name")).toLowerCase().equals("dxbm")){
-                columnInfo.setColumnChinese(String.valueOf(System.currentTimeMillis()));
-            }
+//                //如果字段是DXBM就生成时间戳
+//            if(((String) map.get("column_name")).toLowerCase().equals("dxbm")){
+//                columnInfo.setColumnChinese(String.valueOf(System.currentTimeMillis()));
+//            }
             columnInfo.setColumnEnglish((String) map.get("column_name"));
             columnInfo.setDataType((String) map.get("data_type"));
             columnInfo.setTableId(id);

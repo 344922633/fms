@@ -37,12 +37,19 @@
                 property,
                 propertyChinese,
                 isDic,
-                dicList
+                dicList,
+                tableId,
+                groupName
+
             } = item
+
             const propertyOption = {
+                groupName:groupName,
+                tableId:tableId,
                 displayName: propertyChinese,
                 client:property
             }
+
             if (isDic === 1 && dicList) {
                 let dicArr
                 try {
@@ -50,8 +57,16 @@
                 }catch (e) {
                     dicArr = []
                 }
-                const options = dicArr.map(dic => dic.MC)
+                // const options = dicArr.map(dic => dic.MC);
+                const options = dicArr.map(function(item){
+                    return {
+                        value:item.MC,
+                        key:item.DM
+                    }
+                })
+
                 propertyOption.options = options
+
             }
             ret.push(propertyOption)
         })
@@ -63,16 +78,16 @@
         data() {
             return {
                 graph: null,
-                saveName: '',
+                    saveName: '',
                 idPropertiesMap: {}
             }
         },
         created() {
-            const needRefresh = localStorage.getItem('__needRefresh__')
-            if (needRefresh) {
-                localStorage.setItem('__needRefresh__', '')
-                location.reload()
-            }
+          const needRefresh = localStorage.getItem('__needRefresh__')
+          if (needRefresh) {
+              localStorage.setItem('__needRefresh__', '')
+              location.reload()
+          }
         },
         async mounted() {
             // 获取控件
@@ -87,13 +102,20 @@
             getControlData() {
                 return this.$axios.post('mvc/control/getList').then((res) => {  //接口返回数据
                     let { data } = res
-                    data.forEach(d => {
+                    data.forEach((d,i) => {
+
                         // d.image = '/static/img/img.jpg'
                         d.label = d.name
                         d.clientProperties ={
                             id: d.id
                         }
-                        delete d.type
+
+                        if(i==0){
+                             d.type = 'Group'
+                        }else{
+                            delete d.type
+                        }
+
                     })
                     this.images = data
                 }).catch(function (error) {
@@ -109,6 +131,7 @@
                     })
 
                     this.idPropertiesMap = ret
+
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -193,11 +216,13 @@
                         propertySheet.showDefaultProperties = false;
 
                         propertySheet.getCustomPropertyDefinitions = function(data){
+
                             var id = data.get('id');
                             var properties = that.idPropertiesMap[id] || []
+
                             return {
                                 group: '属性',
-                                properties: properties
+                                properties: properties,
                             }
                         }
                         //实现带箭头的线条
@@ -219,9 +244,10 @@
                 });
             },
             getQueryData() {
-                const id = this.$route.query.id
+              const id = this.$route.query.id
                 this.$axios.post('mvc/picture/showPicture',{id}).then((res) => {
                     const {data} = res
+
                     if (data) {
                         const {json, name} = data
                         this.loadJSONData(json)
@@ -231,7 +257,19 @@
                     console.log(error);
                 });
             },
-
+/*
+            getQueryData() {
+                const id = this.$route.query.id
+                this.$axios.post('mvc/picture/handlePicture',{id}).then((res) => {
+                    const {data} = res
+                    if (data) {
+                        const {json} = data
+                        this.loadJSONData(json)
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },*/
             loadJSONData(res) {
                 try{
                     res = JSON.parse(res)
@@ -251,16 +289,13 @@
                     this.$message.error('请输入图片名称')
                     return
                 }
-                // for(let i = 0,len = tableData.length; i < len; i++) {
-                //     if(tableData[i].name == this.form.name){
-                //         this.$message.warning('控件名重复');
-                //         return
-                //     }
-                // }
-
-
                 const json = this.graphEditor.exportJSON()
 
+
+                //  if (JSON.stringify(json).search("Group") != -1) {
+                //         this.$message.error('没有父组件')
+                //         return
+                //     }
                 const loading = this.$loading({
                     lock: true,
                     text: '正在保存',
@@ -271,23 +306,32 @@
                     id,
                     name,
                     json:JSON.stringify(json)
-                }).then((res) => {
-                    //接口返回数据
-                    this.$message.warning(res.data.data)
+                }).then((res) => {  //接口返回数据
+
+                    if(this.Data = res.data.success){
+                        this.$message.success('保存成功')
+                    }else{
+                        alert("名称重复")
+                    }
+
                     loading.close()
                 }).catch(function (error) {
                     loading.close()
                     console.log(error);
                 });
             },
+
             init(graph, editor) {
                 editor.toolbox.hideDefaultGroups();
                 editor.toolbox.hideButtonBar();
             },
+
             sendInfo(){
                 const json = this.graphEditor.exportJSON()
+
                 this.$axios.post('mvc/picture/sendDataToKafka', {
                     json:JSON.stringify(json)
+
                 }).then((res) => {  //接口返回数据
                     this.$message.success('发送成功')
                 });

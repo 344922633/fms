@@ -43,6 +43,12 @@
         <include refid="condition" />
     </select>
 
+    <select id="queryFolderExist" parameterType="map" resultType="integer">
+        SELECT count(*)
+        FROM fms_directory
+        WHERE  parent_id=#{parentId} and text = #{text}
+    </select>
+
     <insert id="add" parameterType="com.fms.domain.filemanage.Directory" >
         INSERT INTO fms_directory
         (<include refid="allNoAs" />)

@@ -32,6 +32,9 @@ public class DirectoryService {
     public List<Directory> query(Map<String, Object> params) {
         return dao.getList(CLASSNAME, "query", params);
     }
+    public int queryFolderExist(Map<String, Object> params) {
+        return dao.get(CLASSNAME, "queryFolderExist", params);
+    }
 
     /**
      * 新增目录

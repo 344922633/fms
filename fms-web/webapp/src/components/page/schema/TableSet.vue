@@ -48,10 +48,10 @@
 
                     <!--&lt;!&ndash;DXBM字段显示时间戳  只读&ndash;&gt;    :type="checkType(item.dataType)"                      -->
 
-                    <Input v-model="item.columnChinese" v-if="item.columnEnglish.toLowerCase() != 'dxbm'" :placeholder="item.dataType"  :value="item.columnChinese" style="width:300px;"/>
+                    <!--<Input v-model="item.columnChinese" v-if="item.columnEnglish.toLowerCase() != 'dxbm'" :placeholder="item.dataType"  :value="item.columnChinese" style="width:300px;"/>-->
 
-                    <Input v-model="item.columnChinese" v-if="item.columnEnglish.toLowerCase() == 'dxbm'" disabled="disabled" :value="item.columnChinese" style="width:300px;"/>
-
+                    <!--<Input v-model="item.columnChinese" v-if="item.columnEnglish.toLowerCase() == 'dxbm'" disabled="disabled" :value="item.columnChinese" style="width:300px;"/>-->
+                    <Input v-model="item.columnChinese" :placeholder="item.data_type" :value="item.columnChinese" style="width:300px;"/>
 
                     <Select v-if="checkedArr[index]" v-model="item.dicTableName" style="width:300px;">
                         <Option v-for="item in dicTableName" :value="item" :key="item">{{ item }}</Option>

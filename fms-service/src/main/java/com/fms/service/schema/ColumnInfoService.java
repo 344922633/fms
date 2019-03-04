@@ -53,6 +53,7 @@ public class ColumnInfoService {
         return dao.getList(CLASSNAME, "getAllTables");
     }
 
+
     public List<String> getDicByTableId(long tid) {
         return dao.get(CLASSNAME, "getDicByTableId", tid);
     }
@@ -91,6 +92,9 @@ public class ColumnInfoService {
 
     public Integer countTableInfoByEnglish(String tableEnglish){
         return dao.get(CLASSNAME,"countTableInfoByEnglish",tableEnglish);
+    }
+    public TableInfo getTableEnglish(Long id){
+        return dao.get(CLASSNAME,"getTableEnglish",id);
     }
 
 

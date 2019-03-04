@@ -57,5 +57,8 @@
         where controlId = #{controlId}
     </select>
 
+    <select id="getTablesId" parameterType="string" resultType="com.fms.domain.tuopu.ControlProperty">
+        select distinct tableId from t_control_property where controlId =#{id};
+    </select>
 
 </mapper>

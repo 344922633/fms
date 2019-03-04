@@ -50,6 +50,7 @@ public class PictureService {
 		return dao.get(CLASSNAME, "get", id);
 	}
 
+
 	public void delete(Long id) {
 		dao.delete(CLASSNAME, "delete", id);
 	}

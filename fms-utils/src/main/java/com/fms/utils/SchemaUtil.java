@@ -17,6 +17,7 @@ public class SchemaUtil {
     public static String schemaStrFormat(String tableName, List<Map<String, Object>> list) {
 
         JSONObject rootObj = new JSONObject();
+//        rootObj.put("operationSource",PropertyUtil.readValue("OPERATION_SOURCE"));
         rootObj.put("operationSource", "XX_PLATFORM");
         JSONArray infoArr = new JSONArray();
         JSONObject infoObj = new JSONObject();

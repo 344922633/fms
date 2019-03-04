@@ -1,11 +1,18 @@
 package com.fms.controller.tuopu;
 
+import com.alibaba.druid.stat.TableStat;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import com.fms.domain.schema.ColumnInfo;
+import com.fms.domain.schema.TableInfo;
+import com.fms.domain.tuopu.ControlProperty;
 import com.fms.domain.tuopu.Picture;
 import com.fms.service.filemanage.FileParserService;
+import com.fms.service.schema.ColumnInfoService;
+import com.fms.service.schema.SchemaService;
+import com.fms.service.tuopu.ControlPropertyService;
 import com.fms.service.tuopu.ControlService;
 import com.fms.service.tuopu.PictureService;
 import com.fms.utils.JSONUtils;
@@ -33,9 +40,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class PictureController {
     @Autowired
     private PictureService pictureService;
+    @Autowired
+    private ColumnInfoService columnInfoService;
 
     @Autowired
     private KafkaTemplate kafkaTemplate;
+
+    @Autowired
+    private ControlPropertyService controlPropertyService;
 
     @Autowired
     private Environment env;
@@ -256,34 +268,34 @@ public class PictureController {
 
         if(pictureService.query(name) == 0){
 
-        // 将读取的数据转换为JSONObject
-        JSONObject jsonObject = JSONObject.parseObject(jsonData);
-        //设置日期格式
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String date = df.format(new Date());
-        Picture picture;
+            // 将读取的数据转换为JSONObject
+            JSONObject jsonObject = JSONObject.parseObject(jsonData);
+            //设置日期格式
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = df.format(new Date());
+            Picture picture;
 
-        if (jsonObject != null) {
-            // 取出所有控件读取属性
-            if (id==null) {
-                picture = new Picture();
-                picture.setJson(jsonData);
-                picture.setName(name);
-                picture.setTime(date);
-                pictureService.add(picture);
+            if (jsonObject != null) {
+                // 取出所有控件读取属性
+                if (id==null) {
+                    picture = new Picture();
+                    picture.setJson(jsonData);
+                    picture.setName(name);
+                    picture.setTime(date);
+                    pictureService.add(picture);
 
-            } else {
-                picture = pictureService.get(id);
-                picture.setJson(jsonData);
-                picture.setName(name);
-                picture.setTime(date);
-                pictureService.update(picture);
+                } else {
+                    picture = pictureService.get(id);
+                    picture.setJson(jsonData);
+                    picture.setName(name);
+                    picture.setTime(date);
+                    pictureService.update(picture);
+                }
             }
-        }
         }else{
             return ExtUtil.failure("名称重复");
         }
-    return ExtUtil.success("操作成功");
+        return ExtUtil.success("操作成功");
     }
 
     @RequestMapping("showPicture")
@@ -307,7 +319,7 @@ public class PictureController {
         JSONArray btnArray = jsonData.getJSONArray(key);
 
 
-            // 循环获取控件
+        // 循环获取控件
         for (int i = 0; i < btnArray.size(); i++) {
 
             JSONObject kongjianObj = btnArray.getJSONObject(i);
@@ -449,6 +461,11 @@ public class PictureController {
 
 
 
+
+
+
+
+
     public String getTable(String str) {
 
         List<Map<String, Object>> json = new ArrayList<>();
@@ -477,12 +494,10 @@ public class PictureController {
         }
         String jsonData = request.getParameter("json");
         String name = request.getParameter("name");
-
         // 将读取的数据转换为JSONObject
         JSONObject jsonObject = JSONObject.parseObject(jsonData);
 
         JSONArray btnArray = jsonObject.getJSONArray("datas");
-
         // 循环获取控件
         for (int i = 0; i < btnArray.size(); i++) {
             String str = "";
@@ -491,45 +506,110 @@ public class PictureController {
             JSONObject obj = new JSONObject();
             JSONArray data = new JSONArray();
             JSONObject obj1 = new JSONObject();
-            obj.put("operationSource",PropertyUtil.readValue("DEFAULT_TOPIC"));
+            JSONObject obj2 = new JSONObject();
+            obj.put("operationSource",PropertyUtil.readValue("OPERATION_SOURCE"));
             obj1.put("operationType", "INSERT");
+            obj2.put("operationType", "INSERT");
             JSONArray columns = new JSONArray();
+            JSONArray columns2 = new JSONArray();
             JSONObject properties = null;
             JSONObject columnObj1 = new JSONObject();
+            JSONObject columnObj2= new JSONObject();
+            String controlId = null;
             if (json.containsKey("properties")) {
                 properties = JSON.parseObject(json.getString("properties"));
                 Iterator<String> colIt = properties.keySet().iterator();
+                Iterator<String> colIt1 = properties.keySet().iterator();
                 while (colIt.hasNext()) {
                     String jsonKey = colIt.next();
                     if (jsonKey.equals("id")) {
-                        continue;
+                        controlId = properties.getString(jsonKey);
                     }
+                }
+                List<ControlProperty>  controlProperties =  controlService.getTablesId(controlId);
+
+                String MtableName = columnInfoService.queryTableInfoById(Long.parseLong(controlProperties.get(0).getTableId())).getTableEnglish();
+
+                String StableName = columnInfoService.queryTableInfoById(Long.parseLong(controlProperties.get(1).getTableId())).getTableEnglish();
+
+                List<ControlProperty> controlPropertyList =getColumnByControlIdAndTableId(controlId,controlProperties.get(0).getTableId());
+                List<ControlProperty> controlPropertyList2 =getColumnByControlIdAndTableId(controlId,controlProperties.get(1).getTableId());
+//                List<String> Scolumn =getColumnByControlIdAndTableId(controlId,controlProperties.get(1).getTableId());
+
+                while (colIt1.hasNext()) {
+                    String jsonKey = colIt1.next();
                     if (jsonKey.toLowerCase().equals("dxbm")) {
                         str = properties.get(jsonKey).toString();
+                        if(str!=""){
                         obj1.put("objectCode", "dxbm");
+                        obj2.put("objectCode", "dxbm");
                         obj1.put("objectCodeValue", str);
-                        continue;
+                        obj2.put("objectCodeValue", str);
+                        }
                     }
                     JSONObject jsonCol = new JSONObject();
-                    jsonCol.put("name", jsonKey.toLowerCase());
-                    jsonCol.put("value", properties.get(jsonKey));
-                    columns.add(jsonCol);
+                    JSONObject jsonCol2 = new JSONObject();
+
+                    for(ControlProperty controlProperty : controlPropertyList) {
+
+                        if (jsonKey.equals(controlProperty.getProperty())){
+                            jsonCol.put("name", jsonKey.toLowerCase());
+                            jsonCol.put("value", properties.get(jsonKey));
+                        }
+                    }
+                    for(ControlProperty controlProperty2 : controlPropertyList2) {
+
+                        if (jsonKey.equals(controlProperty2.getProperty())){
+                            jsonCol2.put("name", jsonKey.toLowerCase());
+                            jsonCol2.put("value", properties.get(jsonKey));
+                        }
+                    }
+
+//                    jsonCol.put("name", jsonKey.toLowerCase());
+//                    jsonCol.put("value", properties.get(jsonKey));
+//                    jsonCol2.put("name", jsonKey.toLowerCase());
+//                    jsonCol2.put("value", properties.get(jsonKey));
+
+                    if(jsonCol.size()!=0){
+                        columns.add(jsonCol);
+                    }
+                    if(jsonCol2.size()!=0) {
+                        columns2.add(jsonCol2);
+                    }
+//                    columns.add(jsonCol);
+//                    columns2.add(jsonCol2);
                 }
-                String tableName = getTable(columns.toJSONString());
+
+//                String tableName = getTable(columns.toJSONString());
                 obj1.put("schema", env.getProperty("schema"));
-                obj1.put("table",tableName);
-                columnObj1.put("name", "dxbm");
-                columnObj1.put("value", str);
-                columns.add(columnObj1);
+                obj2.put("schema", env.getProperty("schema"));
+                obj1.put("table",MtableName);
+                obj2.put("table",StableName);
+//                columnObj1.put("name", "dxbm");
+//                columnObj1.put("value", str);
+//                columnObj2.put("name", "dxbm");
+//                columnObj2.put("value", str);
+//                columns.add(columnObj1);
+//                columns2.add(columnObj2);
                 obj1.put("columns", columns);
+                obj2.put("columns", columns2);
                 data.add(obj1);
+                data.add(obj2);
                 obj.put("data", data);
                 System.out.println(obj.toJSONString());
-                kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), obj.toJSONString());
+//                kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), obj.toJSONString());
             }
         }
     }
 
+
+    public List<ControlProperty> getColumnByControlIdAndTableId(String controlId,String tableId){
+        Map<String, Object> params = new HashMap<>();
+        params.put("controlId",controlId);
+        params.put("tableId",tableId);
+        return controlPropertyService.getColumnByControlIdAndTableId(params);
+
+    }
 
 
 }

@@ -32,6 +32,7 @@
             </if>
         </where>
     </select>
+
     <sql id="condition">
         <where>
             <if test="id != null ">
@@ -48,6 +49,11 @@
         <include refid="condition" />
     </select>
 
+    <select id="getCountById" parameterType="long" resultType="com.fms.domain.filemanage.BlockManage">
+        SELECT *
+        FROM block_manage
+        where id = #{id}
+    </select>
     <!--添加数据-->
     <insert id="add" parameterType="com.fms.domain.filemanage.BlockManage">
         INSERT INTO block_manage
@@ -67,8 +73,12 @@
     <update id="updateById" parameterType="com.fms.domain.filemanage.BlockManage">
         UPDATE block_manage
         SET
-        white_content = #{whiteContent},
-        black_content = #{blackContent},
+        <if test="whiteContent != null">
+            white_content = #{whiteContent},
+        </if>
+        <if test="blackContent != null">
+            black_content = #{blackContent},
+        </if>
         updated = #{updated}
         <where>
             <if test="id != null">
@@ -76,6 +86,7 @@
             </if>
         </where>
     </update>
+
 
     <!--根据解析器id更新名单信息-->
     <update id="updateByParserId" parameterType="com.fms.domain.filemanage.BlockManage">
@@ -90,4 +101,25 @@
         updated = #{updated}
         where file_parser_id = #{fileParserId}
     </update>
+
+
+
+
+    <delete id="deleteById" parameterType="long">
+        delete from
+        block_manage
+        where
+         id = #{id}
+    </delete>
+
+    <insert id="addNewCount" parameterType="com.fms.domain.filemanage.BlockManage">
+        INSERT INTO block_manage
+        (id,white_content,black_content)
+        VALUES (
+        #{id},
+        #{whiteContent},
+        #{blackContent}
+        )
+    </insert>
+
 </mapper>
