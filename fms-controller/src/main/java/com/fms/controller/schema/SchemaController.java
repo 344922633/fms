@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fms.domain.schema.ColumnInfo;
 import com.fms.domain.filemanage.MasterSlaveDo;
+import com.fms.domain.schema.TableInfo;
 import com.fms.service.schema.ColumnInfoService;
 import com.fms.service.schema.ColumnSetService;
 import com.fms.service.masterSlave.ColumnValuesService;
@@ -44,6 +45,11 @@ public class SchemaController {
     @Autowired
     private KafkaTemplate kafkaTemplate;
 
+
+    @RequestMapping("getTableNameById")
+    public String getTableNameById(long tableId) {
+        return schemaService.getTableNameById(tableId);
+    }
 
     @RequestMapping("listColumns")
     public List<Map<String, Object>> listColumns(String tableName) {

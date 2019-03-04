@@ -327,7 +327,8 @@
         result = result || {};
         var properties = options.properties;
         var groupName = options.group || 'Element'
-
+         console.log(result,'result')
+        console.log(options,'options')
         properties.forEach(function (item) {
             result[item.tableId] ={};
         })
@@ -350,11 +351,15 @@
             if (!item.groupName) {
                 item.groupName = groupName;
             }
+            // result[item.tableId][key] = item;
+            // console.log(item, 'item')
             result[item.tableId][key] = item;
-            // console.log(result, 'result')
+
         })
+
         return result;
     }
+
 
     registerDefaultProperties({
         class: Q.Element,
@@ -758,10 +763,22 @@
             this.propertyGroup = this._getProperties(datas[0]);
 
             var group = this.propertyGroup.group;
-            // console.log(group, 'group')
-            for (var groupName in group) {
-                this.createItemGroup(groupName, group[groupName]);
+            //以下为临时数据，JS不知道如何调取后台出此下策
+            //后台 方法  mvc/getTableNameById  参数为tableId  返回值为String  tableChinese
+            group2 = {};
+            for(var i in group){
+                group2["主表"]=group[i];
+                break;
             }
+            for(var i in group){
+                group2["从表"]=group[i];
+            }
+            for (var groupName in group2) {
+                this.createItemGroup(groupName, group2[groupName]);
+            }
+            // for (var groupName in group) {
+            //     this.createItemGroup(groupName, group[groupName]);
+            // }
         }
     }
 

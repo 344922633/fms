@@ -360,8 +360,8 @@
                 table_name: '',
                 //表中所有字段属性
                 allTableField: [],
-
-
+                initHandleOkState:1, // 条件是否满足执行hanlerOk事件
+                preClassColumnsParams: null,
 
 
                 //解析前预分类数据
@@ -470,6 +470,7 @@
                         render: (h, params) => {
                             const {row, index} = params || {};
                             const {recommendParserId} = row || {};
+                            this.preClassColumnsParams = params;
                             const hasMulte =
                                 this.idPropertiesMap[recommendParserId] &&
                                 this.idPropertiesMap[recommendParserId].length;
@@ -518,6 +519,8 @@
                                 hasMulte? h("a",{
                                     on: {
                                         click: () => {
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
                                             this.setVisible = true;
                                         }
                                     }
@@ -550,6 +553,7 @@
                         render: (h, params) => {
                             const {row, index} = params || {};
                             const {recommendParserId} = row || {};
+                            this.preClassColumnsParams = params;
                             const hasMulte =
                                 this.idPropertiesMap[recommendParserId] &&
                                 this.idPropertiesMap[recommendParserId].length;
@@ -582,6 +586,8 @@
                                 hasMulte? h("a",{
                                     on: {
                                         click: () => {
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
                                             this.setVisible = true;
                                         }
                                     }
@@ -612,6 +618,7 @@
                         render: (h, params) => {
                             const {row, index} = params || {};
                             const {recommendParserId} = row || {};
+                            this.preClassColumnsParams = params;
                             const hasMulte =
                                 this.idPropertiesMap[recommendParserId] &&
                                 this.idPropertiesMap[recommendParserId].length;
@@ -643,7 +650,9 @@
                                     }," 选择解析器 "),
                                 hasMulte? h("a",{
                                     on: {
-                                        change: () => {
+                                        click: () => {
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
                                             this.setVisible = true;
                                         }
                                     }
@@ -672,6 +681,7 @@
                         title: "操作",
                         key: "recommendParserName",
                         render: (h, params) => {
+                            this.preClassColumnsParams = params;
                             const {row, index} = params || {};
                             const {recommendParserId} = row || {};
                             const hasMulte =
@@ -706,6 +716,8 @@
                                 hasMulte? h("a",{
                                     on: {
                                         click: () => {
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
                                             this.setVisible = true;
                                         }
                                     }
@@ -736,6 +748,7 @@
                         render: (h, params) => {
                             const {row, index} = params || {};
                             const {recommendParserId} = row || {};
+                            this.preClassColumnsParams = params;
                             const hasMulte =
                                 this.idPropertiesMap[recommendParserId] &&
                                 this.idPropertiesMap[recommendParserId].length;
@@ -768,6 +781,8 @@
                                 hasMulte? h("a",{
                                     on: {
                                         click: () => {
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
                                             this.setVisible = true;
                                         }
                                     }
@@ -798,6 +813,7 @@
                         render: (h, params) => {
                             const {row, index} = params || {};
                             const {recommendParserId} = row || {};
+                            this.preClassColumnsParams = params;
                             const hasMulte =
                                 this.idPropertiesMap[recommendParserId] &&
                                 this.idPropertiesMap[recommendParserId].length;
@@ -830,6 +846,8 @@
                                 hasMulte? h("a",{
                                     on: {
                                         click: () => {
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
                                             this.setVisible = true;
                                         }
                                     }
@@ -860,6 +878,7 @@
                         render: (h, params) => {
                             const {row, index} = params || {};
                             const {recommendParserId} = row || {};
+                            this.preClassColumnsParams = params;
                             const hasMulte =
                                 this.idPropertiesMap[recommendParserId] &&
                                 this.idPropertiesMap[recommendParserId].length;
@@ -894,6 +913,8 @@
                                 hasMulte? h("a",{
                                     on: {
                                         click: () => {
+                                            this.currentIndex = params.index;
+                                            this.currentParser = params.row.recommendParserId;
                                             this.setVisible = true;
                                         }
                                     }
@@ -1216,30 +1237,37 @@
             //数据库类文件
             choseDbFile() {
                 this.dBshow = !this.dBshow;
+                this.initHandleOk('预分类1', this.preClassDataFor1)
             },
             //拓扑结构类文件
             choseTbFile() {
                 this.tPshow = !this.tPshow;
+                this.initHandleOk('预分类2',this.preClassDataFor2)
             },
             //结构化文件
             choseJgFile() {
                 this.jGshow = !this.jGshow;
+                this.initHandleOk('预分类3',this.preClassDataFor3)
             },
             //文本类文件
             choseTxFile() {
                 this.tXshow = !this.tXshow;
+                this.initHandleOk('预分类4',this.preClassDataFor4)
             },
             //配置类文件
             choseCfFile() {
                 this.cFshow = !this.cFshow;
+                this.initHandleOk('预分类5',this.preClassDataFor5)
             },
             //日志类文件
             choseLgFile() {
                 this.lGshow = !this.lGshow;
+                this.initHandleOk('预分类6',this.preClassDataFor6)
             },
             //程序类文件
             chosePrFile() {
                 this.pRshow = !this.pRshow;
+                this.initHandleOk('预分类7',this.preClassDataFor7)
             },
             //上传合并
             fileSuccess(rootFile, file, message, chunk) {
@@ -1357,7 +1385,8 @@
             //获取页面table数据
             getAllData() {
                 let _self = this;
-                this.$axios.post("mvc/fileParser/getList", {}).then(res => {
+                this.$axios.post("mvc/fileParser/getList", {}).then(async (res) => {
+                    this.initHandleOk();
                     this.parsers = res.data;
                     this.$axios
                         .post("mvc/pageFilesByIsParser", {
@@ -1374,6 +1403,7 @@
                                 this.preClassDataFor1[i]._checked = true;
                             }
                             this.handlePreSelectionChange1(this.preClassDataFor1);
+                            this.initHandleOk();
                         });
                     this.$axios
                         .post("mvc/pageFilesByIsParser", {
@@ -1390,6 +1420,7 @@
                                 this.preClassDataFor2[i]._checked = true;
                             }
                             this.handlePreSelectionChange2(this.preClassDataFor2);
+                            this.initHandleOk();
                         });
                     this.$axios
                         .post("mvc/pageFilesByIsParser", {
@@ -1406,6 +1437,7 @@
                                 this.preClassDataFor3[i]._checked = true;
                             }
                             this.handlePreSelectionChange3(this.preClassDataFor3);
+                            this.initHandleOk();
                         });
                     this.$axios
                         .post("mvc/pageFilesByIsParser", {
@@ -1422,6 +1454,7 @@
                                 this.preClassDataFor4[i]._checked = true;
                             }
                             this.handlePreSelectionChange4(this.preClassDataFor4);
+                            this.initHandleOk();
                         });
                     this.$axios
                         .post("mvc/pageFilesByIsParser", {
@@ -1438,6 +1471,7 @@
                                 this.preClassDataFor5[i]._checked = true;
                             }
                             this.handlePreSelectionChange5(this.preClassDataFor5);
+                            this.initHandleOk();
                         });
                     this.$axios
                         .post("mvc/pageFilesByIsParser", {
@@ -1454,6 +1488,7 @@
                                 this.preClassDataFor6[i]._checked = true;
                             }
                             this.handlePreSelectionChange6(this.preClassDataFor6);
+                            this.initHandleOk();
                         });
                     this.$axios
                         .post("mvc/pageFilesByIsParser", {
@@ -1469,7 +1504,9 @@
                             for (var i = 0; i < this.preClassDataFor7.length; i++) {
                                 this.preClassDataFor7[i]._checked = true;
                             }
+                            console.log(this.preClassDataFor7)
                             this.handlePreSelectionChange7(this.preClassDataFor7);
+                            this.initHandleOk();
                         });
                     this.$axios
                         .post("mvc/pageFilesByIsParser", {
@@ -1481,6 +1518,7 @@
                         })
                         .then(res => {
                             this.waitClassData = res.data.list;
+                            this.initHandleOk();
                         });
                     this.$axios
                         .post("mvc/pageFilesByIsParser", {
@@ -1492,7 +1530,15 @@
                         })
                         .then(res => {
                             this.otherData = res.data.list;
+                            this.initHandleOk();
                         });
+                    this.$axios
+                        .post("mvc/fileParser/getList", {})
+                        .then(res => {
+                            this.parsers = res.data;
+                            this.initHandleOk();
+                        });
+
                 });
                 //已解析数据清空
                 this.afterPreClassData = [];
@@ -1500,6 +1546,20 @@
                 this.afterOtherData = [];
                 //解析进度初始化
                 this.parsed = 0;
+            },
+            initHandleOk(currentType, data=[]) {
+                this.initHandleOkState++;
+                if(this.initHandleOkState >= 12 && data.length>0){
+                    console.log( this.preClassColumnsParams, 'initHandleOkState')
+                    let params = data;
+                    for(let i = 0,len = params.length; i< len; i++) {
+                        this.currentIndex = i;
+                        this.currentParser = params[i].recommendParserId;
+                        this.currentType = currentType;
+                        this.handleOk()
+                    }
+
+                }
             },
             //执行多文件解析
             handleMultiParse() {
@@ -1875,41 +1935,71 @@
             handleOk() {
                 this.fixCon = false;
                 let current = this.parsers.find(i => i.id == this.currentParser);
+                if(!current){
+                    return;
+                }
                 if (this.currentType == "预分类1") {
-                    this.preClassDataFor1[this.currentIndex].recommendParserId = current.id;
-                    this.preClassDataFor1[this.currentIndex].recommendParserName =
-                        current.name;
+                    if(this.preClassDataFor1.length>0 && this.preClassDataFor1[this.currentIndex]) {
+                        this.preClassDataFor1[this.currentIndex].recommendParserId = current.id;
+                        this.preClassDataFor1[this.currentIndex].recommendParserName =
+                            current.name;
+                    }
+
                 } else if (this.currentType == "预分类2") {
-                    this.preClassDataFor2[this.currentIndex].recommendParserId = current.id;
-                    this.preClassDataFor2[this.currentIndex].recommendParserName =
-                        current.name;
+                    if(this.preClassDataFor2.length>0&& this.preClassDataFor2[this.currentIndex]) {
+                        this.preClassDataFor2[this.currentIndex].recommendParserId = current.id;
+                        this.preClassDataFor2[this.currentIndex].recommendParserName =
+                            current.name;
+                    }
+
                 } else if (this.currentType == "预分类3") {
-                    this.preClassDataFor3[this.currentIndex].recommendParserId = current.id;
-                    this.preClassDataFor3[this.currentIndex].recommendParserName =
-                        current.name;
+                    if(this.preClassDataFor3.length>0&& this.preClassDataFor3[this.currentIndex]) {
+                        this.preClassDataFor3[this.currentIndex].recommendParserId = current.id;
+                        this.preClassDataFor3[this.currentIndex].recommendParserName =
+                            current.name;
+                    }
+
                 } else if (this.currentType == "预分类4") {
-                    this.preClassDataFor4[this.currentIndex].recommendParserId = current.id;
-                    this.preClassDataFor4[this.currentIndex].recommendParserName =
-                        current.name;
+                    if(this.preClassDataFor4.length>0&& this.preClassDataFor4[this.currentIndex]) {
+                        this.preClassDataFor4[this.currentIndex].recommendParserId = current.id;
+                        this.preClassDataFor4[this.currentIndex].recommendParserName =
+                            current.name;
+                    }
+
                 } else if (this.currentType == "预分类5") {
-                    this.preClassDataFor5[this.currentIndex].recommendParserId = current.id;
-                    this.preClassDataFor5[this.currentIndex].recommendParserName =
-                        current.name;
+                    if(this.preClassDataFor5.length>0&& this.preClassDataFor5[this.currentIndex]) {
+                        this.preClassDataFor5[this.currentIndex].recommendParserId = current.id;
+                        this.preClassDataFor5[this.currentIndex].recommendParserName =
+                            current.name;
+                    }
+
                 } else if (this.currentType == "预分类6") {
-                    this.preClassDataFor6[this.currentIndex].recommendParserId = current.id;
-                    this.preClassDataFor6[this.currentIndex].recommendParserName =
-                        current.name;
+                    if(this.preClassDataFor6.length>0&& this.preClassDataFor6[this.currentIndex]) {
+                        this.preClassDataFor6[this.currentIndex].recommendParserId = current.id;
+                        this.preClassDataFor6[this.currentIndex].recommendParserName =
+                            current.name;
+                    }
+
                 } else if (this.currentType == "预分类7") {
-                    this.preClassDataFor7[this.currentIndex].recommendParserId = current.id;
-                    this.preClassDataFor7[this.currentIndex].recommendParserName =
-                        current.name;
+                    console.log(this.preClassDataFor7[this.currentIndex])
+                    if(this.preClassDataFor7.length>0&& this.preClassDataFor7[this.currentIndex]){
+                        this.preClassDataFor7[this.currentIndex].recommendParserId = current.id;
+                        this.preClassDataFor7[this.currentIndex].recommendParserName =
+                            current.name;
+                    }
+
                 } else if (this.currentType == "待分类") {
-                    this.waitClassData[this.currentIndex].recommendParserId = current.id;
-                    this.waitClassData[this.currentIndex].recommendParserName =
-                        current.name;
+                    if(this.waitClassData.length>0&& this.waitClassData[this.currentIndex]) {
+                        this.waitClassData[this.currentIndex].recommendParserId = current.id;
+                        this.waitClassData[this.currentIndex].recommendParserName =
+                            current.name;
+                    }
+
                 } else {
-                    this.otherData[this.currentIndex].recommendParserId = current.id;
-                    this.otherData[this.currentIndex].recommendParserName = current.name;
+                    if(this.otherData.length>0&& this.otherData[this.currentIndex]) {
+                        this.otherData[this.currentIndex].recommendParserId = current.id;
+                        this.otherData[this.currentIndex].recommendParserName = current.name;
+                    }
                 }
                 const id = current.id;
                 this.$axios
@@ -1923,7 +2013,9 @@
             handleSetOk() {
                 let propertiesMap = {};
                 propertiesMap.paramList = this.idPropertiesMap[this.currentParser];
-                this.waitClassData[this.currentIndex] = Object.assign({},this.waitClassData[this.currentIndex],propertiesMap);
+                //this.$set(this.idPropertiesMap,this.currentParser,propertiesMap.paramList);
+                console.log(this.idPropertiesMap)
+                this.waitClassData[this.currentIndex] = Object.assign({},propertiesMap,this.waitClassData[this.currentIndex]);
             },
             //****多文件解析添加映射******
             bcysgx(){
@@ -2427,9 +2519,12 @@
                 // 新版预览
                 var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
                 var ip = ipRex.exec(this.config.fileServerPath);
-                // var a ="http://"+ ip +":8888/index?filePath="+ row.realPath +'&id='+ row.id;
+                var previewIP2 = this.config.previewIP2;
+
+                var a ="http://"+ ip +":8888/index?filePath="+ row.realPath +'&id='+ row.id;
                 // var a ="http://localhost:8888/index?filePath="+row.realPath+'&id='+row.id;
-                var a ="http://datanode3:8888/index?filePath="+ row.realPath +'&id='+ row.id;
+                // var a ="http://datanode3:8888/index?filePath="+ row.realPath +'&id='+ row.id;
+                // var a ="http://bigdata3:8888/index?filePath="+ row.realPath +'&id='+ row.id;
                 var ifr = document.createElement('iframe');
                 ifr.src = a;
                 document.body.appendChild(ifr);

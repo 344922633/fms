@@ -112,7 +112,7 @@
                         <div class="proper-wrap">
                             <el-input :readonly="item.canDelete === false" v-model="item.text" style="width:200px;"></el-input>
                             <i v-if="index === 0" class="el-icon-plus" @click="addInput"></i>
-                            <i v-if="index !==0 && item.canDelete !== false" class="el-icon-minus" @click="removeInput(index)"></i>
+                            <i v-if="index !==0 && item.canDelete == false" class="el-icon-minus" @click="removeInput(index)"></i>
                         </div>
                     </el-form-item>
 
@@ -359,6 +359,7 @@
             },
             //编辑
             async handleEdit(index, row) {
+                console.log(this.inputs)
                 this.idx = index;   //下标
                 this.form = {
                     id:row.id,

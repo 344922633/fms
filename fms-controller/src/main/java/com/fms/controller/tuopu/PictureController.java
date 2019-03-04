@@ -597,7 +597,7 @@ public class PictureController {
                 data.add(obj2);
                 obj.put("data", data);
                 System.out.println(obj.toJSONString());
-//                kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), obj.toJSONString());
+                kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), obj.toJSONString());
             }
         }
     }

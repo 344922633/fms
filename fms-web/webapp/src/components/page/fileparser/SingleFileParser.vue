@@ -89,14 +89,15 @@
                 width="1500px"
                 scrollable
                 v-model="modalPreviewFile"
-                :mask-closable="false">
+                @on-cancel="PreviewFileClose"
+                >
                 <!--<div class="layout">-->
                 <div id="editor" data-options="region:'center'"></div>
                 <!--</div>-->
                 <div slot="footer">
                     <Input style="width: 150px" v-model="topologyName" placeholder="请输入拓扑图名称" />
                     <Button @click="submitTopology" type="primary">保存</Button>
-                    <Button @click="modalPreviewFile = false">取消</Button>
+                    <Button @click="PreviewFileClose">取消</Button>
                 </div>
             </Modal>
 
@@ -386,6 +387,10 @@
         mounted() {
         },
         methods: {
+            PreviewFileClose() {
+                this.modalPreviewFile =false
+                location.reload()
+            },
             //解析窗口，解析器下拉列表
             getParsers(classId) {
                 // if (classId == null  || classId == '') {
@@ -475,8 +480,10 @@
                 }).then((res) => {  //接口返回数据
                     this.$message.success('保存成功')
                     loading.close()
+                    location.reload()
                 }).catch(function (error) {
                     loading.close()
+                    location.reload()
                 });
             },
             resetData() {
