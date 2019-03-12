@@ -90,6 +90,7 @@
                 scrollable
                 v-model="modalPreviewFile"
                 @on-cancel="PreviewFileClose"
+
                 >
                 <!--<div class="layout">-->
                 <div id="editor" data-options="region:'center'"></div>
@@ -389,7 +390,7 @@
         methods: {
             PreviewFileClose() {
                 this.modalPreviewFile =false
-                location.reload()
+                // location.reload()
             },
             //解析窗口，解析器下拉列表
             getParsers(classId) {

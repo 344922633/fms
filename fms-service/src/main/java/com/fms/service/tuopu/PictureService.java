@@ -1,6 +1,7 @@
 package com.fms.service.tuopu;
 
 import com.fms.domain.filemanage.*;
+import com.fms.domain.tuopu.Control;
 import com.fms.domain.tuopu.Picture;
 import com.handu.apollo.base.Page;
 import com.handu.apollo.data.mybatis.Dao;
@@ -48,6 +49,10 @@ public class PictureService {
 
 	public Picture get(Long id) {
 		return dao.get(CLASSNAME, "get", id);
+	}
+
+	public String getImageByName(String masterName) {
+		return dao.get(CLASSNAME, "getImageByName", masterName);
 	}
 
 

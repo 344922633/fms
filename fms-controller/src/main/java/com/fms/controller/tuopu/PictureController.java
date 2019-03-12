@@ -320,7 +320,7 @@ public class PictureController {
 
 
         // 循环获取控件
-        for (int i = 0; i < btnArray.size(); i++) {
+            for (int i = 0; i < btnArray.size(); i++) {
 
             JSONObject kongjianObj = btnArray.getJSONObject(i);
             //id
@@ -333,6 +333,21 @@ public class PictureController {
             if (kongjianObj.containsKey("name")) {
                 name = kongjianObj.getString("name");
             }
+
+            //masterName
+            String masterName;
+            String image =null;
+            if (kongjianObj.containsKey("masterName")) {
+                masterName = kongjianObj.getString("masterName");
+                if(masterName!=null){
+                    //根据名称获取所对应的图片
+                   image = getImageByName(masterName);
+//                    image = images.get(0).toString();
+
+
+                }
+            }
+
             //pinX
             String pinX = "";
             if (kongjianObj.containsKey("pinX")) {
@@ -379,6 +394,7 @@ public class PictureController {
             BigDecimal y = null;
             if (kongjianObj.containsKey("pinY")) {
                 y = kongjianObj.getBigDecimal("pinY").multiply(new BigDecimal(100));
+                y = y.multiply(new BigDecimal(-1));
             }
 
             //height
@@ -404,6 +420,9 @@ public class PictureController {
                     obj.put("_className", "Q.Edge");
                     obj.put("json", json);
                     json.put("styles", styles);
+                    if(StringUtils.isNotBlank(image)){
+                        json.put("image", image);
+                    }
                     styles.put("arrow.to", "true");
                     styles.put("arrow.from", "true");
                     json.put("from", from);
@@ -420,6 +439,9 @@ public class PictureController {
                     obj.put("_className", "Q.Edge");
                     obj.put("json", json);
                     json.put("styles", styles);
+                    if(StringUtils.isNotBlank(image)){
+                        json.put("image", image);
+                    }
                     styles.put("arrow.to", "false");
                     styles.put("arrow.from", "true");
                     json.put("from", from);
@@ -437,7 +459,11 @@ public class PictureController {
                 obj.put("_refId", cid);
                 obj.put("json", json);
                 json.put("name", "Node");
+
                 json.put("location", location);
+                if(StringUtils.isNotBlank(image)){
+                    json.put("image", image);
+                }
                 location.put("x", x);
                 location.put("y", y);
                 json.put("size",sizeJson);
@@ -449,22 +475,25 @@ public class PictureController {
         }
 
         pictureData.put("datas", datas);
-        pictureData.put("scale", 0.5);
-        pictureData.put("tx", -512.9521709668734);
-        pictureData.put("ty", -521.4666034055338);
+        pictureData.put("scale", 0.8);
+        pictureData.put("tx", 512.9521709668734);
+        pictureData.put("ty", 521.4666034055338);
         picData=pictureData.toJSONString();
         System.out.println(pictureData.toJSONString());
         return picData;
     }
 
+
+
+
+    public String getImageByName(String masterName) {
+
+        return pictureService.getImageByName(masterName);
+    }
+
+
+
     //以下代码已经替换作废
-
-
-
-
-
-
-
 
     public String getTable(String str) {
 

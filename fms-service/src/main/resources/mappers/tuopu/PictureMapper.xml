@@ -16,6 +16,11 @@
         WHERE id = #{id}
     </select>
 
+    <select id="getImageByName" parameterType="String" resultType="String">
+        select image from t_control where name=#{masterName}
+    </select>
+
+
     <select id="getList" parameterType="map" resultType="com.fms.domain.tuopu.Picture">
         SELECT <include refid="all" />
         FROM t_picture
