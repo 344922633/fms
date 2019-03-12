@@ -139,7 +139,7 @@ public class FileController {
     @RequestMapping("updateFile")
     public Object updateFile(@ModelAttribute File file) {
 
-        Long fileClassId = file.getClassId();
+            Long fileClassId = file.getClassId();
         Long uRecommendParserId = file.getRecommendParserId();
         FileType fileType = fileTypeService.getById(fileClassId);
         if(fileType!=null){

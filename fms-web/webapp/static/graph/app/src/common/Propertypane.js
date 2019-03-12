@@ -767,11 +767,11 @@
             //后台 方法  mvc/getTableNameById  参数为tableId  返回值为String  tableChinese
             group2 = {};
             for(var i in group){
-                group2["主表"]=group[i];
+                group2["基本属性"]=group[i];
                 break;
             }
             for(var i in group){
-                group2["从表"]=group[i];
+                group2["扩展属性"]=group[i];
             }
             for (var groupName in group2) {
                 this.createItemGroup(groupName, group2[groupName]);
