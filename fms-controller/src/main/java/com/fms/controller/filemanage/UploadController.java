@@ -1135,8 +1135,8 @@ public class UploadController {
             JSONObject colJson = array.getJSONObject(i);
 
             String dxbm = "";
-            if(colJson.containsKey("DXBM")){
-                dxbm = colJson.getString("DXBM");
+            if(colJson.containsKey("dxbm")){
+                dxbm = colJson.getString("dxbm");
             }else if(colJson.containsKey("dxbm")){
                 dxbm = colJson.getString("dxbm");
             }

@@ -106,42 +106,42 @@ public class ExcelUtil {
 			return "";
 		}
 //		poi版本变更
-//		switch (cell.getCellType()) {
-//			case 0:
-//				if (HSSFDateUtil.isCellDateFormatted(cell)) {
-//					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//					return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue())).toString();
-//				}
-//				return df.format(cell.getNumericCellValue());
-//			case 1:
-//				return cell.getStringCellValue();
-//			case 2:
-//				return cell.getCellFormula();
-//			case 3:
-//				return "";
-//			case 4:
-//				return cell.getBooleanCellValue() + "";
-//			case 5:
-//				return cell.getErrorCellValue() + "";
-//		}
-		switch (cell.getCellTypeEnum()) {
-			case NUMERIC:
+		switch (cell.getCellType()) {
+			case 0:
 				if (HSSFDateUtil.isCellDateFormatted(cell)) {
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue())).toString();
 				}
 				return df.format(cell.getNumericCellValue());
-			case STRING:
+			case 1:
 				return cell.getStringCellValue();
-			case FORMULA:
+			case 2:
 				return cell.getCellFormula();
-			case BLANK:
+			case 3:
 				return "";
-			case BOOLEAN:
+			case 4:
 				return cell.getBooleanCellValue() + "";
-			case ERROR:
+			case 5:
 				return cell.getErrorCellValue() + "";
 		}
+//		switch (cell.getCellTypeEnum()) {
+//			case NUMERIC:
+//				if (HSSFDateUtil.isCellDateFormatted(cell)) {
+//					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//					return sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue())).toString();
+//				}
+//				return df.format(cell.getNumericCellValue());
+//			case STRING:
+//				return cell.getStringCellValue();
+//			case FORMULA:
+//				return cell.getCellFormula();
+//			case BLANK:
+//				return "";
+//			case BOOLEAN:
+//				return cell.getBooleanCellValue() + "";
+//			case ERROR:
+//				return cell.getErrorCellValue() + "";
+//		}
 		return "";
 	}
 

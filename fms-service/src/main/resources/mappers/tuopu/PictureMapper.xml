@@ -45,19 +45,27 @@
 
 
     <insert id="add" parameterType="com.fms.domain.tuopu.Picture" >
-        INSERT INTO t_picture (name,json,userId,time)
-        VALUES (
-        #{name},
-        #{json},
-        #{userId},
-        #{time}
+        insert into t_picture(
+        <if test="name != null">name,</if>
+        <if test="json != null">json,</if>
+        <if test="userId != null">userId,</if>
+        time
+        )values(
+        <if test="name != null">#{name},</if>
+        <if test="json != null">#{json},</if>
+        <if test="userId != null">#{userId},</if>
+        sysdate()
         )
     </insert>
-    
+
+
     <update id="update" parameterType="com.fms.domain.tuopu.Picture">
-        UPDATE t_picture
-        SET
-          name=#{name},json=#{json},userId = #{userId},time = #{time}
+        update t_picture
+        <set>
+        <if test="json != null">json = #{json},</if>
+        <if test="userId != null">userId = #{userId},</if>
+        <if test="name != null">name = #{name}</if>
+        </set>
         WHERE id=#{id}
     </update>
 

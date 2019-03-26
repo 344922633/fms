@@ -57,11 +57,11 @@
                 }catch (e) {
                     dicArr = []
                 }
-                // const options = dicArr.map(dic => dic.MC);
+                // const options = dicArr.map(dic => dic.mc);
                 const options = dicArr.map(function(item){
                     return {
-                        value:item.MC,
-                        key:item.DM
+                        value:item.mc,
+                        key:item.dm
                     }
                 })
 

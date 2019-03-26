@@ -70,7 +70,6 @@
                 <el-button type="primary" @click="saveMapEdit">确 定</el-button>
             </span>
 
-
         </el-dialog>
 
         <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
@@ -156,13 +155,13 @@
             //     }
             // },
         async getTables() {
-        return this.$axios.post('mvc/getAllXxList').then(res => {
+        return this.$axios.post('mvc/getAllNzList').then(res => {
             this.tableNames = res.data;
             })
             },
 
     getDicTables() {
-        this.$axios.post('mvc/getXxDicTable').then(res => {
+        this.$axios.post('mvc/getNzDicTable').then(res => {
             this.dicTableName = res.data;
     })
     },

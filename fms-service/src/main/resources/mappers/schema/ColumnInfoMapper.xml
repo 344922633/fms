@@ -62,8 +62,8 @@
         select table_name as name from INFORMATION_SCHEMA.tables where table_schema = 'fms'and table_name like '%nz_dic%';
     </select>
 
-  <select id="getXxDicTable" resultType="java.lang.String">
-        select table_name as name from INFORMATION_SCHEMA.tables where table_schema = 'fms2'and table_name like '%xx_dic%';
+  <select id="getNzDicTable" resultType="java.lang.String">
+        select table_name as name from INFORMATION_SCHEMA.tables where table_schema = 'fms'and table_name like '%nz_dic%';
     </select>
 
   <select id="countTableInfoByEnglish" parameterType="String" resultType="java.lang.Integer">

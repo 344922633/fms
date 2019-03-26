@@ -27,11 +27,11 @@ public class ManuallyController {
     }
 
 
-    @RequestMapping("getAllXxList")
-    public Object getAllXxList() {
+    @RequestMapping("getAllNzList")
+    public Object getAllNzList() {
     Manual manual = new Manual();
 
-    List<String> list =  manuallyService.getAllXxList(manual);
+    List<String> list =  manuallyService.getAllNzList(manual);
     return  list;
 }
 

@@ -8,21 +8,21 @@
 
     </resultMap>
 
+    <select id="query" parameterType="com.fms.domain.schema.Manual" resultType="com.fms.domain.schema.Manual">
+        select * from INFORMATION_SCHEMA.tables where table_schema = 'fms' and table_name like '%nz_dic%';
+    </select>
+
+   <select id="getAllNzList" parameterType="com.fms.domain.schema.Manual" resultType="java.lang.String">
+        select table_name as name from INFORMATION_SCHEMA.tables where table_schema = 'fms' and table_name like '%nz%' and table_name not like '%nz_dic%';
+    </select>
+
     <!--<select id="query" parameterType="com.fms.domain.schema.Manual" resultType="com.fms.domain.schema.Manual">-->
-        <!--select * from INFORMATION_SCHEMA.tables where table_schema = 'fms' and table_name like '%nz_dic%';-->
+        <!--select * from INFORMATION_SCHEMA.tables where table_schema = 'fms2' and table_name like '%xx_dic%';-->
     <!--</select>-->
 
-   <!--<select id="getAllNzList" parameterType="com.fms.domain.schema.Manual" resultType="java.lang.String">-->
-        <!--select table_name as name from INFORMATION_SCHEMA.tables where table_schema = 'fms' and table_name like '%nz%' and table_name not like '%nz_dic%';-->
-    <!--</select> -->
-
-    <select id="query" parameterType="com.fms.domain.schema.Manual" resultType="com.fms.domain.schema.Manual">
-        select * from INFORMATION_SCHEMA.tables where table_schema = 'fms2' and table_name like '%xx_dic%';
-    </select>
-
-   <select id="getAllXxList" parameterType="com.fms.domain.schema.Manual" resultType="java.lang.String">
-        select table_name as name from INFORMATION_SCHEMA.tables where table_schema = 'fms2' and table_name like '%xx%' and table_name not like '%xx_dic%';
-    </select>
+   <!--<select id="getAllXxList" parameterType="com.fms.domain.schema.Manual" resultType="java.lang.String">-->
+        <!--select table_name as name from INFORMATION_SCHEMA.tables where table_schema = 'fms2' and table_name like '%xx%' and table_name not like '%xx_dic%';-->
+    <!--</select>-->
 
 </mapper>
 

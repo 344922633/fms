@@ -497,18 +497,18 @@ public class FileParserController {
                     json.addAll(JSONUtils.jsonToObject(value, List.class, Map.class));
                 }
             }
+
+
+            Map<String, Object> result = fileParserService.parseData(json);
+            isParser(fileParser);
+            result.put("allKeyForDisplay", set);
+            result.put("jsonStr", data.get("jsonBottomLevel"));
+            return ExtUtil.success(result);
         } catch (Exception e) {
             return ExtUtil.failure(e.getMessage());
         }
 
-
-        Map<String, Object> result = fileParserService.parseData(json);
-        isParser(fileParser);
-        result.put("allKeyForDisplay", set);
-        result.put("jsonStr", data.get("jsonBottomLevel"));
-        return ExtUtil.success(result);
     }
-
 
     //将文件修改为已解析状态
 
@@ -736,8 +736,6 @@ public class FileParserController {
      */
     private Object singleFileStrFormatNew(JSONObject json, JSONObject data) {
         boolean result = false;
-
-
         System.out.println(json);
         //下面这句话不知道干什么的    JSONObject 与 JSONArray之间转换各种报错。
         JSONObject jsonNew = new JSONObject();
@@ -755,7 +753,6 @@ public class FileParserController {
             }
             jsonNew.put(key, arrayNew);
         }
-
         System.out.println(jsonNew);
 
         // 获取日志key
@@ -882,8 +879,6 @@ public class FileParserController {
 
                 kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), rootObj.toJSONString());
                 result = true;
-//               kafkaTemplate.send(env.getProperty("DEFAULT_TOPIC"),
-//                        rootObj.toJSONString());
             }
         }
         return result;
@@ -896,8 +891,7 @@ public class FileParserController {
         JSONObject customKey = JSONObject.parseObject(customKeys);
         // 循环获取tableName 发送kafka
         JSONObject data = JSONObject.parseObject(columnKeyNamesMap);
-
-        // 新的kafka数据格式
+//         新的kafka数据格式
         singleFileStrFormatNew(json, data);
 
         com.fms.domain.filemanage.File file = fileService.get(file_id);

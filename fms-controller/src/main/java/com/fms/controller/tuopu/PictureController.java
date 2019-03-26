@@ -594,32 +594,18 @@ public class PictureController {
                         }
                     }
 
-//                    jsonCol.put("name", jsonKey.toLowerCase());
-//                    jsonCol.put("value", properties.get(jsonKey));
-//                    jsonCol2.put("name", jsonKey.toLowerCase());
-//                    jsonCol2.put("value", properties.get(jsonKey));
-
                     if(jsonCol.size()!=0){
                         columns.add(jsonCol);
                     }
                     if(jsonCol2.size()!=0) {
                         columns2.add(jsonCol2);
                     }
-//                    columns.add(jsonCol);
-//                    columns2.add(jsonCol2);
                 }
 
-//                String tableName = getTable(columns.toJSONString());
                 obj1.put("schema", env.getProperty("schema"));
                 obj2.put("schema", env.getProperty("schema"));
                 obj1.put("table",MtableName);
                 obj2.put("table",StableName);
-//                columnObj1.put("name", "dxbm");
-//                columnObj1.put("value", str);
-//                columnObj2.put("name", "dxbm");
-//                columnObj2.put("value", str);
-//                columns.add(columnObj1);
-//                columns2.add(columnObj2);
                 obj1.put("columns", columns);
                 obj2.put("columns", columns2);
                 data.add(obj1);

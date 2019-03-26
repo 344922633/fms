@@ -10,6 +10,7 @@ import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.PageFilter;
 import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,16 @@ public class HbaseUtil {
     @Value("${GROUP_ID_CONFIG}")
     private static String GROUP_ID_CONFIG;
 
+
+    private static String HBASE_ZOOKEEPER_QUORUM;
+
+    @Value("${HBASE_ZOOKEEPER_QUORUM}")
+    public void setHbaseZookeeperQuorum(String hbaseZookeeperQuorum){
+        HBASE_ZOOKEEPER_QUORUM = hbaseZookeeperQuorum;
+    }
+
+
+
     //测试代码
     public static void main(String[] args) {
         System.out.println("操作完成:"+PropertyUtilHbase.readValue("HBASE_ZOOKEEPER_QUORUM"));
@@ -54,9 +65,11 @@ public class HbaseUtil {
             }
             conf = HBaseConfiguration.create();
 //            conf.set("hbase.zookeeper.quorum",env.getProperty("HBASE_ZOOKEEPER_QUORUM"));//zookeeper地址
-            conf.set("hbase.zookeeper.quorum",PropertyUtilHbase.readValue("HBASE_ZOOKEEPER_QUORUM"));//zookeeper地址
+//            conf.set("hbase.zookeeper.quorum",PropertyUtilHbase.readValue("HBASE_ZOOKEEPER_QUORUM"));//zookeeper地址
+            conf.set("hbase.zookeeper.quorum",HBASE_ZOOKEEPER_QUORUM);//zookeeper地址
             connection = ConnectionFactory.createConnection(conf);
             admin = connection.getAdmin();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

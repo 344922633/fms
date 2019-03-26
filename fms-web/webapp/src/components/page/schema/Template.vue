@@ -55,7 +55,7 @@
                         <FormItem v-for="dicTable in selectMap[index].dicTables" :label="dicTable.dicTableName">
                             <Select @on-change="(val)=>{changeColumnDicMap(dicTable,val)}"
                                     v-model="formList[index]['dicMap'][dicTable.dicTableName]" style="width: 180px">
-                                <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM" :key="dic.DM"> {{ dic.MC }}</Option>
+                                <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.dm" :key="dic.dm"> {{ dic.mc }}</Option>
                             </Select>
                         </FormItem>
                     </template>
@@ -103,7 +103,7 @@
                             <Select @on-change="(val)=>{changeColumnDicMap(dicTable,val)}"
                                     v-model="formList2[index]['dicMap'][dicTable.dicTableName]" style="width: 180px">
 
-                                <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.DM+''"  :key="dic.DM"> {{ dic.MC }}</Option>
+                                <Option v-for="(dic,dicIdx) in dicTable.dicList" :value="dic.dm+''"  :key="dic.dm"> {{ dic.mc }}</Option>
                             </Select>
                         </FormItem>
                     </template>

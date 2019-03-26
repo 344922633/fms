@@ -45,8 +45,8 @@
 
                         <Input  v-if="item.column.isDic === 0 && item.column.columnEnglish.toLowerCase() == 'dxbm'" v-model="item.column.dataValue" disabled="disabled">
                         </Input>
-                        <Select v-if="item.column.isDic === 1" v-model="item.column.dicList" filterable>
-                            <Option :value="singlevalue.MC" v-for="singlevalue in item.dicList" >{{singlevalue.MC}}</option>
+                        <Select v-if="item.column.isDic === 1" v-model="item.column.dicList" >
+                            <Option :value="singlevalue.mc" v-for="singlevalue in item.dicList" >{{singlevalue.mc}}</option>
                         </Select>
 
                     </FormItem>

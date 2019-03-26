@@ -28,9 +28,9 @@ public class ColumnInfoController {
         return columnInfoService.getDicTable();
     }
 
-    @RequestMapping("getXxDicTable")
-    public List<String> getXxDicTable() {
-        return columnInfoService.getXxDicTable();
+    @RequestMapping("getNzDicTable")
+    public List<String> getNzDicTable() {
+        return columnInfoService.getNzDicTable();
     }
 
     @RequestMapping("/deleteTableInfo")

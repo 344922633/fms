@@ -215,7 +215,7 @@
 
     <update id="update" parameterType="com.fms.domain.filemanage.File">
         UPDATE fms_file
-        SET
+        <set>
         <if test="name!=null">
             name = #{name},
         </if>
@@ -265,6 +265,7 @@
         <if test="classId != null">
             class_id = #{classId}
         </if>
+        </set>
         WHERE id = #{id}
     </update>
 

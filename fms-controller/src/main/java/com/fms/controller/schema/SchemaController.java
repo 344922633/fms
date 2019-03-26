@@ -64,7 +64,7 @@ public class SchemaController {
 
     @RequestMapping("getMenuListFormasterslave")
     public Object getMenuListFormasterslave() {
-        List<MasterSlaveDo> masterSlaveDoList = new ArrayList<MasterSlaveDo>();
+        List<MasterSlaveDo> masterSlaveDoList = new ArrayList<>();
         List<String> parentList = masterSlaveService.queryType();
         for (String parentType : parentList) {
             MasterSlaveDo masterSlaveDo = new MasterSlaveDo();
@@ -318,10 +318,10 @@ public class SchemaController {
                     List<Map> dicList = (List<Map>) datum.get("dicList");
                     if (dicList != null && dicList.size() > 0){
                         for (Map m: dicList) {
-                            String mc = (String) m.get("MC");
+                            String mc = (String) m.get("mc");
 
                             if(dicListName.equals(mc)){
-                                column.put("value",m.get("DM"));
+                                column.put("value",m.get("dm"));
                                 break;
                             }
 

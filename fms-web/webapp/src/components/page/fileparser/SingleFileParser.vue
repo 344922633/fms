@@ -190,7 +190,7 @@
                                     v-model="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
                                     :clearable="true"
                             >
-                                <Option v-for="(dic,dicIdx) in dicTable.dicList" :data="dic.DM" :value="dic.DM+''" :key="dic.DM+''"> {{ dic.MC }}</Option>
+                                <Option v-for="(dic,dicIdx) in dicTable.dicList" :data="dic.dm" :value="dic.dm+''" :key="dic.dm+''"> {{ dic.mc }}</Option>
                             </Select>
                         </FormItem>
                     </template>
