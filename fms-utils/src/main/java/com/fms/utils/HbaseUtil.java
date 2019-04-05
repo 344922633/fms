@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,15 +40,17 @@ public class HbaseUtil {
     private static String HBASE_ZOOKEEPER_QUORUM;
 
     @Value("${HBASE_ZOOKEEPER_QUORUM}")
-    public void setHbaseZookeeperQuorum(String hbaseZookeeperQuorum){
+    public void setHbaseZookeeperQuorum(String hbaseZookeeperQuorum) {
         HBASE_ZOOKEEPER_QUORUM = hbaseZookeeperQuorum;
     }
 
 
-
     //测试代码
     public static void main(String[] args) {
-        System.out.println("操作完成:"+PropertyUtilHbase.readValue("HBASE_ZOOKEEPER_QUORUM"));
+//        System.out.println("操作完成:"+PropertyUtilHbase.readValue("HBASE_ZOOKEEPER_QUORUM"));
+//        getHbaseConnection();
+//        scanValues("ns_fms:tb_file", "cf0", "file_name", "ApacheLogParser_testFile.log");
+//        scanValuesByTimes("ns_fms:tb_file", "1554248510000", "1554594110000");
     }
 
     /**
@@ -67,6 +70,7 @@ public class HbaseUtil {
 //            conf.set("hbase.zookeeper.quorum",env.getProperty("HBASE_ZOOKEEPER_QUORUM"));//zookeeper地址
 //            conf.set("hbase.zookeeper.quorum",PropertyUtilHbase.readValue("HBASE_ZOOKEEPER_QUORUM"));//zookeeper地址
             conf.set("hbase.zookeeper.quorum",HBASE_ZOOKEEPER_QUORUM);//zookeeper地址
+//            conf.set("hbase.zookeeper.quorum", "192.168.135.129");//zookeeper测试地址
             connection = ConnectionFactory.createConnection(conf);
             admin = connection.getAdmin();
 
@@ -96,7 +100,7 @@ public class HbaseUtil {
      * @desc 创建表
      */
     public static String createTable(String tableName, String family) {
-        String res="";
+        String res = "";
         try {
 //			创建表空间
 
@@ -110,7 +114,7 @@ public class HbaseUtil {
             if (admin.tableExists(tName)) {
 //                admin.disableTable(tName);
 ////                admin.deleteTable(tName);
-                res="该表已存在";
+                res = "该表已存在";
             } else {
 
 
@@ -123,7 +127,7 @@ public class HbaseUtil {
                 tableDesc.addFamily(colDesc);
                 admin.createTable(tableDesc);//直接创建表
 //				admin.createTable(tableDesc, splitKeys);//创建表，添加预分区，避免热点写,若不指定splitKeys为空即可
-                res="操作成功";
+                res = "操作成功";
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -397,13 +401,13 @@ public class HbaseUtil {
 
 
     /**
-     * @param tableName  hbase表名
-     * @param family     列族
-     * @param jsonStr    需录入的数据  json格式
-     * @param fileType   文件类型
-     * @param fileInfo   文件信息（全量入库）
-     * @param fileName   文件名称
-     * @param fileMD5    文件MD5值
+     * @param tableName hbase表名
+     * @param family    列族
+     * @param jsonStr   需录入的数据  json格式
+     * @param fileType  文件类型
+     * @param fileInfo  文件信息（全量入库）
+     * @param fileName  文件名称
+     * @param fileMD5   文件MD5值
      */
     public static void addMoreRecordFromJSON(String tableName, String family, String jsonStr, String fileType, String fileInfo, String fileName, String fileMD5) {
         Table table = null;
@@ -493,6 +497,57 @@ public class HbaseUtil {
             }
         }
         return null;
+    }
+
+
+    /**
+     * 根据时间戳范围查询数据
+     * @param tableName
+     * @param sTime 开始时间戳
+     * @param eTime 结束时间戳
+     * @return
+     */
+    public static JSONArray scanValuesByTimes(String tableName, Long sTime, Long eTime) {
+        JSONArray arr=new JSONArray();
+        Table table = null;
+        try {
+            table = connection.getTable(TableName.valueOf(tableName));
+
+            Scan scan = new Scan();
+//            scan.setTimeStamp(1554248510000L);
+            scan.setTimeRange(sTime, eTime);
+            ResultScanner rs = table.getScanner(scan);
+
+            for (Result r : rs) {
+                for (Cell cell : r.rawCells()) {
+                    JSONObject obj=new JSONObject();
+                    obj.put("RowKey",Bytes.toString(r.getRow()));
+                    obj.put("Familiy:Quilifier",Bytes.toString(CellUtil.cloneFamily(cell))+":"+Bytes.toString(CellUtil.cloneQualifier(cell)));
+                    obj.put("Value",Bytes.toString(CellUtil.cloneValue(cell)));
+                    obj.put("Time",timestamp2string(cell.getTimestamp()));
+                    obj.put("timestamp",cell.getTimestamp());
+                    arr.add(obj);
+                }
+            }
+            rs.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (table != null) {
+                try {
+                    table.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return arr;
+    }
+
+    public static String  timestamp2string(Long time) {
+        // 13位的秒级别的时间戳
+         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+
     }
 
     /**

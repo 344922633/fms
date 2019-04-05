@@ -179,6 +179,11 @@ export default new Router({
                     meta: { title: '解析器', permission: true}
                 },
                 {
+                    path: '/queryHabseData',
+                        component: resolve => require(['../components/page/fileparser/queryHabseData.vue'], resolve),
+                    meta: { title: 'hbase数据查询', permission: true}
+                },
+                {
                     path: '/404',
                     component: resolve => require(['../components/page/404.vue'], resolve),
                     meta: { title: '404' }

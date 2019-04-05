@@ -132,6 +132,11 @@
                                 title: '映射模板',
                                 icon: 'el-icon-setting'
                             },
+                            {
+                                index: 'queryHabseData',
+                                title: 'hbase数据查询',
+                                icon: 'el-icon-setting'
+                            }
 
                         ]
                     },
