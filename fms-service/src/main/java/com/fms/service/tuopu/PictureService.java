@@ -51,7 +51,7 @@ public class PictureService {
 		return dao.get(CLASSNAME, "get", id);
 	}
 
-	public String getImageByName(String masterName) {
+	public Control getImageByName(String masterName) {
 		return dao.get(CLASSNAME, "getImageByName", masterName);
 	}
 

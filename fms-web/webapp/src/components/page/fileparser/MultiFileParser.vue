@@ -163,14 +163,36 @@
                     :class="{tableActive:index == tableIndex}" v-for="(value,key,index) in jsonTables"
                     @click="toggleTab(index)"><a>{{key}}</a></div>
             </div>
-            <!--改表格高度-->
+<!--            改表格高度-->
+<!--            <div v-if="jsonTables && Object.keys(jsonTables).length" style="height: 300px; overflow-y: auto;">-->
+<!--                <table style="border-right:1px solid #ddd;border-bottom:1px solid #ddd;width:100%;overflow-x:scroll;"-->
+<!--                       v-for="(value,key,index) in jsonTables" :key="key" :label="value" :value="key"-->
+<!--                       v-show="index == tableIndex" border="0" cellspacing="0" cellpadding="0">-->
+<!--                    <thead>-->
+<!--                    <tr>-->
+<!--                        <th style="background: #c0c4cc;border: 1px solid #ddd;" v-for="keyvalue in allKey">-->
+<!--                            {{keyvalue}}-->
+<!--                        </th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody>-->
+<!--                    <tr v-for="(value, key) in [...value]">-->
+
+<!--                        <td v-for="keyvalue in allKey"-->
+<!--                            style="text-align: center;border-left:1px solid #ddd;border-top:1px solid #ddd">-->
+<!--                            {{value[keyvalue]}}-->
+<!--                        </td>-->
+<!--                    </tr>-->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
             <div v-if="jsonTables && Object.keys(jsonTables).length" style="height: 300px; overflow-y: auto;">
                 <table style="border-right:1px solid #ddd;border-bottom:1px solid #ddd;width:100%;overflow-x:scroll;"
                        v-for="(value,key,index) in jsonTables" :key="key" :label="value" :value="key"
                        v-show="index == tableIndex" border="0" cellspacing="0" cellpadding="0">
                     <thead>
                     <tr>
-                        <th style="background: #c0c4cc;border: 1px solid #ddd;" v-for="keyvalue in allKey">
+                        <th style="background: #c0c4cc;border: 1px solid #ddd;" v-for="keyvalue in tableKeysForDisplay">
                             {{keyvalue}}
                         </th>
                     </tr>
@@ -178,10 +200,7 @@
                     <tbody>
                     <tr v-for="(value, key) in [...value]">
 
-                        <td v-for="keyvalue in allKey"
-                            style="text-align: center;border-left:1px solid #ddd;border-top:1px solid #ddd">
-                            {{value[keyvalue]}}
-                        </td>
+                        <td v-for="keyvalue in tableKeysForDisplay" style="text-align: center;border-left:1px solid #ddd;border-top:1px solid #ddd">{{value[keyvalue]}}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -207,7 +226,7 @@
             <div v-if="columnData && Object.keys(columnData).length" style="height: 300px; overflow-y: auto;">
                 <Form inline v-for="(data,key) in columnData" :key="key" v-if="columnKeyNamesMap[key] != null">
 
-                    <FormItem :label-width="100" :label="key"></FormItem>
+                    <FormItem :label-width="200" :label="key"></FormItem>
 
                     <FormItem label="选择库">
                         <Select
@@ -1253,6 +1272,12 @@
                     percent = (this.parsed / this.allParse).toFixed(2) * 100;
                 }
                 return percent;
+            },
+            tableKeysForDisplay() {
+                const tableKey = this.tableKey
+                let rows = this.jsonTables[tableKey] || []
+                const keys = Object.keys(rows[0] || {})
+                return keys
             }
         },
         methods: {
@@ -1535,7 +1560,7 @@
                             for (var i = 0; i < this.preClassDataFor7.length; i++) {
                                 this.preClassDataFor7[i]._checked = true;
                             }
-                            console.log(this.preClassDataFor7)
+                            // console.log(this.preClassDataFor7)
                             this.handlePreSelectionChange7(this.preClassDataFor7);
                             this.initHandleOk();
                         });
@@ -1581,7 +1606,6 @@
             initHandleOk(currentType, data=[]) {
                 this.initHandleOkState++;
                 if(this.initHandleOkState >= 12 && data.length>0){
-                    console.log( this.preClassColumnsParams, 'initHandleOkState')
                     let params = data;
                     for(let i = 0,len = params.length; i< len; i++) {
                         this.currentIndex = i;
@@ -2021,7 +2045,7 @@
                     }
 
                 } else if (this.currentType == "预分类7") {
-                    console.log(this.preClassDataFor7[this.currentIndex])
+                    // console.log(this.preClassDataFor7[this.currentIndex])
                     if(this.preClassDataFor7.length>0&& this.preClassDataFor7[this.currentIndex]){
                         this.preClassDataFor7[this.currentIndex].recommendParserId = current.id;
                         fileIdList.push( this.preClassDataFor7[this.currentIndex].id);
@@ -2062,12 +2086,12 @@
                     });
             },
             handleSetOk() {
-                console.dir(this)
+                // console.dir(this)
                 let propertiesMap = {};
                 //接着改
                 // console.log(this.fileCountMap) //文件详情
                 // console.log(this.idPropertiesMap)
-                console.log(this.currentFileId)//文件ID
+                // console.log(this.currentFileId)//文件ID
                 // console.log(this.currentParser)//解析器ID
                 //     let newparsid=Date.now().toString();
                 //     console.log(newparsid);
@@ -2091,8 +2115,8 @@
 
                 propertiesMap.paramList = this.idPropertiesMap[this.currentParser];
 
-                console.log(this.idPropertiesMap)
-                console.log(this.currentParser)
+                // console.log(this.idPropertiesMap)
+                // console.log(this.currentParser)
 
             },
             //****多文件解析添加映射******
@@ -2618,8 +2642,8 @@
             },
             idPropertiesMap:{//深度监听，可监听到对象、数组的变化
                 handler(val, oldval){
-                    console.log(val)
-                    console.log(oldval)
+                    // console.log(val)
+                    // console.log(oldval)
 
                 },
                 deep:true

@@ -359,7 +359,6 @@
             },
             //编辑
             async handleEdit(index, row) {
-                console.log(this.inputs)
                 this.idx = index;   //下标
                 this.form = {
                     id:row.id,

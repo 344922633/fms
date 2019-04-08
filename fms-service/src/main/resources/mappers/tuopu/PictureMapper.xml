@@ -16,8 +16,8 @@
         WHERE id = #{id}
     </select>
 
-    <select id="getImageByName" parameterType="String" resultType="String">
-        select image from t_control where name=#{masterName}
+    <select id="getImageByName" parameterType="String" resultType="com.fms.domain.tuopu.Control">
+        select * from t_control where name=#{masterName}
     </select>
 
 

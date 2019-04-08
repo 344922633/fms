@@ -147,7 +147,7 @@
 
                 <Form inline v-for="(data,key) in columnData" :key="key" v-if="columnKeyNamesMap[key] != null">
 
-                    <FormItem :label-width="100" :label="key">
+                    <FormItem :label-width="200" :label="key">
                     </FormItem>
                     <FormItem label="选择库">
                         <Select
@@ -390,6 +390,7 @@
         methods: {
             PreviewFileClose() {
                 this.modalPreviewFile =false
+                this.graphEditor.loadDatas({})
                 // location.reload()
             },
             //解析窗口，解析器下拉列表

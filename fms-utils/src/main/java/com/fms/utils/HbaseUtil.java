@@ -69,7 +69,8 @@ public class HbaseUtil {
             conf = HBaseConfiguration.create();
 //            conf.set("hbase.zookeeper.quorum",env.getProperty("HBASE_ZOOKEEPER_QUORUM"));//zookeeper地址
 //            conf.set("hbase.zookeeper.quorum",PropertyUtilHbase.readValue("HBASE_ZOOKEEPER_QUORUM"));//zookeeper地址
-            conf.set("hbase.zookeeper.quorum",HBASE_ZOOKEEPER_QUORUM);//zookeeper地址
+            //zookeeper地址
+            conf.set("hbase.zookeeper.quorum",HBASE_ZOOKEEPER_QUORUM);
 //            conf.set("hbase.zookeeper.quorum", "192.168.135.129");//zookeeper测试地址
             connection = ConnectionFactory.createConnection(conf);
             admin = connection.getAdmin();
