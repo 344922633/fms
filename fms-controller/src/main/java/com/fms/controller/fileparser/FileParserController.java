@@ -871,6 +871,8 @@ public class FileParserController {
                                 columnJson.put("name", key1);
                                 columnJson.put("value", value1);
                                 columnArr.add(columnJson);
+                                key1 = null;
+                                value1 = null;
                             }
                         }
                     }
@@ -885,12 +887,10 @@ public class FileParserController {
 
                     rootObj.put("data", infoArr);
                 }
-
                 System.out.println("kafka消息格式：\n" + rootObj);
-
-
                 kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), rootObj.toJSONString());
                 result = true;
+
             }
         }
         return result;

@@ -86,7 +86,7 @@
                         </Select>
                     </FormItem>
                     <FormItem label="表名：">
-                        <Select @on-change="(tableId) => getColumnsByTable(tableId,index)" v-model="formList2[index]. tableId" style="width: 130px">
+                        <Select @on-change="(tableId) => getColumnsByTable(tableId,index)" v-model="formList2[index].tableId" style="width: 130px">
                             <Option v-for="(table,tableIdx) in selectMap[index].tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
                         </Select>
                     </FormItem>

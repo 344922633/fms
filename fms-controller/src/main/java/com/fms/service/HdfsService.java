@@ -1,5 +1,3 @@
-// Copyright (C) 2019 Zaiye
-// All rights reserved
 package com.fms.service;
 
 import org.apache.commons.lang3.StringUtils;
