@@ -32,13 +32,15 @@ public class HdfsConfig {
         String nn2 = Preconditions.checkNotNull(env.getProperty("dfs.namenode.rpc-address.mycluster.nn2"),"dfs.namenode.rpc-address.mycluster.nn2 is null");
         String providerMucluster = Preconditions.checkNotNull(env.getProperty("dfs.client.failover.proxy.provider.mycluster"),"dfs.client.failover.proxy.provider.mycluster is null");
         Configuration configuration = new Configuration();
+        System.setProperty("HADOOP_USER_NAME", hdfsUserName);
         configuration.set("fs.defaultFS", defaultFS);
         configuration.set("dfs.nameservices", nameService);
         configuration.set("dfs.ha.namenodes.mycluster", mycluster);
         configuration.set("dfs.namenode.rpc-address.mycluster.nn1", nn1);
         configuration.set("dfs.namenode.rpc-address.mycluster.nn2", nn2);
         configuration.set("dfs.client.failover.proxy.provider.mycluster", providerMucluster);
-        return FileSystem.get(new URI(hdfsPath), configuration, hdfsUserName);
+//        return FileSystem.get(new URI(hdfsPath), configuration, hdfsUserName);
+        return FileSystem.get(configuration);
     }
 
 }
