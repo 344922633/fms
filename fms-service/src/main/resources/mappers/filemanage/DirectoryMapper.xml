@@ -62,6 +62,12 @@
           #{level}
         )
     </insert>
+    <select id="getIdByText" parameterType="string" resultType="long">
+        SELECT
+        id
+        FROM fms_directory
+        WHERE text = #{text}
+    </select>
 
     <update id="update" parameterType="com.fms.domain.filemanage.Directory">
         UPDATE fms_directory

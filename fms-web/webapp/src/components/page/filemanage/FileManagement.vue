@@ -860,16 +860,14 @@
 // var filePath = this.selectFileList[0].realPath;
 
 // 拿到ip
+
 //                     var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
 //                     var ip = ipRex.exec(this.config.fileServerPath);
                     // 获取预览服务运行的地址
                     let previewPath = this.config.previewPath;
-
-                    var previewSrc ="http://"+ previewPath +"/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
-                    // var a ="http://192.168.0.130:8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
-                    // var a ="http://"+ ip +":8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
+                    // var ip = '39.104.131.29';
+                    var previewSrc ="http://"+ previewPath +"/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;                    // var a ="http://"+ ip +":8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
                     // var a ="http://datanode3:8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
-
                     var ifr = document.createElement('iframe');
                     ifr.src = previewSrc;
                     document.body.appendChild(ifr);

@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import com.fms.domain.schema.ColumnInfo;
 import com.fms.domain.schema.TableInfo;
+import com.fms.domain.tuopu.Control;
 import com.fms.domain.tuopu.ControlProperty;
 import com.fms.domain.tuopu.Picture;
 import com.fms.service.filemanage.FileParserService;
@@ -335,16 +336,21 @@ public class PictureController {
             }
 
             //masterName
-            String masterName;
+            String masterName = "Node";
             String image =null;
+            String id =null;
+            Map properties = new HashMap();
             if (kongjianObj.containsKey("masterName")) {
                 masterName = kongjianObj.getString("masterName");
-                if(masterName!=null){
+                if(masterName!=null) {
                     //根据名称获取所对应的图片
-                   image = getImageByName(masterName);
-//                    image = images.get(0).toString();
-
-
+                    Control control = getImageByName(masterName);
+                    if (control != null){
+                    image = control.getImage();
+                    name = masterName;
+                    id = control.getId();
+                    properties.put("id", id);
+                }
                 }
             }
 
@@ -423,6 +429,9 @@ public class PictureController {
                     if(StringUtils.isNotBlank(image)){
                         json.put("image", image);
                     }
+                    if(properties.size()!=0){
+                        json.put("properties", properties);
+                    }
                     styles.put("arrow.to", "true");
                     styles.put("arrow.from", "true");
                     json.put("from", from);
@@ -442,6 +451,9 @@ public class PictureController {
                     if(StringUtils.isNotBlank(image)){
                         json.put("image", image);
                     }
+                    if(properties.size()!=0){
+                        json.put("properties", properties);
+                    }
                     styles.put("arrow.to", "false");
                     styles.put("arrow.from", "true");
                     json.put("from", from);
@@ -458,11 +470,14 @@ public class PictureController {
                 obj.put("_className", "Q.Node");
                 obj.put("_refId", cid);
                 obj.put("json", json);
-                json.put("name", "Node");
+                json.put("name", masterName);
 
                 json.put("location", location);
                 if(StringUtils.isNotBlank(image)){
                     json.put("image", image);
+                }
+                if(properties.size()!=0){
+                    json.put("properties", properties);
                 }
                 location.put("x", x);
                 location.put("y", y);
@@ -486,7 +501,7 @@ public class PictureController {
 
 
 
-    public String getImageByName(String masterName) {
+    public Control getImageByName(String masterName) {
 
         return pictureService.getImageByName(masterName);
     }

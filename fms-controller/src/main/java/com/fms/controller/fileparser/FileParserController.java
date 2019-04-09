@@ -899,7 +899,10 @@ public class FileParserController {
         String fileName = file.getName();
         String fileInfo = file.toString();
         List<FileType> typeList = fileTypeService.getListByFileParserId(parserId);
-        String fileType = typeList.get(0).getType();
+        String fileType = null;
+        if(typeList.size() != 0){
+            fileType = typeList.get(0).getType();
+        }
 
         //数据入库
         boolean result = fileParserService.parseDataSaveDataHBase(file_id, parserId, jsonStr, fileInfo, fileType, fileMD5, fileName);

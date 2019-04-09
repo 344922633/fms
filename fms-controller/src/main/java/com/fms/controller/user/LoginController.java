@@ -43,7 +43,7 @@ public class LoginController {
         String [] paths = {"一级","二级","三级"};
         ReentrantLock reentrantLock = new ReentrantLock();
         Long pId=3L;
-        System.out.println(directoryService.createRelativePath(pId,paths));
+//        System.out.println(directoryService.createRelativePath(pId,paths));
 
         User gUser = userService.queryName(user);
 
