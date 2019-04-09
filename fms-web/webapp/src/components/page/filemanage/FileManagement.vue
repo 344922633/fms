@@ -864,9 +864,9 @@
                     var ip = ipRex.exec(this.config.fileServerPath);
 
                     // var ip = '39.104.131.29';
-                    var a ="http://192.168.0.130:8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
+                    // var a ="http://192.168.0.130:8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
                     // var a ="http://"+ ip +":8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
-                    // var a ="http://datanode3:8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
+                    var a ="http://datanode3:8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
                     // var a ="http://bigdata3:8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
 // alert(a);
 //var a = "http://47.93.40.219:8888/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");

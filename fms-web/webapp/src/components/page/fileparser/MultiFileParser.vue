@@ -2625,10 +2625,10 @@
                 var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
                 var ip = ipRex.exec(this.config.fileServerPath);
 
-                var a ="http://192.168.0.130:8888/index?filePath="+ row.realPath +'&id='+ row.id;
+                // var a ="http://192.168.0.130:8888/index?filePath="+ row.realPath +'&id='+ row.id;
                 // var a ="http://"+ ip +":8888/index?filePath="+ row.realPath +'&id='+ row.id;
                 // var a ="http://localhost:8888/index?filePath="+row.realPath+'&id='+row.id;
-                // var a ="http://datanode3:8888/index?filePath="+ row.realPath +'&id='+ row.id;
+                var a ="http://datanode3:8888/index?filePath="+ row.realPath +'&id='+ row.id;
                 // var a ="http://bigdata3:8888/index?filePath="+ row.realPath +'&id='+ row.id;
                 var ifr = document.createElement('iframe');
                 ifr.src = a;

@@ -5,7 +5,7 @@
             <i class="el-icon-menu"></i>
         </div>
         <div class="logo">网络态势综合分析系统</div>
-        <div class="flogo">--文件管理系统</div>
+        <div class="flogo">--汇聚系统</div>
         <div class="header-right">
             <div class="blac_div"><a href="http://192.168.1.124:8081/#/home"> 返回首页 <-汇聚系统</a></div>
             <div class="header-user-con">

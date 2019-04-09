@@ -91,6 +91,9 @@ public class DirectoryService {
         params.put("id", id);
         dao.delete(CLASSNAME, "delete", params);
     }
+    public Long getIdByText(String text) {
+      return  dao.get(CLASSNAME, "getIdByText", text);
+    }
 
     /**
      * 批量删除文件目录

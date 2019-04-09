@@ -468,7 +468,14 @@ public class UploadController {
                 String relativePath = fileInfo.getWebkitRelativePath();
                 if (!Strings.isNullOrEmpty(relativePath)) {
                     relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
-                    dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                    //根据文件夹名字 查询文件夹ID    避免重复
+                   Long pid  = directoryService.getIdByText(relativePath);
+                    if(pid == null) {
+                        dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                    }else{
+                        dirId = pid;
+                    }
+
                 }
             }
 
