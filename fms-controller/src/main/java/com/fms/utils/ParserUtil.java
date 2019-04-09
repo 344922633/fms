@@ -90,13 +90,14 @@ public class ParserUtil {
                 params[0] = local ;
             }
 
-//        PptParser p = new PptParser();
-//
+//        CmdParser p = new CmdParser();
 //        try {
-//            return p.parsePpt(new java.io.File("E:\\PptParser_testFile.pptx"), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), 0, "E:\\");
+//            return p.parseCmd(new java.io.File("E:\\00_work\\01_fms\\CmdParser_testFile.txt"), "E:\\00_work\\01_fms\\CmdParser_testFile.txt");
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
+//        fp.setSource("E:\\00_work\\01_fms\\CmdParser.jar");
+
         return (Map<String, String>) ParserUtil.parser(fp, classes, params);
 //        return null;
     }
