@@ -34,6 +34,9 @@ public class LoginController {
     @Value("${hdfs.path}")
     private String hdfsPath;
 
+    @Value("${previewPath}")
+    private String previewPath;
+
     @RequestMapping("login")
     public Object login(User user, HttpServletRequest request) {
 
@@ -88,7 +91,7 @@ public class LoginController {
     }
 
     /**
-     * 废弃的，不知道有何用，祖传代码，另外 fastdfs 已经改为hdfs，
+     * 获取配置
      * @return
      */
     @Deprecated
@@ -99,7 +102,7 @@ public class LoginController {
 //        params.put("fileServerPath", "http://" + env.getProperty("fastdfs.nginxAddress") + ":" + env.getProperty("fastdfs.trackerHttpPort"));
 //        params.put("previewPath", env.getProperty("previewPath"));
         params.put("fileServerPath",hdfsPath);
-        params.put("previewPath", "");
+        params.put("previewPath", previewPath);
         return params;
     }
     @ResponseBody

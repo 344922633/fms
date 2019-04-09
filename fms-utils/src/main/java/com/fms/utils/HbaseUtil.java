@@ -48,9 +48,10 @@ public class HbaseUtil {
     //测试代码
     public static void main(String[] args) {
 //        System.out.println("操作完成:"+PropertyUtilHbase.readValue("HBASE_ZOOKEEPER_QUORUM"));
+//        System.out.println("操作完成:"+HBASE_ZOOKEEPER_QUORUM);
 //        getHbaseConnection();
 //        scanValues("ns_fms:tb_file", "cf0", "file_name", "ApacheLogParser_testFile.log");
-//        scanValuesByTimes("ns_fms:tb_file", "1554248510000", "1554594110000");
+//        scanValuesByTimes("ns_fms:tb_file", 1554248510000L, 1554594110000L);
     }
 
     /**

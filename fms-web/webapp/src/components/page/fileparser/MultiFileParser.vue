@@ -2598,16 +2598,16 @@
             // 新版预览
             preview(row){
                 // 新版预览
-                var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
-                var ip = ipRex.exec(this.config.fileServerPath);
+                let previewPath = this.config.previewPath;
 
-                var a ="http://192.168.0.130:8888/index?filePath="+ row.realPath +'&id='+ row.id;
+                var previewSrc ="http://"+ previewPath +"/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
+                // var a ="http://192.168.0.130:8888/index?filePath="+ row.realPath +'&id='+ row.id;
                 // var a ="http://"+ ip +":8888/index?filePath="+ row.realPath +'&id='+ row.id;
                 // var a ="http://localhost:8888/index?filePath="+row.realPath+'&id='+row.id;
                 // var a ="http://datanode3:8888/index?filePath="+ row.realPath +'&id='+ row.id;
                 // var a ="http://bigdata3:8888/index?filePath="+ row.realPath +'&id='+ row.id;
                 var ifr = document.createElement('iframe');
-                ifr.src = a;
+                ifr.src = previewSrc;
                 document.body.appendChild(ifr);
             }
         },

@@ -86,7 +86,7 @@
                 </el-dialog>
             </Sider>
             <!--左侧目录树结束-->
- 
+
             <!--table-->
             <Layout>
                 <div class="table">
@@ -860,20 +860,18 @@
 // var filePath = this.selectFileList[0].realPath;
 
 // 拿到ip
-                    var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
-                    var ip = ipRex.exec(this.config.fileServerPath);
+//                     var ipRex = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
+//                     var ip = ipRex.exec(this.config.fileServerPath);
+                    // 获取预览服务运行的地址
+                    let previewPath = this.config.previewPath;
 
-                    // var ip = '39.104.131.29';
-                    var a ="http://192.168.0.130:8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
+                    var previewSrc ="http://"+ previewPath +"/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
+                    // var a ="http://192.168.0.130:8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
                     // var a ="http://"+ ip +":8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
                     // var a ="http://datanode3:8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
-                    // var a ="http://bigdata3:8888/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
-// alert(a);
-//var a = "http://47.93.40.219:8888/word?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/root/data/fdfs/storage/data");
-// var a = "http://"+ ip +":8888/index?filePath="+"file://"+this.selectFileList[0].realPath.replace("M00","/home/huiju/data/fdfs/storage/data")
-//     +'&id='+this.selectFileList[0].id;
+
                     var ifr = document.createElement('iframe');
-                    ifr.src = a;
+                    ifr.src = previewSrc;
                     document.body.appendChild(ifr);
                 }
             },
