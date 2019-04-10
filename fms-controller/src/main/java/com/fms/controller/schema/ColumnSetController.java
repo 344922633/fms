@@ -64,42 +64,64 @@ public class ColumnSetController {
 
     @RequestMapping("/getDicNameByTableId")
     public JSONArray getDicNameByTableId(String tableId){
-        long tid = Long.parseLong(tableId);
-        List<ColumnInfo> list = columnSetService.getDicNameByTableId(tid);
 
-        JSONArray array = new JSONArray();
-        // 循环获取字段 字典表列名
-        for (ColumnInfo ci : list) {
-            JSONObject obj = (JSONObject) JSONObject.toJSON(ci);
-            if (StringUtils.isNotEmpty(ci.getDicTableName())) {
-                List<Map<String, Object>> dicList = columnSetService.getDicColumnsByDicName(ci.getDicTableName());
-                obj.put("dicList", dicList);
+        JSONArray array = null;
+        try {
+            long tid = Long.parseLong(tableId);
+            List<ColumnInfo> list = columnSetService.getDicNameByTableId(tid);
 
-                array.add(obj);
+            array = new JSONArray();
+            // 循环获取字段 字典表列名
+            for (ColumnInfo ci : list) {
+                JSONObject obj = (JSONObject) JSONObject.toJSON(ci);
+                if (StringUtils.isNotEmpty(ci.getDicTableName())) {
+                    List<Map<String, Object>> dicList = columnSetService.getDicColumnsByDicName(ci.getDicTableName());
+                    obj.put("dicList", dicList);
+
+                    array.add(obj);
+                }
             }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return new JSONArray();
         }
         return array;
     }
 
     @RequestMapping("/getColumnsForTable")
     public List<ColumnInfo> getColumnsForTable(String tableId){
-        long tid=Long.parseLong(tableId);
-        List<ColumnInfo> ColumnInfos = new ArrayList<>();
-        //根据表查出所有字段
-        List<ColumnInfo> columnInfoList=columnSetService.getColumnsForTable(tid);
-        //根据是否有字段中文名进行过滤   //根据是否为dxbm进行过滤
-        for(ColumnInfo columnInfo : columnInfoList) {
-            if(columnInfo.getColumnChinese()!=null && !columnInfo.getColumnChinese().equals("") && !columnInfo.getColumnEnglish().toLowerCase().equals("dxbm")){
-                ColumnInfos.add(columnInfo);
+
+        List<ColumnInfo> ColumnInfos = null;
+        try {
+            long tid=Long.parseLong(tableId);
+            ColumnInfos = new ArrayList<>();
+            //根据表查出所有字段
+            List<ColumnInfo> columnInfoList=columnSetService.getColumnsForTable(tid);
+            //根据是否有字段中文名进行过滤   //根据是否为dxbm进行过滤
+            for(ColumnInfo columnInfo : columnInfoList) {
+                if(columnInfo.getColumnChinese()!=null && !columnInfo.getColumnChinese().equals("") && !columnInfo.getColumnEnglish().toLowerCase().equals("dxbm")){
+                    ColumnInfos.add(columnInfo);
+                }
             }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
         return ColumnInfos;
     }
 
     @RequestMapping("/getTablesBySchemaId")
     public List<TableInfo> getTablesBySchemaId(String schemaId){
-        int sid=Integer.valueOf(schemaId);
-        return columnSetService.getTablesBySchemaId(sid);
+
+        List<TableInfo> tableInfoList= null;
+        try {
+            int sid=Integer.valueOf(schemaId);
+            tableInfoList = columnSetService.getTablesBySchemaId(sid);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+        return tableInfoList;
     }
 	@RequestMapping("/getAllSchemas")
     public Object getAllSchemas(Map<String, Object> params) {

@@ -91,8 +91,8 @@ public class DirectoryService {
         params.put("id", id);
         dao.delete(CLASSNAME, "delete", params);
     }
-    public Long getIdByText(String text) {
-      return  dao.get(CLASSNAME, "getIdByText", text);
+    public List<Long> getIdByText(String text) {
+      return  dao.getList(CLASSNAME, "getIdByText", text);
     }
 
     /**

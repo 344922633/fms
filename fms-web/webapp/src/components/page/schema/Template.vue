@@ -86,6 +86,7 @@
                         </Select>
                     </FormItem>
                     <FormItem label="表名：">
+                        {{formList2[index].tableId}}
                         <Select @on-change="(tableId) => getColumnsByTable(tableId,index)" v-model="formList2[index].tableId" style="width: 130px">
                             <Option v-for="(table,tableIdx) in selectMap[index].tables" :value="table.id" :key="table.id"> {{ table.tableChinese }}</Option>
                         </Select>
@@ -110,7 +111,7 @@
                 </Form>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
+                <el-button @click="editVisible = false" >取 消</el-button>
                 <el-button type="primary" @click="submitEdit">确 定</el-button>
             </span>
         </el-dialog>
@@ -232,7 +233,16 @@
 
             //关闭弹框的事件
             closeDialog(){
-                this.xxx = '';//清空数据
+                //清空数据
+                this.formList2 = [{
+                    templateName:'',
+                    columnKey: '',
+                    schemaId: '',
+                    tableId: '',
+                    tableName:'',
+                    columnId: '',
+                    dicMap:{}
+                }];
             },
 
 
@@ -344,8 +354,11 @@
             async getColumnsByTable(tableId,idx) {
                 await this.$axios.post('mvc/getColumnsForTable', {tableId}).then(res => {
                     this.$set(this.selectMap[idx], 'columns', res.data)
-                    this.refresh()
                     this.getDicByTableId(tableId, idx)
+                    this.refresh()
+                }).catch(() => {
+                    // location.reload()
+
                 })
             },
             getDicByColumn(columnId, key) {

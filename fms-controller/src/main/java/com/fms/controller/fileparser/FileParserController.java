@@ -926,7 +926,6 @@ public class FileParserController {
         }
     }
 
-
     /**
      * 多文件解析入HBase库
      */
@@ -959,34 +958,38 @@ public class FileParserController {
         }
 
         JSONObject jsonTemp = JSONObject.parseObject(columnKeyNamesMapObj);
+//        JSONObject jsonStr2 = JSONObject.parseObject(dataJSON);
         Iterator<String> it = jsonTemp.keySet().iterator();
         while(it.hasNext()){
             // 获得key
             String key = it.next();
             JSONObject data = jsonTemp.getJSONObject(key);
-            JSONObject json = jsonTemp.getJSONObject(key);
-            singleFileStrFormat(json, data);
+//            JSONObject json = jsonStr2.getJSONObject(key);
+            singleFileStrFormat(data);
         }
         return ExtUtil.failure("执行完毕");
 
     }
-
+    //烂七八糟的玩意   有时间重写吧
     //多文件
-    private void singleFileStrFormat(JSONObject json, JSONObject data) {
-        for (String key : json.keySet()) {
-            JSONObject colJson = json.getJSONObject(key);
+    private Object singleFileStrFormat(JSONObject data) {
+
+        boolean result = false;
+        for (String key : data.keySet()) {
+            JSONObject colJson = data.getJSONObject(key);
 
             Map<String, Set<String>> map = new HashMap<>();
             Map<String, String> valueMap = new HashMap<>();
             Map<String, JSONObject> dicMap = new HashMap<>();
+
             String columnId = colJson.getString("columnId");
             String schemaId = colJson.getString("schemaId");
             String columnId1 = null;
-            if(colJson.containsKey("columnId+''")){
+            if (colJson.containsKey("columnId+''")) {
                 columnId1 = colJson.get("columnId+''").toString();
             }
-            if(columnId1!=null){
-                columnId=columnId1;
+            if (columnId1 != null) {
+                columnId = columnId1;
             }
 
             if (StringUtils.isNotEmpty(schemaId) && !(schemaId.equals("0"))) {
@@ -1002,14 +1005,16 @@ public class FileParserController {
                     column.add(columnId);
                     map.put(table_schema, column);
                     String columnId2 = colJson.getString("columnId+''");
-                    if(columnId2!=null){
-                        columnId=columnId1;
+                    if (columnId2 != null) {
+                        columnId = columnId1;
                     }
                     String valueKey = table_schema + "_" + columnId;
                     valueMap.put(valueKey, key.toLowerCase());
                     dicMap.put(table_schema, colJson.getJSONObject("dicMap"));
                 }
             }
+
+
             for (String key2 : colJson.keySet()) {
                 String objectCodeValue = "dwj_" + System.nanoTime();
                 JSONObject rootObj = new JSONObject();
@@ -1078,10 +1083,11 @@ public class FileParserController {
                 if(rootObj.containsKey("data")){
                     System.out.println("kafka消息格式：\n" + rootObj);
                     kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), rootObj.toJSONString());
-                    break;
+                    result = true;
+
                 }
             }
-            break;
         }
+        return result;
     }
 }

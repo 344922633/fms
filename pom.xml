@@ -14,29 +14,6 @@
         <version>1.4.0</version>
     </parent>
 
-    <!--<repositories>-->
-        <!--<repository>-->
-            <!--<id>apollo-releases</id>-->
-            <!--<url>http://47.93.196.60:8081/repository/maven-releases/</url>-->
-            <!--<releases>-->
-                <!--<enabled>true</enabled>-->
-            <!--</releases>-->
-            <!--<snapshots>-->
-                <!--<enabled>false</enabled>-->
-            <!--</snapshots>-->
-        <!--</repository>-->
-        <!--<repository>-->
-            <!--<id>apollo-snapshots</id>-->
-            <!--<url>http://47.93.196.60:8081/repository/maven-snapshots/</url>-->
-            <!--<releases>-->
-                <!--<enabled>false</enabled>-->
-            <!--</releases>-->
-            <!--<snapshots>-->
-                <!--<enabled>true</enabled>-->
-            <!--</snapshots>-->
-        <!--</repository>-->
-    <!--</repositories>-->
-
     <modules>
         <module>fms-domain</module>
         <module>fms-service</module>
@@ -81,7 +58,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <!--管理配置文件打包-->
+
         <resources>
             <resource>
                 <!--需要打包的目录-->

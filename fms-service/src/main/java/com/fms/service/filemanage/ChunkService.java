@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +27,7 @@ public class ChunkService {
      * @param chunk
      * @return
      */
-    public Chunk query(Chunk chunk){return dao.get(CLASSNAME, "query", chunk);}
+    public List<Chunk> query(Chunk chunk){return dao.getList(CLASSNAME, "query", chunk);}
 
     /**
      *新增分片信息

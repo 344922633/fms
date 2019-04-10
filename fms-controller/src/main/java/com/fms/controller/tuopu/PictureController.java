@@ -531,104 +531,108 @@ public class PictureController {
     @ResponseBody
     @RequestMapping("sendDataToKafka")
     public void sendDataToKafka(HttpServletRequest request) throws IOException {
-        String idStr = request.getParameter("id");
-        Long id = null;
-        if (StringUtils.isNotEmpty(idStr)) {
-            id = Long.parseLong(idStr);
-        }
-        String jsonData = request.getParameter("json");
-        String name = request.getParameter("name");
-        // 将读取的数据转换为JSONObject
-        JSONObject jsonObject = JSONObject.parseObject(jsonData);
-
-        JSONArray btnArray = jsonObject.getJSONArray("datas");
-        // 循环获取控件
-        for (int i = 0; i < btnArray.size(); i++) {
-            String str = "";
-            JSONObject kongjianObj = btnArray.getJSONObject(i);
-            JSONObject json = kongjianObj.getJSONObject("json");
-            JSONObject obj = new JSONObject();
-            JSONArray data = new JSONArray();
-            JSONObject obj1 = new JSONObject();
-            JSONObject obj2 = new JSONObject();
-            obj.put("operationSource",PropertyUtil.readValue("OPERATION_SOURCE"));
-            obj1.put("operationType", "INSERT");
-            obj2.put("operationType", "INSERT");
-            JSONArray columns = new JSONArray();
-            JSONArray columns2 = new JSONArray();
-            JSONObject properties = null;
-            JSONObject columnObj1 = new JSONObject();
-            JSONObject columnObj2= new JSONObject();
-            String controlId = null;
-            if (json.containsKey("properties")) {
-                properties = JSON.parseObject(json.getString("properties"));
-                Iterator<String> colIt = properties.keySet().iterator();
-                Iterator<String> colIt1 = properties.keySet().iterator();
-                while (colIt.hasNext()) {
-                    String jsonKey = colIt.next();
-                    if (jsonKey.equals("id")) {
-                        controlId = properties.getString(jsonKey);
-                    }
-                }
-                List<ControlProperty>  controlProperties =  controlService.getTablesId(controlId);
-
-                String MtableName = columnInfoService.queryTableInfoById(Long.parseLong(controlProperties.get(0).getTableId())).getTableEnglish();
-
-                String StableName = columnInfoService.queryTableInfoById(Long.parseLong(controlProperties.get(1).getTableId())).getTableEnglish();
-
-                List<ControlProperty> controlPropertyList =getColumnByControlIdAndTableId(controlId,controlProperties.get(0).getTableId());
-                List<ControlProperty> controlPropertyList2 =getColumnByControlIdAndTableId(controlId,controlProperties.get(1).getTableId());
-//                List<String> Scolumn =getColumnByControlIdAndTableId(controlId,controlProperties.get(1).getTableId());
-
-                while (colIt1.hasNext()) {
-                    String jsonKey = colIt1.next();
-                    if (jsonKey.toLowerCase().equals("dxbm")) {
-                        str = properties.get(jsonKey).toString();
-                        if(str!=""){
-                        obj1.put("objectCode", "dxbm");
-                        obj2.put("objectCode", "dxbm");
-                        obj1.put("objectCodeValue", str);
-                        obj2.put("objectCodeValue", str);
-                        }
-                    }
-                    JSONObject jsonCol = new JSONObject();
-                    JSONObject jsonCol2 = new JSONObject();
-
-                    for(ControlProperty controlProperty : controlPropertyList) {
-
-                        if (jsonKey.equals(controlProperty.getProperty())){
-                            jsonCol.put("name", jsonKey.toLowerCase());
-                            jsonCol.put("value", properties.get(jsonKey));
-                        }
-                    }
-                    for(ControlProperty controlProperty2 : controlPropertyList2) {
-
-                        if (jsonKey.equals(controlProperty2.getProperty())){
-                            jsonCol2.put("name", jsonKey.toLowerCase());
-                            jsonCol2.put("value", properties.get(jsonKey));
-                        }
-                    }
-
-                    if(jsonCol.size()!=0){
-                        columns.add(jsonCol);
-                    }
-                    if(jsonCol2.size()!=0) {
-                        columns2.add(jsonCol2);
-                    }
-                }
-
-                obj1.put("schema", env.getProperty("schema"));
-                obj2.put("schema", env.getProperty("schema"));
-                obj1.put("table",MtableName);
-                obj2.put("table",StableName);
-                obj1.put("columns", columns);
-                obj2.put("columns", columns2);
-                data.add(obj1);
-                data.add(obj2);
-                obj.put("data", data);
-                System.out.println(obj.toJSONString());
-                kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), obj.toJSONString());
+        try {
+            String idStr = request.getParameter("id");
+            Long id = null;
+            if (StringUtils.isNotEmpty(idStr)) {
+                id = Long.parseLong(idStr);
             }
+            String jsonData = request.getParameter("json");
+            String name = request.getParameter("name");
+            // 将读取的数据转换为JSONObject
+            JSONObject jsonObject = JSONObject.parseObject(jsonData);
+
+            JSONArray btnArray = jsonObject.getJSONArray("datas");
+            // 循环获取控件
+            for (int i = 0; i < btnArray.size(); i++) {
+                String str = "";
+                JSONObject kongjianObj = btnArray.getJSONObject(i);
+                JSONObject json = kongjianObj.getJSONObject("json");
+                JSONObject obj = new JSONObject();
+                JSONArray data = new JSONArray();
+                JSONObject obj1 = new JSONObject();
+                JSONObject obj2 = new JSONObject();
+                obj.put("operationSource",PropertyUtil.readValue("OPERATION_SOURCE"));
+                obj1.put("operationType", "INSERT");
+                obj2.put("operationType", "INSERT");
+                JSONArray columns = new JSONArray();
+                JSONArray columns2 = new JSONArray();
+                JSONObject properties = null;
+                JSONObject columnObj1 = new JSONObject();
+                JSONObject columnObj2= new JSONObject();
+                String controlId = null;
+                if (json.containsKey("properties")) {
+                    properties = JSON.parseObject(json.getString("properties"));
+                    Iterator<String> colIt = properties.keySet().iterator();
+                    Iterator<String> colIt1 = properties.keySet().iterator();
+                    while (colIt.hasNext()) {
+                        String jsonKey = colIt.next();
+                        if (jsonKey.equals("id")) {
+                            controlId = properties.getString(jsonKey);
+                        }
+                    }
+                    List<ControlProperty>  controlProperties =  controlService.getTablesId(controlId);
+
+                    String MtableName = columnInfoService.queryTableInfoById(Long.parseLong(controlProperties.get(0).getTableId())).getTableEnglish();
+
+                    String StableName = columnInfoService.queryTableInfoById(Long.parseLong(controlProperties.get(1).getTableId())).getTableEnglish();
+
+                    List<ControlProperty> controlPropertyList =getColumnByControlIdAndTableId(controlId,controlProperties.get(0).getTableId());
+                    List<ControlProperty> controlPropertyList2 =getColumnByControlIdAndTableId(controlId,controlProperties.get(1).getTableId());
+    //                List<String> Scolumn =getColumnByControlIdAndTableId(controlId,controlProperties.get(1).getTableId());
+
+                    while (colIt1.hasNext()) {
+                        String jsonKey = colIt1.next();
+                        if (jsonKey.toLowerCase().equals("dxbm")) {
+                            str = properties.get(jsonKey).toString();
+                            if(str!=""){
+                            obj1.put("objectCode", "dxbm");
+                            obj2.put("objectCode", "dxbm");
+                            obj1.put("objectCodeValue", str);
+                            obj2.put("objectCodeValue", str);
+                            }
+                        }
+                        JSONObject jsonCol = new JSONObject();
+                        JSONObject jsonCol2 = new JSONObject();
+
+                        for(ControlProperty controlProperty : controlPropertyList) {
+
+                            if (jsonKey.equals(controlProperty.getProperty())){
+                                jsonCol.put("name", jsonKey.toLowerCase());
+                                jsonCol.put("value", properties.get(jsonKey));
+                            }
+                        }
+                        for(ControlProperty controlProperty2 : controlPropertyList2) {
+
+                            if (jsonKey.equals(controlProperty2.getProperty())){
+                                jsonCol2.put("name", jsonKey.toLowerCase());
+                                jsonCol2.put("value", properties.get(jsonKey));
+                            }
+                        }
+
+                        if(jsonCol.size()!=0){
+                            columns.add(jsonCol);
+                        }
+                        if(jsonCol2.size()!=0) {
+                            columns2.add(jsonCol2);
+                        }
+                    }
+
+                    obj1.put("schema", env.getProperty("schema"));
+                    obj2.put("schema", env.getProperty("schema"));
+                    obj1.put("table",MtableName);
+                    obj2.put("table",StableName);
+                    obj1.put("columns", columns);
+                    obj2.put("columns", columns2);
+                    data.add(obj1);
+                    data.add(obj2);
+                    obj.put("data", data);
+                    System.out.println(obj.toJSONString());
+                    kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), obj.toJSONString());
+                }
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
         }
     }
 

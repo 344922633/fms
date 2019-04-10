@@ -360,26 +360,36 @@ public class UploadController {
      */
     @GetMapping("/chunk")
     public Object checkChunk(Chunk chunk, HttpServletResponse response) {
-        Map<String, Object> params = Maps.newHashMap();
-        params.put("fileMd5", chunk.getIdentifier());
-        List<com.fms.domain.filemanage.File> files = fileService.query(params);
-        if (CollectionUtil.isNotEmpty(files)) {
-            return chunk;
-        }
-        Chunk oChunk = chunkService.query(chunk);
-        if (oChunk == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-        } else {
-            String fileTmp = env.getProperty("file.tmpPath") + "/";
-            String dir = fileTmp + chunk.getIdentifier();
-            Path dirPath = Paths.get(dir);
-            String fileName = chunk.getTotalChunks().intValue() == 1 ? chunk.getFilename() : (chunk.getFilename() + "-" + oChunk.getChunkNumber());
-            Path filePath = Paths.get(dirPath + "/" + fileName);
-            if (!Files.exists(filePath)) {
-                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        try {
+            Map<String, Object> params = Maps.newHashMap();
+            params.put("fileMd5", chunk.getIdentifier());
+            List<com.fms.domain.filemanage.File> files = fileService.query(params);
+            if (CollectionUtil.isNotEmpty(files)) {
+                return chunk;
             }
+            List<Chunk> chunkList = chunkService.query(chunk);
+            Chunk  oChunk = new Chunk();
+            if(chunkList.size() !=0 ){
+                oChunk  = chunkList.get(0);
+            }
+
+            if (oChunk == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            } else {
+                String fileTmp = env.getProperty("file.tmpPath") + "/";
+                String dir = fileTmp + chunk.getIdentifier();
+                Path dirPath = Paths.get(dir);
+                String fileName = chunk.getTotalChunks().intValue() == 1 ? chunk.getFilename() : (chunk.getFilename() + "-" + oChunk.getChunkNumber());
+                Path filePath = Paths.get(dirPath + "/" + fileName);
+                if (!Files.exists(filePath)) {
+                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Chunk();
         }
-         return chunk;
+        return chunk;
     }
 
     /**
@@ -390,53 +400,57 @@ public class UploadController {
      */
     @PostMapping("/mergeFile")
     public Object mergeFile(FileInfo fileInfo) {
-        String uploadFolder = env.getProperty("file.tmpPath");
-        String fileName = fileInfo.getFilename();
-        String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" : fileName.substring(fileName.lastIndexOf(".") + 1);
-        String path = uploadFolder + "/" + fileInfo.getIdentifier() + "/" + fileInfo.getFilename();
-        Map<String, Object> params = Maps.newHashMap();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        params.put("fileMd5", fileInfo.getIdentifier());
-        List<com.fms.domain.filemanage.File> files = fileService.query(params);
-
-        if (CollectionUtil.isNotEmpty(files)) {
-            for (com.fms.domain.filemanage.File file : files) {
-                //进行文件名和MD5校验  如果匹配进行合并
-                if (file.getName().equals(fileInfo.getFilename()) && file.getFileMd5().equals(fileInfo.getIdentifier())) {
-
-                    //文件所在位置
-                    String text = fileService.getTextById(file.getDirectoryId());
-                    return ExtUtil.failure("重复文件所在文件夹位置:" + text);
-                }
-//                com.fms.domain.filemanage.File file = files.get(0);
-                Long dirId = fileInfo.getDirectoryId();
-
-                if (dirId == 1) {
-                    Date currentDate = new Date();
-                    String relativePath = sdf.format(currentDate) + "/" + fileInfo.getWebkitRelativePath();
-                    if (!Strings.isNullOrEmpty(relativePath)) {
-                        relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
-                        dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
-                        saveFile(file.getRealPath(), fileName, suffix, dirId, fileInfo.getIdentifier());
-                    }
-                }else{
-                    String relativePath = fileInfo.getWebkitRelativePath();
-                    if (!Strings.isNullOrEmpty(relativePath)) {
-                        relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
-                        dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
-                        saveFile(file.getRealPath(), fileName, suffix, dirId, fileInfo.getIdentifier());
-                    }
-                }
-
-                return "合并成功";
-            }
-        }
-        String folder = uploadFolder + "/" + fileInfo.getIdentifier();
-        merge(path, folder);
-        fileInfo.setLocation(path);
-//        fileInfoService.addFileInfo(fileInfo);
 
         try {
+            String uploadFolder = env.getProperty("file.tmpPath");
+            String fileName = fileInfo.getFilename();
+            String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" : fileName.substring(fileName.lastIndexOf(".") + 1);
+            String path = uploadFolder + "/" + fileInfo.getIdentifier() + "/" + fileInfo.getFilename();
+            Map<String, Object> params = Maps.newHashMap();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            params.put("fileMd5", fileInfo.getIdentifier());
+            List<com.fms.domain.filemanage.File> files = fileService.query(params);
+
+            if (CollectionUtil.isNotEmpty(files)) {
+                for (com.fms.domain.filemanage.File file : files) {
+                    //进行文件名和MD5校验  如果匹配进行合并
+                    if (file.getName().equals(fileInfo.getFilename()) && file.getFileMd5().equals(fileInfo.getIdentifier())) {
+
+                        //文件所在位置
+                        String text = fileService.getTextById(file.getDirectoryId());
+                        return ExtUtil.failure("重复文件所在文件夹位置:" + text);
+                    }
+
+                    Long dirId = fileInfo.getDirectoryId();
+
+                    if (dirId == 1) {
+                        Date currentDate = new Date();
+                        String relativePath = sdf.format(currentDate) + "/" + fileInfo.getWebkitRelativePath();
+                        if (!Strings.isNullOrEmpty(relativePath)) {
+                            relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
+                            dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                            saveFile(file.getRealPath(), fileName, suffix, dirId, fileInfo.getIdentifier());
+                        }
+                    }else{
+                        String relativePath = fileInfo.getWebkitRelativePath();
+                        if (!Strings.isNullOrEmpty(relativePath)) {
+                            //根据文件夹名字  查询是否存在
+
+                            relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
+                            dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                            saveFile(file.getRealPath(), fileName, suffix, dirId, fileInfo.getIdentifier());
+                        }
+                    }
+
+                    return "合并成功";
+                }
+            }
+            String folder = uploadFolder + "/" + fileInfo.getIdentifier();
+            merge(path, folder);
+            fileInfo.setLocation(path);
+//        fileInfoService.addFileInfo(fileInfo);
+
+
             FileInputStream fis = null;
             ByteArrayOutputStream bos = null;
             byte[] buffer = null;
@@ -467,9 +481,14 @@ public class UploadController {
             }else{
                 String relativePath = fileInfo.getWebkitRelativePath();
                 if (!Strings.isNullOrEmpty(relativePath)) {
+                    Long pid = null;
                     relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
                     //根据文件夹名字 查询文件夹ID    避免重复
-                   Long pid  = directoryService.getIdByText(relativePath);
+                    List<Long> longList= directoryService.getIdByText(relativePath);
+                    if(longList.size()!=0){
+                        pid = longList.get(0);
+                    }
+
                     if(pid == null) {
                         dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
                     }else{
@@ -487,11 +506,11 @@ public class UploadController {
                 tempFile.delete();
             }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
         return ExtUtil.success("上传成功");
     }
 
