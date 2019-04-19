@@ -73,13 +73,9 @@
     <update id="updateById" parameterType="com.fms.domain.filemanage.BlockManage">
         UPDATE block_manage
         SET
-        <if test="whiteContent != null">
-            white_content = #{whiteContent},
-        </if>
-        <if test="blackContent != null">
-            black_content = #{blackContent},
-        </if>
-        updated = #{updated}
+          white_content = #{whiteContent},
+          black_content = #{blackContent},
+          updated = #{updated}
         <where>
             <if test="id != null">
                 and id = #{id}

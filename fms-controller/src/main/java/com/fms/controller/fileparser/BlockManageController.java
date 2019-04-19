@@ -42,37 +42,10 @@ public class BlockManageController {
      * @return
      */
 //犹豫预览发送请求本机无法调试   只能暂时在显示的时候进行数组重组
-
     @RequestMapping(value = "/getList", method = RequestMethod.POST)
     public Object getList(@RequestParam Map<String, Object> params) {
-        BlockManage newbm = new BlockManage();
-        List<BlockManage> bmList = new ArrayList<>();
-
-        String nwc = null;
-        String nbc = null;
-        blockManageService.deleteById(1L);
-         List<BlockManage> blockManageList= blockManageService.getList(params);
-        for(BlockManage blockManage : blockManageList) {
-            blockManage.getWhiteContent();
-            blockManage.getBlackContent();
-            if(nwc==null){
-                nwc = blockManage.getWhiteContent();
-            }else{
-                nwc = nwc+ "," +blockManage.getWhiteContent();
-            }
-            if(nbc==null) {
-                nbc =blockManage.getBlackContent();
-            }else{
-                nbc = nbc + "," + blockManage.getBlackContent();
-            }
-        }
-
-        newbm.setBlackContent(nbc);
-        newbm.setWhiteContent(nwc);
-        newbm.setId(1L);
-        blockManageService.add(newbm);
-        bmList.add(newbm);
-        return bmList;
+        List<BlockManage> blockManageList= blockManageService.getList(params);
+        return blockManageList;
     }
 
 
@@ -138,12 +111,16 @@ public class BlockManageController {
         StringBuffer blackBuffer =  new StringBuffer();
         for (List<String> rows : list) {
             String blackContent = rows.get(0);
-            String whiteContent = rows.get(1);
             if (StringUtils.isNotEmpty(blackContent)) {
                 blackBuffer.append(blackContent);
                 blackBuffer.append(",");
             }
 
+            //如果小于等于0，说明第二项内容为空
+            if (rows.size() <= 1) {
+                continue;
+            }
+            String whiteContent = rows.get(1);
             if (StringUtils.isNotEmpty(whiteContent)) {
                 whiteBuffer.append(whiteContent);
                 whiteBuffer.append(",");
