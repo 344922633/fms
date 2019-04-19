@@ -42,6 +42,7 @@ public class BlockManageController {
      * @return
      */
 //犹豫预览发送请求本机无法调试   只能暂时在显示的时候进行数组重组
+
     @RequestMapping(value = "/getList", method = RequestMethod.POST)
     public Object getList(@RequestParam Map<String, Object> params) {
         BlockManage newbm = new BlockManage();

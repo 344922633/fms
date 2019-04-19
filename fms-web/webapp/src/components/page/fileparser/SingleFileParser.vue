@@ -186,8 +186,8 @@
 
                             <Select
                                     style="width: 180px"
-                                    :data="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
-                                    v-model="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
+                                    :data="columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]"
+                                    v-model="columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]"
                                     :clearable="true"
                             >
                                 <Option v-for="(dic,dicIdx) in dicTable.dicList" :data="dic.dm" :value="dic.dm+''" :key="dic.dm+''"> {{ dic.mc }}</Option>
@@ -874,8 +874,9 @@
                     this.$set(this.columnKeyNamesMap[key], 'dicMap', {})
 
                     dicTables.forEach(dicTable => {
+                        console.log(dicTable.columnEnglish)
                         const { columnEnglish } = dicTable
-                        this.$set(this.columnKeyNamesMap[key]['dicMap'], columnEnglish, '')
+                        this.$set(this.columnKeyNamesMap[key]['dicMap'], dicTable.columnEnglish, '')
                     })
                 })
             },

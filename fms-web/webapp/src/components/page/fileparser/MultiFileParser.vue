@@ -247,8 +247,8 @@
                         <FormItem v-for="dicTable in columnSelectMap[key].dicTables" :label="dicTable.columnChinese">
                             <Select
                                     style="width: 180px"
-                                    :data="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
-                                    v-model="columnKeyNamesMap[key]['dicMap'][dicTable.dicTableName]"
+                                    :data="columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]"
+                                    v-model="columnKeyNamesMap[key]['dicMap'][dicTable.columnEnglish]"
                                     :clearable="true"
                                 >
                                 <Option v-for="(dic,dicIdx) in dicTable.dicList" :data="dic.dm" :value="dic.dm+''" :key="dic.dm+''"> {{ dic.mc }}</Option>
@@ -2291,7 +2291,7 @@
 
                     dicTables.forEach(dicTable => {
                         const { columnEnglish } = dicTable
-                        this.$set(this.columnKeyNamesMap[key]['dicMap'], columnEnglish, '')
+                        this.$set(this.columnKeyNamesMap[key]['dicMap'], dicTable.columnEnglish, '')
                     })
 
                 })
@@ -2597,6 +2597,13 @@
 
             // 新版预览
             preview(row){
+                // // 新版预览
+                // let previewPath = this.config.previewPath;
+                //
+                // var previewSrc ="http://"+ previewPath +"/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
+                // var ifr = document.createElement('iframe');
+                // ifr.src = previewSrc;
+                // document.body.appendChild(ifr);
                 // 新版预览
                 let previewPath = this.config.previewPath;
 
@@ -2604,6 +2611,10 @@
                 var ifr = document.createElement('iframe');
                 ifr.src = previewSrc;
                 document.body.appendChild(ifr);
+
+
+
+
             }
         },
         watch: {

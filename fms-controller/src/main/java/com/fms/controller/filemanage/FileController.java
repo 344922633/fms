@@ -112,8 +112,8 @@ public class FileController {
      * @param response
      */
     @RequestMapping("downloadFile")
-    public void downloadFile(Long id, HttpServletResponse response) {
-        File file = fileService.get(id);
+    public void downloadFile(String id, HttpServletResponse response) {
+        File file = fileService.get(Long.valueOf(id));
         if (file != null) {
             try {
                 byte[] buf = hdfsService.cat(file.getRealPath());

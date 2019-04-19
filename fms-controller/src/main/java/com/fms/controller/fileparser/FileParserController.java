@@ -856,23 +856,13 @@ public class FileParserController {
                     }
 
                     if (dicJSON != null) {
-                        boolean trans = false;
-                        String key1 = null;
-                        String value1=null;
                         for (String dicKey : dicJSON.keySet()) {
                             JSONObject columnJson = new JSONObject();
                             // 获取枚举字段
-                            if (StringUtils.isBlank(dicJSON.getString(dicKey))) {
-                                key1 =dicKey.toLowerCase();
-                            }else{
-                                value1 = dicJSON.getString(dicKey);
-                            }
-                            if(key1!=null&&value1!=null){
-                                columnJson.put("name", key1);
-                                columnJson.put("value", value1);
+                            if (StringUtils.isNotBlank((dicJSON.getString(dicKey)))) {
+                                columnJson.put("name", dicKey.toLowerCase());
+                                columnJson.put("value", dicJSON.getString(dicKey));
                                 columnArr.add(columnJson);
-                                key1 = null;
-                                value1 = null;
                             }
                         }
                     }
@@ -1044,35 +1034,18 @@ public class FileParserController {
                         // 获取column名称  ：非枚举字段
                         columnJson.put("name", columnInfo.getColumnEnglish().toLowerCase());
                     }
-
                     if (dicJSON != null) {
-                        int i = 0;
-                        String value ;
-                        String name ;
-                        String value1 = null;
-                        String name1 = null;
                         for (String dicKey : dicJSON.keySet()) {
-                            i++;
                             JSONObject columnJson = new JSONObject();
                             // 获取枚举字段
-                            if (StringUtils.isNotEmpty(dicJSON.getString(dicKey))) {
-                                value1 = dicJSON.getString(dicKey);
-                            }else{
-                                name1 = dicKey.toLowerCase();
+                            if (StringUtils.isNotBlank((dicJSON.getString(dicKey)))) {
+                                columnJson.put("name", dicKey.toLowerCase());
+                                columnJson.put("value", dicJSON.getString(dicKey));
+                                columnArr.add(columnJson);
                             }
-                            if(name1 != null&& value1 !=null){
-                                value = value1;
-                                name = name1;
-                                if (i % 2 == 0) {
-                                    columnJson.put("name", name);
-                                    columnJson.put("value", value);
-                                    columnArr.add(columnJson);
-                                }
-                            }
-
-
                         }
                     }
+
                     columnPublic.put("name", "dxbm");
                     columnPublic.put("value", objectCodeValue);
                     columnArr.add(columnPublic);
