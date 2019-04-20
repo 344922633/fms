@@ -156,36 +156,43 @@
                 <div ref="result"></div>
             </div>
             <!--表格tab-->
+            <Row>
+                <Col span="24">
+                    <div class="tabs" style="height:20px">
+                        <div
+                            style="float: left;margin-right: 10px; width: 100px;float: left; margin: 3px 5px 2px 3px;border-radius: 3px;font-size: 12px;overflow: hidden;cursor: pointer;height: 23px;line-height: 23px;border: 1px solid #e9eaec;background: #fff;padding: 0 5px 0 12px;vertical-align: middle;color: #666;transition: all .3s ease-in;"
+                            :class="{tableActive:index == tableIndex}" v-for="(value,key,index) in jsonTables"
+                            @click="toggleTab(index)"><a>{{key}}</a></div>
+                    </div>
+                </Col>
+                <Col span="24">
+                    <div v-if="jsonTables && Object.keys(jsonTables).length" style="height: 300px; overflow-y: auto;">
+                        <table style="border-right:1px solid #ddd;border-bottom:1px solid #ddd;width:100%;overflow-x:scroll;"
+                               v-for="(value,key,index) in jsonTables" :key="key" :label="value" :value="key"
+                               v-show="index == tableIndex" border="0" cellspacing="0" cellpadding="0">
+                            <thead>
+                            <tr>
+                                <th style="background: #c0c4cc;border: 1px solid #ddd;" v-for="keyvalue in allKeyAll[index]">
+                                    {{keyvalue}}
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(value, key) in [...value]">
 
-            <div class="tabs" style="height:20px">
-                <div
-                    style="float: left;margin-right: 10px; width: 100px;float: left; margin: 3px 5px 2px 3px;border-radius: 3px;font-size: 12px;overflow: hidden;cursor: pointer;height: 23px;line-height: 23px;border: 1px solid #e9eaec;background: #fff;padding: 0 5px 0 12px;vertical-align: middle;color: #666;transition: all .3s ease-in;"
-                    :class="{tableActive:index == tableIndex}" v-for="(value,key,index) in jsonTables"
-                    @click="toggleTab(index)"><a>{{key}}</a></div>
-            </div>
+                                <td v-for="keyvalue in allKeyAll[index]"
+                                    style="text-align: center;border-left:1px solid #ddd;border-top:1px solid #ddd">
+                                    {{value[keyvalue]}}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </Col>
+            </Row>
+
             <!--改表格高度-->
-            <div v-if="jsonTables && Object.keys(jsonTables).length" style="height: 300px; overflow-y: auto;">
-                <table style="border-right:1px solid #ddd;border-bottom:1px solid #ddd;width:100%;overflow-x:scroll;"
-                       v-for="(value,key,index) in jsonTables" :key="key" :label="value" :value="key"
-                       v-show="index == tableIndex" border="0" cellspacing="0" cellpadding="0">
-                    <thead>
-                    <tr>
-                        <th style="background: #c0c4cc;border: 1px solid #ddd;" v-for="keyvalue in allKey">
-                            {{keyvalue}}
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(value, key) in [...value]">
 
-                        <td v-for="keyvalue in allKey"
-                            style="text-align: center;border-left:1px solid #ddd;border-top:1px solid #ddd">
-                            {{value[keyvalue]}}
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
 
 
 
@@ -1220,6 +1227,7 @@
                 numOfSelect: 20,
                 numOfSelectOptions: [20, 30, 50],
                 allKey:[],//解析的文件key的数组
+                allKeyAll:[],//解析的文件key的数组
                 columnKeyNamesMap: {},
                 columnSelectMap: {},
                 schemas: [],
@@ -2120,6 +2128,23 @@
                 });
                 return keyStr;
             },
+            getAllKeysAll(obj){
+                // alert(obj);
+                let firstJson;
+                let keyStr=[];
+                Object.keys(obj).forEach((key, index)=>{
+                    let json=obj[key][index];
+                    firstJson=json;
+                    let keyStrSon=[];
+                    Object.keys(firstJson).forEach((key, index)=>{
+                        keyStrSon.push(key);
+                    });
+                    keyStr.push(keyStrSon);
+                });
+
+
+                return keyStr;
+            },
 
             getDicColumnsByDicName(dicTable, key) {
                 this.$axios.post('mvc/getDicColumnsByDicName', {
@@ -2131,14 +2156,14 @@
             },
 
             handleRightRowClick(row) {
-
+                console.log(row);
                 this.highLightRow(row);
                 this.$refs.result.innerHTML =
                     '<textarea id="ID"  style="width:100%;min-height:600px;overflow:scroll;resize:none;" >' +
                     row.parseResult +
                     "</textarea>";
-                this.allKey=this.getAllKeys(JSON.parse(row.parseResult));
-
+                this.allKey=this.getAllKeys(JSON.parse(row.parseResult.toLowerCase()));
+                this.allKeyAll=this.getAllKeysAll(JSON.parse(row.parseResult.toLowerCase()));
                 this.tempFileId=row.id;
                 if(this.columnKeyNamesMapObj.hasOwnProperty(row.id)){
                     delete this.columnKeyNamesMapObj[row.id];
@@ -2607,7 +2632,8 @@
                 // 新版预览
                 let previewPath = this.config.previewPath;
 
-                var previewSrc ="http://"+ previewPath +"/index?filePath="+this.selectFileList[0].realPath+'&id='+this.selectFileList[0].id;
+                // var previewSrc ="http://"+ previewPath +"/index?filePath="+row.selectFileList[0].realPath+'&id='+row.selectFileList[0].id;
+                var previewSrc ="http://"+ previewPath +"/index?filePath="+row.realPath+'&id='+row.id;
                 var ifr = document.createElement('iframe');
                 ifr.src = previewSrc;
                 document.body.appendChild(ifr);
@@ -2649,6 +2675,9 @@
         margin-right: 5px;
         border-radius: 6px;
         border: 1px #e1e4e8 solid;
+    }
+    .tableActive a{
+        color:#666;
     }
     .tableActive {
         border: 1px solid #409eff;
