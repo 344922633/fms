@@ -92,4 +92,15 @@
             #{id}
         </foreach>
     </delete>
+    <select id="queryFolderExistByTextAndParent" parameterType="map" resultType="integer">
+        SELECT count(*)
+        FROM fms_directory
+        WHERE  parent_id=#{parentId} and text = #{text}
+    </select>
+    <select id="getIdByTextAndParent" parameterType="map" resultType="long">
+        SELECT
+        id
+        FROM fms_directory
+        WHERE text = #{text} AND parent_id = '0'
+    </select>
 </mapper>

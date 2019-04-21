@@ -141,4 +141,22 @@ public class DirectoryService {
         }
         return parentId;
     }
+
+    /**
+     * 根据目录名和父节点判断是否存在该节点
+     * @param params
+     * @return
+     */
+    public int queryFolderExistByTextAndParent(Map<String, Object> params) {
+        return dao.get(CLASSNAME, "queryFolderExistByTextAndParent", params);
+    }
+
+    /**
+     * 根据目录名和父节点获取该节点的ID
+     * @param params
+     * @return
+     */
+    public Long getIdByTextAndParent(Map<String, Object> params) {
+        return dao.get(CLASSNAME, "getIdByTextAndParent", params);
+    }
 }

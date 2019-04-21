@@ -2,6 +2,7 @@ package com.fms.controller.filemanage;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fms.domain.filemanage.Directory;
 import com.fms.domain.filemanage.FileParser;
 import com.fms.domain.filemanage.FileParserJar;
 import com.fms.domain.filemanage.FileType;
@@ -25,10 +26,13 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -104,7 +108,7 @@ public class UploadController {
                     try {
                         Long directoryId = ftp.getDirectoryId();
 
-                        if(sf == null || ! SFTPUtils.isSFTPConnect(sf) ){// 判断SFTP是否连接中
+                        if (sf == null || !SFTPUtils.isSFTPConnect(sf)) {// 判断SFTP是否连接中
                             sf = SFTPUtils.getInstance(ftp);// 断开或者是去连接null时，重新连接
                         }
                         files = sf.listFiles(directory);
@@ -154,11 +158,11 @@ public class UploadController {
                                             }
 
 
-                                    } catch (FileNotFoundException e) {
-                                        e.printStackTrace();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+                                        } catch (FileNotFoundException e) {
+                                            e.printStackTrace();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
 
                                     }
                                 }
@@ -169,7 +173,7 @@ public class UploadController {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if(sf != null){
+                    if (sf != null) {
                         sf.disconnect();
                     }
                 }
@@ -267,11 +271,11 @@ public class UploadController {
                                             String realPath = hdfsService.upload(buffer, fileName);
                                             saveFile(realPath, fileName, suffix, dirId, null);
 
-                                                // 清除文件夹
-                                                File tempFile = new File(tempFold);
-                                                if (tempFile.isDirectory() && tempFile.exists()) {
-                                                    tempFile.delete();
-                                                }
+                                            // 清除文件夹
+                                            File tempFile = new File(tempFold);
+                                            if (tempFile.isDirectory() && tempFile.exists()) {
+                                                tempFile.delete();
+                                            }
 
                                         } catch (FileNotFoundException e) {
                                             e.printStackTrace();
@@ -368,9 +372,9 @@ public class UploadController {
                 return chunk;
             }
             List<Chunk> chunkList = chunkService.query(chunk);
-            Chunk  oChunk = new Chunk();
-            if(chunkList.size() !=0 ){
-                oChunk  = chunkList.get(0);
+            Chunk oChunk = new Chunk();
+            if (chunkList.size() != 0) {
+                oChunk = chunkList.get(0);
             }
 
             if (oChunk == null) {
@@ -431,7 +435,7 @@ public class UploadController {
                             dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
                             saveFile(file.getRealPath(), fileName, suffix, dirId, fileInfo.getIdentifier());
                         }
-                    }else{
+                    } else {
                         String relativePath = fileInfo.getWebkitRelativePath();
                         if (!Strings.isNullOrEmpty(relativePath)) {
                             //根据文件夹名字  查询是否存在
@@ -470,28 +474,28 @@ public class UploadController {
             // 根目录 dirId=1
             Long dirId = fileInfo.getDirectoryId();// 根目录 dirId=1
 
-            if(dirId == 1){
+            if (dirId == 1) {
                 Date currentDate = new Date();
                 String relativePath = sdf.format(currentDate) + "/" + fileInfo.getWebkitRelativePath();
 
-                if(!Strings.isNullOrEmpty(relativePath)) {
+                if (!Strings.isNullOrEmpty(relativePath)) {
                     relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
                     dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
                 }
-            }else{
+            } else {
                 String relativePath = fileInfo.getWebkitRelativePath();
                 if (!Strings.isNullOrEmpty(relativePath)) {
                     Long pid = null;
                     relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
                     //根据文件夹名字 查询文件夹ID    避免重复
-                    List<Long> longList= directoryService.getIdByText(relativePath);
-                    if(longList.size()!=0){
+                    List<Long> longList = directoryService.getIdByText(relativePath);
+                    if (longList.size() != 0) {
                         pid = longList.get(0);
                     }
 
-                    if(pid == null) {
+                    if (pid == null) {
                         dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
-                    }else{
+                    } else {
                         dirId = pid;
                     }
 
@@ -584,6 +588,7 @@ public class UploadController {
 
     /**
      * 保存文件
+     *
      * @param fileName
      * @param suffix
      * @param dirId
@@ -1054,7 +1059,6 @@ public class UploadController {
                 boolean isUpload = true;// 判断是否上报
 
 
-
                 File fileLocal = null;
                 if (file != null) {
                     try {
@@ -1071,11 +1075,11 @@ public class UploadController {
 
                         byte[] buf = hdfsService.cat(file.getRealPath());
 
-                        if(buf != null){
+                        if (buf != null) {
                             out.write(buf);
-                            fileService.updateFileIsReportById(file.getId(),1);
+                            fileService.updateFileIsReportById(file.getId(), 1);
                             System.out.println("第" + i + "个文件下载成功！--" + fileName);
-                        }else{
+                        } else {
                             isUpload = false;
                             System.out.println("第" + i + "个文件不存在，下载失败！--" + fileName);
                         }
@@ -1092,7 +1096,7 @@ public class UploadController {
 
                 //String filePath = "http://"+env.getProperty("fastdfs.nginxAddress")+"/"+file.getGroups()+"/"+file.getRealPath();
                 System.out.println(filePath);
-                if(isUpload){
+                if (isUpload) {
                     if (21 == ftp.getPort()) {
                         try {
                             FtpUtil.connectFtp(ftp);
@@ -1102,7 +1106,7 @@ public class UploadController {
                             e.printStackTrace();
                         }
                     } else {
-                        if(sf == null || ! SFTPUtils.isSFTPConnect(sf) ){// 判断SFTP是否连接中
+                        if (sf == null || !SFTPUtils.isSFTPConnect(sf)) {// 判断SFTP是否连接中
                             sf = SFTPUtils.getInstance(ftp);// 断开或者是去连接null时，重新连接
                         }
 
@@ -1111,11 +1115,11 @@ public class UploadController {
                 }
 
                 // 删除临时文件
-                if(fileLocal != null){
+                if (fileLocal != null) {
                     fileLocal.delete();
                 }
             }
-            if(sf!=null){
+            if (sf != null) {
                 sf.disconnect();// 断开连接
             }
 
@@ -1161,14 +1165,14 @@ public class UploadController {
             JSONObject colJson = array.getJSONObject(i);
 
             String dxbm = "";
-            if(colJson.containsKey("dxbm")){
+            if (colJson.containsKey("dxbm")) {
                 dxbm = colJson.getString("dxbm");
-            }else if(colJson.containsKey("dxbm")){
+            } else if (colJson.containsKey("dxbm")) {
                 dxbm = colJson.getString("dxbm");
             }
 
             for (String colKey : colJson.keySet()) {
-                if(! colKey.equals("TableSchema")){
+                if (!colKey.equals("TableSchema")) {
                     JSONObject columnJson = new JSONObject();
 
                     columnJson.put("name", colKey.toLowerCase());// 获取
@@ -1191,6 +1195,93 @@ public class UploadController {
 
         kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), rootObj.toJSONString());
 
+    }
+
+
+    @RequestMapping(value = "/uploadFromFtpFileAll", method = RequestMethod.POST)
+    public void uploadFromFtpFileAll(HttpServletRequest request, HttpServletResponse response) {
+        String ip = request.getParameter("ip");
+        String port = request.getParameter("port");
+        String userName = request.getParameter("userName");
+        String pwd = request.getParameter("password");
+        String path = request.getParameter("path");
+
+        //连接sftp
+        SFTPUtilsNew sftp = new SFTPUtilsNew(ip, Integer.parseInt(port), userName, pwd);
+        //创建连接
+        sftp.connect();
+        //判断目录是否存在
+        Map<String, Object> param = new HashMap<>();
+        param.put("parentId", "0");
+        param.put("text", ip);
+        int co_dir = directoryService.queryFolderExistByTextAndParent(param);
+        if (co_dir == 0) {
+            //创建一个节点
+            Directory dc = new Directory();
+            dc.setText(ip);
+            dc.setParentId((long) 0);
+            directoryService.add(dc);
+        }
+        //查询该节点的id
+        Long id = directoryService.getIdByTextAndParent(param);
+
+        //ftp临时文件下载地址
+        String tempFolder = env.getProperty("file.tmpPath");
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!sftp.isSFTPConnect()) {
+                    //重新创建连接
+                    sftp.connect();
+                }
+                //判断临时目录是否存在
+                File file_dir = new File(tempFolder);
+                if (!file_dir.exists()) {
+                    file_dir.mkdirs();
+                }
+                try {
+                    // 下载
+                    sftp.batchDownLoadFileAll(path +"/", tempFolder, "", "", false);
+                    //把临时文件存放到HDFS系统
+                    File[] files = file_dir.listFiles();
+                    for (File file : files) {
+                        File sFile=new File(file.getAbsolutePath());
+                        File[] sFiles=sFile.listFiles();
+                        FileInfo info = new FileInfo();
+                        info.setFilename(sFiles[0].getName());
+                        info.setIdentifier(file.getName());
+                        info.setTotalSize(sFiles[0].length());
+                        info.setDirectoryId(id);
+                        info.setWebkitRelativePath("");
+//                        String suffix = info.getFilename().toLowerCase().endsWith("tar.gz") ? "tar.gz" : info.getFilename().indexOf(".") == -1 ? "" : info.getFilename().substring(info.getFilename().lastIndexOf(".") + 1);
+//                        String realPath = hdfsService.upload(input2byte(new FileInputStream(file)), info.getFilename());
+//                        saveFile(realPath, info.getFilename(), suffix, id, null);
+                        mergeFile(info);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    sftp.disconnect();
+                }
+            }
+        };
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
+        service.scheduleAtFixedRate(runnable, 0, 1800, TimeUnit.SECONDS);
+    }
+
+
+    public  byte[] input2byte(InputStream inStream) throws IOException {
+        ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+        byte[] buff = new byte[inStream.available()];
+        int rc = 0;
+        while ((rc = inStream.read(buff)) != -1) {
+            swapStream.write(buff, 0, rc);
+        }
+        byte[] in2b = swapStream.toByteArray();
+        swapStream.close();
+        return in2b;
     }
 
 

@@ -155,7 +155,7 @@
                     this.idx = index;
                     const item = this.tableData[index];
                 await
-                    this.$axios.post('mvc/uploadFromFtpFile',{
+                    this.$axios.post('mvc/uploadFromFtpFileAll',{
                         ip: item.ip,
                         userName: item.userName,
                         password: item.password,
