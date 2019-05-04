@@ -858,11 +858,16 @@
                     const data = res.data || []
                     const dicData = data.filter(v => v.isDic === 0)
                     this.$set(this.columnSelectMap[key], 'columns',dicData)
+                    // console.info(JSON.stringify(data));
+                    // console.info(JSON.stringify(dicData));
+                    // console.info(JSON.stringify(this.columnSelectMap));
 
                 })
                 this.getDicByTableId(tableId, key)
             },
             getDicByColumn(columnId, key) {
+                //console.info(columnId+"===="+key);
+                this.$set(this.columnKeyNamesMap[key], 'columnId', columnId);
                 //选择字段下拉框选择后，暂时不需要处理
             },
             getDicByTableId(tableId, key) {

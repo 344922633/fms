@@ -2305,6 +2305,7 @@
             },
             getDicByColumn(columnId, key) {
                 //选择字段下拉框选择后，暂时不需要处理
+                this.$set(this.columnKeyNamesMap[key], 'columnId', columnId);
             },
             getDicByTableId(tableId, key) {
                 this.$axios.post('mvc/getDicNameByTableId', {
