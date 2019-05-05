@@ -741,22 +741,7 @@ public class FileParserController {
         boolean result = false;
         System.out.println(json);
         //下面这句话不知道干什么的    JSONObject 与 JSONArray之间转换各种报错。
-        JSONObject jsonNew = new JSONObject();
-        for (String key : json.keySet()) {
-            JSONArray array = json.getJSONArray(key);
-            JSONArray arrayNew = new JSONArray();
 
-            for (int i = 0; i < array.size(); i++) {
-                JSONObject obj = array.getJSONObject(i);
-                JSONObject objNew = new JSONObject();
-                for (String key1 : obj.keySet()) {
-                    objNew.put(key1.toLowerCase(), obj.get(key1));
-                }
-                arrayNew.add(objNew);
-            }
-            jsonNew.put(key, arrayNew);
-        }
-        System.out.println(jsonNew);
 
         // 获取日志key
         String logKeyStr = "";
@@ -810,7 +795,7 @@ public class FileParserController {
             }
 
             for (int i = 0; i < logArray.size(); i++) {
-                JSONObject appacheLog = logArray.getJSONObject(i);
+                JSONObject lowerJSON = jsonKey2lower(logArray.getJSONObject(i));
                 String objectCodeValue = "dwj_" + System.nanoTime();
 
                 JSONObject rootObj = new JSONObject();
@@ -849,8 +834,8 @@ public class FileParserController {
                         String valueKey = mapKey + "_" + colId;
                         // bytes
                         String logKey1 = valueMap.get(valueKey);
-                        columnJson.put("value", appacheLog.get(logKey1.toLowerCase()));
-                        if (appacheLog.get(logKey1.toLowerCase()) != null) {
+                        columnJson.put("value", lowerJSON.get(logKey1.toLowerCase()));
+                        if (lowerJSON.get(logKey1.toLowerCase()) != null) {
                             columnArr.add(columnJson);
                         }
                     }
@@ -930,6 +915,8 @@ public class FileParserController {
         String s[] = dataJSON.split("#");
         String id[] = dataIdJSON.split("#");
 
+
+
         for (int i = 0; i < s.length; i++) {
             if (i % 2 == 0) {
                 com.fms.domain.filemanage.File file = fileService.get(parserData.get(i).get("fileId"));
@@ -947,16 +934,12 @@ public class FileParserController {
             }
         }
 
+        //发送kafka
         JSONObject jsonTemp = JSONObject.parseObject(columnKeyNamesMapObj);
-//        JSONObject jsonStr2 = JSONObject.parseObject(dataJSON);
-        Iterator<String> it = jsonTemp.keySet().iterator();
-        while(it.hasNext()){
-            // 获得key
-            String key = it.next();
-            JSONObject data = jsonTemp.getJSONObject(key);
-//            JSONObject json = jsonStr2.getJSONObject(key);
-            singleFileStrFormat(data);
+        for(int i=0;i<s.length;i++){
+            singleFileStrFormatNew(JSONObject.parseObject(s[i]),jsonTemp.getJSONObject(id[i]));
         }
+
         return ExtUtil.failure("执行完毕");
 
     }
@@ -1062,5 +1045,18 @@ public class FileParserController {
             }
         }
         return result;
+    }
+
+    /**
+     * 把json的key转换成小写
+     * @param json
+     * @return
+     */
+    public JSONObject jsonKey2lower(JSONObject json){
+        JSONObject jsonNew = new JSONObject();
+        for (String key : json.keySet()) {
+            jsonNew.put(key.toLowerCase(), json.get(key));
+        }
+       return jsonNew;
     }
 }
