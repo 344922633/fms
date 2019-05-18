@@ -42,7 +42,10 @@ Vue.prototype.$axios = axios;
 Vue.use(uploader)
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
+    localStorage.setItem('ms_username',"admin");
     const role = localStorage.getItem('ms_username');
+    console.log(role);
+    console.log(to.path);
     if(!role && to.path !== '/user'){
         next('/user');
     }else if(to.meta.permission){

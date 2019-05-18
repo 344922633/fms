@@ -895,6 +895,7 @@ public class FileParserController {
         boolean result = fileParserService.parseDataSaveDataHBase(file_id, parserId, jsonStr, fileInfo, fileType, fileMD5, fileName);
 
         if (result) {
+            fileParserService.updateIsParser(file_id, 1);
             return ExtUtil.success("入库成功");
         } else {
             return ExtUtil.failure("入库失败");

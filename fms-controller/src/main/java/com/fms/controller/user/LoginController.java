@@ -43,7 +43,7 @@ public class LoginController {
         String [] paths = {"一级","二级","三级"};
         ReentrantLock reentrantLock = new ReentrantLock();
         Long pId=3L;
-//        System.out.println(directoryService.createRelativePath(pId,paths));
+
 
         User gUser = userService.queryName(user);
 
@@ -59,11 +59,11 @@ public class LoginController {
             HttpSession session = request.getSession();
             session.setAttribute("user",gUser);
 
-            return "redirect:http://127.0.0.1:8089";
+            return "redirect:http://127.0.0.1:8089/dashboard";
 
+        }else{
+            return "密码错误或权限不足";
         }
-
-        return "密码错误或权限不足";
     }
 
     @ResponseBody
