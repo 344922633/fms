@@ -336,7 +336,7 @@
                         key: 'recommendParserName'
                     },
                     {
-                        title: '是否解析',
+                        title: '是否入库',
                         key: 'isParser',
                         render: (h, params) => {
                             return h('span',{}, params.row.isParser == 1 ? '是' : '否');

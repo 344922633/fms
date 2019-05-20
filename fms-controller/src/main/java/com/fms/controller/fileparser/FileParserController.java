@@ -681,8 +681,8 @@ public class FileParserController {
                     } else {
                         file.setParseResult(data.get("jsonBottomLevel"));
                         //将文件修改为已解析状态
-                        String name = file.getName();
-                        fileParserService.updateIsParserMultiFile(name, 1);
+//                        String name = file.getName();
+//                        fileParserService.updateIsParserMultiFile(name, 1);
 
                     }
                 }
@@ -928,10 +928,17 @@ public class FileParserController {
                 Long file_id  = file.getId();
 
                 List<FileType> typeList = fileTypeService.getListByFileParserId(parserData.get(i).get("parserId"));
-                String fileType = typeList.get(0).getType();
+                String fileType ="";
+                if(typeList.size()>0){
+                    fileType = typeList.get(0).getType();
+                }
+
                 //数据入库;
                 String jsonStr = s[i];
                 fileParserService.multiParseDataSaveDataHBase(file_id, parserId, jsonStr, fileInfo, fileType, fileMD5, fileName);
+                //将文件修改为已解析状态
+                String name = file.getName();
+                fileParserService.updateIsParserMultiFile(name, 1);
             }
         }
 
