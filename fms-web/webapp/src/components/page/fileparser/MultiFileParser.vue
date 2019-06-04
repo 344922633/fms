@@ -2596,9 +2596,9 @@
 
                 this.$axios
                     .post("mvc/fileParser/multiParseSaveDataToHBase", {
-                        dataJSON: data.join("#"),
+                        dataJSON: data.join("#,##,#-#-#,##,#"),
                         parserDataJSON: JSON.stringify(parserData),
-                        dataIdJSON:dataId.join("#"),
+                        dataIdJSON:dataId.join("#,##,#-#-#,##,#"),
                         customKeysObj:JSON.stringify(this.customKeysObj),
                         columnKeyNamesMapObj:JSON.stringify(this.columnKeyNamesMapObj)
                     })

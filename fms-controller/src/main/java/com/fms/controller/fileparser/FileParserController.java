@@ -705,7 +705,7 @@ public class FileParserController {
         //转换完毕后的解析数据
         List<List<Map<String, Object>>> finalParseData = new LinkedList<>();
         //多个解析结果拆分开
-        String s[] = dataJSON.split("#");
+        String s[] = dataJSON.split("#,##,#-#-#,##,#");
         //解析结果从json转成对象
         for (String s1 : s) {
             List<Map<String, Object>> item = JSONUtils.jsonToObject(s1, List.class, Map.class);
@@ -919,8 +919,8 @@ public class FileParserController {
         //解析器和文件信息
         List<Map<String, Long>> parserData = JSONUtils.jsonToObject(parserDataJSON, List.class, Map.class);
         //多个解析结果拆分开
-        String s[] = dataJSON.split("#");
-        String id[] = dataIdJSON.split("#");
+        String s[] = dataJSON.split("#,##,#-#-#,##,#");
+        String id[] = dataIdJSON.split("#,##,#-#-#,##,#");
 
 
         for (int i = 0; i < s.length; i++) {
