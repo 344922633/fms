@@ -21,6 +21,8 @@ import com.handu.apollo.utils.CollectionUtil;
 import com.handu.apollo.utils.ExtUtil;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -46,6 +48,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @CrossOrigin
 public class UploadController {
+    private final static Logger LOGGER = LoggerFactory.getLogger(FileParserService.class);
     //    @Value("${prop.upload-folder}")
 
     @Autowired
@@ -411,6 +414,129 @@ public class UploadController {
 
         try {
             String uploadFolder = env.getProperty("file.tmpPath");
+            String fileName = fileInfo.getFilename();
+            String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" : fileName.substring(fileName.lastIndexOf(".") + 1);
+            String path = uploadFolder + "/" + fileInfo.getIdentifier() + "/" + fileInfo.getFilename();
+            Map<String, Object> params = Maps.newHashMap();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            params.put("fileMd5", fileInfo.getIdentifier());
+            List<com.fms.domain.filemanage.File> files = fileService.query(params);
+
+            if (CollectionUtil.isNotEmpty(files)) {
+                for (com.fms.domain.filemanage.File file : files) {
+                    //进行文件名和MD5校验  如果匹配进行合并
+                    if (file.getName().equals(fileInfo.getFilename()) && file.getFileMd5().equals(fileInfo.getIdentifier())) {
+
+                        //文件所在位置
+                        String text = fileService.getTextById(file.getDirectoryId());
+                        return ExtUtil.failure("重复文件所在文件夹位置:" + text);
+                    }
+
+                    Long dirId = fileInfo.getDirectoryId();
+
+                    if (dirId == 1) {
+                        Date currentDate = new Date();
+                        String relativePath = sdf.format(currentDate) + "/" + fileInfo.getWebkitRelativePath();
+                        if (!Strings.isNullOrEmpty(relativePath)) {
+                            relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
+                            dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                            saveFile(file.getRealPath(), fileName, suffix, dirId, fileInfo.getIdentifier());
+                        }
+                    } else {
+                        String relativePath = fileInfo.getWebkitRelativePath();
+                        if (!Strings.isNullOrEmpty(relativePath)) {
+                            //根据文件夹名字  查询是否存在
+
+                            relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
+                            dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                            saveFile(file.getRealPath(), fileName, suffix, dirId, fileInfo.getIdentifier());
+                        }
+                    }
+
+                    return "合并成功";
+                }
+            }
+            String folder = uploadFolder + "/" + fileInfo.getIdentifier();
+            merge(path, folder);
+            fileInfo.setLocation(path);
+//        fileInfoService.addFileInfo(fileInfo);
+
+
+            FileInputStream fis = null;
+            ByteArrayOutputStream bos = null;
+            byte[] buffer = null;
+            fis = new FileInputStream(fileInfo.getLocation());
+            bos = new ByteArrayOutputStream();
+
+            byte[] b = new byte[1024];
+
+            int n;
+
+            while ((n = fis.read(b)) != -1) {
+                bos.write(b, 0, n);
+            }
+
+            buffer = bos.toByteArray();
+            String realPath = hdfsService.upload(buffer, fileName);
+            // 根目录 dirId=1
+            Long dirId = fileInfo.getDirectoryId();// 根目录 dirId=1
+
+            if (dirId == 1) {
+                Date currentDate = new Date();
+                String relativePath = sdf.format(currentDate) + "/" + fileInfo.getWebkitRelativePath();
+
+                if (!Strings.isNullOrEmpty(relativePath)) {
+                    relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
+                    dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                }
+            } else {
+                String relativePath = fileInfo.getWebkitRelativePath();
+                if (!Strings.isNullOrEmpty(relativePath)) {
+                    Long pid = null;
+                    relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
+                    //根据文件夹名字 查询文件夹ID    避免重复
+                    List<Long> longList = directoryService.getIdByText(relativePath);
+                    if (longList.size() != 0) {
+                        pid = longList.get(0);
+                    }
+
+                    if (pid == null) {
+                        dirId = directoryService.createRelativePath(dirId, relativePath.split("/"));
+                    } else {
+                        dirId = pid;
+                    }
+
+                }
+            }
+
+            saveFile(realPath, fileName, suffix, dirId, fileInfo.getIdentifier());
+            chunkService.delete(fileInfo.getIdentifier());
+            // 清除文件夹
+            File tempFile = new File(path);
+            if (tempFile.isDirectory() && tempFile.exists()) {
+                tempFile.delete();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return ExtUtil.success("上传成功");
+    }
+
+
+    /**
+     * 文件合并
+     *
+     * @param fileInfo
+     * @return
+     */
+    @PostMapping("/mergeFileNew")
+    public Object mergeFileNew(FileInfo fileInfo,String tempPath) {
+
+        try {
+            String uploadFolder = tempPath;
             String fileName = fileInfo.getFilename();
             String suffix = fileName.toLowerCase().endsWith("tar.gz") ? "tar.gz" : fileName.indexOf(".") == -1 ? "" : fileName.substring(fileName.lastIndexOf(".") + 1);
             String path = uploadFolder + "/" + fileInfo.getIdentifier() + "/" + fileInfo.getFilename();
@@ -993,6 +1119,7 @@ public class UploadController {
                 }*/
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -1025,8 +1152,14 @@ public class UploadController {
             e.printStackTrace();
         }
         Map<String, Object> result = fileParserService.parseData(json);
-        System.out.println(result.get("table_name").toString());
-        return result.get("table_name").toString();
+        if(result.get("table_name")==null){
+            LOGGER.info("解析字段==>"+json+"<==没有映射到表名!");
+            return null;
+        }else{
+            LOGGER.info("解析字段==>"+json+"<==映射到表名为:"+result.get("table_name").toString());
+            return result.get("table_name").toString();
+        }
+
     }
 
     @RequestMapping(value = "/sendToFtp", method = RequestMethod.POST)
@@ -1149,55 +1282,56 @@ public class UploadController {
         System.out.println(array.toJSONString());
         String tableName = getTable(array.toJSONString());// =======================================================================
         //String tableName = "sd_ddd_xxx";
+        //如果匹配到表名则发送kafka
+        if(tableName!=null){
+            JSONObject rootObj = new JSONObject();
+            rootObj.put("operationSource", "XX_PLATFORM");
+
+            JSONArray infoArr = new JSONArray();
+            for (int i = 0; i < array.size(); i++) {
+                JSONObject infoObj = new JSONObject();
+                infoObj.put("operationType", "INSERT");
+
+                infoObj.put("schema", env.getProperty("schema"));//库名
 
 
-        JSONObject rootObj = new JSONObject();
-        rootObj.put("operationSource", "XX_PLATFORM");
+                JSONArray columnArr = new JSONArray();
 
-        JSONArray infoArr = new JSONArray();
-        for (int i = 0; i < array.size(); i++) {
-            JSONObject infoObj = new JSONObject();
-            infoObj.put("operationType", "INSERT");
+                infoObj.put("table", tableName);//表名
 
-            infoObj.put("schema", env.getProperty("schema"));//库名
+                JSONObject colJson = array.getJSONObject(i);
 
-
-            JSONArray columnArr = new JSONArray();
-
-            infoObj.put("table", tableName);//表名
-
-            JSONObject colJson = array.getJSONObject(i);
-
-            String dxbm = "";
-            if (colJson.containsKey("dxbm")) {
-                dxbm = colJson.getString("dxbm");
-            } else if (colJson.containsKey("dxbm")) {
-                dxbm = colJson.getString("dxbm");
-            }
-
-            for (String colKey : colJson.keySet()) {
-                if (!colKey.equals("TableSchema")) {
-                    JSONObject columnJson = new JSONObject();
-
-                    columnJson.put("name", colKey.toLowerCase());// 获取
-                    columnJson.put("value", colJson.getString(colKey));
-
-                    columnArr.add(columnJson);
+                String dxbm = "";
+                if (colJson.containsKey("dxbm")) {
+                    dxbm = colJson.getString("dxbm");
+                } else if (colJson.containsKey("dxbm")) {
+                    dxbm = colJson.getString("dxbm");
                 }
+
+                for (String colKey : colJson.keySet()) {
+                    if (!colKey.equals("TableSchema")) {
+                        JSONObject columnJson = new JSONObject();
+
+                        columnJson.put("name", colKey.toLowerCase());// 获取
+                        columnJson.put("value", colJson.getString(colKey));
+
+                        columnArr.add(columnJson);
+                    }
+                }
+
+
+                infoObj.put("objectCode", "dxbm");
+                infoObj.put("objectCodeValue", dxbm);//
+                infoObj.put("columns", columnArr);
+
+                infoArr.add(infoObj);
+
+                rootObj.put("data", infoArr);
             }
+            System.out.println("kafka消息格式：\n" + rootObj);
 
-
-            infoObj.put("objectCode", "dxbm");
-            infoObj.put("objectCodeValue", dxbm);//
-            infoObj.put("columns", columnArr);
-
-            infoArr.add(infoObj);
-
-            rootObj.put("data", infoArr);
+            kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), rootObj.toJSONString());
         }
-        System.out.println("kafka消息格式：\n" + rootObj);
-
-        kafkaTemplate.send(PropertyUtil.readValue("DEFAULT_TOPIC"), rootObj.toJSONString());
 
     }
 
@@ -1230,7 +1364,7 @@ public class UploadController {
         Long id = directoryService.getIdByTextAndParent(param);
 
         //ftp临时文件下载地址
-        String tempFolder = env.getProperty("file.tmpPath");
+        String tempFolder = env.getProperty("file.tmpPath")+File.separator+new Date().getTime();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -1238,14 +1372,15 @@ public class UploadController {
                     //重新创建连接
                     sftp.connect();
                 }
-                //判断临时目录是否存在
+                //判断临时目录是否存在（每个线程唯一的临时目录用完删除）
                 File file_dir = new File(tempFolder);
+
                 if (!file_dir.exists()) {
                     file_dir.mkdirs();
                 }
                 try {
                     // 下载
-                    sftp.batchDownLoadFileAll(path +"/", tempFolder, "", "", false);
+                    sftp.batchDownLoadFileAll(path +"/", tempFolder, "", "", true);
                     //把临时文件存放到HDFS系统
                     File[] files = file_dir.listFiles();
                     for (File file : files) {
@@ -1260,7 +1395,7 @@ public class UploadController {
 //                        String suffix = info.getFilename().toLowerCase().endsWith("tar.gz") ? "tar.gz" : info.getFilename().indexOf(".") == -1 ? "" : info.getFilename().substring(info.getFilename().lastIndexOf(".") + 1);
 //                        String realPath = hdfsService.upload(input2byte(new FileInputStream(file)), info.getFilename());
 //                        saveFile(realPath, info.getFilename(), suffix, id, null);
-                        mergeFile(info);
+                        mergeFileNew(info,tempFolder);
                         //发送kafka消息
                         handleFile(sFiles[0]);
                     }
@@ -1268,6 +1403,8 @@ public class UploadController {
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
+                    //删除临时目录
+                    Util.delFile(file_dir);
                     sftp.disconnect();
                 }
             }
@@ -1289,6 +1426,8 @@ public class UploadController {
         swapStream.close();
         return in2b;
     }
+
+
 
 
 }

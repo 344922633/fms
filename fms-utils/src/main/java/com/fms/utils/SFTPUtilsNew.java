@@ -214,54 +214,58 @@ public class SFTPUtilsNew {
                     String filename = entry.getFilename();
                     SftpATTRS attrs = entry.getAttrs();
                     if (!attrs.isDir()) {
-                        boolean flag = false;
-                        //生成md5密文
-                        String uuid = md5(filename);
-                        String localFileName = localPath +"/"+uuid+"/"+ filename;
-                        fileFormat = fileFormat == null ? "" : fileFormat
-                                .trim();
-                        fileEndFormat = fileEndFormat == null ? ""
-                                : fileEndFormat.trim();
-                        // 三种情况
-                        if (fileFormat.length() > 0 && fileEndFormat.length() > 0) {
-                            if (filename.startsWith(fileFormat) && filename.endsWith(fileEndFormat)) {
-                                flag = downloadFile(remotePath, filename, localPath+"/"+uuid, filename);
-                                if (flag) {
-                                    filenames.add(localFileName);
-                                    if (flag && del) {
-                                        deleteSFTP(remotePath, filename);
+                        //如果是那4种文件
+                        if(isFormatFile(filename)){
+                            boolean flag = false;
+                            //生成md5密文
+                            String uuid = md5(filename);
+                            String localFileName = localPath +"/"+uuid+"/"+ filename;
+                            fileFormat = fileFormat == null ? "" : fileFormat
+                                    .trim();
+                            fileEndFormat = fileEndFormat == null ? ""
+                                    : fileEndFormat.trim();
+                            // 三种情况
+                            if (fileFormat.length() > 0 && fileEndFormat.length() > 0) {
+                                if (filename.startsWith(fileFormat) && filename.endsWith(fileEndFormat)) {
+                                    flag = downloadFile(remotePath, filename, localPath+"/"+uuid, filename);
+                                    if (flag) {
+                                        filenames.add(localFileName);
+                                        if (flag && del) {
+                                            deleteSFTP(remotePath, filename);
+                                        }
                                     }
                                 }
-                            }
-                        } else if (fileFormat.length() > 0 && "".equals(fileEndFormat)) {
-                            if (filename.startsWith(fileFormat)) {
+                            } else if (fileFormat.length() > 0 && "".equals(fileEndFormat)) {
+                                if (filename.startsWith(fileFormat)) {
+                                    flag = downloadFile(remotePath, filename, localPath+"/"+uuid+"/", filename);
+                                    if (flag) {
+                                        filenames.add(localFileName);
+                                        if (flag && del) {
+                                            deleteSFTP(remotePath, filename);
+                                        }
+                                    }
+                                }
+                            } else if (fileEndFormat.length() > 0 && "".equals(fileFormat)) {
+                                if (filename.endsWith(fileEndFormat)) {
+                                    flag = downloadFile(remotePath, filename, localPath+"/"+uuid+"/", filename);
+                                    if (flag) {
+                                        filenames.add(localFileName);
+                                        if (flag && del) {
+                                            deleteSFTP(remotePath, filename);
+                                        }
+                                    }
+                                }
+                            } else {
                                 flag = downloadFile(remotePath, filename, localPath+"/"+uuid+"/", filename);
                                 if (flag) {
                                     filenames.add(localFileName);
                                     if (flag && del) {
                                         deleteSFTP(remotePath, filename);
                                     }
-                                }
-                            }
-                        } else if (fileEndFormat.length() > 0 && "".equals(fileFormat)) {
-                            if (filename.endsWith(fileEndFormat)) {
-                                flag = downloadFile(remotePath, filename, localPath+"/"+uuid+"/", filename);
-                                if (flag) {
-                                    filenames.add(localFileName);
-                                    if (flag && del) {
-                                        deleteSFTP(remotePath, filename);
-                                    }
-                                }
-                            }
-                        } else {
-                            flag = downloadFile(remotePath, filename, localPath+"/"+uuid+"/", filename);
-                            if (flag) {
-                                filenames.add(localFileName);
-                                if (flag && del) {
-                                    deleteSFTP(remotePath, filename);
                                 }
                             }
                         }
+
                     }
                     else{
                         if(!filename.equals("..")&&!filename.equals(".")){
@@ -635,5 +639,18 @@ public class SFTPUtilsNew {
             md5code = "0" + md5code;
         }
         return md5code;
+    }
+
+    /**
+     * 是否是需要格式化的文件
+     * @param fileName
+     * @return
+     */
+    private boolean isFormatFile(String fileName){
+        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+        if(suffix.equals("xml")||suffix.equals("json")||suffix.equals("sql")||suffix.equals("xls")||suffix.equals("xlsx")){
+            return true;
+        }
+        return false;
     }
 }
