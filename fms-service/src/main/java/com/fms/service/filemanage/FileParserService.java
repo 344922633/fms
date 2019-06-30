@@ -197,20 +197,93 @@ public class FileParserService {
         return null;
     }
 
+//    不能匹配到tableName（备份）
+//    public Map<String, Object> parseData(List<Map<String, Object>> data) {
+//        //构建结果
+//        Map<String, Object> result = new LinkedHashMap<>();
+//        //json中所有的key
+//        Set<String> set = new HashSet<>();
+//        for (Map<String, Object> child : data) {
+//
+//            if(child.get("name")!=null){
+//                set.add(child.get("name").toString().toLowerCase());
+//            }
+//        }
+//        result.put("allKey", set);
+//        //查询所有表的字段信息
+//        List<TableInfo> data1 = dao.getList(CLASSNAME, "queryTableInfo", null);
+//        //将表的字段信息以表名为key放到map中，方便处理
+//        Map<String, List<Map<String, String>>> tables = new LinkedHashMap<>();
+//        for (TableInfo tableInfo : data1) {
+//            tables.put(tableInfo.getTable_name(), tableInfo.getColumnInfo());
+//        }
+//        //key的最大匹配次数
+//        int maxNum = 0;
+//        //最大匹配的表名
+//        String maxTable = null;
+//        //匹配最多的表的已匹配字段
+//        Set<String> maxExistFields = null;
+//        //遍历所有表字段，找到匹配最多的表
+//        for (Map.Entry<String, List<Map<String, String>>> entry : tables.entrySet()) {
+//            int num = 0;
+//            Set<String> existFields = new LinkedHashSet<>();
+//
+//            for (Map<String, String> table : entry.getValue()) {
+//                String column_name = table.get("column_name").toLowerCase();
+//                for (String key : set) {
+//                    if (key.equals(column_name)) {
+//                        num++;
+//                        existFields.add(column_name);
+//                        break;
+//                    }
+//                }
+//            }
+//            if (num > maxNum) {
+//                maxNum = num;
+//                maxTable = entry.getKey();
+//                maxExistFields = existFields;
+//            }
+//        }
+//        List<Map<String, String>> table = tables.get(maxTable);
+//        //构建每个字段的备选数据，已经匹配到的字段无法修改，为匹配到的字段可以选择其他未被使用的字段
+//        for (String key : set) {
+//            Set<String> arrayList = new LinkedHashSet<>();
+//            //已经匹配到得字段，数据无法修改，只能取匹配到的列
+//            if(maxExistFields!=null){
+//            if (maxExistFields.contains(key)) {
+//                arrayList.add(key);
+//                result.put(key, arrayList);
+//            } else {
+//                //为匹配的字段，可以从未使用的列中选择
+//                for (Map<String, String> column : table) {
+//                    String column_name = column.get("column_name").toLowerCase();
+//                    for (String field : maxExistFields) {
+//                        if ((!column.get("column_key").equals("PRI")) && !maxExistFields.contains(column_name) && !field.equals(column_name)) {
+//                            arrayList.add(column.get("column_name").toLowerCase());
+//                        }
+//                    }
+//                }
+//                result.put(key, arrayList);
+//            }
+//            }
+//        }
+//        result.put("table_name", maxTable);
+//        return result;
+//    }
+
     public Map<String, Object> parseData(List<Map<String, Object>> data) {
         //构建结果
         Map<String, Object> result = new LinkedHashMap<>();
         //json中所有的key
         Set<String> set = new HashSet<>();
         for (Map<String, Object> child : data) {
-
-            if(child.get("name")!=null){
-                set.add(child.get("name").toString().toLowerCase());
+            for (Map.Entry<String, Object> entry : child.entrySet()) {
+                set.add(entry.getKey().toLowerCase());
             }
         }
         result.put("allKey", set);
         //查询所有表的字段信息
-        List<TableInfo> data1 = dao.getList(CLASSNAME, "queryTableInfo", null);
+        List<TableInfo> data1 =dao.getList(CLASSNAME, "queryTableInfo", null);
         //将表的字段信息以表名为key放到map中，方便处理
         Map<String, List<Map<String, String>>> tables = new LinkedHashMap<>();
         for (TableInfo tableInfo : data1) {
@@ -226,7 +299,6 @@ public class FileParserService {
         for (Map.Entry<String, List<Map<String, String>>> entry : tables.entrySet()) {
             int num = 0;
             Set<String> existFields = new LinkedHashSet<>();
-
             for (Map<String, String> table : entry.getValue()) {
                 String column_name = table.get("column_name").toLowerCase();
                 for (String key : set) {
@@ -237,7 +309,7 @@ public class FileParserService {
                     }
                 }
             }
-            if (num > maxNum) {
+            if (num >= maxNum) {
                 maxNum = num;
                 maxTable = entry.getKey();
                 maxExistFields = existFields;
@@ -248,7 +320,6 @@ public class FileParserService {
         for (String key : set) {
             Set<String> arrayList = new LinkedHashSet<>();
             //已经匹配到得字段，数据无法修改，只能取匹配到的列
-            if(maxExistFields!=null){
             if (maxExistFields.contains(key)) {
                 arrayList.add(key);
                 result.put(key, arrayList);
@@ -264,12 +335,10 @@ public class FileParserService {
                 }
                 result.put(key, arrayList);
             }
-            }
         }
         result.put("table_name", maxTable);
         return result;
     }
-
 
     public Map<String, Object> parseDataForTableName(Set<String> set) {
         Map<String, Object> result = new LinkedHashMap<>();
