@@ -14,7 +14,7 @@
         "browser-md5-file": "^1.0.0",
         "element-ui": "^2.4.5",
         "iview": "^3.1.1",
-        "mavon-editor": "^2.5.4",
+        "mavon-editor": "^2.8.2",
         "prettier": "^1.12.1",
         "vue": "^2.5.16",
         "vue-contextmenu": "^1.4.9",
